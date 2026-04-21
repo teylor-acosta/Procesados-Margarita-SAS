@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard - Procesados Margarita</title>
-
-<!-- Google Fonts - Averia Libre -->
-<link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap" rel="stylesheet">
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Procesados Margarita</title>
+    <link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="bg-light">
 
-<div class="container-fluid p-0">
-    <!-- HEADER FIJO -->
     <nav class="navbar navbar-expand-lg bg-white shadow-sm border-bottom border-success border-3 navbar-fixed">
         <div class="container-fluid py-2 px-3 px-md-5">
             <div class="d-flex align-items-center gap-3">
@@ -31,276 +26,17 @@
         </div>
     </nav>
 
-    <!-- CONTENIDO PRINCIPAL -->
     <div class="main-content">
         <div class="container">
             <div id="contenidoDashboard">
                 <div class="text-center p-5">
-                    <div class="spinner-border text-success" role="status">
-                        <span class="visually-hidden">Cargando...</span>
-                    </div>
-                    <p class="mt-3 text-success">Cargando información del usuario...</p>
+                    <div class="spinner-border text-success" role="status"></div>
+                    <p class="mt-3 text-success">Cargando tu panel de control...</p>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    let usuarioActual = null;
-    let induccionCompleta = false;
-
-    document.addEventListener('DOMContentLoaded', async () => {
-        await cargarUsuario();
-        await verificarInduccion();
-    });
-
-    async function cargarUsuario() {
-        try {
-            const response = await fetch('/api/usuario-actual');
-            const data = await response.json();
-            
-            if (data.success) {
-                usuarioActual = data.usuario;
-                renderizarDashboard();
-            } else {
-                window.location.href = '/login';
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            window.location.href = '/login';
-        }
-    }
-
-    async function verificarInduccion() {
-        try {
-            const response = await fetch('/api/verificar-induccion');
-            const data = await response.json();
-            
-            if (data.success) {
-                induccionCompleta = data.induccion_completa;
-                
-                // Cambiar el botón del header según si completó inducción o no
-                const btnHeader = document.getElementById('btnAccionHeader');
-                if (induccionCompleta) {
-                    btnHeader.innerHTML = '<i class="fas fa-arrow-right me-2"></i>Ingresar';
-                    btnHeader.style.background = 'linear-gradient(135deg, #28a745, #007bff)';
-                    btnHeader.onclick = () => ingresarAlSistema();
-                } else {
-                    btnHeader.innerHTML = '<i class="fas fa-sign-out-alt me-2"></i>Cerrar sesión';
-                    btnHeader.style.background = 'linear-gradient(135deg, #dc3545, #c82333)';
-                    btnHeader.onclick = () => cerrarSesion();
-                }
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-
-    function renderizarDashboard() {
-        if (!usuarioActual) return;
-        
-        const container = document.getElementById('contenidoDashboard');
-        
-        let html = `
-            <div class="dashboard-layout">
-                <!-- SIDEBAR IZQUIERDO - Información del usuario -->
-                <div class="sidebar">
-                    <div class="sidebar-card">
-                        <div class="sidebar-header">
-                            <i class="fas fa-user-circle"></i>
-                            <h4>Información de sesión</h4>
-                        </div>
-                        <div class="sidebar-body">
-                            <div class="sidebar-info-row">
-                                <div class="sidebar-info-icon">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div>
-                                    <div class="sidebar-info-label">Ingresaste como</div>
-                                    <div class="sidebar-info-value">${usuarioActual.nombre}</div>
-                                </div>
-                            </div>
-                            
-                            <div class="sidebar-info-row">
-                                <div class="sidebar-info-icon">
-                                    <i class="fas fa-tag"></i>
-                                </div>
-                                <div>
-                                    <div class="sidebar-info-label">Rol</div>
-                                    <div class="sidebar-info-value">${usuarioActual.rol || 'No asignado'}</div>
-                                </div>
-                            </div>
-                            
-                            <div class="sidebar-info-row">
-                                <div class="sidebar-info-icon">
-                                    <i class="fas fa-briefcase"></i>
-                                </div>
-                                <div>
-                                    <div class="sidebar-info-label">Cargo</div>
-                                    <div class="sidebar-info-value">${usuarioActual.cargo || 'No asignado'}</div>
-                                </div>
-                            </div>
-                            
-                            <div class="sidebar-info-row">
-                                <div class="sidebar-info-icon">
-                                    <i class="fas fa-building"></i>
-                                </div>
-                                <div>
-                                    <div class="sidebar-info-label">Sede</div>
-                                    <div class="sidebar-info-value">${usuarioActual.sede || 'No asignada'}</div>
-                                </div>
-                            </div>
-                            
-                            <div class="sidebar-info-row">
-                                <div class="sidebar-info-icon">
-                                    <i class="fas fa-id-card"></i>
-                                </div>
-                                <div>
-                                    <div class="sidebar-info-label">Código de empleado</div>
-                                    <div class="sidebar-info-value">${usuarioActual.codigo || 'No asignado'}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- CONTENIDO PRINCIPAL - Información de la empresa -->
-                <div class="content-main">
-                    <!-- Descripción de la empresa -->
-                    <div class="info-card">
-                        <div class="info-card-header">
-                            <h4><i class="fas fa-chart-line"></i> Procesados Margarita SAS</h4>
-                        </div>
-                        <div class="info-card-body">
-                            <p class="info-text">
-                                <strong>Procesados Margarita S.A.S.</strong> es una organización con sede en Bogotá D.C., especializada en la transformación y manejo integral de productos plásticos. 
-                                La empresa se distingue por su enfoque en la <strong>economía circular</strong>, convirtiendo residuos sólidos post-industriales en materias primas secundarias de alta calidad 
-                                mediante procesos técnicos de clasificación y tratamiento especializado.
-                            </p>
-                            <p class="info-text mt-3">
-                                <strong>📍 Domicilio Principal:</strong> Calle 74 Sur N.º 87B-77, Bogotá D.C.<br>
-                                <strong>🏢 Red Operativa:</strong> 10 sedes distribuidas en las localidades de Kennedy y Bosa.<br>
-                                <strong>📅 Jornada Laboral:</strong> Lunes a viernes de 7:00 a.m. a 5:00 p.m. | Sábados de 7:00 a.m. a 12:00 p.m.<br>
-                                <strong>📄 NIT:</strong> 900.509.538-1
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <!-- Misión y Visión -->
-                    <div class="mision-vision-grid">
-                        <div class="mv-item">
-                            <i class="fas fa-bullseye"></i>
-                            <h5>Misión</h5>
-                            <p>
-                                Contribuir con un granito de arena en el cuidado y conservación del medio ambiente dando un excelente manejo integral 
-                                a los residuos sólidos post-industriales convencionales que manejamos y hacer de estos una excelente materia prima secundaria, 
-                                partiendo de su clasificación y sometiendo a un tratamiento de acuerdo a sus especificaciones.
-                            </p>
-                        </div>
-                        <div class="mv-item">
-                            <i class="fas fa-eye"></i>
-                            <h5>Visión 2030</h5>
-                            <p>
-                                Ser una de las empresas líderes en el manejo integral de los residuos sólidos post industriales en Bogotá y expandirnos a nivel regional 
-                                para ofrecer nuestro conocimiento técnico y tecnológico que hemos adquirido a través del tiempo que llevamos con este deseo de aportar 
-                                un granito de arena para la conservación, cuidado y uso racional de los recursos del medio ambiente brindando un excelente servicio a nuestros clientes.
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <!-- Valores Corporativos -->
-                    <div class="info-card mt-4">
-                        <div class="info-card-header">
-                            <h4><i class="fas fa-heart"></i> Valores Organizacionales</h4>
-                        </div>
-                        <div class="info-card-body">
-                            <div class="valores-tags">
-                                <span class="valor-tag"><i class="fas fa-shield-alt me-1"></i> Responsabilidad</span>
-                                <span class="valor-tag"><i class="fas fa-check-circle me-1"></i> Calidad</span>
-                                <span class="valor-tag"><i class="fas fa-users me-1"></i> Trabajo en Equipo</span>
-                                <span class="valor-tag"><i class="fas fa-lightbulb me-1"></i> Innovación</span>
-                                <span class="valor-tag"><i class="fas fa-leaf me-1"></i> Compromiso Ambiental</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Cultura de Prevención -->
-                    <div class="info-card mt-4">
-                        <div class="info-card-header">
-                            <h4><i class="fas fa-shield-virus"></i> Cultura de Prevención</h4>
-                        </div>
-                        <div class="info-card-body">
-                            <p class="info-text">
-                                La organización opera bajo un sólido <strong>Sistema de Gestión de Seguridad y Salud en el Trabajo (SG-SST)</strong>, 
-                                priorizando el bienestar físico y mental de sus trabajadores y la prevención de riesgos laborales.
-                            </p>
-                        </div>
-                    </div>
-        `;
-        
-        // Si NO ha completado la inducción, mostrar la sección obligatoria
-        if (!induccionCompleta) {
-            html += `
-                    <!-- SECCIÓN DE INDUCCIÓN OBLIGATORIA -->
-                    <div class="info-card mt-4" style="border-top-color: #ff9800; border-bottom-color: #ff9800;">
-                        <div class="info-card-header" style="background: linear-gradient(135deg, #fff9e6, #fff3cd);">
-                            <h4 style="color: #e65100;"><i class="fas fa-graduation-cap"></i> 🎓 Inducción Obligatoria</h4>
-                        </div>
-                        <div class="info-card-body">
-                            <div class="text-center">
-                                <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
-                                <h5 class="text-warning fw-bold">¡Atención! Debes completar la inducción</h5>
-                                <p class="info-text">
-                                    Para poder acceder al sistema ERP y comenzar a trabajar, es obligatorio que completes el curso de inducción. 
-                                    Este curso te permitirá conocer nuestra cultura organizacional, políticas internas, protocolos de seguridad 
-                                    y el manejo adecuado de residuos sólidos.
-                                </p>
-                                <p class="info-text mt-2">
-                                    <strong>📋 Duración aproximada:</strong> 30 minutos<br>
-                                    <strong>📹 Formato:</strong> Videos interactivos con contenido educativo
-                                </p>
-                                <button class="btn-induccion-custom mt-3" onclick="irAInduccion()">
-                                    <i class="fas fa-play-circle me-2"></i>Iniciar Curso de Inducción (Obligatorio)
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-            `;
-        }
-        
-        html += `
-                </div>
-            </div>
-        `;
-        
-        container.innerHTML = html;
-    }
-
-    function irAInduccion() {
-        window.location.href = '/induccion';
-    }
-
-    function ingresarAlSistema() {
-        // Aquí puedes redirigir a la siguiente sección del ERP
-        // Por ahora muestra un mensaje, después lo conectas con el módulo que quieras
-        alert('🔜 Próximamente: Módulo principal del ERP\n\nAquí irá el contenido principal del sistema.');
-        // window.location.href = '/erp-principal';
-    }
-
-    function cerrarSesion() {
-        window.location.href = '/logout';
-    }
-
-    function accionHeader() {
-        // Esta función se llama desde el botón del header
-        if (induccionCompleta) {
-            ingresarAlSistema();
-        } else {
-            cerrarSesion();
-        }
-    }
-</script>
-
+    <script src="js/dashboard.js"></script>
 </body>
 </html>
