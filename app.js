@@ -105,14 +105,14 @@ app.post('/api/login', async (req, res) => {
         const passwordMatch = await bcrypt.compare(password, user.password_hash);
         
         if (!passwordMatch) {
-            db.query(`UPDATE Usuarios SET intentos_fallidos = intentos_fallidos + 1 WHERE ID = ?`, [user.ID]);
-            db.query(`UPDATE Usuarios SET bloqueado = 1 WHERE ID = ? AND intentos_fallidos >= 3`, [user.ID]);
+            db.query(`UPDATE usuarios SET intentos_fallidos = intentos_fallidos + 1 WHERE ID = ?`, [user.ID]);
+            db.query(`UPDATE usuarios SET bloqueado = 1 WHERE ID = ? AND intentos_fallidos >= 3`, [user.ID]);
             return res.json({ success: false, message: "Contraseña incorrecta" });
         }
 
         req.session.usuarioID = user.ID;
         
-        db.query(`UPDATE Usuarios SET intentos_fallidos = 0, fecha_ultimo_login = NOW() WHERE ID = ?`, [user.ID]);
+        db.query(`UPDATE usuarios SET intentos_fallidos = 0, fecha_ultimo_login = NOW() WHERE ID = ?`, [user.ID]);
 
         const cambio = parseInt(user.cambio_password, 10);
 
@@ -718,7 +718,7 @@ app.post('/api/recuperar', async (req, res) => {
 
             await new Promise((resolve, reject) => {
                 db.query(`
-                    UPDATE Usuarios 
+                    UPDATE usuarios 
                     SET 
                         password_hash = ?,
                         cambio_password = 1
@@ -766,7 +766,7 @@ app.get('/logout', (req, res) => {
 // ============================================
 // SERVER
 // ============================================
-app.listen(PORT,'0.0.0.0', () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
     console.log(`📋 Páginas disponibles:`);
     console.log(`   - http://localhost:${PORT}/`);
