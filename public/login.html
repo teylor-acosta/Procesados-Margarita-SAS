@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iniciar Sesión - Procesados Margarita</title>
+
+<!-- Google Fonts - Averia Libre -->
+<link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap" rel="stylesheet">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6 col-lg-5">
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <img src="img/logo de procesados sin NIT.png" alt="Logo" width="100" class="mb-3 img-fluid">
+                    <h3>Iniciar Sesión</h3>
+                    <p class="text-primary mb-0">Sistema ERP Procesados Margarita</p>
+                </div>
+                <div class="card-body-custom">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label class="form-label">Usuario</label>
+                            <input type="text" name="usuario" class="form-control" placeholder="Ingrese su usuario" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" name="password" class="form-control" placeholder="Ingrese su contraseña" required>
+                        </div>
+                        <button type="submit" class="btn btn-gradient w-100">
+                            <i class="fas fa-sign-in-alt me-2"></i>Ingresar
+                        </button>
+                        <hr class="my-4">
+                        <div class="text-center">
+                            <a href="/recuperar" class="text-primary text-decoration-none">
+                                <i class="fas fa-key me-1"></i>¿Olvidaste tu contraseña?
+                            </a>
+                        </div>
+                    </form>
+                    <div id="mensaje" class="alert-custom"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+    const mensajeDiv = document.getElementById('mensaje');
+    const btnSubmit = e.target.querySelector('button[type="submit"]');
+    const usuario = formData.get('usuario');
+    const password = formData.get('password');
+    
+    // Validar que no estén vacíos
+    if (!usuario || !password) {
+        mensajeDiv.style.display = 'block';
+        mensajeDiv.className = 'alert-custom alert-error-custom';
+        mensajeDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Por favor ingrese usuario y contraseña';
+        return;
+    }
+    
+    // Deshabilitar botón
+    btnSubmit.disabled = true;
+    btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verificando...';
+    
+    try {
+        // 1. Hacer login
+        const loginResponse = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ usuario, password })
+        });
+        
+        const loginResult = await loginResponse.json();
+        
+        mensajeDiv.style.display = 'block';
+        
+        if (!loginResult.success) {
+            mensajeDiv.className = 'alert-custom alert-error-custom';
+            mensajeDiv.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>${loginResult.message}`;
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Ingresar';
+            return;
+        }
+        
+        // Si requiere cambiar contraseña
+        if (loginResult.redirect === '/cambiar-password') {
+            mensajeDiv.className = 'alert-custom alert-success-custom';
+            mensajeDiv.innerHTML = '<i class="fas fa-check-circle me-2"></i>Debes cambiar tu contraseña...';
+            setTimeout(() => {
+                window.location.href = '/cambiar-password';
+            }, 1000);
+            return;
+        }
+        
+        mensajeDiv.className = 'alert-custom alert-success-custom';
+        mensajeDiv.innerHTML = '<i class="fas fa-check-circle me-2"></i>Acceso correcto, redirigiendo...';
+        
+        // 2. Verificar hacia dónde debe ir
+        setTimeout(async () => {
+            try {
+                const checkResponse = await fetch('/api/check-acceso');
+                const checkResult = await checkResponse.json();
+                
+                console.log('Check acceso result:', checkResult);
+                
+                if (checkResult.redirect) {
+                    window.location.href = checkResult.redirect;
+                } else {
+                    window.location.href = '/dashboard';
+                }
+            } catch (error) {
+                console.error('Error en verificación:', error);
+                // Si falla, ir directamente al dashboard
+                window.location.href = '/dashboard';
+            }
+        }, 500);
+        
+    } catch (error) {
+        console.error('Error en login:', error);
+        mensajeDiv.className = 'alert-custom alert-error-custom';
+        mensajeDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Error de conexión con el servidor';
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Ingresar';
+    }
+});
+</script>
+
+</body>
+</html>

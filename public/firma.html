@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Firma Digital - Procesados Margarita</title>
+
+<!-- Google Fonts - Averia Libre -->
+<link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap" rel="stylesheet">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="firma-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8">
+                <div class="card-custom">
+                    <div class="card-header-custom">
+                        <i class="fas fa-signature"></i>
+                        <h3>Firma Digital</h3>
+                        <p class="text-muted">Firma digitalmente para completar tu inducción</p>
+                    </div>
+                    <div class="card-body-custom text-center">
+                        <p>Por favor, firma en el recuadro a continuación:</p>
+                        
+                        <canvas id="canvasFirma" class="canvas-firma" width="500" height="200" style="border:2px solid #28a745; border-radius:10px; background:white; cursor:crosshair; max-width:100%;"></canvas>
+                        
+                        <div class="mt-3">
+                            <button class="btn btn-secondary" onclick="limpiarFirma()">
+                                <i class="fas fa-eraser"></i> Limpiar
+                            </button>
+                            <button class="btn-gradient ms-2" onclick="guardarFirma()">
+                                <i class="fas fa-save"></i> Guardar firma y generar certificado
+                            </button>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <a href="/induccion" class="text-primary">
+                                <i class="fas fa-arrow-left"></i> Volver
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let canvas = null;
+    let ctx = null;
+    let drawing = false;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        canvas = document.getElementById('canvasFirma');
+        ctx = canvas.getContext('2d');
+        
+        canvas.addEventListener('mousedown', empezarDibujo);
+        canvas.addEventListener('mousemove', dibujar);
+        canvas.addEventListener('mouseup', terminarDibujo);
+        canvas.addEventListener('mouseleave', terminarDibujo);
+        
+        // Para touch
+        canvas.addEventListener('touchstart', empezarDibujoTouch);
+        canvas.addEventListener('touchmove', dibujarTouch);
+        canvas.addEventListener('touchend', terminarDibujo);
+        
+        ctx.strokeStyle = '#28a745';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+    });
+
+    function empezarDibujo(e) {
+        drawing = true;
+        const pos = obtenerPosicion(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+        ctx.stroke();
+    }
+
+    function dibujar(e) {
+        if (!drawing) return;
+        const pos = obtenerPosicion(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+    }
+
+    function terminarDibujo() {
+        drawing = false;
+        ctx.beginPath();
+    }
+
+    function empezarDibujoTouch(e) {
+        e.preventDefault();
+        drawing = true;
+        const touch = e.touches[0];
+        const pos = obtenerPosicionTouch(touch);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+        ctx.stroke();
+    }
+
+    function dibujarTouch(e) {
+        e.preventDefault();
+        if (!drawing) return;
+        const touch = e.touches[0];
+        const pos = obtenerPosicionTouch(touch);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+    }
+
+    function obtenerPosicion(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        return {
+            x: (e.clientX - rect.left) * scaleX,
+            y: (e.clientY - rect.top) * scaleY
+        };
+    }
+
+    function obtenerPosicionTouch(touch) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        return {
+            x: (touch.clientX - rect.left) * scaleX,
+            y: (touch.clientY - rect.top) * scaleY
+        };
+    }
+
+    function limpiarFirma() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = '#28a745';
+        ctx.lineWidth = 2;
+    }
+
+    async function guardarFirma() {
+        const firmaData = canvas.toDataURL('image/png');
+        
+        if (firmaData === canvas.toDataURL()) {
+            const ctxTemp = canvas.getContext('2d');
+            const imageData = ctxTemp.getImageData(0, 0, canvas.width, canvas.height);
+            let isEmpty = true;
+            for (let i = 0; i < imageData.data.length; i += 4) {
+                if (imageData.data[i] !== 255 || imageData.data[i+1] !== 255 || imageData.data[i+2] !== 255) {
+                    isEmpty = false;
+                    break;
+                }
+            }
+            
+            if (isEmpty) {
+                alert('Por favor, firma en el recuadro antes de continuar');
+                return;
+            }
+        }
+        
+        try {
+            const response = await fetch('/api/guardar-firma', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ firma_data: firmaData })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                window.location.href = '/certificado';
+            } else {
+                alert('Error al guardar la firma');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error de conexión');
+        }
+    }
+</script>
+
+</body>
+</html>

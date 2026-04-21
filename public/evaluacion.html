@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evaluación - Procesados Margarita</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap" rel="stylesheet">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="evaluacion-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8">
+                <div class="card-custom mb-4">
+                    <div class="card-header-custom">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3 id="tituloCapitulo">Evaluación</h3>
+                        <p class="text-muted">Responde todas las preguntas. Mínimo 70% para aprobar</p>
+                    </div>
+                    <div class="card-body-custom" id="contenidoEvaluacion">
+                        <div class="text-center p-5">
+                            <div class="spinner-border text-success" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                            <p class="mt-3">Cargando evaluación...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="resultadoModal" class="resultado-modal">
+    <div class="resultado-content" id="resultadoContent">
+        <i class="fas fa-check-circle fa-3x" id="resultadoIcono" style="color: #28a745;"></i>
+        <h3 id="resultadoTitulo">¡Felicidades!</h3>
+        <p id="resultadoMensaje">Has aprobado la evaluación</p>
+        <p><strong id="resultadoNota">Nota: 85%</strong></p>
+        <button class="btn-gradient" id="btnCerrarModal" onclick="cerrarModalYRedirigir()">
+            <i class="fas fa-arrow-right"></i> Continuar
+        </button>
+    </div>
+</div>
+
+<script>
+    let capituloId = null;
+    let preguntas = [];
+    let respuestas = {};
+    let capituloTitulo = '';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        capituloId = urlParams.get('capitulo');
+        
+        console.log('Capitulo ID:', capituloId);
+        
+        if (!capituloId) {
+            alert('No se especificó el capítulo');
+            window.location.href = '/induccion';
+            return;
+        }
+        
+        await cargarEvaluacion();
+    });
+
+    async function cargarEvaluacion() {
+        try {
+            console.log('Cargando evaluación para capítulo:', capituloId);
+            const response = await fetch(`/api/preguntas-evaluacion/${capituloId}`);
+            const result = await response.json();
+            
+            console.log('Respuesta del servidor:', result);
+            
+            if (result.success) {
+                preguntas = result.preguntas;
+                await cargarCapituloInfo();
+                renderizarEvaluacion();
+            } else {
+                document.getElementById('contenidoEvaluacion').innerHTML = `
+                    <div class="alert alert-danger">Error al cargar la evaluación: ${result.message || 'Error desconocido'}</div>
+                    <a href="/induccion" class="btn-gradient mt-3">Volver a inducción</a>
+                `;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('contenidoEvaluacion').innerHTML = `
+                <div class="alert alert-danger">Error de conexión: ${error.message}</div>
+                <a href="/induccion" class="btn-gradient mt-3">Volver a inducción</a>
+            `;
+        }
+    }
+
+    async function cargarCapituloInfo() {
+        try {
+            const response = await fetch('/api/capitulos-induccion');
+            const result = await response.json();
+            
+            if (result.success) {
+                const capitulo = result.capitulos.find(c => c.id == capituloId);
+                if (capitulo) {
+                    capituloTitulo = capitulo.titulo;
+                    document.getElementById('tituloCapitulo').innerHTML = `<i class="fas fa-book"></i> ${capituloTitulo}`;
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    function renderizarEvaluacion() {
+        if (!preguntas.length) {
+            document.getElementById('contenidoEvaluacion').innerHTML = `
+                <div class="alert alert-warning">No hay preguntas para esta evaluación</div>
+                <a href="/induccion" class="btn-gradient mt-3">Volver a inducción</a>
+            `;
+            return;
+        }
+        
+        let html = '';
+        
+        preguntas.forEach((pregunta, index) => {
+            const seleccionada = respuestas[pregunta.id] || '';
+            
+            html += `
+                <div class="pregunta-card">
+                    <div class="pregunta-texto">
+                        <strong>${index + 1}. ${pregunta.pregunta}</strong>
+                    </div>
+                    <div class="opcion-item ${seleccionada === 'A' ? 'opcion-seleccionada' : ''}" onclick="seleccionarRespuesta(${pregunta.id}, 'A')">
+                        <span class="opcion-letra">A.</span> ${pregunta.opcion_a}
+                    </div>
+                    <div class="opcion-item ${seleccionada === 'B' ? 'opcion-seleccionada' : ''}" onclick="seleccionarRespuesta(${pregunta.id}, 'B')">
+                        <span class="opcion-letra">B.</span> ${pregunta.opcion_b}
+                    </div>
+                    <div class="opcion-item ${seleccionada === 'C' ? 'opcion-seleccionada' : ''}" onclick="seleccionarRespuesta(${pregunta.id}, 'C')">
+                        <span class="opcion-letra">C.</span> ${pregunta.opcion_c}
+                    </div>
+                    <div class="opcion-item ${seleccionada === 'D' ? 'opcion-seleccionada' : ''}" onclick="seleccionarRespuesta(${pregunta.id}, 'D')">
+                        <span class="opcion-letra">D.</span> ${pregunta.opcion_d}
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += `
+            <div class="text-center mt-4">
+                <button class="btn-gradient" onclick="enviarEvaluacion()">
+                    <i class="fas fa-check-circle"></i> Calificar evaluación
+                </button>
+                <a href="/induccion" class="btn btn-secondary ms-2">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+            </div>
+        `;
+        
+        document.getElementById('contenidoEvaluacion').innerHTML = html;
+    }
+
+    function seleccionarRespuesta(preguntaId, respuesta) {
+        respuestas[preguntaId] = respuesta;
+        renderizarEvaluacion();
+    }
+
+    async function enviarEvaluacion() {
+        const totalPreguntas = preguntas.length;
+        const respondidas = Object.keys(respuestas).length;
+        
+        if (respondidas < totalPreguntas) {
+            alert(`Faltan ${totalPreguntas - respondidas} preguntas por responder`);
+            return;
+        }
+        
+        // Mostrar loading
+        const btn = document.querySelector('.btn-gradient');
+        const textoOriginal = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+        btn.disabled = true;
+        
+        try {
+            console.log('Enviando evaluación:', {
+                capitulo_id: capituloId,
+                respuestas: respuestas
+            });
+            
+            const response = await fetch('/api/guardar-evaluacion', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    capitulo_id: parseInt(capituloId),
+                    respuestas: respuestas
+                })
+            });
+            
+            const result = await response.json();
+            console.log('Resultado:', result);
+            
+            if (result.success) {
+                mostrarResultado(result.aprobado, result.nota, result.mensaje);
+            } else {
+                alert('Error: ' + (result.message || 'Error al guardar la evaluación'));
+                btn.innerHTML = textoOriginal;
+                btn.disabled = false;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error de conexión: ' + error.message);
+            btn.innerHTML = textoOriginal;
+            btn.disabled = false;
+        }
+    }
+
+    function mostrarResultado(aprobado, nota, mensaje) {
+        const modal = document.getElementById('resultadoModal');
+        const icono = document.getElementById('resultadoIcono');
+        const titulo = document.getElementById('resultadoTitulo');
+        const mensajeEl = document.getElementById('resultadoMensaje');
+        const notaEl = document.getElementById('resultadoNota');
+        const content = document.getElementById('resultadoContent');
+        
+        if (aprobado) {
+            icono.className = 'fas fa-check-circle fa-3x';
+            icono.style.color = '#28a745';
+            titulo.innerHTML = '¡Felicidades!';
+            content.className = 'resultado-content resultado-aprobado';
+        } else {
+            icono.className = 'fas fa-times-circle fa-3x';
+            icono.style.color = '#dc3545';
+            titulo.innerHTML = 'No aprobaste';
+            content.className = 'resultado-content resultado-reprobado';
+        }
+        
+        mensajeEl.innerHTML = mensaje;
+        notaEl.innerHTML = `Nota: ${Math.round(nota)}%`;
+        
+        modal.style.display = 'flex';
+    }
+
+    function cerrarModalYRedirigir() {
+        window.location.href = '/induccion';
+    }
+</script>
+
+</body>
+</html>
