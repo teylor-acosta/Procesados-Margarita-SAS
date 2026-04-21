@@ -79,7 +79,7 @@ app.post('/api/login', async (req, res) => {
         SELECT u.*, e.activo 
         FROM usuarios u
         JOIN empleados e ON u.empleado_id = e.id
-        WHERE LOWER(u.Usuario) = LOWER(?)
+        WHERE LOWER(u.usuario) = LOWER(?)
     `;
 
     db.query(sql, [usuario], async (err, results) => {
@@ -105,14 +105,14 @@ app.post('/api/login', async (req, res) => {
         const passwordMatch = await bcrypt.compare(password, user.password_hash);
         
         if (!passwordMatch) {
-            db.query(`UPDATE usuarios SET intentos_fallidos = intentos_fallidos + 1 WHERE ID = ?`, [user.ID]);
-            db.query(`UPDATE usuarios SET bloqueado = 1 WHERE ID = ? AND intentos_fallidos >= 3`, [user.ID]);
+            db.query(`UPDATE usuarios SET intentos_fallidos = intentos_fallidos + 1 WHERE id = ?`, [user.id]);
+            db.query(`UPDATE usuarios SET bloqueado = 1 WHERE id = ? AND intentos_fallidos >= 3`, [user.id]);
             return res.json({ success: false, message: "Contraseña incorrecta" });
         }
 
-        req.session.usuarioID = user.ID;
+        req.session.usuarioID = user.id;
         
-        db.query(`UPDATE usuarios SET intentos_fallidos = 0, fecha_ultimo_login = NOW() WHERE ID = ?`, [user.ID]);
+        db.query(`UPDATE usuarios SET intentos_fallidos = 0, fecha_ultimo_login = NOW() WHERE id = ?`, [user.id]);
 
         const cambio = parseInt(user.cambio_password, 10);
 
@@ -137,9 +137,9 @@ app.get('/api/check-acceso', (req, res) => {
                COUNT(DISTINCT r.capitulo_id) as capitulos_aprobados,
                (SELECT COUNT(*) FROM capitulos_induccion WHERE activo = 1) as total_capitulos
         FROM usuarios u
-        LEFT JOIN resultados_evaluaciones r ON u.ID = r.usuario_id AND r.aprobado = 1
-        WHERE u.ID = ?
-        GROUP BY u.ID
+        LEFT JOIN resultados_evaluaciones r ON u.id = r.usuario_id AND r.aprobado = 1
+        WHERE u.id = ?
+        GROUP BY u.id
     `;
 
     db.query(sql, [req.session.usuarioID], (err, results) => {
@@ -162,6 +162,48 @@ app.get('/api/check-acceso', (req, res) => {
         }
         
         res.json({ success: true, redirect: '/dashboard' });
+    });
+});
+
+// ============================================
+// DASHBOARD - OBTENER DATOS DEL USUARIO ACTUAL
+// ============================================
+app.get('/api/usuario-actual', (req, res) => {
+    if (!req.session.usuarioID) {
+        return res.json({ success: false, message: "No autorizado" });
+    }
+
+    const sql = `
+        SELECT 
+            u.id,
+            u.usuario,
+            u.primera_vez,
+            e.codigo,
+            e.nombre,
+            e.numero_documento,
+            c.nombre as cargo,
+            r.nombre as rol,
+            s.nombre as sede
+        FROM usuarios u
+        JOIN empleados e ON u.empleado_id = e.id
+        LEFT JOIN cargos c ON e.cargo_id = c.id
+        LEFT JOIN rol r ON u.rol_id = r.id
+        LEFT JOIN sedes s ON e.sede_id = s.id
+        WHERE u.id = ?
+    `;
+
+    db.query(sql, [req.session.usuarioID], (err, results) => {
+        if (err) {
+            console.error('Error:', err);
+            return res.json({ success: false, message: "Error servidor" });
+        }
+
+        if (results.length === 0) {
+            return res.json({ success: false, message: "Usuario no encontrado" });
+        }
+
+        const user = results[0];
+        res.json({ success: true, usuario: user });
     });
 });
 
@@ -363,7 +405,7 @@ app.post('/api/guardar-evaluacion', (req, res) => {
 
                         db.query(checkSql, [usuario_id], (err, results) => {
                             if (!err && results[0] && results[0].total_aprobados >= results[0].total_capitulos) {
-                                db.query('UPDATE usuarios SET primera_vez = 0 WHERE ID = ?', [usuario_id]);
+                                db.query('UPDATE usuarios SET primera_vez = 0 WHERE id = ?', [usuario_id]);
                             }
                         });
 
@@ -439,7 +481,7 @@ app.post('/api/guardar-firma', (req, res) => {
             });
         } else {
             sql = `INSERT INTO firmas_usuario (usuario_id, firma_data, ip_address) VALUES (?, ?, ?)`;
-            db.query(sql, [usuario_id, firma_data, ip], (err) => {
+            db.query(sql, [firma_data, ip, usuario_id], (err) => {
                 if (err) {
                     console.error('Error:', err);
                     return res.json({ success: false, message: "Error al guardar firma" });
@@ -526,7 +568,7 @@ app.get('/api/datos-certificado', (req, res) => {
 
     const sql = `
         SELECT 
-            u.ID,
+            u.id,
             u.usuario,
             e.nombre,
             e.numero_documento,
@@ -537,9 +579,9 @@ app.get('/api/datos-certificado', (req, res) => {
             f.firma_data
         FROM usuarios u
         JOIN empleados e ON u.empleado_id = e.id
-        LEFT JOIN certificados_usuario c ON u.ID = c.usuario_id
-        LEFT JOIN firmas_usuario f ON u.ID = f.usuario_id
-        WHERE u.ID = ?
+        LEFT JOIN certificados_usuario c ON u.id = c.usuario_id
+        LEFT JOIN firmas_usuario f ON u.id = f.usuario_id
+        WHERE u.id = ?
         ORDER BY c.fecha_emision DESC
         LIMIT 1
     `;
@@ -594,48 +636,6 @@ app.get('/api/datos-certificado', (req, res) => {
 });
 
 // ============================================
-// DASHBOARD - OBTENER DATOS DEL USUARIO ACTUAL
-// ============================================
-app.get('/api/usuario-actual', (req, res) => {
-    if (!req.session.usuarioID) {
-        return res.json({ success: false, message: "No autorizado" });
-    }
-
-    const sql = `
-        SELECT 
-            u.ID,
-            u.usuario,
-            u.primera_vez,
-            e.codigo,
-            e.nombre,
-            e.numero_documento,
-            c.nombre as cargo,
-            r.Nombre as rol,
-            s.nombre as sede
-        FROM usuarios u
-        JOIN empleados e ON u.empleado_id = e.id
-        LEFT JOIN cargos c ON e.cargo_id = c.id
-        LEFT JOIN Rol r ON u.rol_id = r.ID
-        LEFT JOIN sedes s ON e.sede_id = s.id
-        WHERE u.ID = ?
-    `;
-
-    db.query(sql, [req.session.usuarioID], (err, results) => {
-        if (err) {
-            console.error('Error:', err);
-            return res.json({ success: false, message: "Error servidor" });
-        }
-
-        if (results.length === 0) {
-            return res.json({ success: false, message: "Usuario no encontrado" });
-        }
-
-        const user = results[0];
-        res.json({ success: true, usuario: user });
-    });
-});
-
-// ============================================
 // CAMBIO DE CONTRASEÑA
 // ============================================
 app.post('/api/cambiar-password', async (req, res) => {
@@ -657,7 +657,7 @@ app.post('/api/cambiar-password', async (req, res) => {
                     password_hash = ?,
                     cambio_password = 0,
                     fecha_cambio_password = NOW()
-                WHERE ID = ?
+                WHERE id = ?
             `, [hashedPassword, id], (err) => {
                 if (err) reject(err);
                 else resolve();
@@ -694,7 +694,7 @@ app.post('/api/recuperar', async (req, res) => {
     const { documento } = req.body;
 
     const sql = `
-        SELECT u.ID
+        SELECT u.id
         FROM usuarios u
         JOIN empleados e ON u.empleado_id = e.id
         WHERE e.numero_documento = ?
@@ -710,7 +710,7 @@ app.post('/api/recuperar', async (req, res) => {
             return res.json({ success: false, message: "No existe usuario" });
         }
 
-        const id = results[0].ID;
+        const id = results[0].id;
         const tempPass = '123456';
 
         try {
@@ -722,7 +722,7 @@ app.post('/api/recuperar', async (req, res) => {
                     SET 
                         password_hash = ?,
                         cambio_password = 1
-                    WHERE ID = ?
+                    WHERE id = ?
                 `, [hashedTempPass, id], (err) => {
                     if (err) reject(err);
                     else resolve();
@@ -768,13 +768,4 @@ app.get('/logout', (req, res) => {
 // ============================================
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
-    console.log(`📋 Páginas disponibles:`);
-    console.log(`   - http://localhost:${PORT}/`);
-    console.log(`   - http://localhost:${PORT}/login`);
-    console.log(`   - http://localhost:${PORT}/dashboard`);
-    console.log(`   - http://localhost:${PORT}/induccion`);
-    console.log(`   - http://localhost:${PORT}/evaluacion`);
-    console.log(`   - http://localhost:${PORT}/resultados`);
-    console.log(`   - http://localhost:${PORT}/firma`);
-    console.log(`   - http://localhost:${PORT}/certificado`);
 });
