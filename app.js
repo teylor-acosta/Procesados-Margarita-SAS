@@ -77,7 +77,7 @@ app.post('/api/login', async (req, res) => {
 
     const sql = `
         SELECT u.*, e.activo 
-        FROM Usuarios u
+        FROM usuarios u
         JOIN empleados e ON u.empleado_id = e.id
         WHERE LOWER(u.Usuario) = LOWER(?)
     `;
@@ -136,7 +136,7 @@ app.get('/api/check-acceso', (req, res) => {
         SELECT u.primera_vez,
                COUNT(DISTINCT r.capitulo_id) as capitulos_aprobados,
                (SELECT COUNT(*) FROM capitulos_induccion WHERE activo = 1) as total_capitulos
-        FROM Usuarios u
+        FROM usuarios u
         LEFT JOIN resultados_evaluaciones r ON u.ID = r.usuario_id AND r.aprobado = 1
         WHERE u.ID = ?
         GROUP BY u.ID
@@ -363,7 +363,7 @@ app.post('/api/guardar-evaluacion', (req, res) => {
 
                         db.query(checkSql, [usuario_id], (err, results) => {
                             if (!err && results[0] && results[0].total_aprobados >= results[0].total_capitulos) {
-                                db.query('UPDATE Usuarios SET primera_vez = 0 WHERE ID = ?', [usuario_id]);
+                                db.query('UPDATE usuarios SET primera_vez = 0 WHERE ID = ?', [usuario_id]);
                             }
                         });
 
@@ -527,7 +527,7 @@ app.get('/api/datos-certificado', (req, res) => {
     const sql = `
         SELECT 
             u.ID,
-            u.Usuario,
+            u.usuario,
             e.nombre,
             e.numero_documento,
             e.codigo,
@@ -535,7 +535,7 @@ app.get('/api/datos-certificado', (req, res) => {
             c.codigo_certificado,
             c.fecha_emision,
             f.firma_data
-        FROM Usuarios u
+        FROM usuarios u
         JOIN empleados e ON u.empleado_id = e.id
         LEFT JOIN certificados_usuario c ON u.ID = c.usuario_id
         LEFT JOIN firmas_usuario f ON u.ID = f.usuario_id
@@ -604,7 +604,7 @@ app.get('/api/usuario-actual', (req, res) => {
     const sql = `
         SELECT 
             u.ID,
-            u.Usuario,
+            u.usuario,
             u.primera_vez,
             e.codigo,
             e.nombre,
@@ -612,7 +612,7 @@ app.get('/api/usuario-actual', (req, res) => {
             c.nombre as cargo,
             r.Nombre as rol,
             s.nombre as sede
-        FROM Usuarios u
+        FROM usuarios u
         JOIN empleados e ON u.empleado_id = e.id
         LEFT JOIN cargos c ON e.cargo_id = c.id
         LEFT JOIN Rol r ON u.rol_id = r.ID
@@ -652,7 +652,7 @@ app.post('/api/cambiar-password', async (req, res) => {
 
         await new Promise((resolve, reject) => {
             db.query(`
-                UPDATE Usuarios 
+                UPDATE usuarios 
                 SET 
                     password_hash = ?,
                     cambio_password = 0,
@@ -695,7 +695,7 @@ app.post('/api/recuperar', async (req, res) => {
 
     const sql = `
         SELECT u.ID
-        FROM Usuarios u
+        FROM usuarios u
         JOIN empleados e ON u.empleado_id = e.id
         WHERE e.numero_documento = ?
     `;
