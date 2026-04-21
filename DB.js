@@ -1,18 +1,13 @@
 const mysql = require('mysql2');
 
-const conexion = mysql.createConnection({
-    host: 'localhost',      // o IP si es otro PC
-    user: 'root',
-    password: '',
-    database: 'MargaritaSAS'
+const db = mysql.createConnection(process.env.MYSQL_URL);
+
+db.connect((err) => {
+  if (err) {
+    console.error('❌ Error de conexión:', err);
+  } else {
+    console.log('✅ Conectado a Railway MySQL');
+  }
 });
 
-conexion.connect((err) => {
-    if (err) {
-        console.error('❌ Error de conexión:', err);
-        return;
-    }
-    console.log('✅ Conectado a MySQL');
-});
-
-module.exports = conexion;
+module.exports = db;
