@@ -4,7 +4,6 @@ let respuestas = {};
 
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
-    // Cambiado de 'capitulo' a 'id' para ser consistentes con la URL que manda induccion.js (?id=...)
     capituloId = urlParams.get('id') || urlParams.get('capitulo');
     
     if (!capituloId) {
@@ -25,7 +24,6 @@ async function inicializarEvaluacion() {
         if (resPreguntas.success) {
             preguntas = resPreguntas.preguntas;
             
-            // Buscamos el título del capítulo actual
             const capitulo = resCapitulos.capitulos?.find(c => c.id == capituloId);
             if (capitulo) {
                 const tituloElem = document.getElementById('tituloCapitulo');
@@ -62,13 +60,16 @@ function renderizarPreguntas() {
                 <strong>${i + 1}. ${p.pregunta}</strong>
             </div>
             <div class="opciones-lista">
-                ${['A', 'B', 'C', 'D'].map(letra => `
-                    <div class="opcion-item p-3 mb-2 border rounded cursor-pointer" 
-                         onclick="seleccionarRespuesta(${p.id}, '${letra}', this)"
-                         style="cursor: pointer; transition: all 0.3s;">
-                        <span class="opcion-letra fw-bold">${letra}.</span> ${p[`opcion_${letra.toLowerCase()}`]}
-                    </div>
-                `).join('')}
+                ${['A', 'B', 'C', 'D'].map(letra => {
+                    const opcionValue = p[`opcion_${letra.toLowerCase()}`];
+                    return `
+                        <div class="opcion-item p-3 mb-2 border rounded cursor-pointer" 
+                             onclick="seleccionarRespuesta(${p.id}, '${letra}', this)"
+                             style="cursor: pointer; transition: all 0.3s;">
+                            <span class="opcion-letra fw-bold">${letra}.</span> ${opcionValue || 'Sin texto'}
+                        </div>
+                    `;
+                }).join('')}
             </div>
         </div>
     `).join('');
@@ -86,28 +87,31 @@ function renderizarPreguntas() {
 function seleccionarRespuesta(preguntaId, letra, elemento) {
     respuestas[preguntaId] = letra;
     
-    // UI: Obtener el bloque de opciones de esta pregunta específica
     const bloque = elemento.closest('.opciones-lista');
     
-    // UI: Limpiar clases de selección en todas las opciones del bloque
     bloque.querySelectorAll('.opcion-item').forEach(el => {
-        el.classList.remove('opcion-seleccionada', 'bg-primary', 'text-white');
-        el.style.backgroundColor = ''; 
+        el.classList.remove('opcion-seleccionada', 'active');
+        el.style.background = '';
+        el.style.border = '2px solid #e0e0e0';
+        el.style.color = '#1a1a1a';
     });
     
-    // UI: Activar la seleccionada (Acomódate a tus clases de CSS o usa estilos directos)
-    elemento.classList.add('opcion-seleccionada');
-    elemento.style.backgroundColor = '#e3f2fd'; // Un tono azul suave de selección
+    elemento.classList.add('opcion-seleccionada', 'active');
+    elemento.style.background = 'linear-gradient(135deg, #28a745, #007bff)';
+    elemento.style.border = 'none';
+    elemento.style.color = 'white';
 }
 
 async function enviarEvaluacion() {
-    // Validar que todas estén respondidas
-    if (Object.keys(respuestas).length < preguntas.length) {
-        alert('Faltan preguntas por responder. Por favor revisa la evaluación.');
+    const faltantes = preguntas.length - Object.keys(respuestas).length;
+    
+    if (faltantes > 0) {
+        alert(`⚠️ Faltan ${faltantes} pregunta(s) por responder. Por favor revisa la evaluación.`);
         return;
     }
 
     const btn = document.getElementById('btnEnviar');
+    const textoOriginal = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Procesando resultados...';
 
@@ -124,20 +128,18 @@ async function enviarEvaluacion() {
         const result = await response.json();
         
         if (result.success) {
-            // Redirigimos a resultados pasando los datos en la URL
-            // Asegúrate de que resultados.html (o la ruta /resultados) esté lista para leer esto
             const nota = result.nota || 0;
             const aprobado = result.aprobado ? 1 : 0;
             window.location.href = `/resultados?score=${nota}&aprobado=${aprobado}&capitulo=${capituloId}`;
         } else {
-            alert(result.message || 'Error al procesar la evaluación');
+            alert('❌ ' + (result.message || 'Error al procesar la evaluación. Intenta nuevamente.'));
             btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Finalizar y Calificar';
+            btn.innerHTML = textoOriginal;
         }
     } catch (e) {
         console.error('Error envío:', e);
-        alert('Error de comunicación con el servidor. Verifica tu conexión.');
+        alert('❌ Error de comunicación con el servidor. Verifica tu conexión.');
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-paper-plane me-2"></i>Finalizar y Calificar';
+        btn.innerHTML = textoOriginal;
     }
 }
