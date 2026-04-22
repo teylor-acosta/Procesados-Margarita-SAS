@@ -1,0 +1,249 @@
+/* FUENTE GLOBAL */
+* {
+    font-family: 'Averia Libre', cursive !important;
+}
+
+/* Fix para Iconos FontAwesome */
+.fas, .far, .fab, .fa {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+}
+
+:root {
+    --azul-margarita: #004085;
+    --verde-margarita: #198754;
+    --degradado: linear-gradient(135deg, #28a745, #007bff);
+}
+
+body {
+    margin: 0;
+    background: url('../img/Fondo.png') no-repeat center center fixed !important;
+    background-size: cover !important;
+}
+
+/* Fondo más visible - menos capa blanca encima */
+.background-overlay {
+    background: rgba(255, 255, 255, 0.75);
+    min-height: 100vh;
+}
+
+.navbar-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5%;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.btn-logout {
+    background-color: #d9534f;
+    color: white !important;
+    padding: 8px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* ============================================
+   MARCO DE 10PX CON GRADIENTE (BORDE COMPLETO)
+   ============================================ */
+.modulo-item {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 30px;
+    border: 10px solid transparent; 
+    background-image: linear-gradient(white, white), 
+                      linear-gradient(135deg, var(--verde-margarita), #007bff);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.modulo-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* ============================================
+   TÍTULOS CON DEGRADADO (Verde-Azul)
+   ============================================ */
+.titulo-principal {
+    background: linear-gradient(135deg, #28a745, #007bff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    font-weight: 800 !important;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2rem;
+}
+
+/* Títulos de cada módulo (Reglamento, Políticas, etc) */
+.modulo-item h3 {
+    background: linear-gradient(135deg, #28a745, #007bff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    font-weight: 700 !important;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+/* Subtítulos o textos destacados */
+.modulo-item h4, .modulo-item .subtitulo {
+    color: #004085;
+    font-weight: 600;
+}
+
+/* Texto de progreso (ej: "10 de 10 completados") */
+.progreso-texto {
+    color: #28a745;
+    font-weight: 600;
+    background: #e8f5e9;
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+/* ============================================
+   BOTONES DEGRADADOS
+   ============================================ */
+.btn-degradado {
+    background: linear-gradient(135deg, #28a745, #007bff) !important;
+    color: white !important;
+    border-radius: 30px;
+    padding: 10px 25px;
+    font-weight: bold;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-degradado:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+}
+
+/* ============================================
+   FILAS DE VIDEOS
+   ============================================ */
+.video-fila {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #eee;
+    transition: all 0.2s ease;
+}
+
+.video-fila:hover {
+    background: #f0f7ff;
+    border-color: #007bff;
+}
+
+.video-fila.visto {
+    background: linear-gradient(135deg, #e8f5e9, #e3f2fd);
+    border-left: 8px solid #28a745;
+}
+
+.video-fila.visto .video-titulo {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.video-titulo {
+    flex: 1;
+    font-weight: 500;
+}
+
+.btn-ver-video {
+    background: linear-gradient(135deg, #28a745, #007bff);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 15px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-ver-video:hover {
+    transform: scale(1.02);
+    opacity: 0.9;
+}
+
+/* Botón de confirmar */
+.btn-confirmar {
+    background: linear-gradient(135deg, #28a745, #007bff);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 8px 20px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-confirmar:hover {
+    transform: scale(1.02);
+    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .modulo-item {
+        padding: 15px;
+    }
+    
+    .titulo-principal {
+        font-size: 1.5rem;
+    }
+    
+    .modulo-item h3 {
+        font-size: 1.2rem;
+    }
+    
+    .video-fila {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .btn-ver-video {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* ============================================
+   ESTILOS ADICIONALES PARA MEJORAR VISUAL
+   ============================================ */
+/* Contenedor principal con más transparencia */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Tarjeta de estadísticas o resumen */
+.stats-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 6px solid #28a745;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.progress-bar-custom {
+    height: 8px;
+    background: linear-gradient(90deg, #28a745, #007bff);
+    border-radius: 4px;
+}
