@@ -247,3 +247,157 @@ body {
     background: linear-gradient(90deg, #28a745, #007bff);
     border-radius: 4px;
 }
+/* ============================================
+   ESTILOS PARA LA PÁGINA DE FIRMA
+   ============================================ */
+.firma-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.firma-card {
+    background: white;
+    border-radius: 32px;
+    padding: 40px;
+    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.firma-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #28a745, #007bff, #28a745);
+}
+
+.firma-titulo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.firma-titulo h2 {
+    background: linear-gradient(135deg, #28a745, #007bff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 800;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.firma-titulo p {
+    color: #6c757d;
+    font-size: 1rem;
+}
+
+/* Área de firma */
+.firma-area {
+    background: #f8f9fa;
+    border: 2px dashed #28a745;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#firmaCanvas {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    cursor: crosshair;
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.firma-botones {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.btn-firma-borrar {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 60px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-firma-borrar:hover {
+    background: #c82333;
+    transform: scale(1.02);
+}
+
+.btn-firma-finalizar {
+    background: linear-gradient(135deg, #28a745, #007bff);
+    color: white;
+    border: none;
+    padding: 12px 35px;
+    border-radius: 60px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-firma-finalizar:hover {
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+}
+
+.btn-volver-modulos {
+    background: transparent;
+    border: 2px solid #28a745;
+    color: #28a745;
+    padding: 10px 25px;
+    border-radius: 60px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-volver-modulos:hover {
+    background: #28a745;
+    color: white;
+}
+
+/* Mensaje de éxito */
+.firma-exito {
+    text-align: center;
+    padding: 20px;
+    background: #d4edda;
+    border-radius: 16px;
+    margin-top: 20px;
+}
+
+.firma-exito i {
+    font-size: 3rem;
+    color: #28a745;
+}
+
+.firma-exito h4 {
+    color: #155724;
+    margin-top: 10px;
+}

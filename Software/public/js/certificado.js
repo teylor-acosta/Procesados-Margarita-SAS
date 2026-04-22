@@ -1,142 +1,107 @@
-let datosCertificado = null;
-
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log("Cargando certificado...");
     await cargarDatosCertificado();
 });
 
 async function cargarDatosCertificado() {
-    const contenedor = document.getElementById('certificadoContent');
+    const loadingDiv = document.getElementById('loadingCertificado');
+    const contenidoDiv = document.getElementById('contenidoCertificado');
+    const accionesDiv = document.getElementById('accionesCertificado');
+    
     try {
-        // Apuntamos a la ruta centralizada en app.js
         const response = await fetch('/api/datos-certificado');
         const result = await response.json();
         
+        console.log("Respuesta:", result);
+        
         if (result.success && result.datos) {
-            datosCertificado = result.datos;
-            renderizarCertificado();
-        } else {
-            // Manejo de error si no ha terminado la inducción o no hay firma
-            contenedor.innerHTML = `
-                <div class="alert alert-danger text-center">
-                    <i class="fas fa-exclamation-triangle fa-2x"></i>
-                    <h4>Certificado no disponible</h4>
-                    <p>${result.message || 'Asegúrate de haber aprobado todas las evaluaciones y haber guardado tu firma digital.'}</p>
-                    <div class="mt-3">
-                        <a href="/induccion" class="btn-gradient me-2">Ir a Inducción</a>
-                        <a href="/firma" class="btn-gradient">Ir a Firmar</a>
-                    </div>
-                </div>
+            const datos = result.datos;
+            
+            document.getElementById('nombreEmpleado').textContent = datos.nombre || 'Empleado';
+            document.getElementById('documentoEmpleado').textContent = `Identificado(a) con documento de identidad No ${datos.numero_documento || 'N/A'}`;
+            document.getElementById('nombreEmpleadoFirma').textContent = datos.nombre || 'Empleado';
+            
+            const notaPromedio = Math.round(datos.nota_promedio || 0);
+            document.getElementById('notaPromedio').textContent = notaPromedio;
+            
+            const fecha = datos.fecha_completado ? new Date(datos.fecha_completado) : new Date();
+            const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+            const fechaFormateada = `${fecha.getDate()} de ${meses[fecha.getMonth()]} de ${fecha.getFullYear()}`;
+            document.getElementById('fechaCertificado').innerHTML = `
+                <i class="fas fa-calendar-alt me-2"></i> 
+                Bogotá, Colombia, ${fechaFormateada}
             `;
+            
+            await cargarFirmaEmpleado();
+            
+            if (loadingDiv) loadingDiv.style.display = 'none';
+            if (contenidoDiv) contenidoDiv.style.display = 'block';
+            if (accionesDiv) accionesDiv.style.display = 'flex';
+        } else {
+            throw new Error(result.error || 'No se pudieron cargar los datos');
         }
     } catch (error) {
         console.error('Error:', error);
-        contenedor.innerHTML = `
-            <div class="alert alert-danger text-center">
-                <i class="fas fa-wifi-slash fa-2x"></i>
-                <p>Error de conexión con el servidor al generar el certificado.</p>
-            </div>
-        `;
-    }
-}
-
-function renderizarCertificado() {
-    // Validamos la fecha: si no viene del servidor, usamos la actual
-    const fechaValida = datosCertificado.fecha_emision ? new Date(datosCertificado.fecha_emision) : new Date();
-    const mes = fechaValida.toLocaleString('es-CO', { month: 'long' });
-    
-    let html = `
-        <div class="certificado-pdf" id="certificadoParaPDF">
-            <div class="marca-agua">
-                <img src="img/marca_agua.png" alt="Marca de agua" onerror="this.style.display='none'">
-            </div>
-            <div class="contenido-certificado">
-                <div class="certificado-header">
-                    <img src="img/9903400.png" alt="Logo" class="certificado-logo">
-                    <h1 class="certificado-titulo-principal">PROCESADOS MARGARITA SAS</h1>
-                    <h3 class="certificado-subtitulo">Certificado de Inducción</h3>
-                    <div class="certificado-linea"></div>
+        if (loadingDiv) {
+            loadingDiv.innerHTML = `
+                <div class="text-center text-danger">
+                    <i class="fas fa-exclamation-triangle fa-4x mb-3"></i>
+                    <h4>Error al cargar el certificado</h4>
+                    <p>${error.message}</p>
+                    <button class="btn-degradado mt-3" onclick="location.reload()">
+                        <i class="fas fa-sync-alt me-2"></i>Reintentar
+                    </button>
                 </div>
-                
-                <div class="certificado-texto">
-                    <p>El Sistema de Gestión de Seguridad y Salud en el Trabajo (SG-SST)</p>
-                    <p>de <strong>Procesados Margarita SAS</strong> Certifica que:</p>
-                </div>
-                
-                <div class="certificado-nombre">${datosCertificado.nombre}</div>
-                
-                <div class="certificado-datos">
-                    <p>Identificado(a) con Cédula de Ciudadanía No. <strong>${datosCertificado.numero_documento}</strong></p>
-                </div>
-                
-                <div class="certificado-curso">
-                    <p>Completó y aprobó satisfactoriamente el curso de:</p>
-                    <p class="certificado-curso-titulo">INDUCCIÓN EMPRESARIAL PROCESADOS MARGARITA SAS</p>
-                </div>
-                
-                <div class="certificado-modulos">
-                    <p>Que incluye los módulos de Reglamento Interno, Políticas de Seguridad y Procesos Operativos.</p>
-                </div>
-                
-                <div class="certificado-fecha">
-                    <p>Se firma el presente en Bogotá D.C., a los <strong>${fechaValida.getDate()}</strong> días del mes de <strong>${mes}</strong> de <strong>${fechaValida.getFullYear()}</strong></p>
-                </div>
-                
-                <div class="certificado-firmas">
-                    <div class="firma-empleado">
-                        ${datosCertificado.firma_data ? `<img src="${datosCertificado.firma_data}" alt="Firma del Empleado">` : '<div class="firma-linea"></div>'}
-                        <div class="firma-nombre">${datosCertificado.nombre}</div>
-                        <div class="firma-cargo">Empleado</div>
-                    </div>
-                    <div class="firma-representante">
-                        <div class="firma-linea"></div>
-                        <div class="firma-nombre">Maria Margarita Herrera</div>
-                        <div class="firma-cargo">Representante Legal</div>
-                    </div>
-                </div>
-                
-                <div class="certificado-pie">
-                    <span><strong>Código:</strong> ${datosCertificado.codigo_certificado || 'PENDIENTE'}</span> | 
-                    <span><strong>Nota:</strong> ${Math.round(datosCertificado.nota_final || 0)}%</span>
-                </div>
-            </div>
-        </div>`;
-        
-    document.getElementById('certificadoContent').innerHTML = html;
-}
-
-async function generarPDF() {
-    const element = document.getElementById('certificadoParaPDF');
-    if (!element) return;
-    
-    // Buscar el botón por clase o por ID
-    const btn = document.querySelector('.btn-pdf') || document.querySelector('button[onclick="generarPDF()"]');
-    if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generando...';
-    }
-    
-    try {
-        // html2canvas con scale 3 para alta resolución
-        const canvas = await html2canvas(element, { 
-            scale: 3, 
-            useCORS: true,
-            logging: false 
-        });
-        
-        const imgData = canvas.toDataURL('image/png');
-        const { jsPDF } = window.jspdf;
-        
-        // Formato A4 Horizontal (Landscape)
-        const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-        pdf.addImage(imgData, 'PNG', 0, 0, 297, 210);
-        pdf.save(`Certificado_Induccion_${datosCertificado.numero_documento}.pdf`);
-    } catch (e) {
-        console.error('Error al generar PDF:', e);
-        alert("Hubo un problema al generar el archivo PDF.");
-    } finally {
-        if (btn) {
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-file-pdf me-2"></i>Descargar Certificado PDF';
+            `;
         }
     }
+}
+
+async function cargarFirmaEmpleado() {
+    try {
+        const response = await fetch('/api/obtener-firma');
+        const result = await response.json();
+        
+        const firmaContainer = document.getElementById('firmaEmpleado');
+        
+        if (result.success && result.firma) {
+            firmaContainer.innerHTML = `<img src="${result.firma}" alt="Firma del empleado" style="max-width: 200px; max-height: 80px;">`;
+        } else {
+            firmaContainer.innerHTML = `<i class="fas fa-signature fa-3x text-muted"></i><p class="text-muted small mt-2">Sin firma registrada</p>`;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+document.getElementById('btnDescargarPDF').addEventListener('click', async () => {
+    const btn = document.getElementById('btnDescargarPDF');
+    const textoOriginal = btn.innerHTML;
+    
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generando PDF...';
+    
+    const element = document.getElementById('certificadoCard');
+    
+    const opt = {
+        margin: [0.5, 0.5, 0.5, 0.5],
+        filename: `Certificado_Induccion_${new Date().toISOString().split('T')[0]}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, letterRendering: true, useCORS: true },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
+    };
+    
+    try {
+        await html2pdf().set(opt).from(element).save();
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al generar el PDF');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = textoOriginal;
+    }
+});
+
+function irADashboard() {
+    window.location.href = '/dashboard';
 }
