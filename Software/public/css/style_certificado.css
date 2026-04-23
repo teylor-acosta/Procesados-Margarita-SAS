@@ -246,3 +246,18 @@
         display: none !important;
     }
 }
+/* ============================================
+   FIRMA REAL PROFESIONAL
+   ============================================ */
+
+.firma-real {
+    max-height: 65px;
+    max-width: 140px;
+    object-fit: contain;
+
+    /* 🔥 mejora visual */
+    filter: contrast(120%) brightness(95%);
+
+    /* 🔥 elimina fondo blanco visualmente */
+    mix-blend-mode: multiply;
+}

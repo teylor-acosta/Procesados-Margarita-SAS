@@ -532,3 +532,132 @@ body::before {
     padding-top: 80px;
 }
 
+/* ============================================
+   DASHBOARD NUEVO
+============================================ */
+
+.dashboard-body {
+    background: linear-gradient(135deg, #e8f5e9, #e3f2fd);
+    font-family: 'Averia Libre', cursive;
+}
+
+.dashboard-container {
+    display: flex;
+    gap: 25px;
+    padding: 30px;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #2f3542, #1e272e);
+    color: white;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.sidebar-item {
+    margin: 15px 0;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* CONTENIDO */
+.content {
+    flex: 1;
+}
+
+/* VALORES */
+.valor-card {
+    background: linear-gradient(135deg, #28a745, #007bff);
+    color: white;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.valor-card:hover {
+    transform: translateY(-5px);
+}
+
+/* ANIMACIÓN */
+.fade-in {
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* ============================================
+   NAVBAR PROFESIONAL
+============================================ */
+
+.navbar-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5%;
+    background: white;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+/* lado izquierdo */
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* logo */
+.logo-navbar {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* texto empresa */
+.empresa-texto {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.empresa-linea1 {
+    font-size: 0.9rem;
+    color: #2f3542;
+}
+
+.empresa-linea2 {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #28a745;
+}
+
+/* botón logout */
+.btn-logout {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white !important;
+    padding: 8px 18px;
+    border-radius: 40px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.3s;
+}
+
+.btn-logout:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+}

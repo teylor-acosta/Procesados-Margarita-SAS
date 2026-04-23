@@ -18,15 +18,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
     secret: 'procesados_margarita_2026',
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: { 
-        secure: false, 
+        secure: false,
+        httpOnly: true, // 🔥 IMPORTANTE
+        sameSite: 'lax', // 🔥 CLAVE PARA FETCH
         maxAge: 24 * 60 * 60 * 1000 
     }
 }));
 
 const proteger = (req, res, next) => {
-    if (!req.session.usuarioID) return res.redirect('/login');
+    if (!req.session.usuarioID) {
+        return res.redirect('/login');
+    }
     next();
 };
 
@@ -37,7 +41,26 @@ app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.ht
 app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html')));
 app.get('/recuperar', (req, res) => res.sendFile(path.join(__dirname, 'public', 'recuperar.html')));
 app.get('/cambiar-password', proteger, (req, res) => res.sendFile(path.join(__dirname, 'public', 'cambiar-password.html')));
-app.get('/dashboard', proteger, (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
+app.get('/dashboard', proteger, (req, res) => {
+
+    const usuario_id = req.session.usuarioID;
+
+    const sql = `
+        SELECT COUNT(*) as firmado 
+        FROM firmas_usuario 
+        WHERE usuario_id = ?
+    `;
+
+    db.query(sql, [usuario_id], (err, result) => {
+
+        if (result[0].firmado === 0) {
+            return res.redirect('/induccion');
+        }
+
+        res.sendFile(path.join(__dirname, 'public/dashboard.html'));
+    });
+
+});
 app.get('/induccion', proteger, (req, res) => res.sendFile(path.join(__dirname, 'public', 'induccion.html')));
 app.get('/evaluacion', proteger, (req, res) => res.sendFile(path.join(__dirname, 'public', 'evaluacion.html')));
 app.get('/resultados', proteger, (req, res) => res.sendFile(path.join(__dirname, 'public', 'resultados.html')));
@@ -49,105 +72,133 @@ app.get('/certificado', proteger, (req, res) => res.sendFile(path.join(__dirname
 // ============================================
 app.post('/api/login', async (req, res) => {
     const { usuario, password } = req.body;
-    
+
     const sql = `SELECT u.*, e.activo, e.id as empleado_id
                  FROM usuarios u 
                  JOIN empleados e ON u.empleado_id = e.id 
                  WHERE u.Usuario = ?`;
 
     db.query(sql, [usuario], async (err, results) => {
+
         if (err) return res.status(500).json({ success: false, message: "error servidor" });
         if (results.length === 0) return res.json({ success: false, message: "usuario no encontrado" });
 
         const user = results[0];
-        
+
         try {
+
             const passwordMatch = await bcrypt.compare(password, user.password_hash);
             if (!passwordMatch) return res.json({ success: false, message: "contraseña incorrecta" });
 
+            // 🔥 GUARDAR SESIÓN
             req.session.usuarioID = user.ID || user.id;
             req.session.empleadoID = user.empleado_id;
 
-            let destino = "/dashboard";
-            
+            // 🔥 CASOS DIRECTOS
             if (parseInt(user.cambio_password) === 1) {
-                destino = "/cambiar-password";
-            } 
-            else if (parseInt(user.primera_vez) === 1) {
-                destino = "/induccion";
+                return req.session.save(() => {
+                    res.json({ success: true, redirect: "/cambiar-password" });
+                });
             }
-            else {
-                const sqlCheckCompletado = `
-                    SELECT 
-                        (SELECT COUNT(*) FROM capitulos_induccion WHERE activo = 1) as total,
-                        (SELECT COUNT(DISTINCT capitulo_id) FROM resultados_evaluaciones WHERE usuario_id = ? AND aprobado = 1) as aprobados
-                `;
-                
-                db.query(sqlCheckCompletado, [req.session.usuarioID], (err, results) => {
-                    if (err) {
-                        return res.json({ success: true, redirect: "/dashboard" });
-                    }
-                    
-                    const total = results[0]?.total || 0;
-                    const aprobados = results[0]?.aprobados || 0;
-                    
+
+            if (parseInt(user.primera_vez) === 1) {
+                return req.session.save(() => {
+                    res.json({ success: true, redirect: "/induccion" });
+                });
+            }
+
+            // 🔥 VALIDAR PROGRESO
+            const sqlCheckCompletado = `
+                SELECT 
+                    (SELECT COUNT(*) FROM capitulos_induccion WHERE activo = 1) as total,
+                    (SELECT COUNT(DISTINCT capitulo_id) FROM resultados_evaluaciones WHERE usuario_id = ? AND aprobado = 1) as aprobados
+            `;
+
+            db.query(sqlCheckCompletado, [req.session.usuarioID], (err2, results2) => {
+
+                let destino = "/dashboard";
+
+                if (!err2 && results2.length > 0) {
+                    const total = results2[0].total || 0;
+                    const aprobados = results2[0].aprobados || 0;
+
                     if (aprobados < total) {
                         destino = "/induccion";
-                    } else {
-                        destino = "/dashboard";
                     }
-                    
-                    return res.json({ success: true, redirect: destino });
+                }
+
+                req.session.save(() => {
+                    res.json({ success: true, redirect: destino });
                 });
-                return;
-            }
-            
-            return res.json({ success: true, redirect: destino });
+
+            });
+
         } catch (e) {
+            console.error(e);
             return res.status(500).json({ success: false });
         }
+
     });
 });
 
 // ============================================
-// CHECK-ACCESO
+// CHECK-ACCESO (CORREGIDO SIN ROMPER TU LÓGICA)
 // ============================================
 app.get('/api/check-acceso', (req, res) => {
-    if (!req.session.usuarioID) return res.json({ success: false, redirect: '/login' });
-    
-    const sql = `
-        SELECT u.cambio_password, u.primera_vez,
-               (SELECT COUNT(*) FROM capitulos_induccion WHERE activo = 1) as total,
-               (SELECT COUNT(DISTINCT capitulo_id) FROM resultados_evaluaciones WHERE usuario_id = u.id AND aprobado = 1) as aprobados
-        FROM usuarios u WHERE u.id = ?`;
 
-    db.query(sql, [req.session.usuarioID], (err, results) => {
-        if (err || results.length === 0) return res.json({ success: false, redirect: '/login' });
-        
-        const user = results[0];
-        const requiereCambio = parseInt(user.cambio_password) === 1;
-        const totalCapitulos = user.total || 0;
-        const aprobados = user.aprobados || 0;
-        
-        const requiereInduccion = (aprobados < totalCapitulos) || (parseInt(user.primera_vez) === 1);
-        
-        let redirect = null;
-        if (requiereCambio) {
-            redirect = '/cambiar-password';
-        } else if (requiereInduccion) {
-            redirect = '/induccion';
-        } else {
-            redirect = '/dashboard';
+    if (!req.session.usuarioID) {
+        return res.json({ success: false, redirect: '/login' });
+    }
+
+    const usuario_id = req.session.usuarioID;
+
+    const sql = `
+        SELECT 
+            u.cambio_password,
+            u.primera_vez,
+
+            (SELECT COUNT(*) FROM capitulos_induccion WHERE activo = 1) as total,
+
+            (SELECT COUNT(DISTINCT capitulo_id) 
+             FROM resultados_evaluaciones 
+             WHERE usuario_id = ? AND aprobado = 1) as aprobados,
+
+            (SELECT COUNT(*) 
+             FROM certificados_usuario 
+             WHERE usuario_id = ?) as tiene_certificado
+
+        FROM usuarios u
+        WHERE u.id = ?
+    `;
+
+    db.query(sql, [usuario_id, usuario_id, usuario_id], (err, results) => {
+
+        if (err || results.length === 0) {
+            return res.json({ success: false, redirect: '/login' });
         }
-        
-        res.json({ 
-            success: true, 
-            requiereCambio, 
-            requiereInduccion,
-            redirect: redirect,
-            totalCapitulos: totalCapitulos,
-            aprobados: aprobados
-        });
+
+        const user = results[0];
+
+        // 🔥 PRIORIDAD 1: CERTIFICADO
+        if (user.tiene_certificado > 0) {
+            return res.json({ success: true, redirect: '/dashboard' });
+        }
+
+        // 🔥 PRIORIDAD 2: CAMBIO PASSWORD
+        if (parseInt(user.cambio_password) === 1) {
+            return res.json({ success: true, redirect: '/cambiar-password' });
+        }
+
+        // 🔥 PRIORIDAD 3: INDUCCIÓN
+        const completo = user.aprobados >= user.total;
+
+        if (!completo) {
+            return res.json({ success: true, redirect: '/induccion' });
+        }
+
+        // 🔥 SI COMPLETÓ PERO NO HA FIRMADO
+        return res.json({ success: true, redirect: '/firma' });
+
     });
 });
 
@@ -292,55 +343,95 @@ app.post('/api/guardar-evaluacion', proteger, (req, res) => {
 // FIRMA - Usando la tabla firmas_usuario
 // ============================================
 app.post('/api/guardar-firma', proteger, (req, res) => {
-    const { firma_data } = req.body;
+
+    const { firma_data } = req.body; // 🔥 IMPORTANTE
     const usuario_id = req.session.usuarioID;
+    const empleado_id = req.session.empleadoID;
+
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
-    
-    // Guardar en la tabla firmas_usuario
-    const sql = `INSERT INTO firmas_usuario (usuario_id, firma_data, fecha_firma, ip_address) 
-                 VALUES (?, ?, NOW(), ?) 
-                 ON DUPLICATE KEY UPDATE firma_data = ?, fecha_firma = NOW(), ip_address = ?`;
-    
-    db.query(sql, [usuario_id, firma_data, ip, firma_data, ip], (err) => {
+
+    // Validación básica
+    if (!firma_data) {
+        return res.json({ success: false, message: "No se recibió la firma" });
+    }
+
+    // 🔥 Guardar o actualizar firma
+    const sql = `
+        INSERT INTO firmas_usuario (usuario_id, firma_data, fecha_firma, ip_address)
+        VALUES (?, ?, NOW(), ?)
+        ON DUPLICATE KEY UPDATE
+            firma_data = VALUES(firma_data),
+            fecha_firma = NOW(),
+            ip_address = VALUES(ip_address)
+    `;
+
+    db.query(sql, [usuario_id, firma_data, ip], (err) => {
+
         if (err) {
             console.error("Error al guardar firma:", err);
             return res.json({ success: false, message: "Error al guardar la firma" });
         }
-        
-        // También registrar en la tabla inducciones
-        const sqlInduccion = `INSERT INTO inducciones (empleado_id, tipo, fecha, calificacion, firmado) 
-                              SELECT ?, 'induccion_completa', CURDATE(), 
-                              (SELECT AVG(nota) FROM resultados_evaluaciones WHERE usuario_id = ? AND aprobado = 1), 1
-                              WHERE NOT EXISTS (SELECT 1 FROM inducciones WHERE empleado_id = ? AND tipo = 'induccion_completa')`;
-        
-        db.query(sqlInduccion, [req.session.empleadoID, usuario_id, req.session.empleadoID], (errInd) => {
+
+        // 🔥 Registrar inducción solo si no existe
+        const sqlInduccion = `
+            INSERT INTO inducciones (empleado_id, tipo, fecha, calificacion, firmado)
+            SELECT ?, 'induccion_completa', CURDATE(),
+            (SELECT AVG(nota) 
+             FROM resultados_evaluaciones 
+             WHERE usuario_id = ? AND aprobado = 1),
+            1
+            WHERE NOT EXISTS (
+                SELECT 1 
+                FROM inducciones 
+                WHERE empleado_id = ? AND tipo = 'induccion_completa'
+            )
+        `;
+
+        db.query(sqlInduccion, [empleado_id, usuario_id, empleado_id], (errInd) => {
+
             if (errInd) {
-                console.error("Error al registrar en inducciones:", errInd);
+                console.error("Error al registrar inducción:", errInd);
+                // no detenemos el proceso por esto
             }
+
             res.json({ success: true });
+
         });
+
     });
+
 });
 
 // ============================================
 // OBTENER FIRMA DEL USUARIO
 // ============================================
-app.get('/api/obtener-firma', proteger, (req, res) => {
+app.get('/api/obtener-firma', (req, res) => {
+
     const usuario_id = req.session.usuarioID;
-    
-    const sql = `SELECT firma_data, fecha_firma FROM firmas_usuario WHERE usuario_id = ? ORDER BY fecha_firma DESC LIMIT 1`;
-    
-    db.query(sql, [usuario_id], (err, results) => {
+
+    const sql = "SELECT firma_data FROM firmas_usuario WHERE usuario_id = ?";
+
+    db.query(sql, [usuario_id], (err, result) => {
+
         if (err) {
-            return res.json({ success: false, message: "Error al obtener la firma" });
+            console.error(err);
+            return res.json({ success: false });
         }
-        
-        if (results.length > 0) {
-            res.json({ success: true, firma: results[0].firma_data, fecha: results[0].fecha_firma });
+
+        if (result.length > 0) {
+            res.json({
+                success: true,
+                firma: result[0].firma_data
+            });
         } else {
-            res.json({ success: false, message: "No hay firma registrada" });
+            res.json({
+                success: false,
+                firma: null
+            });
         }
+
     });
+
 });
 
 // ============================================
@@ -372,6 +463,37 @@ app.get('/api/induccion-completada', proteger, (req, res) => {
             firmado: firmado === 1,
             total: total,
             aprobados: aprobados
+        });
+    });
+});
+app.get('/api/estado-usuario', (req, res) => {
+
+    if (!req.session.usuarioID) {
+        return res.json({ success: false });
+    }
+
+    const usuario_id = req.session.usuarioID;
+
+    const sql = `
+        SELECT 
+            (SELECT COUNT(*) FROM capitulos_induccion WHERE activo = 1) as total,
+            (SELECT COUNT(DISTINCT capitulo_id) FROM resultados_evaluaciones WHERE usuario_id = ? AND aprobado = 1) as aprobados,
+            (SELECT COUNT(*) FROM certificados_usuario WHERE usuario_id = ?) as tiene_certificado
+    `;
+
+    db.query(sql, [usuario_id, usuario_id], (err, results) => {
+
+        if (err) return res.json({ success: false });
+
+        const r = results[0];
+
+        const completo = r.aprobados >= r.total;
+        const tieneCertificado = r.tiene_certificado > 0;
+
+        res.json({
+            success: true,
+            completo,
+            tiene_certificado: tieneCertificado
         });
     });
 });
@@ -407,6 +529,51 @@ app.get('/api/datos-certificado', proteger, (req, res) => {
         
         res.json({ success: true, datos: results[0] });
     });
+});
+app.post('/api/generar-certificado', (req, res) => {
+
+    const usuario_id = req.session.usuarioID;
+
+    // calcular promedio
+    const sqlPromedio = `
+        SELECT AVG(nota) as promedio 
+        FROM resultados_evaluaciones 
+        WHERE usuario_id = ? AND aprobado = 1
+    `;
+
+    db.query(sqlPromedio, [usuario_id], (err, result) => {
+
+        if (err) {
+            return res.json({ success: false });
+        }
+
+        const promedio = result[0]?.promedio || 0;
+
+        // código único
+        const codigo = 'CERT-' + Date.now();
+
+        const sqlInsert = `
+            INSERT INTO certificados_usuario 
+            (usuario_id, nota_final, fecha_emision, codigo_certificado)
+            VALUES (?, ?, NOW(), ?)
+            ON DUPLICATE KEY UPDATE
+                nota_final = VALUES(nota_final),
+                fecha_emision = NOW()
+        `;
+
+        db.query(sqlInsert, [usuario_id, promedio, codigo], (err2) => {
+
+            if (err2) {
+                console.error(err2);
+                return res.json({ success: false });
+            }
+
+            res.json({ success: true, codigo });
+
+        });
+
+    });
+
 });
 // ============================================
 // RECUPERACIÓN Y CAMBIO DE CLAVE
