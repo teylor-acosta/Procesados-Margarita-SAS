@@ -1,13 +1,14 @@
-// Script de protección de rutas - Ejecución inmediata
 (async function checkAuth() {
-    // Rutas que no necesitan validación (evita bucles infinitos)
+
     const publicPaths = ['/login', '/recuperar', '/cambiar-password'];
     const currentPath = window.location.pathname;
 
     try {
-        const res = await fetch('/api/check-acceso');
-        
-        // Si el servidor no responde o hay error de sesión (401/403)
+
+        const res = await fetch('/api/check-acceso', {
+            credentials: 'include'
+        });
+
         if (!res.ok) {
             if (!publicPaths.includes(currentPath)) {
                 window.location.href = '/login';
@@ -17,28 +18,30 @@
 
         const data = await res.json();
 
-        if (data.success) {
-            // Lógica de Redirección Inteligente
-            // Si el servidor sugiere una ruta y no estamos en ella, redirigimos.
-            // Excepción: Si estamos en una ruta pública pero ya tenemos sesión válida.
-            if (data.redirect && currentPath !== data.redirect) {
-                
-                // Evitamos redirigir si el usuario ya está en el dashboard y el server sugiere dashboard
-                if (currentPath === '/dashboard' && data.redirect === '/dashboard') return;
-                
-                window.location.href = data.redirect;
-            }
-        } else {
-            // Si el éxito es falso y no estamos en login, a loguearse
+        if (!data.success) {
             if (!publicPaths.includes(currentPath)) {
                 window.location.href = '/login';
             }
+            return;
         }
+
+        // 🔥 SI YA ESTÁ EN LA RUTA CORRECTA → NO HACE NADA
+        if (currentPath === data.redirect) return;
+
+        // 🔥 SI ESTÁ EN DASHBOARD Y TIENE CERTIFICADO → NO MOVERLO
+        if (currentPath === '/dashboard' && data.tiene_certificado) return;
+
+        // 🔥 SOLO REDIRIGE SI REALMENTE ESTÁ EN OTRA RUTA
+        if (data.redirect && currentPath !== data.redirect) {
+            window.location.href = data.redirect;
+        }
+
     } catch (e) {
-        console.error("Error crítico de autenticación:", e);
-        // En caso de caída del servidor, protegemos la entrada
+        console.error("Error auth:", e);
+
         if (!publicPaths.includes(currentPath)) {
             window.location.href = '/login';
         }
     }
+
 })();
