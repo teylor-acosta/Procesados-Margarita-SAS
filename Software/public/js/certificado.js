@@ -12,8 +12,6 @@ async function cargarDatosCertificado() {
         const response = await fetch('/api/datos-certificado');
         const result = await response.json();
         
-        console.log("Respuesta:", result);
-        
         if (result.success && result.datos) {
             const datos = result.datos;
             
@@ -27,6 +25,7 @@ async function cargarDatosCertificado() {
             const fecha = datos.fecha_completado ? new Date(datos.fecha_completado) : new Date();
             const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
             const fechaFormateada = `${fecha.getDate()} de ${meses[fecha.getMonth()]} de ${fecha.getFullYear()}`;
+            
             document.getElementById('fechaCertificado').innerHTML = `
                 <i class="fas fa-calendar-alt me-2"></i> 
                 Bogotá, Colombia, ${fechaFormateada}
@@ -34,26 +33,23 @@ async function cargarDatosCertificado() {
             
             await cargarFirmaEmpleado();
             
-            if (loadingDiv) loadingDiv.style.display = 'none';
-            if (contenidoDiv) contenidoDiv.style.display = 'block';
-            if (accionesDiv) accionesDiv.style.display = 'flex';
+            loadingDiv.style.display = 'none';
+            contenidoDiv.style.display = 'block';
+            accionesDiv.style.display = 'flex';
+
         } else {
             throw new Error(result.error || 'No se pudieron cargar los datos');
         }
+
     } catch (error) {
         console.error('Error:', error);
-        if (loadingDiv) {
-            loadingDiv.innerHTML = `
-                <div class="text-center text-danger">
-                    <i class="fas fa-exclamation-triangle fa-4x mb-3"></i>
-                    <h4>Error al cargar el certificado</h4>
-                    <p>${error.message}</p>
-                    <button class="btn-degradado mt-3" onclick="location.reload()">
-                        <i class="fas fa-sync-alt me-2"></i>Reintentar
-                    </button>
-                </div>
-            `;
-        }
+        loadingDiv.innerHTML = `
+            <div class="text-center text-danger">
+                <i class="fas fa-exclamation-triangle fa-4x mb-3"></i>
+                <h4>Error al cargar el certificado</h4>
+                <p>${error.message}</p>
+            </div>
+        `;
     }
 }
 
@@ -65,40 +61,93 @@ async function cargarFirmaEmpleado() {
         const firmaContainer = document.getElementById('firmaEmpleado');
         
         if (result.success && result.firma) {
-            firmaContainer.innerHTML = `<img src="${result.firma}" alt="Firma del empleado" style="max-width: 200px; max-height: 80px;">`;
+            firmaContainer.innerHTML = `<img src="${result.firma}" style="max-width: 140px; max-height: 65px;">`;
         } else {
-            firmaContainer.innerHTML = `<i class="fas fa-signature fa-3x text-muted"></i><p class="text-muted small mt-2">Sin firma registrada</p>`;
+            firmaContainer.innerHTML = `<i class="fas fa-signature fa-3x text-muted"></i>`;
         }
     } catch (error) {
         console.error('Error:', error);
     }
 }
 
-document.getElementById('btnDescargarPDF').addEventListener('click', async () => {
-    const btn = document.getElementById('btnDescargarPDF');
-    const textoOriginal = btn.innerHTML;
-    
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generando PDF...';
-    
+async function generarPDF() {
     const element = document.getElementById('certificadoCard');
-    
+
+    // 🔥 ACTIVAR MODO PDF
+    document.body.classList.add("certificado-pdf");
+
+    // 🔥 Crear contenedor centrador
+    const wrapper = document.createElement("div");
+
+    wrapper.style.width = "279mm";
+    wrapper.style.height = "216mm";
+    wrapper.style.display = "flex";
+    wrapper.style.justifyContent = "center";
+    wrapper.style.alignItems = "center";
+    wrapper.style.background = "#ffffff";
+
+    const clone = element.cloneNode(true);
+
+    clone.style.margin = "0";
+    clone.style.boxShadow = "none";
+
+    wrapper.appendChild(clone);
+    document.body.appendChild(wrapper);
+
+    await new Promise(resolve => setTimeout(resolve, 300));
+
     const opt = {
-        margin: [0.5, 0.5, 0.5, 0.5],
-        filename: `Certificado_Induccion_${new Date().toISOString().split('T')[0]}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, letterRendering: true, useCORS: true },
-        jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' }
+        margin: 0,
+        filename: `Certificado_${new Date().toISOString().split('T')[0]}.pdf`,
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: {
+            scale: 3,
+            useCORS: true,
+            backgroundColor: "#ffffff"
+        },
+        jsPDF: {
+            unit: 'mm',
+            format: 'letter',
+            orientation: 'landscape'
+        }
     };
-    
+
     try {
-        await html2pdf().set(opt).from(element).save();
+        await html2pdf().set(opt).from(wrapper).save();
+
     } catch (error) {
-        console.error('Error:', error);
-        alert('Error al generar el PDF');
+        console.error("Error generando PDF:", error);
+
     } finally {
-        btn.disabled = false;
-        btn.innerHTML = textoOriginal;
+        // 🔥 LIMPIEZA TOTAL (CLAVE PARA QUE NO DESAPAREZCAN BOTONES)
+        if (document.body.contains(wrapper)) {
+            document.body.removeChild(wrapper);
+        }
+
+        document.body.classList.remove("certificado-pdf");
+    }
+}
+
+// 🔥 ESPERAR A QUE EL DOM CARGUE EL BOTÓN
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('btnDescargarPDF');
+
+    if (btn) {
+        btn.addEventListener('click', async () => {
+            const textoOriginal = btn.innerHTML;
+
+            btn.disabled = true;
+            btn.innerHTML = 'Generando PDF...';
+
+            try {
+                await generarPDF();
+            } catch (error) {
+                alert('Error al generar el PDF');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = textoOriginal;
+            }
+        });
     }
 });
 
