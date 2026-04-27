@@ -1,31 +1,48 @@
+// ============================================
+// CONFIGURACIONES BASE
+// ============================================
+
 const express = require('express');
 const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
 const path = require('path');
 const bcrypt = require('bcrypt');
-const db = require('./DB'); 
+const db = require('./DB');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const SALT_ROUNDS = 10;
 
 // ============================================
-// CONFIGURACIONES BASE
+// BODY PARSER
 // ============================================
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '50mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+
+// ============================================
+// SESSION STORE MYSQL (🔥 FIX PRINCIPAL)
+// ============================================
+
+const sessionStore = new MySQLStore({}, db);
 
 app.use(session({
+    key: 'connect.sid',
     secret: 'procesados_margarita_2026',
+    store: sessionStore,
     resave: false,
     saveUninitialized: false,
-    cookie: { 
-        secure: false,
-        httpOnly: true, // 🔥 IMPORTANTE
-        sameSite: 'lax', // 🔥 CLAVE PARA FETCH
-        maxAge: 24 * 60 * 60 * 1000 
+    cookie: {
+        secure: false,       // localhost
+        httpOnly: true,
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000
     }
 }));
+
+// ============================================
+// 🔒 MIDDLEWARE PROTEGER
+// ============================================
 
 const proteger = (req, res, next) => {
     if (!req.session.usuarioID) {
@@ -35,41 +52,51 @@ const proteger = (req, res, next) => {
 };
 
 // ============================================
-// RUTAS DE PÁGINAS (HTML)
+// STATIC (DESPUÉS DE SESSION)
 // ============================================
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+// ============================================
+// RUTAS HTML
+// ============================================
+
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'public', 'login.html')));
 app.get('/recuperar', (req, res) => res.sendFile(path.join(__dirname, 'public', 'recuperar.html')));
-app.get('/cambiar-password', proteger, (req, res) => res.sendFile(path.join(__dirname, 'public', 'cambiar-password.html')));
-app.get('/dashboard', proteger, (req, res) => {
 
-    const usuario_id = req.session.usuarioID;
+app.get('/cambiar-password', proteger, (req, res) =>
+    res.sendFile(path.join(__dirname, 'public', 'cambiar-password.html'))
+);
 
-    const sql = `
-        SELECT COUNT(*) as firmado 
-        FROM firmas_usuario 
-        WHERE usuario_id = ?
-    `;
+app.get('/dashboard', proteger, (req, res) =>
+    res.sendFile(path.join(__dirname, 'public', 'dashboard.html'))
+);
 
-    db.query(sql, [usuario_id], (err, result) => {
+app.get('/induccion', proteger, (req, res) =>
+    res.sendFile(path.join(__dirname, 'public', 'induccion.html'))
+);
 
-        if (result[0].firmado === 0) {
-            return res.redirect('/induccion');
-        }
+app.get('/evaluacion', proteger, (req, res) =>
+    res.sendFile(path.join(__dirname, 'public', 'evaluacion.html'))
+);
 
-        res.sendFile(path.join(__dirname, 'public/dashboard.html'));
-    });
+app.get('/resultados', proteger, (req, res) =>
+    res.sendFile(path.join(__dirname, 'public', 'resultados.html'))
+);
 
-});
-app.get('/induccion', proteger, (req, res) => res.sendFile(path.join(__dirname, 'public', 'induccion.html')));
-app.get('/evaluacion', proteger, (req, res) => res.sendFile(path.join(__dirname, 'public', 'evaluacion.html')));
-app.get('/resultados', proteger, (req, res) => res.sendFile(path.join(__dirname, 'public', 'resultados.html')));
-app.get('/firma', proteger, (req, res) => res.sendFile(path.join(__dirname, 'public', 'firma.html')));
-app.get('/certificado', proteger, (req, res) => res.sendFile(path.join(__dirname, 'public', 'certificado.html')));
+app.get('/firma', proteger, (req, res) =>
+    res.sendFile(path.join(__dirname, 'public', 'firma.html'))
+);
+
+app.get('/certificado', proteger, (req, res) =>
+    res.sendFile(path.join(__dirname, 'public', 'certificado.html'))
+);
 
 // ============================================
-// LOGIN
+// LOGIN COMPLETO
 // ============================================
+
 app.post('/api/login', async (req, res) => {
     const { usuario, password } = req.body;
 
@@ -86,7 +113,6 @@ app.post('/api/login', async (req, res) => {
         const user = results[0];
 
         try {
-
             const passwordMatch = await bcrypt.compare(password, user.password_hash);
             if (!passwordMatch) return res.json({ success: false, message: "contraseña incorrecta" });
 
@@ -94,44 +120,49 @@ app.post('/api/login', async (req, res) => {
             req.session.usuarioID = user.ID || user.id;
             req.session.empleadoID = user.empleado_id;
 
-            // 🔥 CASOS DIRECTOS
+            // 🔥 CASO 1: CAMBIO DE PASSWORD
             if (parseInt(user.cambio_password) === 1) {
                 return req.session.save(() => {
                     res.json({ success: true, redirect: "/cambiar-password" });
                 });
             }
 
-            if (parseInt(user.primera_vez) === 1) {
-                return req.session.save(() => {
-                    res.json({ success: true, redirect: "/induccion" });
-                });
-            }
+// 🔥 VALIDAR TODO EL FLUJO (PRIMERO)
+const sqlCheck = `
+    SELECT 
+        (SELECT COUNT(*) FROM capitulos_induccion WHERE activo = 1) as total,
+        (SELECT COUNT(DISTINCT capitulo_id) 
+            FROM resultados_evaluaciones 
+            WHERE usuario_id = ? AND aprobado = 1) as aprobados,
+        (SELECT COUNT(*) 
+            FROM certificados_usuario 
+            WHERE usuario_id = ?) as tiene_certificado
+`;
 
-            // 🔥 VALIDAR PROGRESO
-            const sqlCheckCompletado = `
-                SELECT 
-                    (SELECT COUNT(*) FROM capitulos_induccion WHERE activo = 1) as total,
-                    (SELECT COUNT(DISTINCT capitulo_id) FROM resultados_evaluaciones WHERE usuario_id = ? AND aprobado = 1) as aprobados
-            `;
+db.query(sqlCheck, [req.session.usuarioID, req.session.usuarioID], (err2, results2) => {
 
-            db.query(sqlCheckCompletado, [req.session.usuarioID], (err2, results2) => {
+    console.log("RESULTADOS:", results2[0]);
 
-                let destino = "/dashboard";
+    let destino = "/dashboard";
 
-                if (!err2 && results2.length > 0) {
-                    const total = results2[0].total || 0;
-                    const aprobados = results2[0].aprobados || 0;
+    if (!err2 && results2.length > 0) {
+        const total = results2[0].total || 0;
+        const aprobados = results2[0].aprobados || 0;
+        const tieneCertificado = results2[0].tiene_certificado > 0;
 
-                    if (aprobados < total) {
-                        destino = "/induccion";
-                    }
-                }
+        if (tieneCertificado) {
+            destino = "/dashboard";
+        } else if (aprobados < total) {
+            destino = "/induccion";
+        } else {
+            destino = "/firma";
+        }
+    }
 
-                req.session.save(() => {
-                    res.json({ success: true, redirect: destino });
-                });
-
-            });
+    req.session.save(() => {
+        res.json({ success: true, redirect: destino });
+    });
+});
 
         } catch (e) {
             console.error(e);
@@ -142,8 +173,9 @@ app.post('/api/login', async (req, res) => {
 });
 
 // ============================================
-// CHECK-ACCESO (CORREGIDO SIN ROMPER TU LÓGICA)
+// CHECK ACCESO COMPLETO
 // ============================================
+
 app.get('/api/check-acceso', (req, res) => {
 
     if (!req.session.usuarioID) {
@@ -156,17 +188,13 @@ app.get('/api/check-acceso', (req, res) => {
         SELECT 
             u.cambio_password,
             u.primera_vez,
-
             (SELECT COUNT(*) FROM capitulos_induccion WHERE activo = 1) as total,
-
             (SELECT COUNT(DISTINCT capitulo_id) 
              FROM resultados_evaluaciones 
              WHERE usuario_id = ? AND aprobado = 1) as aprobados,
-
             (SELECT COUNT(*) 
              FROM certificados_usuario 
              WHERE usuario_id = ?) as tiene_certificado
-
         FROM usuarios u
         WHERE u.id = ?
     `;
@@ -205,6 +233,7 @@ app.get('/api/check-acceso', (req, res) => {
 // ============================================
 // INDUCCIÓN Y VIDEOS
 // ============================================
+
 app.get('/api/capitulos-induccion', proteger, (req, res) => {
     const sql = `
         SELECT c.*, 
@@ -245,6 +274,7 @@ app.post('/api/marcar-visto', proteger, (req, res) => {
 // ============================================
 // EVALUACIONES
 // ============================================
+
 app.get('/api/preguntas-evaluacion/:capituloId', proteger, (req, res) => {
     const sql = `SELECT id, pregunta, opcion_a, opcion_b, opcion_c, opcion_d, respuesta_correcta, puntos 
                  FROM preguntas_induccion WHERE capitulo_id = ?`;
@@ -342,20 +372,17 @@ app.post('/api/guardar-evaluacion', proteger, (req, res) => {
 // ============================================
 // FIRMA - Usando la tabla firmas_usuario
 // ============================================
-app.post('/api/guardar-firma', proteger, (req, res) => {
 
-    const { firma_data } = req.body; // 🔥 IMPORTANTE
+app.post('/api/guardar-firma', proteger, (req, res) => {
+    const { firma_data } = req.body;
     const usuario_id = req.session.usuarioID;
     const empleado_id = req.session.empleadoID;
-
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
 
-    // Validación básica
     if (!firma_data) {
         return res.json({ success: false, message: "No se recibió la firma" });
     }
 
-    // 🔥 Guardar o actualizar firma
     const sql = `
         INSERT INTO firmas_usuario (usuario_id, firma_data, fecha_firma, ip_address)
         VALUES (?, ?, NOW(), ?)
@@ -366,13 +393,11 @@ app.post('/api/guardar-firma', proteger, (req, res) => {
     `;
 
     db.query(sql, [usuario_id, firma_data, ip], (err) => {
-
         if (err) {
             console.error("Error al guardar firma:", err);
             return res.json({ success: false, message: "Error al guardar la firma" });
         }
 
-        // 🔥 Registrar inducción solo si no existe
         const sqlInduccion = `
             INSERT INTO inducciones (empleado_id, tipo, fecha, calificacion, firmado)
             SELECT ?, 'induccion_completa', CURDATE(),
@@ -388,55 +413,40 @@ app.post('/api/guardar-firma', proteger, (req, res) => {
         `;
 
         db.query(sqlInduccion, [empleado_id, usuario_id, empleado_id], (errInd) => {
-
             if (errInd) {
                 console.error("Error al registrar inducción:", errInd);
-                // no detenemos el proceso por esto
             }
-
             res.json({ success: true });
-
         });
-
     });
-
 });
 
 // ============================================
 // OBTENER FIRMA DEL USUARIO
 // ============================================
-app.get('/api/obtener-firma', (req, res) => {
 
+app.get('/api/obtener-firma', proteger, (req, res) => {
     const usuario_id = req.session.usuarioID;
-
     const sql = "SELECT firma_data FROM firmas_usuario WHERE usuario_id = ?";
 
     db.query(sql, [usuario_id], (err, result) => {
-
         if (err) {
             console.error(err);
             return res.json({ success: false });
         }
 
         if (result.length > 0) {
-            res.json({
-                success: true,
-                firma: result[0].firma_data
-            });
+            res.json({ success: true, firma: result[0].firma_data });
         } else {
-            res.json({
-                success: false,
-                firma: null
-            });
+            res.json({ success: false, firma: null });
         }
-
     });
-
 });
 
 // ============================================
 // VERIFICAR SI LA INDUCCIÓN ESTÁ COMPLETADA
 // ============================================
+
 app.get('/api/induccion-completada', proteger, (req, res) => {
     const usuario_id = req.session.usuarioID;
     
@@ -466,12 +476,12 @@ app.get('/api/induccion-completada', proteger, (req, res) => {
         });
     });
 });
-app.get('/api/estado-usuario', (req, res) => {
 
-    if (!req.session.usuarioID) {
-        return res.json({ success: false });
-    }
+// ============================================
+// ESTADO DEL USUARIO
+// ============================================
 
+app.get('/api/estado-usuario', proteger, (req, res) => {
     const usuario_id = req.session.usuarioID;
 
     const sql = `
@@ -482,11 +492,9 @@ app.get('/api/estado-usuario', (req, res) => {
     `;
 
     db.query(sql, [usuario_id, usuario_id], (err, results) => {
-
         if (err) return res.json({ success: false });
 
         const r = results[0];
-
         const completo = r.aprobados >= r.total;
         const tieneCertificado = r.tiene_certificado > 0;
 
@@ -501,6 +509,7 @@ app.get('/api/estado-usuario', (req, res) => {
 // ============================================
 // DATOS PARA EL CERTIFICADO
 // ============================================
+
 app.get('/api/datos-certificado', proteger, (req, res) => {
     const usuario_id = req.session.usuarioID;
     
@@ -530,11 +539,14 @@ app.get('/api/datos-certificado', proteger, (req, res) => {
         res.json({ success: true, datos: results[0] });
     });
 });
-app.post('/api/generar-certificado', (req, res) => {
 
+// ============================================
+// GENERAR CERTIFICADO
+// ============================================
+
+app.post('/api/generar-certificado', proteger, (req, res) => {
     const usuario_id = req.session.usuarioID;
 
-    // calcular promedio
     const sqlPromedio = `
         SELECT AVG(nota) as promedio 
         FROM resultados_evaluaciones 
@@ -542,14 +554,11 @@ app.post('/api/generar-certificado', (req, res) => {
     `;
 
     db.query(sqlPromedio, [usuario_id], (err, result) => {
-
         if (err) {
             return res.json({ success: false });
         }
 
         const promedio = result[0]?.promedio || 0;
-
-        // código único
         const codigo = 'CERT-' + Date.now();
 
         const sqlInsert = `
@@ -562,22 +571,19 @@ app.post('/api/generar-certificado', (req, res) => {
         `;
 
         db.query(sqlInsert, [usuario_id, promedio, codigo], (err2) => {
-
             if (err2) {
                 console.error(err2);
                 return res.json({ success: false });
             }
-
             res.json({ success: true, codigo });
-
         });
-
     });
-
 });
+
 // ============================================
 // RECUPERACIÓN Y CAMBIO DE CLAVE
 // ============================================
+
 app.post('/api/recuperar', async (req, res) => {
     const { documento } = req.body;
     const sql = `SELECT u.id FROM usuarios u JOIN empleados e ON u.empleado_id = e.id WHERE e.numero_documento = ?`;
@@ -597,14 +603,16 @@ app.post('/api/cambiar-password', proteger, async (req, res) => {
     const hash = await bcrypt.hash(password, SALT_ROUNDS);
     db.query(`UPDATE usuarios SET password_hash = ?, cambio_password = 0 WHERE id = ?`, [hash, req.session.usuarioID], (err) => {
         if (err) return res.json({ success: false });
-        req.session.destroy();
-        res.json({ success: true, redirect: "/login" });
+        req.session.destroy(() => {
+            res.json({ success: true, redirect: "/login" });
+        });
     });
 });
 
 // ============================================
 // USUARIO ACTUAL
 // ============================================
+
 app.get('/api/usuario-actual', proteger, (req, res) => {
     const sql = `SELECT u.id, u.usuario, e.nombre, e.numero_documento, e.sede, c.nombre as cargo 
                  FROM usuarios u 
@@ -617,10 +625,19 @@ app.get('/api/usuario-actual', proteger, (req, res) => {
     });
 });
 
+// ============================================
+// LOGOUT
+// ============================================
+
 app.get('/logout', (req, res) => {
-    req.session.destroy();
-    res.redirect('/login');
+    req.session.destroy(() => {
+        res.redirect('/login');
+    });
 });
+
+// ============================================
+// SERVER
+// ============================================
 
 app.listen(PORT, () => {
     console.log(`🚀 servidor margarita listo en puerto ${PORT}`);

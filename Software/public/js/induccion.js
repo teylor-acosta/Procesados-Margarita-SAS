@@ -282,7 +282,7 @@ function verVideo(subCapituloId, capituloId, videoUrl) {
     videoSource.src = videoUrl;
     videoPlayer.load();
     
-    btnConfirmar.disabled = true;
+    btnConfirmar.disabled = false;
     btnConfirmar.innerHTML = 'MARCAR COMO VISTO';
     btnConfirmar.classList.remove('btn-success');
     btnConfirmar.classList.add('btn-secondary');
@@ -360,6 +360,7 @@ function irAFirma() {
 }
 
 function irACertificado() {
+    console.log("👉 yendo a certificado");
     window.location.href = '/certificado';
 }
 
@@ -372,4 +373,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnConfirmar) {
         btnConfirmar.onclick = marcarVideoComoVisto;
     }
+});
+
+
+
+/* 🔥 MODO PRUEBA (SIN VIDEO) */
+document.addEventListener("click", function(e) {
+
+    // 👇 ESTE ES EL BOTÓN REAL QUE USAS
+    if (e.target && e.target.id === "btnConfirmarVisto") {
+
+        alert("Marcado como visto (modo prueba)");
+
+        // 🔥 simulamos guardado sin video
+        if (videoModalInstance) {
+            videoModalInstance.hide();
+        }
+
+        // 🔥 recarga para que avance módulos
+        cargarCapitulos();
+    }
+
 });
