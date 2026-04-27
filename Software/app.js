@@ -45,11 +45,132 @@ app.use(session({
 // ============================================
 
 const proteger = (req, res, next) => {
+
     if (!req.session.usuarioID) {
+
+        // 🔥 SI ES UNA API → RESPONDER JSON
+        if (req.originalUrl.startsWith('/api')) {
+            return res.status(401).json({
+                success: false,
+                message: "No autenticado"
+            });
+        }
+
+        // 🔥 SI ES UNA VISTA → REDIRIGIR NORMAL
         return res.redirect('/login');
     }
+
     next();
 };
+
+// ============================================
+// 🔥 NUEVO ENDPOINT CENTRAL (REEMPLAZA LOS 3)
+// ============================================
+
+app.get('/api/me', (req, res) => {
+
+    if (!req.session.usuarioID) {
+        return res.json({ success: false });
+    }
+
+    const usuario_id = req.session.usuarioID;
+
+const sql = `
+    SELECT 
+        e.codigo,
+        e.nombre,
+        e.tipo_documento,
+        e.numero_documento,
+        e.rh,
+        e.fecha_nacimiento,
+        e.lugar_nacimiento,
+        e.estado_civil,
+        e.direccion,
+        e.barrio_localidad,
+        e.telefono,
+        e.email,
+        c.nombre as cargo,
+        a.nombre as area,
+        s.nombre as sede,
+        u.cambio_password,
+        e.foto,
+
+        (SELECT COUNT(*) FROM capitulos_induccion WHERE activo = 1) as total,
+        (SELECT COUNT(DISTINCT capitulo_id) 
+            FROM resultados_evaluaciones 
+            WHERE usuario_id = ? AND aprobado = 1) as aprobados,
+        (SELECT COUNT(*) 
+            FROM certificados_usuario 
+            WHERE usuario_id = ?) as tiene_certificado
+
+    FROM usuarios u
+    JOIN empleados e ON u.empleado_id = e.id
+    LEFT JOIN cargos c ON e.cargo_id = c.id
+    LEFT JOIN areas a ON e.area_id = a.id
+    LEFT JOIN sedes s ON e.sede_id = s.id
+    WHERE u.id = ?
+`;
+
+    db.query(sql, [usuario_id, usuario_id, usuario_id], (err, results) => {
+
+        if (err || results.length === 0) {
+            return res.json({ success: false });
+        }
+
+        const u = results[0];
+
+        const completo = u.aprobados >= u.total;
+        const tieneCertificado = u.tiene_certificado > 0;
+
+        let redirect = "/dashboard";
+
+        if (tieneCertificado) {
+            redirect = "/dashboard";
+        } else if (parseInt(u.cambio_password) === 1) {
+            redirect = "/cambiar-password";
+        } else if (!completo) {
+            redirect = "/induccion";
+        } else {
+            redirect = "/firma";
+        }
+
+        res.json({
+            success: true,
+            usuario: u,
+            completo,
+            tiene_certificado: tieneCertificado,
+            redirect
+        });
+
+    });
+});
+
+
+app.post('/api/subir-foto', (req, res) => {
+
+    if (!req.session.usuarioID) {
+        return res.json({ success: false });
+    }
+
+    const { foto } = req.body;
+
+    const sql = `
+        UPDATE empleados e
+        JOIN usuarios u ON u.empleado_id = e.id
+        SET e.foto = ?
+        WHERE u.id = ?
+    `;
+
+    db.query(sql, [foto, req.session.usuarioID], (err) => {
+        if (err) {
+            console.error(err);
+            return res.json({ success: false });
+        }
+
+        res.json({ success: true });
+    });
+
+});
 
 // ============================================
 // STATIC (DESPUÉS DE SESSION)
@@ -91,6 +212,10 @@ app.get('/firma', proteger, (req, res) =>
 
 app.get('/certificado', proteger, (req, res) =>
     res.sendFile(path.join(__dirname, 'public', 'certificado.html'))
+);
+
+app.get('/perfil', proteger, (req, res) =>
+    res.sendFile(path.join(__dirname, 'public', 'perfil.html'))
 );
 
 // ============================================
@@ -168,64 +293,6 @@ db.query(sqlCheck, [req.session.usuarioID, req.session.usuarioID], (err2, result
             console.error(e);
             return res.status(500).json({ success: false });
         }
-
-    });
-});
-
-// ============================================
-// CHECK ACCESO COMPLETO
-// ============================================
-
-app.get('/api/check-acceso', (req, res) => {
-
-    if (!req.session.usuarioID) {
-        return res.json({ success: false, redirect: '/login' });
-    }
-
-    const usuario_id = req.session.usuarioID;
-
-    const sql = `
-        SELECT 
-            u.cambio_password,
-            u.primera_vez,
-            (SELECT COUNT(*) FROM capitulos_induccion WHERE activo = 1) as total,
-            (SELECT COUNT(DISTINCT capitulo_id) 
-             FROM resultados_evaluaciones 
-             WHERE usuario_id = ? AND aprobado = 1) as aprobados,
-            (SELECT COUNT(*) 
-             FROM certificados_usuario 
-             WHERE usuario_id = ?) as tiene_certificado
-        FROM usuarios u
-        WHERE u.id = ?
-    `;
-
-    db.query(sql, [usuario_id, usuario_id, usuario_id], (err, results) => {
-
-        if (err || results.length === 0) {
-            return res.json({ success: false, redirect: '/login' });
-        }
-
-        const user = results[0];
-
-        // 🔥 PRIORIDAD 1: CERTIFICADO
-        if (user.tiene_certificado > 0) {
-            return res.json({ success: true, redirect: '/dashboard' });
-        }
-
-        // 🔥 PRIORIDAD 2: CAMBIO PASSWORD
-        if (parseInt(user.cambio_password) === 1) {
-            return res.json({ success: true, redirect: '/cambiar-password' });
-        }
-
-        // 🔥 PRIORIDAD 3: INDUCCIÓN
-        const completo = user.aprobados >= user.total;
-
-        if (!completo) {
-            return res.json({ success: true, redirect: '/induccion' });
-        }
-
-        // 🔥 SI COMPLETÓ PERO NO HA FIRMADO
-        return res.json({ success: true, redirect: '/firma' });
 
     });
 });
@@ -478,35 +545,6 @@ app.get('/api/induccion-completada', proteger, (req, res) => {
 });
 
 // ============================================
-// ESTADO DEL USUARIO
-// ============================================
-
-app.get('/api/estado-usuario', proteger, (req, res) => {
-    const usuario_id = req.session.usuarioID;
-
-    const sql = `
-        SELECT 
-            (SELECT COUNT(*) FROM capitulos_induccion WHERE activo = 1) as total,
-            (SELECT COUNT(DISTINCT capitulo_id) FROM resultados_evaluaciones WHERE usuario_id = ? AND aprobado = 1) as aprobados,
-            (SELECT COUNT(*) FROM certificados_usuario WHERE usuario_id = ?) as tiene_certificado
-    `;
-
-    db.query(sql, [usuario_id, usuario_id], (err, results) => {
-        if (err) return res.json({ success: false });
-
-        const r = results[0];
-        const completo = r.aprobados >= r.total;
-        const tieneCertificado = r.tiene_certificado > 0;
-
-        res.json({
-            success: true,
-            completo,
-            tiene_certificado: tieneCertificado
-        });
-    });
-});
-
-// ============================================
 // DATOS PARA EL CERTIFICADO
 // ============================================
 
@@ -606,22 +644,6 @@ app.post('/api/cambiar-password', proteger, async (req, res) => {
         req.session.destroy(() => {
             res.json({ success: true, redirect: "/login" });
         });
-    });
-});
-
-// ============================================
-// USUARIO ACTUAL
-// ============================================
-
-app.get('/api/usuario-actual', proteger, (req, res) => {
-    const sql = `SELECT u.id, u.usuario, e.nombre, e.numero_documento, e.sede, c.nombre as cargo 
-                 FROM usuarios u 
-                 JOIN empleados e ON u.empleado_id = e.id 
-                 LEFT JOIN cargos c ON e.cargo_id = c.id 
-                 WHERE u.id = ?`;
-    db.query(sql, [req.session.usuarioID], (err, results) => {
-        if (err || results.length === 0) return res.json({ success: false });
-        res.json({ success: true, usuario: results[0] });
     });
 });
 
