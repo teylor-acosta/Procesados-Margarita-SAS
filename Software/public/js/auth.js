@@ -1,15 +1,17 @@
-(async function checkAuth() {
+(async function () {
 
-    const publicPaths = ['/login', '/recuperar', '/cambiar-password'];
+    const publicPaths = ['/login', '/recuperar'];
     const currentPath = window.location.pathname;
 
     try {
 
-        const res = await fetch('/api/check-acceso', {
+        const res = await fetch('/api/me', {
             credentials: 'include'
         });
 
         const data = await res.json();
+
+        console.log("AUTH:", data);
 
         // ❌ NO LOGUEADO
         if (!data.success) {
@@ -19,21 +21,10 @@
             return;
         }
 
-        // 🔥 SI ESTÁ EN LOGIN Y YA ESTÁ LOGUEADO → REDIRIGIR
-        if (publicPaths.includes(currentPath)) {
+        // 🔥 REDIRECCIÓN INTELIGENTE
+        if (currentPath !== data.redirect) {
             window.location.href = data.redirect;
-            return;
         }
-
-        // 🔥 SI YA ESTÁ EN LA RUTA CORRECTA → NO HACER NADA
-        if (currentPath === data.redirect) {
-            return;
-        }
-
-        // 🔥 SOLO REDIRIGIR SI ES OTRA RUTA DIFERENTE
-        // (esto evita loops)
-        // ⚠️ puedes incluso comentar esto si quieres máxima estabilidad
-        // window.location.href = data.redirect;
 
     } catch (e) {
         console.error("Error auth:", e);
