@@ -9,14 +9,15 @@
 
 body {
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; 
-    align-items: center; 
     font-family: 'Averia Libre', cursive;
     position: relative;
     background-color: #f4f7f6;
     overflow-x: hidden;
+
+    /* ❌ ELIMINA ESTO */
+    /* display: flex; */
+    /* justify-content: center; */
+    /* align-items: center; */
 }
 
 /* Fondo con imagen borrosa */
@@ -486,23 +487,86 @@ body::before {
 /* ============================================
    HEADER / NAVBAR - Para todas las páginas
    ============================================ */
+/* NAVBAR PRO */
 .navbar-custom {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 5%;
-    background: white;
-    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+
+    padding: 10px 30px;
+    background: #fff;
+
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
+
     z-index: 1000;
 }
 
-.navbar-custom img {
-    height: 55px;
-    object-fit: contain;
+/* IZQUIERDA */
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* DERECHA */
+.navbar-right {
+    display: flex;
+    align-items: center;
+}
+
+/* ICONO MENU */
+.menu-toggle {
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* LOGO */
+.logo-navbar {
+    height: 45px;
+}
+
+/* TEXTO */
+.empresa-nombre {
+    font-weight: bold;
+    color: #28a745;
+    font-size: 16px;
+}
+
+/* BOTÓN */
+.btn-logout {
+    background: #dc3545;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.btn-logout:hover {
+    background: #bb2d3b;
+}
+@media (max-width: 768px){
+
+    .navbar-custom{
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .navbar-left{
+        justify-content: center;
+    }
+
+    .btn-logout{
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 .btn-logout {
@@ -662,27 +726,41 @@ body::before {
     box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
 }
 
-/* ================= PERFIL ================= */
+/* ================= PERFIL PRO ================= */
 
 .perfil-container{
     max-width: 1000px;
-    margin: 40px auto;
-}
+    margin: 60px auto;
+    padding: 20px;
 
+    /* 🔥 IMPORTANTE */
+    background: transparent;
+    box-shadow: none;
+    border: none;
+}
 .perfil-card{
     display: flex;
     flex-wrap: wrap;
-    gap: 30px;
-    background: #1e293b;
-    border-radius: 20px;
-    padding: 30px;
-    color: #fff;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    gap: 40px;
+
+    background: #ffffff;
+    border-radius: 25px;
+    padding: 40px;
+
+    color: #1e293b;
+
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
 }
 
+/* BORDE CORPORATIVO */
+.perfil-card{
+    border: 2px solid #33ff00;
+}
+
+/* FOTO */
 .perfil-foto{
-    text-align: center;
     flex: 1 1 250px;
+    text-align: center;
 }
 
 .avatar{
@@ -690,56 +768,271 @@ body::before {
     height: 160px;
     border-radius: 50%;
     object-fit: cover;
+
     border: 4px solid #22c55e;
+
+    box-shadow: 0 0 25px rgba(34,197,94,0.6);
+
     transition: 0.3s;
 }
 
 .avatar:hover{
-    transform: scale(1.05);
+    transform: scale(1.08);
 }
 
+/* BOTÓN FOTO */
+.btn-upload{
+    margin-top: 12px;
+    padding: 8px 18px;
+    border-radius: 30px;
+    border: none;
+
+  background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+
+    font-size: 14px;
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.btn-upload:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(40,167,69,0.4);
+}
+
+/* INFO */
 .perfil-info{
     flex: 2 1 500px;
 }
 
 .perfil-info h3{
-    font-weight: bold;
+    font-size: 24px;
+    font-weight: 700;
+    color: #007bff;
 }
 
 .perfil-info p{
     margin-bottom: 6px;
+    font-size: 14px;
+    color: #334155;
 }
 
-.btn-upload{
-    margin-top: 10px;
+/* DIVISIÓN */
+.perfil-info hr{
+    border: none;
+    height: 1px;
+    background: rgba(255,255,255,0.1);
+    margin: 15px 0;
 }
 
-/* Click en sesión */
-.sesion-activa{
+.perfil-header{
+    max-width: 1100px;
+    margin: 20px auto 0;
+    padding: 0 20px;
+}
+
+.btn-back{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+
+    border: none;
+    padding: 10px 18px;
+    border-radius: 30px;
+
     cursor: pointer;
+    font-weight: 600;
+
+    transition: 0.3s;
+}
+
+.btn-back:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,123,255,0.4);
+}
+@media (max-width: 768px){
+
+    .perfil-card{
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .perfil-info{
+        text-align: left;
+    }
+}
+/* ================= DASHBOARD MOBILE FIX ================= */
+
+.dashboard-container{
+    padding: 10px;
+}
+
+/* CONTENIDO GENERAL */
+.content{
+    padding: 10px;
+}
+
+/* CARD PRINCIPAL */
+.card-custom{
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+
+    border-radius: 20px;
+    padding: 20px;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* TITULOS */
+.card-custom h4{
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* TEXTO */
+.card-custom p{
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* VALORES */
+.valor-card{
+    background: linear-gradient(135deg, #22c55e, #1d4ed8);
+    color: white;
+
+    padding: 12px;
+    border-radius: 12px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
     transition: 0.2s;
 }
 
-.sesion-activa:hover{
-    background: rgba(0,0,0,0.2);
-    border-radius: 10px;
+.valor-card:hover{
+    transform: translateY(-2px);
 }
 
-.perfil-card{
+/* ESPACIADO ENTRE BLOQUES */
+.card-custom hr{
+    margin: 20px 0;
+}
+
+/* MOBILE */
+@media (max-width: 768px){
+
+    .navbar-custom{
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .sidebar{
+        display: none; /* 🔥 ocultamos sidebar en móvil */
+    }
+
+    .dashboard-container{
+        flex-direction: column;
+    }
+
+    .content{
+        width: 100%;
+    }
+
+    .valor-card{
+        font-size: 13px;
+        padding: 10px;
+    }
+
+}
+/* 🔥 RESET TOTAL SOLO PARA PERFIL */
+.perfil-container *::before,
+.perfil-container *::after{
+    display: none !important;
+}
+
+.dashboard-body {
+    padding-top: 90px;
+}
+/* 🔥 FIX NAVBAR DEFINITIVO */
+.navbar-custom {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+/* IZQUIERDA */
+.navbar-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px;
+}
+
+/* DERECHA */
+.navbar-right {
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* 🔥 ESTE ES EL PROBLEMA REAL */
+.btn-logout {
+    width: auto !important;   /* ← esto evita que baje */
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+.top-actions{
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+.btn-dashboard{
+    background: linear-gradient(135deg, #22c55e, #2563eb);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+.btn-dashboard:hover{
+    transform: scale(1.05);
+}
+.card-modulo-link{
+    text-decoration: none;
+}
+
+.card-modulo{
     background: linear-gradient(135deg, #1e293b, #0f172a);
-    border-left: 5px solid #22c55e;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    color: #fff;
+    transition: 0.3s;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
 
-.avatar{
-    border: 4px solid #22c55e;
-    box-shadow: 0 0 15px rgba(34,197,94,0.5);
+.card-modulo img{
+    width: 100%;
+    height: 150px;
+    object-fit: contain;
+    margin-bottom: 15px;
 }
 
-.btn-upload{
-    background: #22c55e;
-    border: none;
-}
-
-.btn-upload:hover{
-    background: #16a34a;
+.card-modulo:hover{
+    transform: translateY(-5px) scale(1.03);
 }
