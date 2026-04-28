@@ -232,7 +232,7 @@ async function cargarSubCapitulos(capituloId) {
             let html = '';
             for (const sub of data.sub_capitulos) {
                 const visto = sub.visto === 1;
-                const videoUrl = sub.video_url || `../videos/${sub.video_file}`;
+                const videoUrl = sub.url_video;
                 
                 html += `
                     <div class="video-fila ${visto ? 'visto' : ''}">
@@ -373,25 +373,4 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnConfirmar) {
         btnConfirmar.onclick = marcarVideoComoVisto;
     }
-});
-
-
-
-/* 🔥 MODO PRUEBA (SIN VIDEO) */
-document.addEventListener("click", function(e) {
-
-    // 👇 ESTE ES EL BOTÓN REAL QUE USAS
-    if (e.target && e.target.id === "btnConfirmarVisto") {
-
-        alert("Marcado como visto (modo prueba)");
-
-        // 🔥 simulamos guardado sin video
-        if (videoModalInstance) {
-            videoModalInstance.hide();
-        }
-
-        // 🔥 recarga para que avance módulos
-        cargarCapitulos();
-    }
-
 });

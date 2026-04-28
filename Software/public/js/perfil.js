@@ -79,3 +79,7 @@ document.getElementById("inputFoto").addEventListener("change", function(){
     reader.readAsDataURL(file);
 
 });
+// ✅ FUERA
+function volverDashboard(){
+    window.location.href = "/dashboard";
+}
