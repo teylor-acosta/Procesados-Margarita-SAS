@@ -55,6 +55,9 @@ router.get('/certificado', proteger, (req, res) => {
 router.get('/perfil', proteger, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'perfil.html'));
 });
+router.get('/empleados-menu', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/empleados-menu.html'));
+});
 
 // ============================================
 // RUTAS POR ROL

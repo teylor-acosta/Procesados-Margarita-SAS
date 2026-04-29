@@ -2,58 +2,182 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Empleados</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 </head>
 
 <body class="dashboard-body">
 
+<!-- NAVBAR -->
 <nav class="navbar-custom">
     <div class="navbar-left">
         <span class="empresa-nombre">Empleados</span>
     </div>
 
     <div class="navbar-right">
-        <a href="/superadmin" class="btn btn-light">
+        <a href="/panel" class="btn btn-light">
             <i class="fas fa-arrow-left"></i> Volver
         </a>
     </div>
 </nav>
 
+<!-- CONTENIDO -->
 <div class="container mt-4">
 
-    <div class="d-flex justify-content-between mb-3">
-        <h3 class="text-white">Listado de empleados</h3>
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <h3 class="text-white m-0">Listado de empleados</h3>
 
         <a href="/crear-empleado" class="btn btn-success">
             <i class="fas fa-plus"></i> Nuevo
         </a>
     </div>
 
-    <div class="card card-custom p-3">
+    <!-- 🔍 FILTROS -->
+    <div class="row mb-3 g-2">
 
-        <table class="table table-dark table-hover">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Documento</th>
-                    <th>Teléfono</th>
-                    <th>Email</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
+        <div class="col-md-4">
+            <input 
+                type="text" 
+                id="buscadorEmpleado" 
+                class="form-control"
+                placeholder="🔍 Buscar por nombre, documento o código"
+            >
+        </div>
 
-            <tbody id="tablaEmpleados"></tbody>
+        <div class="col-md-2">
+            <select id="filtroArea" class="form-control">
+                <option value="">Área</option>
+            </select>
+        </div>
 
-        </table>
+        <div class="col-md-2">
+            <select id="filtroSede" class="form-control">
+                <option value="">Sede</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <select id="filtroCargo" class="form-control">
+                <option value="">Cargo</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button id="btnLimpiar" class="btn btn-secondary w-100">
+                <i class="fas fa-broom"></i> Limpiar
+            </button>
+        </div>
+
+    </div>
+
+    <!-- TABLA -->
+    <div class="card card-custom p-3 shadow-lg">
+
+        <!-- 💻 DESKTOP -->
+        <div class="table-responsive d-none d-md-block">
+            <table class="table table-dark table-hover text-center align-middle">
+
+                <thead class="table-success text-dark">
+                    <tr>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Documento</th>
+                        <th>Área</th>
+                        <th>Sede</th>
+                        <th>Cargo</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tablaEmpleados"></tbody>
+
+            </table>
+        </div>
+
+        <!-- 📱 MOBILE (cards) -->
+        <div id="cardsEmpleados" class="d-md-none"></div>
+
+        <!-- 🔢 PAGINACIÓN -->
+        <ul class="pagination justify-content-center mt-3" id="paginacion"></ul>
 
     </div>
 
 </div>
 
+<!-- 🔥 MODAL -->
+<div class="modal fade" id="modalEmpleado">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+
+<div class="modal-header">
+<h5 class="modal-title">Detalle del empleado</h5>
+<button class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+
+<input type="hidden" id="edit_id">
+
+<div class="row g-3">
+
+<div class="col-md-6">
+<label>Nombre</label>
+<input id="edit_nombre" class="form-control">
+</div>
+
+<div class="col-md-6">
+<label>Documento</label>
+<input id="edit_documento" class="form-control">
+</div>
+
+<div class="col-md-6">
+<label>Teléfono</label>
+<input id="edit_telefono" class="form-control">
+</div>
+
+<div class="col-md-6">
+<label>Email</label>
+<input id="edit_email" class="form-control">
+</div>
+
+<div class="col-md-12">
+<label>Dirección</label>
+<input id="edit_direccion" class="form-control">
+</div>
+
+</div>
+
+</div>
+
+<div class="modal-footer">
+
+<button class="btn btn-danger" onclick="eliminarEmpleado()">
+    <i class="fas fa-trash"></i> Eliminar
+</button>
+
+<button class="btn btn-success" onclick="guardarCambios()">
+    <i class="fas fa-save"></i> Actualizar
+</button>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- SCRIPTS -->
 <script src="/js/auth.js"></script>
-<script src="js/empleados.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/empleados.js"></script>
+
 </body>
 </html>

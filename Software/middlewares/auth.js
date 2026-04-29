@@ -23,14 +23,15 @@ const proteger = (req, res, next) => {
 // ============================================
 // 🔒 CONTROL DE ROLES (GENÉRICO)
 // ============================================
-
 const soloRol = (rolesPermitidos) => {
 
     return (req, res, next) => {
 
-        const rol = req.session.rol;
+        const rol = (req.session.rol || "").toLowerCase().trim();
 
-        if (!rol || !rolesPermitidos.includes(rol)) {
+        const permitido = rolesPermitidos.some(r => rol === r.toLowerCase());
+
+        if (!permitido) {
 
             if (req.originalUrl.startsWith('/api')) {
                 return res.status(403).json({
@@ -50,7 +51,7 @@ const soloRol = (rolesPermitidos) => {
 // 🔒 ROLES ESPECÍFICOS
 // ============================================
 
-const soloSuperAdmin = soloRol(['superadministrador']);
+const soloSuperAdmin = soloRol(['superadmin']);
 const soloAdmin = soloRol(['administrador']);
 const soloAuxiliar = soloRol(['auxiliar']);
 
