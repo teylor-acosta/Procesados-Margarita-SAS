@@ -78,6 +78,8 @@ app.use(require('./routes/evaluacion.routes'));
 app.use(require('./routes/firma.routes'));
 app.use(require('./routes/certificado.routes'));
 app.use(require('./routes/perfil.routes')); // 🔥 importante (foto perfil)
+app.use(require('./routes/catalogos.routes'));
+
 
 
 // ============================================

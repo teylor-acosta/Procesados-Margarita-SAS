@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Módulo Empleados</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+</head>
+
+<body class="dashboard-body">
+
+<nav class="navbar-custom">
+    <div class="navbar-left">
+        <span class="empresa-nombre">Empleados</span>
+    </div>
+
+    <div class="navbar-right">
+        <a href="/panel" class="btn btn-light">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
+</nav>
+
+<div class="container mt-5">
+
+    <div class="d-flex justify-content-center gap-4 flex-wrap">
+
+        <!-- 🔥 CREAR -->
+        <a href="/crear-empleado" class="card-opcion" onclick="limpiarEmpleado()">
+            <i class="fas fa-user-plus fa-3x mb-2"></i>
+            <p>Crear empleado</p>
+        </a>
+
+        <!-- 🔥 VER -->
+        <a href="/empleados" class="card-opcion">
+            <i class="fas fa-search fa-3x mb-2"></i>
+            <p>Ver empleados</p>
+        </a>
+
+        <!-- 🔥 DESACTIVADOS -->
+        <a href="/empleados-inactivos" class="card-opcion">
+            <i class="fas fa-user-slash fa-3x mb-2"></i>
+            <p>Desactivados</p>
+        </a>
+
+    </div>
+
+</div>
+
+<!-- 🔥 SCRIPT CLAVE -->
+<script>
+function limpiarEmpleado() {
+    localStorage.removeItem("empleadoEditar");
+}
+</script>
+
+</body>
+</html>

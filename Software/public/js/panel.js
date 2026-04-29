@@ -1,54 +1,111 @@
-async function cargarPanel() {
+document.addEventListener("DOMContentLoaded", async () => {
 
-    const res = await fetch('/api/me');
-    const data = await res.json();
+    const contenedor = document.getElementById("contenedorModulos");
 
-    if (!data.success) return;
+    try {
 
-    const rol = data.usuario.rol;
-    const contenedor = document.getElementById('contenedorModulos');
+        const res = await fetch('/api/me', {
+            credentials: 'include'
+        });
 
-    contenedor.innerHTML = '';
+        const data = await res.json();
 
-    // 🔥 SUPERADMIN
-    if (rol === 'superadministrador') {
+        console.log("DATA PANEL:", data);
 
-        contenedor.innerHTML += `
-        <div class="col-md-4 mb-4">
-            <a href="/empleados" class="card-modulo-link">
-                <div class="card-modulo">
-                    <img src="img/empleado.png">
-                    <h5>Empleados</h5>
+        if (!data.success) {
+            window.location.href = "/login";
+            return;
+        }
+
+        // 🔥 NORMALIZAR ROL
+        const rol = (data.usuario.rol || "").toLowerCase().trim();
+
+        console.log("ROL NORMALIZADO:", rol);
+
+        let html = "";
+
+        // ============================================
+        // 🔥 SUPER ADMIN
+        // ============================================
+        if (rol.includes("super")) {
+
+            html += `
+                <div class="col-md-3 col-sm-6 mb-4 d-flex justify-content-center">
+
+                    <a href="/empleados-menu" class="card-opcion text-center">
+
+                        <i class="fas fa-users fa-3x mb-3"></i>
+
+                        <p>Empleados</p>
+
+                    </a>
+
                 </div>
-            </a>
-        </div>
-        `;
-    }
+            `;
+        }
 
-    // 🔥 ADMIN
-    else if (rol === 'administrador') {
+        // ============================================
+        // 🔥 ADMIN
+        // ============================================
+        else if (rol.includes("admin")) {
 
-        contenedor.innerHTML += `
-        <div class="col-md-4 mb-4">
-            <div class="card-modulo">
-                <h5>Reportes</h5>
+            html += `
+                <div class="col-md-3 col-sm-6 mb-4 d-flex justify-content-center">
+
+                    <a href="/empleados-menu" class="card-opcion text-center">
+
+                        <i class="fas fa-users fa-3x mb-3"></i>
+
+                        <p>Empleados</p>
+
+                    </a>
+
+                </div>
+            `;
+        }
+
+        // ============================================
+        // 🔥 AUXILIAR
+        // ============================================
+        else if (rol.includes("auxiliar")) {
+
+            html += `
+                <div class="col-md-3 col-sm-6 mb-4 d-flex justify-content-center">
+
+                    <a href="/perfil" class="card-opcion text-center">
+
+                        <i class="fas fa-user fa-3x mb-3"></i>
+
+                        <p>Mi perfil</p>
+
+                    </a>
+
+                </div>
+            `;
+        }
+
+        // ============================================
+        // 🔥 FALLBACK
+        // ============================================
+        if (html === "") {
+            html = `<p class="text-warning text-center">Rol no reconocido: ${rol}</p>`;
+        }
+
+        contenedor.innerHTML = `
+            <div class="row justify-content-center">
+                ${html}
             </div>
-        </div>
+        `;
+
+    } catch (error) {
+
+        console.error("ERROR PANEL:", error);
+
+        contenedor.innerHTML = `
+            <p class="text-danger text-center">
+                Error cargando módulos
+            </p>
         `;
     }
 
-    // 🔥 AUXILIAR
-    else if (rol === 'auxiliar') {
-
-        contenedor.innerHTML += `
-        <div class="col-md-4 mb-4">
-            <div class="card-modulo">
-                <h5>Consultas</h5>
-            </div>
-        </div>
-        `;
-    }
-
-}
-
-cargarPanel();
+});

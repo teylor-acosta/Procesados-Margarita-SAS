@@ -729,19 +729,20 @@ body::before {
 /* ================= PERFIL PRO ================= */
 
 .perfil-container{
-    max-width: 1000px;
-    margin: 60px auto;
-    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    /* 🔥 IMPORTANTE */
-    background: transparent;
-    box-shadow: none;
-    border: none;
+    min-height: calc(100vh - 120px); /* centra vertical */
+    padding: 20px;
 }
 .perfil-card{
     display: flex;
     flex-wrap: wrap;
     gap: 40px;
+        width: 900px;
+    max-width: 95%;
+    margin: auto;
 
     background: #ffffff;
     border-radius: 25px;
@@ -1035,4 +1036,314 @@ body::before {
 
 .card-modulo:hover{
     transform: translateY(-5px) scale(1.03);
+}
+
+/* ============================================
+   🔥 FORMULARIO CREAR EMPLEADO
+============================================ */
+
+/* Card principal */
+.card-custom {
+    border-radius: 20px;
+    border: none;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+/* Título */
+.card-custom h4 {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* Labels */
+.form-label {
+    font-weight: 500;
+    color: #444;
+}
+
+/* Inputs */
+.form-control {
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+
+/* Hover */
+.form-control:hover {
+    border-color: #28a745;
+}
+
+/* Focus */
+.form-control:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);
+}
+
+/* Botón */
+.btn-success {
+    border-radius: 25px;
+    padding: 10px 25px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* Hover botón */
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Navbar ajuste */
+.navbar-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Fondo dashboard */
+.dashboard-body {
+    background: linear-gradient(
+        rgba(255,255,255,0.7),
+        rgba(255,255,255,0.7)
+    ),
+    url('../img/Fondo.png'); /* cambia si tienes otro fondo */
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+}
+
+/* Contenedor */
+.container {
+    max-width: 900px;
+}
+
+/* 🔥 PANEL FULL WIDTH */
+.panel-container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* 🔥 TARJETAS PANEL NUEVAS */
+.card-panel {
+    width: 180px;
+    height: 160px;
+    background: #fff;
+    border-radius: 20px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    text-decoration: none;
+    color: #333;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    transition: 0.3s;
+}
+
+.card-panel:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+
+.card-panel img {
+    width: 60px;
+    margin-bottom: 10px;
+}
+
+.panel-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+/* 🔥 INPUT ERROR */
+.input-error {
+    border: 2px solid #dc3545 !important;
+    background-color: #fff5f5;
+    box-shadow: 0 0 5px rgba(220, 53, 69, 0.3);
+}
+
+/* 🔥 CARD MÁS BONITA */
+.card-custom {
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    position: relative;
+}
+
+/* 🔥 BORDE DEGRADADO CORPORATIVO */
+.card-custom::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 3px;
+    background: linear-gradient(90deg, #198754, #0d6efd);
+    -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+/* 🔥 INPUTS MÁS PRO */
+.form-control {
+    border-radius: 12px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #198754;
+    box-shadow: 0 0 8px rgba(25, 135, 84, 0.3);
+}
+
+/* 🔥 BOTÓN MÁS BONITO */
+.btn-success {
+    border-radius: 30px;
+    padding: 10px 30px;
+    font-weight: bold;
+    background: linear-gradient(90deg, #198754, #157347);
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-success:hover {
+    transform: scale(1.05);
+    background: linear-gradient(90deg, #157347, #0d6efd);
+}
+
+.card-custom {
+    border-radius: 20px;
+    border: none;
+    background: rgba(255,255,255,0.95);
+}
+
+.form-control {
+    border-radius: 10px;
+    padding: 10px;
+}
+
+label {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.btn-success {
+    border-radius: 30px;
+    font-weight: bold;
+    padding: 10px 25px;
+}
+
+/* =========================
+   TABLA PRO
+========================= */
+.tabla-fija {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.tabla-fija th,
+.tabla-fija td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* =========================
+   HOVER BONITO
+========================= */
+.table-hover tbody tr:hover {
+    background-color: rgba(25, 135, 84, 0.2);
+    cursor: pointer;
+}
+
+/* =========================
+   ESTADOS
+========================= */
+.badge-activo {
+    background: #198754;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    color: white;
+}
+
+.badge-inactivo {
+    background: #dc3545;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    color: white;
+}
+
+/* =========================
+   CARDS MOBILE
+========================= */
+.card-empleado {
+    background: #1f1f1f;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.card-empleado span {
+    display: block;
+    font-size: 13px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+/* 📱 CELULAR */
+@media (max-width: 768px) {
+
+    .tabla-fija {
+        display: none;
+    }
+
+    #cardsEmpleados {
+        display: block;
+    }
+}
+
+/* 💻 ESCRITORIO */
+@media (min-width: 769px) {
+
+    #cardsEmpleados {
+        display: none;
+    }
+}
+
+.card-opcion {
+    width: 160px;
+    height: 160px;
+    background: #ffffffcc;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: #333;
+    transition: 0.3s;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.card-opcion:hover {
+    transform: scale(1.05);
+}
+
+.card-opcion p {
+    margin: 0;
+    font-weight: bold;
 }

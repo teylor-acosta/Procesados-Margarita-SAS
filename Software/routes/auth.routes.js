@@ -111,16 +111,32 @@ router.get('/api/me', proteger, (req, res) => {
 
     const sql = `
         SELECT 
+            e.codigo,
             e.nombre,
+            e.tipo_documento,
             e.numero_documento,
+            e.rh,
+            e.fecha_nacimiento,
+            e.lugar_nacimiento,
+            e.estado_civil,
+            e.direccion,
+            e.barrio_localidad,
+            e.telefono,
+            e.email,
+            e.activo,
             c.nombre as cargo,
+            a.nombre as area,
+            s.nombre as sede,
             u.cambio_password,
             e.foto,
+            r.nombre as rol,
 
             (SELECT COUNT(*) FROM capitulos_induccion WHERE activo = 1) as total,
+
             (SELECT COUNT(DISTINCT capitulo_id) 
                 FROM resultados_evaluaciones 
                 WHERE usuario_id = ? AND aprobado = 1) as aprobados,
+
             (SELECT COUNT(*) 
                 FROM certificados_usuario 
                 WHERE usuario_id = ?) as tiene_certificado
@@ -128,6 +144,9 @@ router.get('/api/me', proteger, (req, res) => {
         FROM usuarios u
         JOIN empleados e ON u.empleado_id = e.id
         LEFT JOIN cargos c ON e.cargo_id = c.id
+        LEFT JOIN areas a ON e.area_id = a.id
+        LEFT JOIN sedes s ON e.sede_id = s.id
+        JOIN rol r ON u.rol_id = r.id
         WHERE u.id = ?
     `;
 
@@ -139,15 +158,29 @@ router.get('/api/me', proteger, (req, res) => {
 
         const u = results[0];
 
-        const completo = u.aprobados >= u.total;
-        const tieneCertificado = u.tiene_certificado > 0;
+        // 🔥 BLOQUEAR SI ESTÁ INACTIVO
+        if (u.activo === 'NO') {
+            req.session.destroy();
+            return res.json({ success: false });
+        }
+
+        const total = u.total || 0;
+        const aprobados = u.aprobados || 0;
+        const tieneCertificado = (u.tiene_certificado || 0) > 0;
+
+        const completo = aprobados >= total && total > 0;
 
         let redirect = "/dashboard";
 
-        if (tieneCertificado) redirect = "/dashboard";
-        else if (parseInt(u.cambio_password) === 1) redirect = "/cambiar-password";
-        else if (!completo) redirect = "/induccion";
-        else redirect = "/firma";
+        if (parseInt(u.cambio_password) === 1) {
+            redirect = "/cambiar-password";
+        } else if (!completo) {
+            redirect = "/induccion";
+        } else if (!tieneCertificado) {
+            redirect = "/firma";
+        } else {
+            redirect = "/dashboard";
+        }
 
         res.json({
             success: true,
