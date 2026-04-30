@@ -3,7 +3,10 @@ const router = express.Router();
 
 const { proteger, soloSuperAdmin } = require('../middlewares/auth');
 
-// 🔥 LISTAR EMPLEADOS
+// ============================================
+// 🔥 LISTAR SOLO ACTIVOS
+// ============================================
+
 router.get('/api/empleados', proteger, soloSuperAdmin, (req, res) => {
 
     const db = req.app.get('db');
@@ -17,6 +20,7 @@ router.get('/api/empleados', proteger, soloSuperAdmin, (req, res) => {
     LEFT JOIN areas a ON e.area_id = a.id
     LEFT JOIN sedes s ON e.sede_id = s.id
     LEFT JOIN cargos c ON e.cargo_id = c.id
+    WHERE e.activo = 'SI'   -- 🔥 CLAVE
     `;
 
     db.query(sql, (err, results) => {
@@ -26,7 +30,11 @@ router.get('/api/empleados', proteger, soloSuperAdmin, (req, res) => {
 
 });
 
-// ACTUALIZAR
+
+// ============================================
+// 🔥 ACTUALIZAR
+// ============================================
+
 router.put('/api/actualizar-empleado', (req, res) => {
 
     const db = req.app.get('db');
@@ -74,7 +82,12 @@ router.put('/api/actualizar-empleado', (req, res) => {
         res.json({ success: true });
     });
 });
+
+
+// ============================================
 // 🔥 DESACTIVAR
+// ============================================
+
 router.put('/api/desactivar-empleado', (req, res) => {
 
     const db = req.app.get('db');
@@ -90,7 +103,10 @@ router.put('/api/desactivar-empleado', (req, res) => {
 });
 
 
+// ============================================
 // 🔥 ACTIVAR
+// ============================================
+
 router.put('/api/activar-empleado', (req, res) => {
 
     const db = req.app.get('db');
@@ -105,23 +121,45 @@ router.put('/api/activar-empleado', (req, res) => {
     );
 });
 
+
+// ============================================
+// 🔥 EMPLEADOS INACTIVOS
+// ============================================
+
 router.get('/api/empleados-inactivos', (req, res) => {
 
     const db = req.app.get('db');
 
-    db.query("SELECT * FROM empleados WHERE activo='NO'", (err, results) => {
+    const sql = `
+    SELECT 
+        e.*,
+        a.nombre AS area,
+        s.nombre AS sede,
+        c.nombre AS cargo
+    FROM empleados e
+    LEFT JOIN areas a ON e.area_id = a.id
+    LEFT JOIN sedes s ON e.sede_id = s.id
+    LEFT JOIN cargos c ON e.cargo_id = c.id
+    WHERE e.activo = 'NO'
+    `;
+
+    db.query(sql, (err, results) => {
         if (err) return res.json([]);
         res.json(results);
     });
+
 });
 
+
+// ============================================
 // 🔥 CREAR
+// ============================================
+
 router.post('/api/crear-empleado', proteger, soloSuperAdmin, (req, res) => {
 
     const db = req.app.get('db');
     const e = req.body;
 
-    // 🔥 1. BUSCAR EL ÚLTIMO CÓDIGO
     db.query("SELECT codigo FROM empleados ORDER BY id DESC LIMIT 1", (err, result) => {
 
         if (err) {
@@ -133,13 +171,12 @@ router.post('/api/crear-empleado', proteger, soloSuperAdmin, (req, res) => {
 
         if (result.length > 0 && result[0].codigo) {
 
-            const ultimo = result[0].codigo; // ej: EMP33
+            const ultimo = result[0].codigo;
             const numero = parseInt(ultimo.replace("EMP", "")) || 0;
 
             nuevoCodigo = "EMP" + (numero + 1);
         }
 
-        // 🔥 2. INSERTAR EMPLEADO CON CÓDIGO AUTOMÁTICO
         const sql = `
         INSERT INTO empleados (
             codigo,
@@ -196,7 +233,11 @@ router.post('/api/crear-empleado', proteger, soloSuperAdmin, (req, res) => {
 
 });
 
+
+// ============================================
 // 🔥 FILTROS
+// ============================================
+
 router.get('/api/filtros-empleado', proteger, soloSuperAdmin, (req, res) => {
 
     const db = req.app.get('db');
