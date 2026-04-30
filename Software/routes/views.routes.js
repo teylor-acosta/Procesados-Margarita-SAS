@@ -58,6 +58,9 @@ router.get('/perfil', proteger, (req, res) => {
 router.get('/empleados-menu', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/empleados-menu.html'));
 });
+router.get('/empleados-inactivos', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/empleados-inactivos.html'));
+});
 
 // ============================================
 // RUTAS POR ROL

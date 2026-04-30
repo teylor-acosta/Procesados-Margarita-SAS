@@ -1,143 +1,38 @@
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
 
-    const form = document.getElementById("formEmpleado");
+    // 🔥 FORZAR LIMPIEZA SI ES CREAR
+    const url = window.location.pathname;
 
-    let modoEditar = false;
-    let empleado = null;
-
-    // ============================================
-    // 🔥 LIMPIAR SI ES CREAR
-    // ============================================
-    const data = localStorage.getItem("empleadoEditar");
-
-    if (data) {
-        empleado = JSON.parse(data);
-        modoEditar = true;
-    } else {
-        // 🔥 CREAR → limpiar todo
-        form.reset();
+    if (url.includes("crear-empleado")) {
+        localStorage.removeItem("empleadoEditar");
     }
 
-    // ============================================
-    // 🔥 CARGAR SELECTS
-    // ============================================
-    async function cargarSelects() {
+    // 🔥 INTENTAR OBTENER EMPLEADO
+    const emp = JSON.parse(localStorage.getItem("empleadoEditar"));
 
-        try {
-            const [areas, sedes, cargos] = await Promise.all([
-                fetch('/api/areas').then(r => r.json()),
-                fetch('/api/sedes').then(r => r.json()),
-                fetch('/api/cargos').then(r => r.json())
-            ]);
-
-            llenarSelect("area_id", areas);
-            llenarSelect("sede_id", sedes);
-            llenarSelect("cargo_id", cargos);
-
-        } catch (error) {
-            console.error("Error cargando selects:", error);
-        }
+    // 🔥 SI NO HAY → FORMULARIO VACÍO
+    if (!emp) {
+        document.getElementById("formEmpleado").reset();
+        return;
     }
 
-    function llenarSelect(id, lista) {
-        const select = document.getElementById(id);
+    // 🔥 SI HAY → EDITAR
+    document.getElementById("empleado_id").value = emp.id || '';
 
-        if (!select) return;
+    document.getElementById("nombres").value = emp.nombre || '';
+    document.getElementById("apellidos").value = emp.apellidos || '';
+    document.getElementById("tipo_documento").value = emp.tipo_documento || '';
+    document.getElementById("numero_documento").value = emp.numero_documento || '';
+    document.getElementById("fecha_nacimiento").value = emp.fecha_nacimiento || '';
+    document.getElementById("lugar_nacimiento").value = emp.lugar_nacimiento || '';
+    document.getElementById("rh").value = emp.rh || '';
+    document.getElementById("estado_civil").value = emp.estado_civil || '';
+    document.getElementById("direccion").value = emp.direccion || '';
+    document.getElementById("barrio_localidad").value = emp.barrio_localidad || '';
+    document.getElementById("telefono").value = emp.telefono || '';
+    document.getElementById("email").value = emp.email || '';
 
-        select.innerHTML = `<option value="">Seleccione</option>`;
-
-        lista.forEach(x => {
-            select.innerHTML += `<option value="${x.id}">${x.nombre}</option>`;
-        });
-    }
-
-    await cargarSelects();
-
-    // ============================================
-    // 🔥 SI ES EDITAR → LLENAR FORM
-    // ============================================
-    if (modoEditar && empleado) {
-
-        form.nombres.value = empleado.nombre?.split(" ")[0] || "";
-        form.apellidos.value = empleado.nombre?.split(" ").slice(1).join(" ") || "";
-
-        form.tipo_documento.value = empleado.tipo_documento || "";
-        form.numero_documento.value = empleado.numero_documento || "";
-        form.rh.value = empleado.rh || "";
-        form.lugar_nacimiento.value = empleado.lugar_nacimiento || "";
-        form.estado_civil.value = empleado.estado_civil || "";
-        form.direccion.value = empleado.direccion || "";
-        form.barrio_localidad.value = empleado.barrio_localidad || "";
-        form.telefono.value = empleado.telefono || "";
-        form.email.value = empleado.email || "";
-
-        if (empleado.fecha_nacimiento) {
-            form.fecha_nacimiento.value = empleado.fecha_nacimiento.split("T")[0];
-        }
-
-        setTimeout(() => {
-            form.area_id.value = empleado.area_id || "";
-            form.sede_id.value = empleado.sede_id || "";
-            form.cargo_id.value = empleado.cargo_id || "";
-        }, 300);
-    }
-
-    // ============================================
-    // 🔥 SUBMIT
-    // ============================================
-    form.addEventListener("submit", async (e) => {
-
-        e.preventDefault();
-
-        const data = {
-            nombre: form.nombres.value + " " + form.apellidos.value,
-            tipo_documento: form.tipo_documento.value,
-            numero_documento: form.numero_documento.value,
-            rh: form.rh.value,
-            fecha_nacimiento: form.fecha_nacimiento.value,
-            lugar_nacimiento: form.lugar_nacimiento.value,
-            estado_civil: form.estado_civil.value,
-            direccion: form.direccion.value,
-            barrio_localidad: form.barrio_localidad.value,
-            telefono: form.telefono.value,
-            email: form.email.value,
-            area_id: form.area_id.value,
-            sede_id: form.sede_id.value,
-            cargo_id: form.cargo_id.value
-        };
-
-        let url = "/api/crear-empleado";
-        let method = "POST";
-
-        if (modoEditar) {
-            url = "/api/actualizar-empleado";
-            method = "PUT";
-            data.id = empleado.id;
-        }
-
-        const res = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        });
-
-        const r = await res.json();
-
-        if (r.success) {
-
-            Swal.fire({
-                icon: "success",
-                title: modoEditar ? "Actualizado" : "Creado",
-                text: modoEditar 
-                    ? "Empleado actualizado correctamente"
-                    : "Empleado creado correctamente"
-            });
-
-            // 🔥 LIMPIAR SIEMPRE
-            localStorage.removeItem("empleadoEditar");
-
-            window.location.href = "/empleados";
-        }
-    });
-
+    document.getElementById("area").value = emp.area_id || '';
+    document.getElementById("sede").value = emp.sede_id || '';
+    document.getElementById("cargo").value = emp.cargo_id || '';
 });

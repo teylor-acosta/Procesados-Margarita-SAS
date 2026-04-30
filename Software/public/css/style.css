@@ -1243,31 +1243,59 @@ label {
 }
 
 /* =========================
-   TABLA PRO
+   CONTENEDOR GENERAL
 ========================= */
-.tabla-fija {
-    table-layout: fixed;
-    width: 100%;
-}
 
-.tabla-fija th,
-.tabla-fija td {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.container-fluid {
+    max-width: 100%;
 }
 
 /* =========================
-   HOVER BONITO
+   CARD
 ========================= */
+
+.card {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* =========================
+   TABLA PRO (FIX REAL)
+========================= */
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tabla-fija {
+    width: 100%;
+    min-width: 1800px; /* 🔥 aquí controlas el ancho real */
+    border-collapse: collapse;
+}
+
+/* CELDAS */
+.tabla-fija th,
+.tabla-fija td {
+    white-space: nowrap;
+    padding: 8px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* =========================
+   HOVER
+========================= */
+
 .table-hover tbody tr:hover {
     background-color: rgba(25, 135, 84, 0.2);
     cursor: pointer;
 }
 
 /* =========================
-   ESTADOS
+   BADGES
 ========================= */
+
 .badge-activo {
     background: #198754;
     padding: 5px 10px;
@@ -1285,26 +1313,9 @@ label {
 }
 
 /* =========================
-   CARDS MOBILE
-========================= */
-.card-empleado {
-    background: #1f1f1f;
-    color: white;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-}
-
-.card-empleado span {
-    display: block;
-    font-size: 13px;
-}
-
-/* =========================
-   RESPONSIVE
+   MOBILE
 ========================= */
 
-/* 📱 CELULAR */
 @media (max-width: 768px) {
 
     .tabla-fija {
@@ -1316,34 +1327,69 @@ label {
     }
 }
 
-/* 💻 ESCRITORIO */
 @media (min-width: 769px) {
 
     #cardsEmpleados {
         display: none;
     }
 }
+/* =========================
+   MENÚ PRINCIPAL (ICONOS)
+========================= */
 
+.menu-opciones {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+}
+
+/* CARD */
 .card-opcion {
     width: 160px;
     height: 160px;
     background: #ffffffcc;
     border-radius: 20px;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
     text-decoration: none;
-    color: #333;
-    transition: 0.3s;
+    color: #0d6efd;
+
+    transition: all 0.3s ease;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
-.card-opcion:hover {
-    transform: scale(1.05);
+/* ICONO */
+.card-opcion i {
+    font-size: 45px;
+    margin-bottom: 10px;
 }
 
+/* TEXTO */
 .card-opcion p {
     margin: 0;
     font-weight: bold;
+    font-size: 16px;
+}
+
+/* HOVER */
+.card-opcion:hover {
+    transform: scale(1.08);
+    background: #0d6efd;
+    color: white;
+}
+
+/* ICONO EN HOVER */
+.card-opcion:hover i {
+    color: white;
+}
+
+/* TEXTO EN HOVER */
+.card-opcion:hover p {
+    color: white;
 }

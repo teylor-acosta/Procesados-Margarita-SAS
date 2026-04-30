@@ -13,117 +13,94 @@
 
 <body class="dashboard-body">
 
-<!-- NAVBAR -->
 <nav class="navbar-custom">
-    <div class="navbar-left">
-        <span class="empresa-nombre">Empleados</span>
-    </div>
-
-    <div class="navbar-right">
-        <a href="/panel" class="btn btn-light">
-            <i class="fas fa-arrow-left"></i> Volver
-        </a>
-    </div>
+    <span class="empresa-nombre">Empleados</span>
+    <a href="/empleados-menu" class="btn btn-light">← Volver</a>
 </nav>
 
-<!-- CONTENIDO -->
-<div class="container mt-4">
+<!-- 🔥 CAMBIO CLAVE -->
+<div class="container-fluid mt-4 px-4">
 
-    <!-- HEADER -->
-    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <h3 class="text-white m-0">Listado de empleados</h3>
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
 
-        <a href="/crear-empleado" class="btn btn-success">
+    <input id="buscadorEmpleado" class="form-control"
+        placeholder="Buscar..." style="width: 220px;">
+
+    <div class="d-flex flex-row flex-nowrap align-items-center gap-2 w-100">
+
+        <select id="filtroArea" class="form-control" style="width: 160px;"></select>
+        <select id="filtroSede" class="form-control" style="width: 160px;"></select>
+        <select id="filtroCargo" class="form-control" style="width: 160px;"></select>
+
+        <select id="filtroTipoDoc" class="form-control" style="width: 140px;">
+            <option value="">Tipo Doc</option>
+            <option value="CC">CC</option>
+            <option value="TI">TI</option>
+            <option value="CE">CE</option>
+            <option value="PAS">PAS</option>
+            <option value="PPT">PPT</option>
+        </select>
+
+        <button id="btnLimpiar" class="btn btn-secondary">
+            <i class="fas fa-broom"></i>
+        </button>
+
+        <a href="/crear-empleado" class="btn btn-success" onclick="limpiarEmpleado()">
             <i class="fas fa-plus"></i> Nuevo
         </a>
-    </div>
-
-    <!-- 🔍 FILTROS -->
-    <div class="row mb-3 g-2">
-
-        <div class="col-md-4">
-            <input 
-                type="text" 
-                id="buscadorEmpleado" 
-                class="form-control"
-                placeholder="🔍 Buscar por nombre, documento o código"
-            >
-        </div>
-
-        <div class="col-md-2">
-            <select id="filtroArea" class="form-control">
-                <option value="">Área</option>
-            </select>
-        </div>
-
-        <div class="col-md-2">
-            <select id="filtroSede" class="form-control">
-                <option value="">Sede</option>
-            </select>
-        </div>
-
-        <div class="col-md-2">
-            <select id="filtroCargo" class="form-control">
-                <option value="">Cargo</option>
-            </select>
-        </div>
-
-        <div class="col-md-2">
-            <button id="btnLimpiar" class="btn btn-secondary w-100">
-                <i class="fas fa-broom"></i> Limpiar
-            </button>
-        </div>
-
-    </div>
-
-    <!-- TABLA -->
-    <div class="card card-custom p-3 shadow-lg">
-
-        <!-- 💻 DESKTOP -->
-        <div class="table-responsive d-none d-md-block">
-            <table class="table table-dark table-hover text-center align-middle">
-
-                <thead class="table-success text-dark">
-                    <tr>
-                        <th>Código</th>
-                        <th>Nombre</th>
-                        <th>Documento</th>
-                        <th>Área</th>
-                        <th>Sede</th>
-                        <th>Cargo</th>
-                        <th>Teléfono</th>
-                        <th>Email</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-
-                <tbody id="tablaEmpleados"></tbody>
-
-            </table>
-        </div>
-
-        <!-- 📱 MOBILE (cards) -->
-        <div id="cardsEmpleados" class="d-md-none"></div>
-
-        <!-- 🔢 PAGINACIÓN -->
-        <ul class="pagination justify-content-center mt-3" id="paginacion"></ul>
 
     </div>
 
 </div>
 
-<!-- 🔥 MODAL -->
+<div class="card p-3">
+
+<div class="table-responsive">
+<table class="table table-dark table-hover text-center align-middle tabla-fija">
+
+<thead class="table-success text-dark">
+<tr>
+<th>Código</th>
+<th>Nombre</th>
+<th>Documento</th>
+<th>Tipo Doc</th>
+<th>Fecha Nac</th>
+<th>Lugar Nac</th>
+<th>RH</th>
+<th>Estado Civil</th>
+<th>Dirección</th>
+<th>Barrio</th>
+<th>Teléfono</th>
+<th>Email</th>
+<th>Área</th>
+<th>Sede</th>
+<th>Cargo</th>
+<th>Activo</th>
+</tr>
+</thead>
+
+<tbody id="tablaEmpleados"></tbody>
+
+</table>
+</div>
+
+<ul class="pagination justify-content-center" id="paginacion"></ul>
+
+</div>
+
+</div>
+
+<!-- MODAL (NO TOCADO) -->
 <div class="modal fade" id="modalEmpleado">
 <div class="modal-dialog modal-lg">
 <div class="modal-content">
 
 <div class="modal-header">
-<h5 class="modal-title">Detalle del empleado</h5>
+<h5>Editar empleado</h5>
 <button class="btn-close" data-bs-dismiss="modal"></button>
 </div>
 
 <div class="modal-body">
-
 <input type="hidden" id="edit_id">
 
 <div class="row g-3">
@@ -139,6 +116,47 @@
 </div>
 
 <div class="col-md-6">
+<label>Tipo documento</label>
+<select id="edit_tipo_documento" class="form-control">
+<option value="CC">CC</option>
+<option value="TI">TI</option>
+<option value="CE">CE</option>
+<option value="PAS">PAS</option>
+<option value="PPT">PPT</option>
+</select>
+</div>
+
+<div class="col-md-6">
+<label>Fecha nacimiento</label>
+<input type="date" id="edit_fecha_nacimiento" class="form-control">
+</div>
+
+<div class="col-md-6">
+<label>Lugar nacimiento</label>
+<input id="edit_lugar_nacimiento" class="form-control">
+</div>
+
+<div class="col-md-6">
+<label>RH</label>
+<input id="edit_rh" class="form-control">
+</div>
+
+<div class="col-md-6">
+<label>Estado civil</label>
+<input id="edit_estado_civil" class="form-control">
+</div>
+
+<div class="col-md-6">
+<label>Barrio</label>
+<input id="edit_barrio" class="form-control">
+</div>
+
+<div class="col-md-6">
+<label>Dirección</label>
+<input id="edit_direccion" class="form-control">
+</div>
+
+<div class="col-md-6">
 <label>Teléfono</label>
 <input id="edit_telefono" class="form-control">
 </div>
@@ -148,32 +166,33 @@
 <input id="edit_email" class="form-control">
 </div>
 
-<div class="col-md-12">
-<label>Dirección</label>
-<input id="edit_direccion" class="form-control">
+<div class="col-md-4">
+<label>Área</label>
+<select id="edit_area" class="form-control"></select>
+</div>
+
+<div class="col-md-4">
+<label>Sede</label>
+<select id="edit_sede" class="form-control"></select>
+</div>
+
+<div class="col-md-4">
+<label>Cargo</label>
+<select id="edit_cargo" class="form-control"></select>
 </div>
 
 </div>
-
 </div>
 
 <div class="modal-footer">
-
-<button class="btn btn-danger" onclick="eliminarEmpleado()">
-    <i class="fas fa-trash"></i> Eliminar
-</button>
-
-<button class="btn btn-success" onclick="guardarCambios()">
-    <i class="fas fa-save"></i> Actualizar
-</button>
-
+<button class="btn btn-danger" onclick="desactivarDesdeModal()">Desactivar</button>
+<button class="btn btn-success" onclick="actualizarEmpleado()">Actualizar</button>
 </div>
 
 </div>
 </div>
 </div>
 
-<!-- SCRIPTS -->
 <script src="/js/auth.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
