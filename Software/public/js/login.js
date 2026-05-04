@@ -16,9 +16,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const usuario = loginForm.querySelector('input[name="usuario"]').value.trim();
         const password = loginForm.querySelector('input[name="password"]').value.trim();
 
+        // Reset mensaje
         mensajeDiv.style.display = 'none';
         mensajeDiv.className = 'alert-custom';
 
+        // Validación básica
+        if (!usuario || !password) {
+            mensajeDiv.textContent = "Debes ingresar usuario y contraseña";
+            mensajeDiv.classList.add('alert', 'alert-warning', 'mt-3');
+            mensajeDiv.style.display = 'block';
+            return;
+        }
+
+        // UI loading
         btnSubmit.disabled = true;
         btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Validando...';
 
@@ -38,7 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("📩 RESPUESTA:", data);
 
             if (data.success) {
-                window.location.href = data.redirect;
+                // 🔥 AQUÍ ESTÁ LA MEJORA CLAVE
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                } else {
+                    window.location.href = "/dashboard";
+                }
             } else {
                 mensajeDiv.textContent = data.message || "Credenciales incorrectas";
                 mensajeDiv.classList.add('alert', 'alert-danger', 'mt-3');

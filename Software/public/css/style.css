@@ -1393,3 +1393,13 @@ label {
 .card-opcion:hover p {
     color: white;
 }
+
+.card-custom {
+    max-width: 620px;
+    width: 100%;
+    margin: auto;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    background: white;
+    padding: 20px;
+}
