@@ -227,7 +227,10 @@ router.post('/api/recuperar', async (req, res) => {
 
             if (errU) return res.json({ success: false });
 
-            res.json({ success: true, message: "contraseña temporal: 123456" });
+            res.json({
+    success: true,
+    password: "123456"
+});
 
         });
 
