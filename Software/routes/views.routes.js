@@ -62,6 +62,7 @@ router.get('/empleados-inactivos', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/empleados-inactivos.html'));
 });
 
+
 // ============================================
 // RUTAS POR ROL
 // ============================================
@@ -88,6 +89,10 @@ router.get('/empleados', proteger, soloSuperAdmin, (req, res) => {
 
 router.get('/panel', proteger, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'panel.html'));
+});
+
+router.get('/recursos-humanos', proteger, soloSuperAdmin, (req, res) => {
+    res.sendFile(path.join(__dirname, '../public', 'recursos-humanos.html'));
 });
 
 module.exports = router;

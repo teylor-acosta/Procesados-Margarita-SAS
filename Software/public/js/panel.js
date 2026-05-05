@@ -25,61 +25,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         let html = "";
 
         // ============================================
-        // 🔥 SUPER ADMIN
+        // 🔥 SUPER ADMIN / ADMIN → RECURSOS HUMANOS
         // ============================================
-        if (rol.includes("super")) {
+        if (rol.includes("super") || rol.includes("admin")) {
 
             html += `
-                <div class="col-md-3 col-sm-6 mb-4 d-flex justify-content-center">
-
-                    <a href="/empleados-menu" class="card-opcion text-center">
-
-                        <i class="fas fa-users fa-3x mb-3"></i>
-
-                        <p>Empleados</p>
-
-                    </a>
-
+                <div class="modulo-card rh" onclick="irRecursosHumanos()">
+                    <i class="fas fa-user-tie icono-modulo"></i>
+                    <span>Recursos Humanos</span>
                 </div>
             `;
         }
 
         // ============================================
-        // 🔥 ADMIN
-        // ============================================
-        else if (rol.includes("admin")) {
-
-            html += `
-                <div class="col-md-3 col-sm-6 mb-4 d-flex justify-content-center">
-
-                    <a href="/empleados-menu" class="card-opcion text-center">
-
-                        <i class="fas fa-users fa-3x mb-3"></i>
-
-                        <p>Empleados</p>
-
-                    </a>
-
-                </div>
-            `;
-        }
-
-        // ============================================
-        // 🔥 AUXILIAR
+        // 🔥 AUXILIAR → SOLO PERFIL
         // ============================================
         else if (rol.includes("auxiliar")) {
 
             html += `
-                <div class="col-md-3 col-sm-6 mb-4 d-flex justify-content-center">
-
-                    <a href="/perfil" class="card-opcion text-center">
-
-                        <i class="fas fa-user fa-3x mb-3"></i>
-
-                        <p>Mi perfil</p>
-
-                    </a>
-
+                <div class="modulo-card" onclick="window.location.href='/perfil'">
+                    <i class="fas fa-user icono-modulo"></i>
+                    <span>Mi perfil</span>
                 </div>
             `;
         }
@@ -91,8 +57,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             html = `<p class="text-warning text-center">Rol no reconocido: ${rol}</p>`;
         }
 
+        // 🔥 RENDER LIMPIO
         contenedor.innerHTML = `
-            <div class="row justify-content-center">
+            <div class="modulos-container">
                 ${html}
             </div>
         `;
@@ -109,3 +76,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
 });
+
+
+// ============================================
+// 🔥 FUNCIONES DE NAVEGACIÓN
+// ============================================
+
+function irRecursosHumanos(){
+    window.location.href = "/recursos-humanos";
+}
+
+function irEmpleados(){
+    window.location.href = "/empleados-menu";
+}

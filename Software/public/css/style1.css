@@ -1,0 +1,166 @@
+/* =========================
+   RESET
+========================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* =========================
+   VARIABLES
+========================= */
+:root {
+    --verde: #22c55e;
+    --azul: #2563eb;
+    --gris: #f4f7f6;
+    --glass: rgba(255,255,255,0.85);
+}
+
+/* =========================
+   BODY + FONDO (🔥 SE MANTIENE)
+========================= */
+body {
+    font-family: 'Averia Libre', cursive;
+    background: var(--gris);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* 🔥 FONDO CON BLUR (ARREGLADO, NO DAÑA NADA) */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: url('../img/Fondo.png') center/cover no-repeat;
+    filter: blur(8px);
+    transform: scale(1.05); /* evita bordes blancos */
+    z-index: -1;
+}
+
+/* =========================
+   NAVBAR PRO (CORREGIDO)
+========================= */
+.navbar-custom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 15px 40px;
+    background: white;
+
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-navbar {
+    width: 45px;
+}
+
+.empresa-nombre {
+    font-weight: bold;
+    color: #15803d;
+    font-size: 16px;
+}
+
+/* botón logout */
+.btn-logout {
+    background: #dc2626;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.btn-logout:hover {
+    background: #b91c1c;
+}
+
+/* icono hamburguesa */
+.menu-toggle {
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* =========================
+   BOTONES GENERALES
+========================= */
+.btn-gradient {
+    background: linear-gradient(135deg, var(--verde), var(--azul));
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 30px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* =========================
+   INPUTS
+========================= */
+.form-control {
+    border-radius: 12px;
+    padding: 12px;
+    border: 1px solid #ddd;
+}
+
+/* =========================
+   ALERTAS
+========================= */
+.alert-custom {
+    padding: 10px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+/* =========================
+   RESPONSIVE BASE
+========================= */
+@media (max-width: 768px) {
+
+    body::before {
+        filter: blur(4px); /* 🔥 corregido */
+    }
+
+    .navbar-custom {
+        padding: 10px 15px;
+    }
+
+    .empresa-nombre {
+        font-size: 14px;
+    }
+
+}
+
+/* =========================
+   MÓVIL
+========================= */
+@media (max-width: 576px) {
+
+    .btn-gradient {
+        width: 100%;
+        text-align: center;
+    }
+
+    .form-control {
+        font-size: 14px;
+    }
+
+}

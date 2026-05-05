@@ -1,0 +1,196 @@
+/* =========================
+   CONTENEDOR GENERAL
+========================= */
+.empleados-container{
+    padding: 100px 40px 40px;
+}
+
+/* =========================
+   TITULO
+========================= */
+.titulo-panel h2{
+    display: inline-block;
+    padding: 12px 30px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #198754, #0d6efd);
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* =========================
+   FILTROS
+========================= */
+.filtros-barra{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.input-busqueda{
+    width: 220px;
+    border-radius: 20px;
+    padding: 8px 12px;
+}
+
+.filtro{
+    width: 140px;
+    border-radius: 20px;
+    padding: 6px;
+}
+
+.btn-icon{
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+}
+
+.btn-nuevo{
+    border-radius: 20px;
+    padding: 8px 18px;
+    background: linear-gradient(135deg, #198754, #0d6efd);
+    border: none;
+    color: white;
+    font-weight: bold;
+}
+
+/* =========================
+   CONTENEDOR TABLA
+========================= */
+.tabla-container{
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* =========================
+   SCROLL TABLA
+========================= */
+.table-responsive{
+    max-height: 420px;
+    overflow-y: auto;
+    border-radius: 12px;
+}
+
+/* =========================
+   TABLA
+========================= */
+.tabla-corporativa{
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+}
+
+/* =========================
+   HEADER (UN SOLO COLOR + DIVISIONES)
+========================= */
+.tabla-corporativa thead th{
+    position: sticky;
+    top: 0;
+    z-index: 20;
+
+    background: #198754;
+    color: white;
+
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+
+    border-right: 2px solid white; /* 🔥 división blanca */
+    border-bottom: 3px solid #0d6efd;
+
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 13px;
+}
+
+/* quitar última línea */
+.tabla-corporativa thead th:last-child{
+    border-right: none;
+}
+
+/* =========================
+   FILAS
+========================= */
+.tabla-corporativa tbody tr{
+    transition: 0.2s;
+}
+
+/* ZEBRA */
+.tabla-corporativa tbody tr:nth-child(even){
+    background: #f4f9ff;
+}
+
+.tabla-corporativa tbody tr:nth-child(odd){
+    background: #ffffff;
+}
+
+/* HOVER */
+.tabla-corporativa tbody tr:hover{
+    background: #d6ecff;
+}
+
+/* =========================
+   CELDAS
+========================= */
+.tabla-corporativa td{
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    border-right: 1px solid #eee; /* 🔥 división suave */
+}
+
+/* quitar última línea */
+.tabla-corporativa td:last-child{
+    border-right: none;
+}
+
+/* PRIMERA COLUMNA */
+.tabla-corporativa td:first-child{
+    font-weight: bold;
+    color: #198754;
+}
+
+/* =========================
+   PAGINACION
+========================= */
+.pagination .page-link{
+    border-radius: 10px;
+    margin: 0 3px;
+    border: none;
+    color: #198754;
+}
+
+.pagination .active .page-link{
+    background: linear-gradient(135deg, #198754, #0d6efd);
+    color: white;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media(max-width: 768px){
+
+    .empleados-container{
+        padding: 90px 10px 20px;
+    }
+
+    .input-busqueda{
+        width: 100%;
+    }
+
+    .filtro{
+        width: 100%;
+    }
+
+    .tabla-corporativa th,
+    .tabla-corporativa td{
+        font-size: 11px;
+        padding: 6px;
+    }
+}

@@ -1,0 +1,51 @@
+/* =========================================
+   RECUPERAR CONTRASEÑA
+========================================= */
+
+.card {
+    border-radius: 25px;
+    overflow: hidden;
+}
+
+/* HEADER */
+.card-header {
+    text-align: center;
+}
+
+/* MENSAJE */
+#mensaje {
+    font-size: 14px;
+}
+
+/* BOTÓN */
+.btn-gradient {
+    font-size: 14px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+
+    .card {
+        border-radius: 20px;
+    }
+
+    .card-header img {
+        width: 80px;
+    }
+
+    h4 {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .card-body {
+        padding: 1.2rem;
+    }
+
+    .btn-gradient {
+        font-size: 13px;
+        padding: 8px;
+    }
+}
