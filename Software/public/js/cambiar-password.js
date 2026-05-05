@@ -1,61 +1,78 @@
-document.getElementById('formPassword').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-    const mensajeDiv = document.getElementById('mensaje');
-    const btnSubmit = e.target.querySelector('button[type="submit"]');
-    
-    // Función interna para mostrar alertas (Manteniendo tu estilo visual)
-    const mostrarAlerta = (texto, tipo) => {
-        mensajeDiv.style.display = 'block';
-        mensajeDiv.className = `alert-custom alert-${tipo}-custom`;
-        const icono = tipo === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle';
-        mensajeDiv.innerHTML = `<i class="fas ${icono} me-2"></i>${texto}`;
-    };
+document.addEventListener('DOMContentLoaded', () => {
 
-    // Validaciones de cliente
-    if (password !== confirmPassword) {
-        mostrarAlerta('Las contraseñas no coinciden', 'error');
-        return;
-    }
-    
-    if (password.length < 6) {
-        mostrarAlerta('La contraseña debe tener al menos 6 caracteres', 'error');
-        return;
-    }
-    
-    // Deshabilitar botón para evitar doble click
-    btnSubmit.disabled = true;
-    btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Actualizando acceso...';
-    
-    try {
-        const response = await fetch('/api/cambiar-password', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password })
+    const form = document.getElementById('formPassword');
+
+    // 🔥 OJITOS (para ambos inputs)
+    document.querySelectorAll('.toggle-password').forEach(icon => {
+
+        icon.addEventListener('click', () => {
+
+            const inputId = icon.getAttribute('data-target');
+            const input = document.getElementById(inputId);
+
+            const type = input.type === 'password' ? 'text' : 'password';
+            input.type = type;
+
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
         });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            // El servidor destruye la sesión, así que debemos ir al Login
-            mostrarAlerta('Contraseña actualizada con éxito. Inicia sesión de nuevo.', 'success');
-            
-            setTimeout(() => {
-                // Usamos la redirección que envía el servidor (que será /login)
-                window.location.href = result.redirect || '/login';
-            }, 2000);
-        } else {
-            mostrarAlerta(result.message || 'Error al cambiar contraseña', 'error');
-            btnSubmit.disabled = false;
-            btnSubmit.innerHTML = '<i class="fas fa-save me-2"></i>Guardar contraseña';
+    });
+
+    // 🔥 FORM SUBMIT
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const mensajeDiv = document.getElementById('mensaje');
+        const btn = form.querySelector('button');
+
+        const mostrar = (msg, tipo) => {
+            mensajeDiv.style.display = 'block';
+            mensajeDiv.className = `alert alert-${tipo}`;
+            mensajeDiv.innerHTML = msg;
+        };
+
+        if (password !== confirmPassword) {
+            mostrar('Las contraseñas no coinciden', 'danger');
+            return;
         }
-        
-    } catch (error) {
-        console.error('Error:', error);
-        mostrarAlerta('Error de conexión con el servidor', 'error');
-        btnSubmit.disabled = false;
-        btnSubmit.innerHTML = '<i class="fas fa-save me-2"></i>Guardar contraseña';
-    }
+
+        if (password.length < 6) {
+            mostrar('Mínimo 6 caracteres', 'warning');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+        try {
+
+            const res = await fetch('/api/cambiar-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                mostrar('Contraseña actualizada. Redirigiendo...', 'success');
+
+                setTimeout(() => {
+                    window.location.href = data.redirect || '/login';
+                }, 2000);
+
+            } else {
+                mostrar(data.message || 'Error', 'danger');
+            }
+
+        } catch (err) {
+            mostrar('Error de conexión', 'danger');
+        }
+
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save me-2"></i>Guardar contraseña';
+    });
+
 });
