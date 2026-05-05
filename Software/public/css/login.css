@@ -63,3 +63,29 @@ body {
         max-width: 80px;
     }
 }
+
+/* 🔥 CONTENEDOR PASSWORD */
+.input-password {
+    position: relative;
+}
+
+/* 🔥 INPUT CON ESPACIO */
+.input-password input {
+    padding-right: 45px;
+}
+
+/* 🔥 OJITO */
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+    font-size: 16px;
+}
+
+/* 🔥 HOVER */
+.toggle-password:hover {
+    color: #198754;
+}
