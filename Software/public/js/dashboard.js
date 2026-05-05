@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             `;
         }
 
-        // 🔥 CLICK PERFIL (AQUÍ VA)
+        // PERFIL
         const btn = document.getElementById("btnPerfil");
 
         if (btn) {
@@ -70,6 +70,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
 });
-function toggleMenu(){
-    document.querySelector(".sidebar").classList.toggle("active");
+
+/* =========================
+   🔥 MENU HAMBURGUESA PRO
+========================= */
+
+function toggleMenu() {
+    const sidebar = document.getElementById("sidebar");
+
+    sidebar.classList.toggle("active");
+
+    if (sidebar.classList.contains("active")) {
+        document.addEventListener("click", cerrarMenuFuera);
+    }
+}
+
+function cerrarMenuFuera(e) {
+    const sidebar = document.getElementById("sidebar");
+
+    if (!sidebar.contains(e.target) && !e.target.classList.contains("menu-toggle")) {
+        sidebar.classList.remove("active");
+        document.removeEventListener("click", cerrarMenuFuera);
+    }
 }

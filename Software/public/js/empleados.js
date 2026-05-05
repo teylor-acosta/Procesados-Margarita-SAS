@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 let empleados = [];
 let filtrados = [];
 let pagina = 1;
-const porPagina = 10;
+const porPagina = 5;
 
 let modal = new bootstrap.Modal(document.getElementById('modalEmpleado'));
 

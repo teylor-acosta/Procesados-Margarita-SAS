@@ -282,8 +282,8 @@ function verVideo(subCapituloId, capituloId, videoUrl) {
     videoSource.src = videoUrl;
     videoPlayer.load();
     
-    btnConfirmar.disabled = false;
-    btnConfirmar.innerHTML = 'MARCAR COMO VISTO';
+    btnConfirmar.disabled = true;
+    btnConfirmar.innerHTML = 'Debe ver el video completo';
     btnConfirmar.classList.remove('btn-success');
     btnConfirmar.classList.add('btn-secondary');
     

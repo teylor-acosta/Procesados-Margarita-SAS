@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel - Procesados Margarita</title>
+<title>Recursos Humanos - Procesados Margarita</title>
 
-<!-- FUENTES -->
+<!-- FUENTE -->
 <link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap" rel="stylesheet">
 
 <!-- BOOTSTRAP -->
@@ -14,56 +14,51 @@
 <!-- ICONOS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-<!-- FAVICON -->
-<link rel="icon" href="img/Gemini_Generated_Image_bo9w5fbo9w5fbo9w-removebg-preview.png">
-
 <!-- ESTILOS -->
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/panel.css">
+<link rel="stylesheet" href="css/style.css"> <!-- generales -->
+<link rel="stylesheet" href="css/recursos-humanos.css">
 
+<link rel="icon" href="img/Gemini_Generated_Image_bo9w5fbo9w5fbo9w-removebg-preview.png">
 </head>
 
 <body>
 
 <!-- 🔥 NAVBAR -->
 <nav class="navbar-custom">
-
-    <!-- IZQUIERDA -->
     <div class="navbar-left">
         <img src="img/logo de procesados sin NIT.png" class="logo-navbar">
         <span class="empresa-nombre">Procesados Margarita SAS</span>
     </div>
 
-    <!-- DERECHA (BOTONES JUNTOS) -->
     <div class="acciones-navbar">
-
-        <button class="btn btn-light" onclick="window.location.href='/dashboard'">
+        <button class="btn btn-light" onclick="history.back()">
             <i class="fas fa-arrow-left"></i> Volver
         </button>
 
         <a href="/logout" class="btn-logout">
             <i class="fas fa-power-off"></i> Cerrar sesión
         </a>
-
     </div>
-
 </nav>
 
 <!-- CONTENIDO -->
-<div class="panel-container">
+<div class="rh-container">
 
-    <div class="titulo-panel">
-        <h2>Módulos disponibles</h2>
+    <div class="titulo-rh">
+        <h2>Módulos de Recursos Humanos</h2>
     </div>
 
-    <!-- 🔥 ESTE CONTENEDOR LO USA panel.js -->
-    <div id="contenedorModulos" class="modulos-container"></div>
+    <div class="modulos-rh">
+
+        <!-- EMPLEADOS -->
+        <div class="modulo-card" onclick="window.location.href='/empleados-menu'">
+            <i class="fas fa-users icono-modulo"></i>
+            <span>Empleados</span>
+        </div>
+
+    </div>
 
 </div>
-
-<!-- JS -->
-<script src="/js/auth.js"></script>
-<script src="js/panel.js"></script>
 
 </body>
 </html>

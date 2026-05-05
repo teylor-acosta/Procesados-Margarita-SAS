@@ -1,0 +1,65 @@
+/* =========================================
+   LOGIN
+========================================= */
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* CARD */
+.card-custom {
+    background: white;
+    border-radius: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    overflow: hidden;
+    width: 100%;
+}
+
+/* HEADER */
+.card-header-custom {
+    text-align: center;
+    padding: 2rem 1.5rem 1rem;
+}
+
+.card-header-custom img {
+    max-width: 100px;
+}
+
+.card-header-custom h3 {
+    color: #004085;
+    font-weight: 800;
+}
+
+/* BODY */
+.card-body-custom {
+    padding: 2rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+
+    .card-custom {
+        border-radius: 20px;
+    }
+
+    .card-header-custom h3 {
+        font-size: 20px;
+    }
+
+    .card-body-custom {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .card-body-custom {
+        padding: 1rem;
+    }
+
+    .card-header-custom img {
+        max-width: 80px;
+    }
+}

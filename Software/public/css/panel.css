@@ -1,0 +1,183 @@
+/* ============================================
+   🎨 VARIABLES CORPORATIVAS
+============================================ */
+:root {
+    --verde: #22c55e;
+    --verde-dark: #16a34a;
+    --azul: #2563eb;
+    --azul-dark: #1d4ed8;
+    --glass: rgba(255,255,255,0.85);
+}
+
+/* ============================================
+   📦 CONTENEDOR PANEL
+============================================ */
+.panel-container {
+    padding-top: 120px;
+    text-align: center;
+}
+
+/* ============================================
+   🏷️ TITULO
+============================================ */
+.titulo-panel {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.titulo-panel h2 {
+    background: var(--glass);
+    padding: 15px 40px;
+    border-radius: 40px;
+
+    font-weight: bold;
+    color: var(--azul);
+
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    backdrop-filter: blur(10px);
+
+    position: relative;
+}
+
+/* Borde gradiente premium */
+.titulo-panel h2::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 40px;
+    padding: 2px;
+
+    background: linear-gradient(135deg, var(--verde), var(--azul));
+
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+/* ============================================
+   📦 CONTENEDOR MODULOS
+============================================ */
+.modulos-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ============================================
+   🎯 TARJETA MODULO (BASE)
+============================================ */
+.modulo-card {
+    width: 170px;
+    height: 170px;
+
+    border-radius: 25px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    transition: 0.3s;
+
+    position: relative;
+
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+
+/* ICONO */
+.icono-modulo {
+    font-size: 40px;
+}
+
+/* TEXTO */
+.modulo-card span {
+    font-size: 14px;
+}
+
+/* HOVER GENERAL */
+.modulo-card:hover {
+    transform: translateY(-8px) scale(1.05);
+}
+
+/* ============================================
+   🟢 RECURSOS HUMANOS (COLOR PRINCIPAL)
+============================================ */
+.modulo-card.rh {
+    background: linear-gradient(135deg, var(--verde), var(--verde-dark));
+    color: white;
+}
+
+/* BORDE BRILLO */
+.modulo-card.rh::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 25px;
+    padding: 2px;
+
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+/* EFECTO HOVER RH */
+.modulo-card.rh:hover {
+    box-shadow: 0 20px 40px rgba(34,197,94,0.4);
+}
+
+/* ============================================
+   🔵 (POR SI LUEGO AGREGAS MÁS MODULOS)
+============================================ */
+.modulo-card.azul {
+    background: linear-gradient(135deg, var(--azul), var(--azul-dark));
+    color: white;
+}
+
+/* ============================================
+   📱 RESPONSIVE
+============================================ */
+@media (max-width: 768px) {
+
+    .panel-container {
+        padding-top: 100px;
+    }
+
+    .modulo-card {
+        width: 140px;
+        height: 140px;
+    }
+
+    .icono-modulo {
+        font-size: 32px;
+    }
+
+    .titulo-panel h2 {
+        font-size: 18px;
+        padding: 10px 25px;
+    }
+
+}
+
+@media (max-width: 480px) {
+
+    .modulos-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+}

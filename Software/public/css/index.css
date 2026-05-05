@@ -1,0 +1,205 @@
+/* ============================================
+   🌿 INDEX PREMIUM PRO
+============================================ */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Averia Libre', cursive;
+}
+
+/* 🔥 FONDO PREMIUM ANIMADO */
+.index-body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+    overflow:hidden;
+}
+
+/* Fondo con blur */
+.index-body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:url('../img/Fondo.png') center/cover no-repeat;
+    filter:blur(10px);
+    transform:scale(1.1);
+    z-index:-2;
+}
+
+/* 🔥 CAPA DE COLOR ANIMADA */
+.index-body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:linear-gradient(120deg, rgba(34,197,94,0.2), rgba(37,99,235,0.2));
+    z-index:-1;
+    animation: moverFondo 10s infinite alternate ease-in-out;
+}
+
+@keyframes moverFondo{
+    0%{opacity:0.4;}
+    100%{opacity:0.7;}
+}
+
+/* CONTENEDOR */
+.index-container{
+    width:100%;
+    padding:20px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* 🔥 CARD GLASS */
+.index-card{
+    width:100%;
+    max-width:480px;
+
+    padding:45px 35px;
+    border-radius:30px;
+
+    background:rgba(255,255,255,0.85);
+    backdrop-filter:blur(15px);
+
+    text-align:center;
+
+    box-shadow:0 25px 60px rgba(0,0,0,0.3);
+
+    position:relative;
+    overflow:hidden;
+}
+
+/* BORDE PREMIUM */
+.index-card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:30px;
+    padding:3px;
+
+    background:linear-gradient(135deg,#22c55e,#2563eb);
+
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite:xor;
+    mask-composite:exclude;
+}
+
+/* LOGO */
+.logo{
+    width:130px;
+    margin-bottom:20px;
+    animation:flotar 3s ease-in-out infinite;
+}
+
+@keyframes flotar{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-8px);}
+}
+
+/* TITULO */
+.index-card h1{
+    color:#198754;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+/* TEXTO */
+.index-card p{
+    color:#6c757d;
+    font-size:14px;
+    margin-bottom:30px;
+}
+
+/* 🔥 BOTÓN PRO */
+.btn-index{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+
+    padding:14px 30px;
+    border-radius:40px;
+
+    background:linear-gradient(135deg,#22c55e,#2563eb);
+    color:white;
+    text-decoration:none;
+
+    font-weight:600;
+    font-size:15px;
+
+    transition:all 0.3s ease;
+
+    position:relative;
+    overflow:hidden;
+}
+
+/* EFECTO HOVER */
+.btn-index:hover{
+    transform:scale(1.07);
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+/* 🔥 EFECTO BRILLO */
+.btn-index::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:100%;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,0.5),transparent);
+    transition:0.5s;
+}
+
+.btn-index:hover::after{
+    left:100%;
+}
+
+/* 🔥 ANIMACIÓN ENTRADA */
+.fade-in{
+    animation:entrada 0.8s ease;
+}
+
+@keyframes entrada{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* ============================================
+   📱 RESPONSIVE
+============================================ */
+
+@media (max-width:768px){
+
+    .index-card{
+        padding:30px 20px;
+    }
+
+    .logo{
+        width:100px;
+    }
+
+    .index-card h1{
+        font-size:22px;
+    }
+
+    .btn-index{
+        width:100%;
+        justify-content:center;
+    }
+
+}
