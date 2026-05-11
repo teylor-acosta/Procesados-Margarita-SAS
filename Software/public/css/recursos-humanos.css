@@ -138,3 +138,61 @@
     }
 
 }
+/* =========================================
+   📱 NAVBAR RESPONSIVE FIX
+========================================= */
+@media (max-width: 768px) {
+
+    .navbar-custom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 10px;
+        flex-wrap: nowrap;
+    }
+
+    .navbar-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+    }
+
+    .navbar-left img {
+        width: 50px;
+        height: auto;
+    }
+
+    .empresa-nombre {
+        font-size: 14px !important;
+        line-height: 1.2;
+        max-width: 120px;
+        word-break: break-word;
+    }
+
+    .navbar-right {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+
+    .navbar-right .btn {
+        padding: 6px 10px !important;
+        font-size: 13px !important;
+        border-radius: 12px !important;
+        white-space: nowrap;
+    }
+
+    .navbar-right .btn i {
+        margin-right: 4px;
+    }
+
+    /* 🔥 botón cerrar sesión */
+    .btn-danger {
+        max-width: 110px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
