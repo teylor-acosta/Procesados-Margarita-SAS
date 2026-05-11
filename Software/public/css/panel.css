@@ -148,36 +148,83 @@
     color: white;
 }
 
-/* ============================================
-   📱 RESPONSIVE
-============================================ */
-@media (max-width: 768px) {
+/* =========================================
+   📱 MODULO EMPLEADOS IGUAL AL PRINCIPAL
+========================================= */
+@media (max-width:900px){
 
-    .panel-container {
-        padding-top: 100px;
+    /* TITULO */
+    .titulo-empleados{
+        display:flex;
+        justify-content:center;
+        margin-top:25px;
+        margin-bottom:40px;
     }
 
-    .modulo-card {
-        width: 140px;
-        height: 140px;
+    .titulo-empleados h2{
+        width:320px;
+        max-width:90%;
+        font-size:20px !important;
+        padding:12px 20px;
+        border-radius:35px;
+        text-align:center;
+        background:#fff;
     }
 
-    .icono-modulo {
-        font-size: 32px;
+    /* CONTENEDOR */
+    .modulos-empleados{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        gap:35px;
+        margin-top:10px;
     }
 
-    .titulo-panel h2 {
-        font-size: 18px;
-        padding: 10px 25px;
+    /* TARJETA */
+    .modulo-card{
+        width:150px !important;
+        height:150px !important;
+
+        border-radius:30px;
+
+        background:#22c55e !important;
+
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+
+        gap:12px;
+
+        box-shadow:0 15px 35px rgba(0,0,0,0.18);
     }
 
-}
-
-@media (max-width: 480px) {
-
-    .modulos-container {
-        flex-direction: column;
-        gap: 20px;
+    .icono-modulo{
+        font-size:42px !important;
+        color:white !important;
     }
 
+    .modulo-card span{
+        font-size:16px !important;
+        color:white !important;
+        text-align:center;
+        line-height:1.2;
+        font-weight:600;
+    }
+
+    /* NAVBAR */
+    .navbar-custom{
+        padding:10px 12px;
+    }
+
+    .navbar-right{
+        display:flex;
+        gap:8px;
+    }
+
+    .navbar-right .btn{
+        padding:8px 14px !important;
+        border-radius:18px !important;
+        font-size:14px !important;
+    }
 }
