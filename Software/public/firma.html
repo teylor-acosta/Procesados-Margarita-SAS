@@ -1,89 +1,202 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Firma Digital - Procesados Margarita</title>
 
+    <title>Firma Digital</title>
+
+    <!-- GOOGLE FONT -->
     <link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- BOOTSTRAP -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FONT AWESOME -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="icon" href="img/Gemini_Generated_Image_bo9w5fbo9w5fbo9w-removebg-preview.png">
-    <link rel="stylesheet" href="css/style_induccion.css">
+
+    <!-- ESTILOS -->
+    <link rel="stylesheet" href="/css/style1.css">
+    <link rel="stylesheet" href="/css/firma.css">
+
+    <!-- ICONO -->
+    <link rel="icon" href="/img/Gemini_Generated_Image_bo9w5fbo9w5fbo9w-removebg-preview.png">
+
 </head>
 
 <body>
-<div class="background-overlay">
 
-<nav class="navbar-custom">
+    <!-- NAVBAR -->
+    <nav class="navbar-custom">
 
-    <div style="display:flex; align-items:center; gap:10px;">
-        <img src="img/logo de procesados sin NIT.png">
-        <span style="font-weight:700; color:#2f3542;">
-            Procesados Margarita SAS
-        </span>
-    </div>
+        <div class="navbar-left">
 
-    <a href="/logout" class="btn-logout">
-        <i class="fas fa-power-off"></i> Cerrar sesión
-    </a>
+            <img 
+                src="/img/logo de procesados sin NIT.png"
+                class="logo-navbar"
+                alt="Logo"
+            >
 
-</nav>
+            <span class="empresa-nombre">
+                Procesados Margarita SAS
+            </span>
 
-    <div class="container py-5">
-        <div class="firma-container">
-            <div class="firma-card">
+        </div>
 
-                <div class="firma-titulo">
-                    <i class="fas fa-signature fa-3x text-success mb-3"></i>
-                    <h2>Firma Digital</h2>
-                    <p>Formaliza la finalización de tu capacitación</p>
+        <div class="navbar-right">
+
+            <a href="/logout" class="btn-logout">
+
+                <i class="fas fa-power-off"></i>
+                Cerrar sesión
+
+            </a>
+
+        </div>
+
+    </nav>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="firma-container">
+
+        <!-- TARJETA -->
+        <section class="firma-card">
+
+            <!-- HEADER -->
+            <div class="firma-header">
+
+                <div class="firma-icono">
+
+                    <i class="fas fa-signature"></i>
+
                 </div>
 
-                <!-- 🔥 NUEVO: SUBIR IMAGEN -->
-                <div class="firma-area">
+                <h1>Firma Digital</h1>
 
-                    <p class="text-muted mb-3">
-                        Sube una imagen de tu firma:
-                    </p>
+                <p>
+                    Formaliza la finalización de tu capacitación
+                </p>
 
-                    <input type="file" id="inputFirma" accept="image/*" class="form-control">
+            </div>
 
-                    <img id="previewFirma" 
-                         style="margin-top:15px; max-width:100%; display:none; border-radius:12px; border:1px solid #ccc;">
+            <!-- CONTENIDO -->
+            <div class="firma-content">
 
-                    <div class="firma-botones mt-3">
-                        <button class="btn-firma-borrar" onclick="limpiarFirma()">
-                            <i class="fas fa-eraser me-1"></i> Borrar
-                        </button>
+                <!-- LABEL -->
+                <label for="inputFirma" class="label-firma">
+
+                    <i class="fas fa-upload"></i>
+
+                    Subir imagen de la firma
+
+                </label>
+
+                <!-- INPUT -->
+                <input
+                    type="file"
+                    id="inputFirma"
+                    accept="image/*"
+                    class="form-control input-firma"
+                >
+
+                <!-- PREVIEW -->
+                <div class="preview-box">
+
+                    <!-- IMAGEN -->
+                    <img
+                        id="previewFirma"
+                        alt="Vista previa firma"
+                    >
+
+                    <!-- PLACEHOLDER -->
+                    <div id="placeholderFirma">
+
+                        <i class="fas fa-image"></i>
+
+                        <h4>
+                            Vista previa
+                        </h4>
+
+                        <p>
+                            La firma aparecerá aquí automáticamente
+                        </p>
+
                     </div>
 
                 </div>
 
-                <div class="text-center mt-4">
-                    <button class="btn-firma-finalizar" id="btnFinalizar">
-                        <i class="fas fa-check-circle me-2"></i>Finalizar Inducción
+                <!-- BOTONES -->
+                <div class="firma-actions">
+
+                    <!-- BORRAR -->
+                    <button
+                        type="button"
+                        class="btn-firma-borrar"
+                        onclick="limpiarFirma()"
+                    >
+
+                        <i class="fas fa-trash"></i>
+
+                        Borrar firma
+
                     </button>
 
-                    <div class="mt-3">
-                        <a href="/induccion" class="btn-volver-modulos">
-                            <i class="fas fa-arrow-left me-2"></i>Volver a los módulos
-                        </a>
-                    </div>
+                    <!-- FINALIZAR -->
+                    <button
+                        type="button"
+                        class="btn-firma-finalizar"
+                        id="btnFinalizar"
+                    >
+
+                        <i class="fas fa-check-circle"></i>
+
+                        Finalizar inducción
+
+                    </button>
+
                 </div>
 
-                <div id="mensajeExito" style="display:none;" class="firma-exito">
+                <!-- LINK -->
+                <div class="volver-box">
+
+                    <a href="/induccion" class="btn-volver-modulos">
+
+                        <i class="fas fa-arrow-left"></i>
+
+                        Volver a los modulos
+
+                    </a>
+
+                </div>
+
+                <!-- MENSAJE -->
+                <div
+                    id="mensajeExito"
+                    class="firma-exito"
+                    style="display:none;"
+                >
+
                     <i class="fas fa-check-circle"></i>
-                    <h4>¡Firma guardada exitosamente!</h4>
-                    <p>Redirigiendo al certificado...</p>
+
+                    <h4>
+                        ¡Firma guardada exitosamente!
+                    </h4>
+
+                    <p>
+                        Redirigiendo al certificado...
+                    </p>
+
                 </div>
 
             </div>
-        </div>
-    </div>
 
-</div>
+        </section>
 
-<script src="js/firma.js"></script>
+    </main>
+
+    <!-- JS -->
+    <script src="/js/firma.js"></script>
+
 </body>
 </html>
