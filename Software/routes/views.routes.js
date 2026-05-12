@@ -62,6 +62,14 @@ router.get('/empleados-inactivos', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/empleados-inactivos.html'));
 });
 
+router.get('/expediente-empleado/:id', (req, res) => {
+
+    res.sendFile(
+        path.join(__dirname, '../public/expediente-empleado.html')
+    );
+
+});
+
 
 // ============================================
 // RUTAS POR ROL

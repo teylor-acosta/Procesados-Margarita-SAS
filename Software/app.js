@@ -73,13 +73,14 @@ app.set('db', db);
 app.use(require('./routes/views.routes'));
 app.use(require('./routes/auth.routes'));
 app.use(require('./routes/empleados.routes'));
+app.use(require('./routes/expediente.routes')); 
 app.use(require('./routes/induccion.routes'));
 app.use(require('./routes/evaluacion.routes'));
 app.use(require('./routes/firma.routes'));
 app.use(require('./routes/certificado.routes'));
 app.use(require('./routes/perfil.routes')); // 🔥 importante (foto perfil)
 app.use(require('./routes/catalogos.routes'));
-
+app.use(require('./routes/documentacion.routes'));
 
 
 // ============================================

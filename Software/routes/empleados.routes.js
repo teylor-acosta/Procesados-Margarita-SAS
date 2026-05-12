@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-
+const path = require('path');
 const { proteger, soloSuperAdmin } = require('../middlewares/auth');
+const db = require('../DB');
 
 // ============================================
 // 🔥 LISTAR SOLO ACTIVOS
@@ -259,5 +260,70 @@ router.get('/api/filtros-empleado', proteger, soloSuperAdmin, (req, res) => {
     });
 
 });
+
+/* =========================================
+   🔥 OBTENER EMPLEADO POR ID
+========================================= */
+
+router.get('/api/empleado/:id', (req, res) => {
+
+    const { id } = req.params;
+
+    const sql = `
+
+        SELECT 
+
+            e.*,
+
+            a.nombre AS area,
+            s.nombre AS sede,
+            c.nombre AS cargo
+
+        FROM empleados e
+
+        LEFT JOIN areas a
+        ON e.area_id = a.id
+
+        LEFT JOIN sedes s
+        ON e.sede_id = s.id
+
+        LEFT JOIN cargos c
+        ON e.cargo_id = c.id
+
+        WHERE e.id = ?
+
+    `;
+
+    db.query(sql, [id], (err, results) => {
+
+        if (err) {
+
+            console.log(err);
+
+            return res.status(500).json({
+                ok: false,
+                mensaje: 'Error servidor'
+            });
+
+        }
+
+        if (results.length === 0) {
+
+            return res.json({
+                ok: false,
+                mensaje: 'Empleado no encontrado'
+            });
+
+        }
+
+        res.json({
+            ok: true,
+            empleado: results[0]
+        });
+
+    });
+
+});
+
 
 module.exports = router;

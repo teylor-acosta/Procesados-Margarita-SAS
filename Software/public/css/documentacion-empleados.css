@@ -1,0 +1,529 @@
+/* =========================================
+   📦 CONTENEDOR GENERAL
+========================================= */
+
+.documentacion-container{
+    padding-top:120px;
+    padding-left:30px;
+    padding-right:30px;
+    padding-bottom:40px;
+}
+
+
+/* =========================================
+   🏷️ TITULO
+========================================= */
+
+.titulo-documentacion{
+    display:flex;
+    justify-content:center;
+    margin-bottom:35px;
+}
+
+.titulo-documentacion h2{
+
+    background:rgba(255,255,255,0.92);
+
+    padding:18px 45px;
+
+    border-radius:45px;
+
+    font-weight:bold;
+
+    color:#2563eb;
+
+    position:relative;
+
+    box-shadow:0 15px 35px rgba(0,0,0,0.15);
+
+    backdrop-filter:blur(10px);
+}
+
+.titulo-documentacion h2::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    border-radius:45px;
+
+    padding:2px;
+
+    background:linear-gradient(
+        135deg,
+        #22c55e,
+        #2563eb
+    );
+
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+
+    -webkit-mask-composite:xor;
+
+    mask-composite:exclude;
+}
+
+
+/* =========================================
+   📊 TARJETAS RESUMEN
+========================================= */
+
+.resumen-documentos{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(250px,1fr));
+
+    gap:20px;
+
+    margin-bottom:35px;
+}
+
+.card-resumen{
+
+    background:rgba(255,255,255,0.92);
+
+    border-radius:25px;
+
+    padding:25px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,0.12);
+
+    backdrop-filter:blur(10px);
+}
+
+.icono-resumen{
+
+    width:70px;
+    height:70px;
+
+    border-radius:20px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:28px;
+
+    color:white;
+}
+
+.card-completo .icono-resumen{
+    background:#22c55e;
+}
+
+.card-pendiente .icono-resumen{
+    background:#f59e0b;
+}
+
+.card-alerta .icono-resumen{
+    background:#ef4444;
+}
+
+.card-resumen h3{
+
+    font-size:30px;
+
+    margin:0;
+
+    font-weight:bold;
+}
+
+.card-resumen p{
+
+    margin:0;
+
+    color:#555;
+}
+
+
+/* =========================================
+   🔎 BUSCADOR
+========================================= */
+
+.barra-busqueda{
+    margin-bottom:35px;
+}
+
+.barra-busqueda .form-control{
+
+    border-radius:15px;
+
+    padding:14px;
+
+    border:none;
+
+    box-shadow:0 5px 20px rgba(0,0,0,0.1);
+}
+
+.barra-busqueda .input-group-text{
+
+    border:none;
+
+    background:white;
+
+    border-radius:15px 0 0 15px;
+}
+
+
+/* =========================================
+   👥 GRID EMPLEADOS
+========================================= */
+
+.grid-empleados{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(360px,1fr));
+
+    gap:25px;
+
+    margin-top:30px;
+}
+
+
+/* =========================================
+   🎴 TARJETA EMPLEADO
+========================================= */
+
+.card-empleado{
+
+    background:rgba(255,255,255,0.92);
+
+    backdrop-filter:blur(10px);
+
+    border-radius:30px;
+
+    padding:25px;
+
+    box-shadow:0 15px 35px rgba(0,0,0,0.15);
+
+    transition:0.3s;
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+.card-empleado:hover{
+
+    transform:translateY(-5px);
+
+    box-shadow:0 20px 40px rgba(0,0,0,0.2);
+}
+
+
+/* =========================================
+   🟢 BORDE SUPERIOR
+========================================= */
+
+.card-empleado::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:5px;
+
+    background:linear-gradient(
+        135deg,
+        #22c55e,
+        #2563eb
+    );
+}
+
+
+/* =========================================
+   👤 HEADER EMPLEADO
+========================================= */
+
+.header-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+}
+
+
+/* FOTO */
+
+.foto-empleado{
+
+    width:90px;
+    height:90px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:4px solid #22c55e;
+
+    flex-shrink:0;
+}
+
+
+/* =========================================
+   📄 INFO EMPLEADO
+========================================= */
+
+.info-principal{
+    width:100%;
+}
+
+.info-principal h3{
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    margin-bottom:5px;
+
+    color:#2563eb;
+
+    word-break:break-word;
+}
+
+.info-principal p{
+
+    margin:0;
+
+    color:#555;
+
+    font-size:15px;
+}
+
+
+/* =========================================
+   🏷️ CODIGO
+========================================= */
+
+.codigo-empleado{
+
+    display:inline-block;
+
+    margin-top:10px;
+
+    background:#2563eb;
+
+    color:white;
+
+    padding:5px 12px;
+
+    border-radius:20px;
+
+    font-size:12px;
+
+    font-weight:bold;
+}
+
+
+/* =========================================
+   📊 ESTADO DOCUMENTOS
+========================================= */
+
+.estado-documentacion{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-top:18px;
+}
+
+
+/* PORCENTAJE */
+
+.porcentaje{
+
+    font-size:14px;
+
+    font-weight:bold;
+
+    color:#444;
+}
+
+
+/* =========================================
+   📈 BARRA PROGRESO
+========================================= */
+
+.barra-documentos{
+
+    height:15px;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    margin-top:10px;
+
+    background:#e5e7eb;
+}
+
+.progress-bar{
+
+    font-size:11px;
+
+    font-weight:bold;
+}
+
+
+/* =========================================
+   📁 BOTON EXPEDIENTE
+========================================= */
+
+.btn-expediente{
+
+    all:unset;
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin-top:20px;
+
+    background:linear-gradient(
+        135deg,
+        #22c55e,
+        #2563eb
+    );
+
+    color:white !important;
+
+    padding:12px;
+
+    border-radius:30px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+    box-sizing:border-box;
+}
+
+.btn-expediente:hover{
+
+    transform:scale(1.03);
+
+    box-shadow:0 10px 20px rgba(0,0,0,0.2);
+}
+
+
+/* =========================================
+   📱 RESPONSIVE TABLET
+========================================= */
+
+@media(max-width:992px){
+
+    .grid-empleados{
+
+        grid-template-columns:
+            repeat(auto-fit,minmax(300px,1fr));
+    }
+
+}
+
+
+/* =========================================
+   📱 RESPONSIVE MOVIL
+========================================= */
+
+@media(max-width:768px){
+
+    .documentacion-container{
+
+        padding-left:15px;
+        padding-right:15px;
+    }
+
+    .titulo-documentacion h2{
+
+        width:100%;
+
+        text-align:center;
+
+        font-size:24px;
+
+        padding:15px;
+    }
+
+    .grid-empleados{
+        grid-template-columns:1fr;
+    }
+
+    .header-card{
+
+        flex-direction:column;
+
+        text-align:center;
+    }
+
+    .estado-documentacion{
+
+        flex-direction:column;
+
+        gap:10px;
+    }
+
+    .card-resumen{
+
+        flex-direction:column;
+
+        text-align:center;
+    }
+
+}
+
+
+/* =========================================
+   📱 MOVILES PEQUEÑOS
+========================================= */
+
+@media(max-width:480px){
+
+    .titulo-documentacion h2{
+        font-size:20px;
+    }
+
+    .foto-empleado{
+
+        width:80px;
+        height:80px;
+    }
+
+    .info-principal h3{
+        font-size:18px;
+    }
+
+    .btn-expediente{
+        font-size:14px;
+    }
+
+}

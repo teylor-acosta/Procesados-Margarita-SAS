@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <!-- ESTILOS -->
-<link rel="stylesheet" href="css/style.css"> <!-- generales -->
+<link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/empleados-menu.css">
 
 <link rel="icon" href="img/Gemini_Generated_Image_bo9w5fbo9w5fbo9w-removebg-preview.png">
@@ -25,50 +25,78 @@
 
 <!-- 🔥 NAVBAR -->
 <nav class="navbar-custom">
+
     <div class="navbar-left">
         <img src="img/logo de procesados sin NIT.png" class="logo-navbar">
-        <span class="empresa-nombre">Procesados Margarita SAS</span>
+        <span class="empresa-nombre">
+            Procesados Margarita SAS
+        </span>
     </div>
 
     <div class="acciones-navbar">
 
         <a href="/recursos-humanos" class="btn btn-light">
-    <i class="fas fa-arrow-left"></i> Volver
-</a>
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
 
         <a href="/logout" class="btn-logout">
             <i class="fas fa-power-off"></i> Cerrar sesión
         </a>
 
     </div>
+
 </nav>
 
-<!-- CONTENIDO -->
+<!-- 🔥 CONTENIDO -->
 <div class="empleados-container">
 
+    <!-- TITULO -->
     <div class="titulo-empleados">
         <h2>Módulo de Empleados</h2>
     </div>
 
+    <!-- TARJETAS -->
     <div class="modulos-empleados">
 
         <!-- 🔹 CREAR -->
-        <div class="modulo-card" onclick="limpiarEmpleado(); window.location.href='/crear-empleado'">
+        <div class="modulo-card"
+             onclick="limpiarEmpleado(); window.location.href='/crear-empleado'">
+
             <i class="fas fa-user-plus icono-modulo"></i>
+
             <span>Crear empleado</span>
+
         </div>
 
         <!-- 🔹 VER -->
-        <div class="modulo-card" onclick="window.location.href='/empleados'">
+        <div class="modulo-card"
+             onclick="window.location.href='/empleados'">
+
             <i class="fas fa-search icono-modulo"></i>
+
             <span>Ver empleados</span>
+
         </div>
 
         <!-- 🔹 DESACTIVADOS -->
-        <div class="modulo-card" onclick="window.location.href='/empleados-inactivos'">
+        <div class="modulo-card"
+             onclick="window.location.href='/empleados-inactivos'">
+
             <i class="fas fa-user-slash icono-modulo"></i>
+
             <span>Desactivados</span>
+
         </div>
+
+        <!-- 🔹 DOCUMENTACIÓN -->
+<div class="modulo-card"
+     onclick="window.location.href='/documentacion-empleados'">
+
+    <i class="fas fa-folder-open icono-modulo"></i>
+
+    <span>Ver documentación</span>
+
+</div>
 
     </div>
 
@@ -76,9 +104,11 @@
 
 <!-- 🔥 SCRIPT -->
 <script>
+
 function limpiarEmpleado() {
     localStorage.removeItem("empleadoEditar");
 }
+
 </script>
 
 </body>
