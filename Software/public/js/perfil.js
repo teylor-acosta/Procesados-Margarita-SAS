@@ -1,7 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
-
     try {
-
         const res = await fetch('/api/me', {
             credentials: 'include'
         });
@@ -58,9 +56,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("Error perfil:", error);
         window.location.href = '/login';
     }
-
 });
-
 
 // ============================================
 // 🔥 SUBIR FOTO
@@ -84,22 +80,44 @@ document.getElementById("inputFoto").addEventListener("change", function(){
         // mostrar inmediatamente
         document.getElementById("foto").src = base64;
 
-        // enviar al backend
-        await fetch('/api/subir-foto', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ foto: base64 })
-        });
+        try {
+            // enviar al backend
+            await fetch('/api/subir-foto', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ foto: base64 })
+            });
 
-        alert("Foto actualizada ✔");
+            // 🔥 CAMBIO AQUÍ: Usamos SweetAlert2 en lugar de alert()
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
 
+            Toast.fire({
+                icon: 'success',
+                title: 'Foto actualizada correctamente'
+            });
+
+        } catch (err) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo subir la foto'
+            });
+        }
     };
 
     reader.readAsDataURL(file);
-
 });
-
 
 // ============================================
 // 🔥 VOLVER
