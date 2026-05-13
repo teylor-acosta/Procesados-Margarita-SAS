@@ -79,7 +79,39 @@ router.put('/api/actualizar-empleado', (req, res) => {
     ], (err) => {
 
         if (err) return res.json({ success: false });
+        // ============================================
+// 🔥 REGISTRAR ACTIVIDAD
+// ============================================
 
+db.query(
+
+    `INSERT INTO centro_actividad (
+
+        empleado_id,
+        usuario_id,
+        accion,
+        modulo,
+        descripcion,
+        color,
+        icono
+
+    )
+
+    VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    
+    [
+
+        e.id,
+        req.session.usuario?.id || null,
+        'ACTUALIZAR',
+        'EMPLEADOS',
+        `Se actualizó el empleado ${e.nombre}`,
+        'azul',
+        'fa-pen'
+
+    ]
+
+);
         res.json({ success: true });
     });
 });
@@ -98,6 +130,39 @@ router.put('/api/desactivar-empleado', (req, res) => {
         [req.body.id],
         err => {
             if (err) return res.json({ success: false });
+            // ============================================
+// 🔥 REGISTRAR ACTIVIDAD
+// ============================================
+
+db.query(
+
+    `INSERT INTO centro_actividad (
+
+        empleado_id,
+        usuario_id,
+        accion,
+        modulo,
+        descripcion,
+        color,
+        icono
+
+    )
+
+    VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    
+    [
+
+        req.body.id,
+        req.session.usuario?.id || null,
+        'DESACTIVAR',
+        'EMPLEADOS',
+        'Empleado desactivado',
+        'rojo',
+        'fa-user-slash'
+
+    ]
+
+);
             res.json({ success: true });
         }
     );
@@ -117,6 +182,45 @@ router.put('/api/activar-empleado', (req, res) => {
         [req.body.id],
         err => {
             if (err) return res.json({ success: false });
+            // ============================================
+// 🔥 REGISTRAR ACTIVIDAD
+// ============================================
+
+db.query(
+
+    `INSERT INTO centro_actividad (
+
+        empleado_id,
+        usuario_id,
+        accion,
+        modulo,
+        descripcion,
+        color,
+        icono
+
+    )
+
+    VALUES (?, ?, ?, ?, ?, ?, ?)`,
+
+    [
+
+        req.body.id,
+
+        req.session.usuario?.id || null,
+
+        'ACTIVAR',
+
+        'EMPLEADOS',
+
+        'Se reactivó un empleado',
+
+        'verde',
+
+        'fa-user-check'
+
+    ]
+
+);
             res.json({ success: true });
         }
     );
@@ -222,6 +326,41 @@ router.post('/api/crear-empleado', proteger, soloSuperAdmin, (req, res) => {
                 console.error(err);
                 return res.json({ success: false });
             }
+
+             // ============================================
+// 🔥 REGISTRAR ACTIVIDAD
+// ============================================
+
+db.query(
+
+    `INSERT INTO centro_actividad (
+
+        empleado_id,
+        usuario_id,
+        accion,
+        modulo,
+        descripcion,
+        color,
+        icono
+
+    )
+
+    VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    
+    [
+
+        result.insertId,
+        req.session.usuario?.id || null,
+        'CREAR',
+        'EMPLEADOS',
+        `Se creó el empleado ${e.nombre}`,
+        'verde',
+        'fa-user-plus'
+
+    ]
+
+);
+
 
             res.json({
                 success: true,

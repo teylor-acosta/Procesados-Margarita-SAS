@@ -16,7 +16,13 @@ async function cargarEmpleados() {
 
     try {
 
-        const response = await fetch('/api/documentacion-empleados');
+        const response = await fetch(
+            '/api/documentacion-empleados',
+            {
+                credentials: 'include'
+            }
+        );
+
         const data = await response.json();
 
         if (!data.ok) {
@@ -30,14 +36,13 @@ async function cargarEmpleados() {
             return;
         }
 
-        /* =========================================
-           🔥 ORDENAR POR CÓDIGO
-        ========================================= */
-
         empleadosGlobal = data.empleados.sort((a, b) => {
 
-            const numA = parseInt(a.codigo.replace(/\D/g, "")) || 0;
-            const numB = parseInt(b.codigo.replace(/\D/g, "")) || 0;
+            const numA =
+                parseInt(a.codigo.replace(/\D/g, "")) || 0;
+
+            const numB =
+                parseInt(b.codigo.replace(/\D/g, "")) || 0;
 
             return numA - numB;
 
@@ -85,11 +90,6 @@ function renderizarEmpleados(lista) {
         const foto = emp.foto
             ? emp.foto
             : '/img/defecto.jpg';
-
-
-        /* =========================================
-           🔥 DOCUMENTACIÓN INCOMPLETA
-        ========================================= */
 
         const progreso = 0;
         const estado = 'Incompleto';
@@ -171,7 +171,6 @@ function actualizarResumen(lista) {
 
     lista.forEach(emp => {
 
-        // TODOS incompletos por ahora
         incompletos++;
 
     });
@@ -189,9 +188,11 @@ function actualizarResumen(lista) {
 
 buscador.addEventListener("input", () => {
 
-    const texto = buscador.value.toLowerCase();
+    const texto =
+        buscador.value.toLowerCase();
 
-    const filtrados = empleadosGlobal.filter(emp => {
+    const filtrados =
+        empleadosGlobal.filter(emp => {
 
         return (
 
@@ -201,7 +202,8 @@ buscador.addEventListener("input", () => {
 
             emp.numero_documento.toLowerCase().includes(texto) ||
 
-            (emp.cargo && emp.cargo.toLowerCase().includes(texto))
+            (emp.cargo &&
+            emp.cargo.toLowerCase().includes(texto))
 
         );
 
@@ -219,7 +221,89 @@ buscador.addEventListener("input", () => {
 
 function verExpediente(id) {
 
-    window.location.href = `/expediente-empleado/${id}`;
+    window.location.href =
+        `/expediente-empleado/${id}`;
+
+}
+
+
+/* =========================================
+   📤 SUBIR DOCUMENTO
+========================================= */
+
+async function subirDocumento(
+    empleadoId,
+    categoria,
+    inputFile
+) {
+
+    const archivo = inputFile.files[0];
+
+    if (!archivo) {
+
+        alert('Selecciona un archivo');
+
+        return;
+    }
+
+    const formData = new FormData();
+
+    formData.append(
+        'empleado_id',
+        empleadoId
+    );
+
+    formData.append(
+        'categoria',
+        categoria
+    );
+
+    formData.append(
+        'tipo_documento',
+        categoria
+    );
+
+    formData.append(
+        'archivo',
+        archivo
+    );
+
+    try {
+
+        const response = await fetch(
+            '/api/subir-documento',
+            {
+                method: 'POST',
+                body: formData,
+                credentials: 'include'
+            }
+        );
+
+        const data = await response.json();
+
+        if (data.ok) {
+
+            alert(
+                'Documento subido correctamente'
+            );
+
+            location.reload();
+
+        } else {
+
+            alert(data.mensaje);
+
+        }
+
+    } catch (error) {
+
+        console.log(error);
+
+        alert(
+            'Error al subir documento'
+        );
+
+    }
 
 }
 

@@ -55,12 +55,31 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (data.success) {
-                window.location.href = data.redirect || "/dashboard";
-            } else {
-                mensajeDiv.textContent = data.message || "Credenciales incorrectas";
-                mensajeDiv.className = "alert alert-danger mt-3";
-                mensajeDiv.style.display = 'block';
-            }
+
+    window.location.href =
+        data.redirect || "/dashboard";
+
+} else {
+
+    Swal.fire({
+
+        icon: data.inactivo
+            ? 'warning'
+            : 'error',
+
+        title: data.inactivo
+            ? 'Empleado inactivo'
+            : 'Error de acceso',
+
+        text:
+            data.message ||
+            'Credenciales incorrectas',
+
+        confirmButtonColor: '#dc3545'
+
+    });
+
+}
 
         } catch (error) {
 

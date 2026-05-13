@@ -13,9 +13,48 @@ const documentoCarnet = document.getElementById('documentoCarnet');
 const rhCarnet = document.getElementById('rhCarnet');
 const cargoCarnet = document.getElementById('cargoCarnet');
 
-const contenedorDocumentos = document.getElementById('contenedorDocumentos');
+const contenedorDocumentos =
+document.getElementById('contenedorDocumentos');
 
+/* =========================================
+   📊 ACTUALIZAR PROGRESO
+========================================= */
 
+function actualizarProgreso(documentosSubidos){
+
+    const total = documentosBase.length;
+
+    const completados = documentosSubidos.length;
+
+    const porcentaje = Math.round(
+
+        (completados / total) * 100
+
+    );
+
+    const barra = document.querySelector(
+        '.progress-bar'
+    );
+
+    const texto = document.querySelector(
+        '.porcentaje-documentos'
+    );
+
+    if(barra){
+
+        barra.style.width =
+        `${porcentaje}%`;
+
+    }
+
+    if(texto){
+
+        texto.textContent =
+        `${porcentaje}%`;
+
+    }
+
+}
 /* =========================================
    🚀 CARGAR EMPLEADO
 ========================================= */
@@ -24,8 +63,11 @@ async function cargarEmpleado(){
 
     try{
 
-        const response = await fetch(`/api/empleado/${id}`);
-        const data = await response.json();
+        const response =
+        await fetch(`/api/empleado/${id}`);
+
+        const data =
+        await response.json();
 
         if(!data.ok){
 
@@ -36,38 +78,36 @@ async function cargarEmpleado(){
 
         const emp = data.empleado;
 
-        nombreEmpleado.textContent = emp.nombre;
+        nombreEmpleado.textContent =
+        emp.nombre;
 
-        codigoEmpleado.textContent = emp.codigo;
+        codigoEmpleado.textContent =
+        emp.codigo;
 
         cargoEmpleado.textContent =
-            emp.cargo || 'Sin cargo';
+        emp.cargo || 'Sin cargo';
 
         areaEmpleado.textContent =
-            emp.area || 'Sin área';
+        emp.area || 'Sin área';
 
         sedeEmpleado.textContent =
-            emp.sede || 'Sin sede';
-
-
-        /* =====================================
-           🪪 CARNET
-        ===================================== */
+        emp.sede || 'Sin sede';
 
         fotoEmpleado.src =
-            emp.foto || '/img/defecto.jpg';
+        emp.foto || '/img/defecto.jpg';
 
         nombreCarnet.textContent =
-            emp.nombre;
+        emp.nombre;
 
         documentoCarnet.textContent =
-            emp.numero_documento || 'Sin documento';
+        emp.numero_documento ||
+        'Sin documento';
 
         rhCarnet.textContent =
-            `RH: ${emp.rh || 'N/A'}`;
+        `RH: ${emp.rh || 'N/A'}`;
 
         cargoCarnet.textContent =
-            emp.cargo || 'Sin cargo';
+        emp.cargo || 'Sin cargo';
 
         cargarDocumentos();
 
@@ -78,7 +118,6 @@ async function cargarEmpleado(){
     }
 
 }
-
 
 
 /* =========================================
@@ -103,65 +142,335 @@ const documentosBase = [
    🎯 RENDER DOCUMENTOS
 ========================================= */
 
-function cargarDocumentos(){
+async function cargarDocumentos(){
 
     contenedorDocumentos.innerHTML = "";
 
-    documentosBase.forEach(doc => {
+    try{
 
-        const card = document.createElement('div');
+        const response = await fetch(
+            `/api/documentos/${id}`
+        );
 
-        card.className = "card-documento";
+        const data =
+        await response.json();
 
-        card.innerHTML = `
+        const documentosSubidos =
+        data.documentos || [];
 
-            <div class="header-documento">
+        actualizarProgreso(documentosSubidos);
 
-                <div class="icono-documento">
+        documentosBase.forEach((doc, index) => {
 
-                    <i class="fas fa-file-pdf"></i>
+            const inputId =
+            `archivo_${index}`;
 
-                </div>
+            const documentoExistente =
 
-                <div>
+            documentosSubidos.find(d =>
 
-                    <h5>${doc}</h5>
+                d.tipo_documento === doc
 
-                    <small>
-                        Documento pendiente
-                    </small>
+            );
 
-                </div>
+            const card =
+            document.createElement('div');
 
-            </div>
+            card.className =
+            "card-documento";
 
-            <input 
-                type="file"
-                class="form-control mb-3"
-            >
+            if(documentoExistente){
 
-            <button class="btn-subir">
+                card.innerHTML = `
 
-                <i class="fas fa-upload"></i>
+                    <div class="header-documento">
 
-                Subir documento
+                        <div class="icono-documento">
 
-            </button>
+                            <i class="fas fa-file-pdf"></i>
 
-            <div class="estado-doc">
+                        </div>
 
-                <span class="badge bg-danger">
-                    Pendiente
-                </span>
+                        <div>
 
-            </div>
+                            <h5>${doc}</h5>
 
-        `;
+                            <small>
 
-        contenedorDocumentos.appendChild(card);
+                                ${documentoExistente.nombre_archivo}
 
-    });
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                    <div class="acciones-documento">
+
+                        <a
+
+                            href="/api/ver-documento/${documentoExistente.id}"
+                            target="_blank"
+
+                            class="btn btn-primary"
+
+                        >
+
+                            <i class="fas fa-eye"></i>
+                            Ver
+
+                        </a>
+
+                        <button
+
+                            class="btn btn-danger"
+
+                            onclick="eliminarDocumento(${documentoExistente.id})"
+
+                        >
+
+                            <i class="fas fa-trash"></i>
+                            Eliminar
+
+                        </button>
+
+                    </div>
+
+                    <div class="estado-doc">
+
+                        <span class="badge bg-success">
+
+                            Documento cargado
+
+                        </span>
+
+                    </div>
+
+                `;
+
+            }
+
+            else{
+
+                card.innerHTML = `
+
+                    <div class="header-documento">
+
+                        <div class="icono-documento">
+
+                            <i class="fas fa-file-pdf"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h5>${doc}</h5>
+
+                            <small>
+
+                                Documento pendiente
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                    <input 
+
+                        type="file"
+                        multiple
+
+                        id="${inputId}"
+
+                        class="form-control mb-3"
+
+                    >
+
+                    <button 
+
+                        class="btn-subir"
+
+                        onclick="subirDocumento(
+                            '${doc}',
+                            document.getElementById('${inputId}')
+                        )"
+
+                    >
+
+                        <i class="fas fa-upload"></i>
+
+                        Subir documento
+
+                    </button>
+
+                    <div class="estado-doc">
+
+                        <span class="badge bg-danger">
+
+                            Pendiente
+
+                        </span>
+
+                    </div>
+
+                `;
+
+            }
+
+            contenedorDocumentos.appendChild(card);
+
+        });
+
+    }catch(error){
+
+        console.log(error);
+
+    }
 
 }
+
+
+/* =========================================
+   📤 SUBIR DOCUMENTO
+========================================= */
+
+async function subirDocumento(
+    tipoDocumento,
+    inputArchivo
+){
+
+    try{
+
+        const archivos =
+        inputArchivo.files;
+
+        if(archivos.length === 0){
+
+            Swal.fire({
+
+                icon:'warning',
+                title:'Selecciona archivos'
+
+            });
+
+            return;
+
+        }
+
+        for(const archivo of archivos){
+
+            const formData = new FormData();
+
+            formData.append(
+                'empleado_id',
+                id
+            );
+
+            formData.append(
+                'categoria',
+                tipoDocumento
+            );
+
+            formData.append(
+                'tipo_documento',
+                tipoDocumento
+            );
+
+            formData.append(
+                'archivo',
+                archivo
+            );
+
+            await fetch(
+
+                '/api/subir-documento',
+
+                {
+
+                    method:'POST',
+                    body:formData
+
+                }
+
+            );
+
+        }
+
+        Swal.fire({
+
+            icon:'success',
+
+            title:'Archivos subidos correctamente',
+
+            confirmButtonColor:'#2563eb'
+
+        });
+
+        cargarDocumentos();
+
+    }catch(error){
+
+        console.log(error);
+
+        Swal.fire({
+
+            icon:'error',
+
+            title:'Error del servidor'
+
+        });
+
+    }
+
+}
+
+/* =========================================
+   🗑️ ELIMINAR DOCUMENTO
+========================================= */
+
+async function eliminarDocumento(idDocumento){
+
+    const confirmar = confirm(
+        '¿Eliminar documento?'
+    );
+
+    if(!confirmar) return;
+
+    try{
+
+        const response = await fetch(
+
+            `/api/documento/${idDocumento}`,
+
+            {
+
+                method:'DELETE'
+
+            }
+
+        );
+
+        const data =
+        await response.json();
+
+        if(data.ok){
+
+            alert(
+                'Documento eliminado'
+            );
+
+            cargarDocumentos();
+
+        }
+
+    }catch(error){
+
+        console.log(error);
+
+    }
+
+}
+
 
 cargarEmpleado();
