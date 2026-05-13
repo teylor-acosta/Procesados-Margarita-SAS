@@ -69,6 +69,20 @@ router.get('/expediente-empleado/:id', (req, res) => {
     );
 
 });
+/* =========================================
+   🔥 CENTRO ACTIVIDAD
+========================================= */
+
+router.get('/centro-actividad', (req, res) => {
+
+    res.sendFile(
+        path.join(
+            __dirname,
+            '../public/centro-actividad.html'
+        )
+    );
+
+});
 
 
 // ============================================
