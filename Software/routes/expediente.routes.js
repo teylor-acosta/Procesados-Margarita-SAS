@@ -14,7 +14,7 @@ router.get('/api/empleado/:id', async (req, res) => {
 
         const { id } = req.params;
 
-        const [empleados] = await db.query(`
+        const sql = `
 
             SELECT 
                 e.*,
@@ -34,11 +34,13 @@ router.get('/api/empleado/:id', async (req, res) => {
             LEFT JOIN sedes s
             ON e.sede_id = s.id
 
-            WHERE e.id = ?
+            WHERE e.id = $1
 
-        `, [id]);
+        `;
 
-        if (empleados.length === 0) {
+        const empleados = await db.query(sql, [id]);
+
+        if (empleados.rows.length === 0) {
 
             return res.json({
                 ok: false
@@ -49,7 +51,7 @@ router.get('/api/empleado/:id', async (req, res) => {
         res.json({
 
             ok: true,
-            empleado: empleados[0]
+            empleado: empleados.rows[0]
 
         });
 

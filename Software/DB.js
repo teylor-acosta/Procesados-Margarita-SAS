@@ -1,43 +1,19 @@
-const mysql = require('mysql2');
+const { Pool } = require('pg');
 require('dotenv').config();
 
-const pool = mysql.createPool({
-
-    host: 'shinkansen.proxy.rlwy.net',
-
-    user: 'root',
-
-    password: 'TWPHRfMEWZooysXkytWNJMcFtjmwjDLX',
-
-    database: 'railway',
-
-    port: 34998,
-
-    waitForConnections: true,
-
-    connectionLimit: 10,
-
-    queueLimit: 0,
-
-    connectTimeout: 10000,
-
-    enableKeepAlive: true,
-
-    keepAliveInitialDelay: 0
-});
-
-pool.getConnection((err, connection) => {
-
-    if (err) {
-
-        console.error('❌ Error MySQL:', err);
-
-        return;
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false
     }
-
-    console.log('✅ MySQL conectado');
-
-    connection.release();
 });
 
-module.exports = pool.promise();
+pool.connect()
+    .then(() => {
+        console.log('✅ PostgreSQL conectado');
+    })
+    .catch((err) => {
+        console.error('❌ Error PostgreSQL:', err);
+    });
+
+module.exports = pool;

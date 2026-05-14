@@ -14,8 +14,8 @@ router.post('/api/subir-foto', proteger, (req, res) => {
     const sql = `
         UPDATE empleados e
         JOIN usuarios u ON u.empleado_id = e.id
-        SET e.foto = ?
-        WHERE u.id = ?
+        SET e.foto = $1
+        WHERE u.id = $1
     `;
 
     db.query(sql, [foto, req.session.usuarioID], (err) => {
