@@ -2,7 +2,12 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const multer = require('multer');
-const fs = require('fs');
+const cloudinary =
+require('../config/cloudinary');
+
+const {
+    CloudinaryStorage
+} = require('multer-storage-cloudinary');
 
 const db = require('../DB');
 
@@ -131,110 +136,33 @@ router.get('/api/documentacion-empleados', (req, res) => {
    📂 CONFIGURAR MULTER
 ========================================= */
 
-const storage = multer.diskStorage({
+/* =========================================
+   ☁️ CLOUDINARY STORAGE
+========================================= */
 
-    destination: (req, file, cb) => {
+const storage = new CloudinaryStorage({
 
-        try {
+    cloudinary,
 
-            const empleado_id =
-                req.body.empleado_id;
+    params: async (req, file) => {
 
-            db.query(
+        const empleado_id =
+        req.body.empleado_id;
 
-                `
+        return {
 
-                SELECT
-                    codigo,
-                    nombre
+            folder:
+            `empleados/${empleado_id}`,
 
-                FROM empleados
+            resource_type:'auto',
 
-                WHERE id = ?
+            public_id:
+                Date.now() +
+                '-' +
+                file.originalname
+                .replace(/\s+/g, '-')
 
-                `,
-
-                [empleado_id],
-
-                (error, results) => {
-
-                    if (error) {
-
-                        console.log(error);
-
-                        return cb(
-                            new Error(
-                                'Error SQL'
-                            )
-                        );
-
-                    }
-
-                    if (results.length === 0) {
-
-                        return cb(
-                            new Error(
-                                'Empleado no encontrado'
-                            )
-                        );
-
-                    }
-
-                    const empleado = results[0];
-
-                    const nombreLimpio =
-
-                        empleado.nombre
-                        .replace(/\s+/g, '-')
-                        .toUpperCase();
-
-                    const carpetaEmpleado =
-
-                        path.join(
-
-                            __dirname,
-                            '../public/archivos-empleados',
-                            `${empleado.codigo}-${nombreLimpio}`
-
-                        );
-
-                    /* =====================================
-                       🔥 CREAR CARPETA
-                    ===================================== */
-
-                    if (!fs.existsSync(carpetaEmpleado)) {
-
-                        fs.mkdirSync(
-                            carpetaEmpleado,
-                            { recursive:true }
-                        );
-
-                    }
-
-                    cb(null, carpetaEmpleado);
-
-                }
-
-            );
-
-        } catch (error) {
-
-            console.log(error);
-
-        }
-
-    },
-
-    filename: (req, file, cb) => {
-
-        const nombreArchivo =
-
-            Date.now() +
-            '-' +
-            file.originalname
-            .replace(/\s+/g, '-');
-
-        cb(null, nombreArchivo);
+        };
 
     }
 
@@ -484,12 +412,9 @@ router.get(
 
                 }
 
-                const documento = results[0];
-
-                const rutaCompleta = documento.ruta_archivo;
-
-                res.sendFile(rutaCompleta);
-
+                res.redirect(
+    documento.ruta_archivo
+);
             }
 
         );
@@ -533,22 +458,6 @@ router.delete(
                     return res.json({
                         ok:false
                     });
-
-                }
-
-                const documento = results[0];
-
-                const rutaCompleta = path.join(
-
-                    __dirname,
-                    '../public',
-                    documento.ruta_archivo
-
-                );
-
-                if (fs.existsSync(rutaCompleta)) {
-
-                    fs.unlinkSync(rutaCompleta);
 
                 }
 
