@@ -142,49 +142,98 @@ async function renderizarCapitulos() {
         const evaluacionAprobada = capitulo.aprobado === 1;
         const evaluacionReprobada = capitulo.aprobado === 0 && capitulo.nota !== null;
         
-        let botonEvaluacionHtml = '';
-        let estadoEvaluacionHtml = '';
-        
-        if (evaluacionAprobada) {
-            estadoEvaluacionHtml = `
-                <div class="mt-3 text-center">
-                    <span class="badge bg-success fs-6 p-2">
-                        <i class="fas fa-check-circle me-1"></i> Evaluación Aprobada (${capitulo.nota}%)
-                    </span>
-                </div>
-            `;
-            botonEvaluacionHtml = '';
-        } else if (evaluacionReprobada) {
-            estadoEvaluacionHtml = `
-                <div class="mt-3 text-center">
-                    <span class="badge bg-danger fs-6 p-2 mb-2">
-                        <i class="fas fa-times-circle me-1"></i> Evaluación Reprobada (${capitulo.nota}%)
-                    </span>
-                </div>
-            `;
-            botonEvaluacionHtml = `
-                <div class="text-center mt-2">
-                    <button class="btn btn-warning btn-sm" onclick="irAEvaluacion(${capitulo.id})">
-                        <i class="fas fa-redo-alt me-1"></i> Reintentar Evaluación
-                    </button>
-                </div>
-            `;
-        } else {
-            estadoEvaluacionHtml = `
-                <div class="mt-3 text-center">
-                    <span class="badge bg-secondary fs-6 p-2">
-                        <i class="fas fa-clock me-1"></i> Evaluación Pendiente
-                    </span>
-                </div>
-            `;
-            botonEvaluacionHtml = `
-                <div class="text-center mt-2">
-                    <button class="btn-degradado" onclick="irAEvaluacion(${capitulo.id})" ${!videosCompletos ? 'disabled' : ''}>
-                        <i class="fas fa-pencil-alt me-1"></i> ${!videosCompletos ? 'Complete los videos primero' : 'Realizar Evaluación'}
-                    </button>
-                </div>
-            `;
-        }
+let botonEvaluacionHtml = '';
+let estadoEvaluacionHtml = '';
+
+// ===============================
+// CAPITULO 1 = SIN EVALUACION
+// ===============================
+
+if (capitulo.id === 1) {
+
+    if (videosCompletos) {
+
+        estadoEvaluacionHtml = `
+            <div class="mt-3 text-center">
+                <span class="badge bg-success fs-6 p-2">
+                    <i class="fas fa-check-circle me-1"></i>
+                    Bienvenida completada
+                </span>
+            </div>
+        `;
+
+    } else {
+
+        estadoEvaluacionHtml = `
+            <div class="mt-3 text-center">
+                <span class="badge bg-secondary fs-6 p-2">
+                    <i class="fas fa-clock me-1"></i>
+                    Video pendiente
+                </span>
+            </div>
+        `;
+    }
+
+    botonEvaluacionHtml = '';
+
+} else if (evaluacionAprobada) {
+
+    estadoEvaluacionHtml = `
+        <div class="mt-3 text-center">
+            <span class="badge bg-success fs-6 p-2">
+                <i class="fas fa-check-circle me-1"></i>
+                Evaluación Aprobada (${capitulo.nota}%)
+            </span>
+        </div>
+    `;
+
+    botonEvaluacionHtml = '';
+
+} else if (evaluacionReprobada) {
+
+    estadoEvaluacionHtml = `
+        <div class="mt-3 text-center">
+            <span class="badge bg-danger fs-6 p-2 mb-2">
+                <i class="fas fa-times-circle me-1"></i>
+                Evaluación Reprobada (${capitulo.nota}%)
+            </span>
+        </div>
+    `;
+
+    botonEvaluacionHtml = `
+        <div class="text-center mt-2">
+            <button class="btn btn-warning btn-sm"
+                onclick="irAEvaluacion(${capitulo.id})">
+                <i class="fas fa-redo-alt me-1"></i>
+                Reintentar Evaluación
+            </button>
+        </div>
+    `;
+
+} else {
+
+    estadoEvaluacionHtml = `
+        <div class="mt-3 text-center">
+            <span class="badge bg-secondary fs-6 p-2">
+                <i class="fas fa-clock me-1"></i>
+                Evaluación Pendiente
+            </span>
+        </div>
+    `;
+
+    botonEvaluacionHtml = `
+        <div class="text-center mt-2">
+            <button class="btn-degradado"
+                onclick="irAEvaluacion(${capitulo.id})"
+                ${!videosCompletos ? 'disabled' : ''}>
+                <i class="fas fa-pencil-alt me-1"></i>
+                ${!videosCompletos
+                    ? 'Complete los videos primero'
+                    : 'Realizar Evaluación'}
+            </button>
+        </div>
+    `;
+}
         
         html += `
             <div class="modulo-item mb-4">
