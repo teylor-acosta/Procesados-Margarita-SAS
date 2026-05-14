@@ -1,7 +1,12 @@
 const mysql = require('mysql2');
+require('dotenv').config();
 
 const pool = mysql.createPool({
-    uri: process.env.MYSQL_URL,
+    host: 'shinkansen.proxy.rlwy.net',
+    user: 'root',
+    password: 'TWPHRfMEWZooysXkytWNJMcFtjmwjDLX',
+    database: 'railway',
+    port: 34998,
 
     waitForConnections: true,
     connectionLimit: 10,
@@ -19,7 +24,7 @@ pool.getConnection((err, connection) => {
         return;
     }
 
-    console.log('✅ MySQL conectado');
+    console.log('✅ MySQL conectado correctamente');
 
     connection.release();
 });
