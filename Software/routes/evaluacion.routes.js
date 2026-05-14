@@ -7,26 +7,47 @@ const { proteger } = require('../middlewares/auth');
 // 🔥 OBTENER PREGUNTAS
 // ============================================
 
-router.get('/api/preguntas-evaluacion/:capituloId', proteger, (req, res) => {
+router.get('/api/preguntas-evaluacion/:capituloId', proteger, async (req, res) => {
 
     const db = req.app.get('db');
 
     const sql = `
-        SELECT id, pregunta, opcion_a, opcion_b, opcion_c, opcion_d, respuesta_correcta, puntos 
+        SELECT 
+            id,
+            pregunta,
+            opcion_a,
+            opcion_b,
+            opcion_c,
+            opcion_d,
+            respuesta_correcta,
+            puntos 
+
         FROM preguntas_induccion 
-        WHERE capitulo_id = ?
+
+        WHERE capitulo_id = $1
     `;
 
-    db.query(sql, [req.params.capituloId], (err, results) => {
+    try {
 
-        if (err) {
-            console.error("Error al cargar preguntas:", err);
-            return res.json({ success: false, message: err.message });
-        }
+        const results = await db.query(sql, [
+            req.params.capituloId
+        ]);
 
-        res.json({ success: true, preguntas: results });
+        res.json({
+            success: true,
+            preguntas: results.rows
+        });
 
-    });
+    } catch (err) {
+
+        console.error("Error al cargar preguntas:", err);
+
+        res.json({
+            success: false,
+            message: err.message
+        });
+
+    }
 
 });
 
@@ -35,118 +56,254 @@ router.get('/api/preguntas-evaluacion/:capituloId', proteger, (req, res) => {
 // 🔥 GUARDAR EVALUACIÓN
 // ============================================
 
-router.post('/api/guardar-evaluacion', proteger, (req, res) => {
+router.post('/api/guardar-evaluacion', proteger, async (req, res) => {
 
     const db = req.app.get('db');
 
     const { capitulo_id, respuestas } = req.body;
+
     const usuario_id = req.session.usuarioID;
 
     if (!capitulo_id || !respuestas) {
-        return res.json({ success: false, message: "Datos incompletos" });
+
+        return res.json({
+            success: false,
+            message: "Datos incompletos"
+        });
+
     }
 
-    const sqlGetPreguntas = `
-        SELECT id, respuesta_correcta 
-        FROM preguntas_induccion 
-        WHERE capitulo_id = ?
-    `;
-    
-    db.query(sqlGetPreguntas, [capitulo_id], (err, preguntas) => {
+    try {
 
-        if (err) {
-            console.error("Error al obtener preguntas:", err);
-            return res.json({ success: false, message: "Error al obtener preguntas" });
-        }
+        // =========================================
+        // 🔥 OBTENER PREGUNTAS
+        // =========================================
+
+        const sqlGetPreguntas = `
+            SELECT 
+                id,
+                respuesta_correcta 
+
+            FROM preguntas_induccion 
+
+            WHERE capitulo_id = $1
+        `;
+
+        const preguntasResult = await db.query(
+            sqlGetPreguntas,
+            [capitulo_id]
+        );
+
+        const preguntas = preguntasResult.rows;
 
         if (preguntas.length === 0) {
-            return res.json({ success: false, message: "No hay preguntas para este capítulo" });
+
+            return res.json({
+                success: false,
+                message: "No hay preguntas para este capítulo"
+            });
+
         }
+
+        // =========================================
+        // 🔥 CALCULAR NOTA
+        // =========================================
 
         let aciertos = 0;
 
         preguntas.forEach(p => {
-            const respuestaUsuario = respuestas[p.id];
-            if (respuestaUsuario && respuestaUsuario === p.respuesta_correcta) {
+
+            const respuestaUsuario =
+                respuestas[p.id];
+
+            if (
+                respuestaUsuario &&
+                respuestaUsuario === p.respuesta_correcta
+            ) {
+
                 aciertos++;
+
             }
+
         });
 
-        const nota = Math.round((aciertos / preguntas.length) * 100);
-        const aprobado = nota >= 70 ? 1 : 0;
+        const nota = Math.round(
+            (aciertos / preguntas.length) * 100
+        );
+
+        const aprobado =
+            nota >= 70;
+
+        // =========================================
+        // 🔥 VALIDAR EXISTENTE
+        // =========================================
 
         const sqlCheck = `
-            SELECT id 
-            FROM resultados_evaluaciones 
-            WHERE usuario_id = ? AND capitulo_id = ?
+            SELECT id
+
+            FROM resultados_evaluaciones
+
+            WHERE usuario_id = $1
+            AND capitulo_id = $2
         `;
-        
-        db.query(sqlCheck, [usuario_id, capitulo_id], (errCheck, existing) => {
 
-            if (errCheck) {
-                return res.json({ success: false, message: "Error al verificar evaluación previa" });
-            }
+        const existingResult = await db.query(
+            sqlCheck,
+            [
+                usuario_id,
+                capitulo_id
+            ]
+        );
 
-            let sqlInsert;
-            let params;
+        const existing =
+            existingResult.rows;
 
-            if (existing.length > 0) {
-                sqlInsert = `
-                    UPDATE resultados_evaluaciones 
-                    SET nota = ?, aprobado = ?, fecha_evaluacion = NOW() 
-                    WHERE usuario_id = ? AND capitulo_id = ?
-                `;
-                params = [nota, aprobado, usuario_id, capitulo_id];
-            } else {
-                sqlInsert = `
-                    INSERT INTO resultados_evaluaciones 
-                    (usuario_id, capitulo_id, nota, aprobado, fecha_evaluacion) 
-                    VALUES (?, ?, ?, ?, NOW())
-                `;
-                params = [usuario_id, capitulo_id, nota, aprobado];
-            }
+        // =========================================
+        // 🔥 INSERT / UPDATE
+        // =========================================
 
-            db.query(sqlInsert, params, (errInsert) => {
+        if (existing.length > 0) {
 
-                if (errInsert) {
-                    console.error("Error al guardar:", errInsert);
-                    return res.json({ success: false, message: errInsert.message });
-                }
+            const sqlUpdate = `
+                UPDATE resultados_evaluaciones
 
-                // 🔥 VALIDAR SI TERMINÓ TODO
-                const sqlTotal = `SELECT COUNT(*) as total FROM capitulos_induccion WHERE activo = 1`;
-                const sqlAprobados = `
-                    SELECT COUNT(*) as aprobados 
-                    FROM resultados_evaluaciones 
-                    WHERE usuario_id = ? AND aprobado = 1
-                `;
+                SET
+                    nota = $1,
+                    aprobado = $2,
+                    fecha_evaluacion = NOW()
 
-                db.query(sqlTotal, (errTotal, totalResult) => {
+                WHERE usuario_id = $3
+                AND capitulo_id = $4
+            `;
 
-                    db.query(sqlAprobados, [usuario_id], (errAprob, aprobadosResult) => {
+            await db.query(sqlUpdate, [
 
-                        const totalCapitulos = totalResult?.[0]?.total || 0;
-                        const totalAprobados = aprobadosResult?.[0]?.aprobados || 0;
+                nota,
+                aprobado,
+                usuario_id,
+                capitulo_id
 
-                        if (totalAprobados >= totalCapitulos && totalCapitulos > 0) {
-                            db.query(`UPDATE usuarios SET primera_vez = 0 WHERE id = ?`, [usuario_id]);
-                        }
+            ]);
 
-                        res.json({
-                            success: true,
-                            nota,
-                            aprobado: aprobado === 1
-                        });
+        } else {
 
-                    });
+            const sqlInsert = `
+                INSERT INTO resultados_evaluaciones (
 
-                });
+                    usuario_id,
+                    capitulo_id,
+                    nota,
+                    aprobado,
+                    fecha_evaluacion
 
-            });
+                )
+
+                VALUES (
+
+                    $1,
+                    $2,
+                    $3,
+                    $4,
+                    NOW()
+
+                )
+            `;
+
+            await db.query(sqlInsert, [
+
+                usuario_id,
+                capitulo_id,
+                nota,
+                aprobado
+
+            ]);
+
+        }
+
+        // =========================================
+        // 🔥 VALIDAR INDUCCIÓN COMPLETA
+        // =========================================
+
+        const sqlTotal = `
+            SELECT COUNT(*) as total
+
+            FROM capitulos_induccion
+
+            WHERE activo = true
+        `;
+
+        const totalResult =
+            await db.query(sqlTotal);
+
+        const sqlAprobados = `
+            SELECT COUNT(*) as aprobados
+
+            FROM resultados_evaluaciones
+
+            WHERE usuario_id = $1
+            AND aprobado = true
+        `;
+
+        const aprobadosResult =
+            await db.query(sqlAprobados, [
+                usuario_id
+            ]);
+
+        const totalCapitulos =
+            totalResult.rows[0]?.total || 0;
+
+        const totalAprobados =
+            aprobadosResult.rows[0]?.aprobados || 0;
+
+        // =========================================
+        // 🔥 ACTUALIZAR USUARIO
+        // =========================================
+
+        if (
+            totalAprobados >= totalCapitulos &&
+            totalCapitulos > 0
+        ) {
+
+            await db.query(
+
+                `
+                UPDATE usuarios
+
+                SET primera_vez = false
+
+                WHERE id = $1
+                `,
+
+                [usuario_id]
+
+            );
+
+        }
+
+        // =========================================
+        // 🔥 RESPUESTA
+        // =========================================
+
+        res.json({
+
+            success: true,
+            nota,
+            aprobado
 
         });
 
-    });
+    } catch (err) {
+
+        console.error("Error guardar evaluación:", err);
+
+        res.json({
+
+            success: false,
+            message: err.message
+
+        });
+
+    }
 
 });
 
