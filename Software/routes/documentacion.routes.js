@@ -1,13 +1,18 @@
 const express = require('express');
+process.on('uncaughtException', err => {
+    console.error('UNCAUGHT EXCEPTION');
+    console.error(err);
+});
+
+process.on('unhandledRejection', err => {
+    console.error('UNHANDLED REJECTION');
+    console.error(err);
+});
 const router = express.Router();
 const path = require('path');
 const multer = require('multer');
 const cloudinary =
 require('../config/cloudinary');
-
-const {
-    CloudinaryStorage
-} = require('multer-storage-cloudinary');
 
 const db = require('../DB');
 
@@ -130,39 +135,29 @@ router.get('/api/documentacion-empleados', (req, res) => {
     });
 
 });
-
-
 /* =========================================
-   📂 CONFIGURAR MULTER
+   ☁️ MULTER LOCAL
 ========================================= */
 
-/* =========================================
-   ☁️ CLOUDINARY STORAGE
-========================================= */
+const storage = multer.diskStorage({
 
-const storage = new CloudinaryStorage({
+    destination: (req, file, cb) => {
 
-    cloudinary,
+        cb(null, 'public/archivos-empleados');
 
-    params: async (req, file) => {
+    },
 
-        const empleado_id =
-        req.body.empleado_id;
+    filename: (req, file, cb) => {
 
-        return {
+        cb(
 
-            folder:
-            `empleados/${empleado_id}`,
+            null,
 
-            resource_type:'auto',
+            Date.now() +
+            '-' +
+            file.originalname.replace(/\s+/g, '-')
 
-            public_id:
-                Date.now() +
-                '-' +
-                file.originalname
-                .replace(/\s+/g, '-')
-
-        };
+        );
 
     }
 
@@ -181,141 +176,186 @@ router.post(
 
     upload.single('archivo'),
 
-    (req, res) => {
+    async (req, res) => {
 
-        const {
+        try {
 
-            empleado_id,
-            categoria,
-            tipo_documento
-
-        } = req.body;
-
-        if (!req.file) {
-
-            return res.json({
-
-                ok:false,
-                mensaje:'Archivo requerido'
-
-            });
-
-        }
-
-        const extension =
-            req.file.originalname
-            .split('.')
-            .pop();
-
-const rutaArchivo = req.file.path;
-
-        const sql = `
-
-            INSERT INTO documentos_empleado (
+            const {
 
                 empleado_id,
                 categoria,
-                tipo_documento,
-                nombre_archivo,
-                ruta_archivo,
-                extension,
-                estado
+                tipo_documento
 
-            )
+            } = req.body;
 
-            VALUES (?, ?, ?, ?, ?, ?, 'PENDIENTE')
+            if (!req.file) {
 
-        `;
+                return res.json({
 
-        db.query(
-
-            sql,
-
-            [
-
-                empleado_id,
-                categoria || tipo_documento,
-                tipo_documento,
-                req.file.originalname,
-                rutaArchivo,
-                extension
-
-            ],
-
-            (error) => {
-
-                if (error) {
-
-                    console.log(error);
-
-                    return res.json({
-
-                        ok:false,
-                        mensaje:'Error servidor'
-
-                    });
-
-                }
-
-                /* =====================================
-                   🔥 CENTRO ACTIVIDAD
-                ===================================== */
-
-                db.query(
-
-                    `
-
-                    INSERT INTO centro_actividad (
-
-                        empleado_id,
-                        usuario_id,
-                        accion,
-                        modulo,
-                        descripcion,
-                        color,
-                        icono
-
-                    )
-
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-
-                    `,
-
-                    [
-
-                        empleado_id,
-
-                        req.session.usuario?.id || null,
-
-                        'DOCUMENTO',
-
-                        'DOCUMENTACION',
-
-                        `Se subió el documento ${tipo_documento}`,
-
-                        'morado',
-
-                        'fa-file-upload'
-
-                    ]
-
-                );
-
-                res.json({
-
-                    ok:true,
-                    mensaje:'Documento subido correctamente'
+                    ok:false,
+                    mensaje:'Archivo requerido'
 
                 });
 
             }
 
-        );
+            const extension =
+                req.file.originalname
+                .split('.')
+                .pop();
+
+            // ========================================
+            // URL CLOUDINARY
+            // ========================================
+const resultado = await cloudinary.uploader.upload(
+
+    req.file.path,
+
+    {
+
+        folder: `empleados/${empleado_id}`,
+
+        resource_type: 'auto'
 
     }
 
 );
 
+const rutaArchivo = resultado.secure_url;
+
+            /* =====================================
+               💾 GUARDAR MYSQL
+            ===================================== */
+
+            const sql = `
+
+                INSERT INTO documentos_empleado (
+
+                    empleado_id,
+                    categoria,
+                    tipo_documento,
+                    nombre_archivo,
+                    ruta_archivo,
+                    extension,
+                    estado
+
+                )
+
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+
+            `;
+
+            db.query(
+
+                sql,
+
+                [
+
+                    empleado_id,
+
+                    categoria || tipo_documento,
+
+                    tipo_documento,
+
+                    req.file.originalname,
+
+                    rutaArchivo,
+
+                    extension,
+
+                    'APROBADO'
+
+                ],
+
+                (error) => {
+
+                    if (error) {
+
+                        console.error(error);
+
+                        return res.json({
+
+                            ok:false,
+                            mensaje:error.message
+
+                        });
+
+                    }
+
+                    /* =====================================
+                       🔥 CENTRO ACTIVIDAD
+                    ===================================== */
+
+                    db.query(
+
+                        `
+
+                        INSERT INTO centro_actividad (
+
+                            empleado_id,
+                            usuario_id,
+                            accion,
+                            modulo,
+                            descripcion,
+                            color,
+                            icono
+
+                        )
+
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+
+                        `,
+
+                        [
+
+                            empleado_id,
+
+                            req.session.usuario?.id || null,
+
+                            'DOCUMENTO',
+
+                            'DOCUMENTACION',
+
+                            `Se subió el documento ${tipo_documento}`,
+
+                            'morado',
+
+                            'fa-file-upload'
+
+                        ]
+
+                    );
+
+                    res.json({
+
+                        ok:true,
+                        mensaje:'Documento subido correctamente',
+                        url:rutaArchivo
+
+                    });
+
+                }
+
+            );
+
+} catch (error) {
+
+    console.error('🔥 ERROR SUBIR DOCUMENTO:');
+
+    console.error(error);
+
+    res.status(500).json({
+
+        ok:false,
+        mensaje:error.message
+
+    });
+
+}
+
+    }
+
+);
 
 /* =========================================
    📄 OBTENER DOCUMENTOS EMPLEADO
@@ -351,7 +391,7 @@ router.get(
 
                 if (error) {
 
-                    console.log(error);
+                    console.error(error);
 
                     return res.json({
                         ok:false
@@ -379,49 +419,47 @@ router.get(
    👁️ VER DOCUMENTO
 ========================================= */
 
-router.get(
+router.get('/api/ver-documento/:id', (req, res) => {
 
-    '/api/ver-documento/:id',
+    const id = req.params.id;
 
-    (req, res) => {
+    const sql = `
+    
+        SELECT *
+        FROM documentos_empleado
+        WHERE id = ?
+    
+    `;
 
-        const { id } = req.params;
+    db.query(sql, [id], (error, results) => {
 
-        db.query(
+        if (error) {
 
-            `
+            console.error(error);
 
-            SELECT *
+            return res.send('Error servidor');
 
-            FROM documentos_empleado
+        }
 
-            WHERE id = ?
+        if (results.length === 0) {
 
-            
-            `,
+            return res.send('Documento no encontrado');
 
-            [id],
+        }
 
-            (error, results) => {
+        const documento = results[0];
 
-                if (error || results.length === 0) {
+        if (!documento.ruta_archivo) {
 
-                    return res.send(
-                        'Documento no encontrado'
-                    );
+            return res.send('Documento sin ruta');
 
-                }
+        }
 
-                res.redirect(
-    documento.ruta_archivo
-);
-            }
+        return res.redirect(documento.ruta_archivo);
 
-        );
+    });
 
-    }
-
-);
+});
 
 
 /* =========================================
@@ -454,6 +492,8 @@ router.delete(
             (error, results) => {
 
                 if (error || results.length === 0) {
+
+                    console.error(error);
 
                     return res.json({
                         ok:false

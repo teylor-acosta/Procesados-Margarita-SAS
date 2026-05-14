@@ -382,7 +382,7 @@ async function subirDocumento(
                 archivo
             );
 
-            await fetch(
+            const response = await fetch(
 
                 '/api/subir-documento',
 
@@ -394,6 +394,22 @@ async function subirDocumento(
                 }
 
             );
+
+            const data =
+            await response.json();
+
+            console.log(data);
+
+            if(!data.ok){
+
+                throw new Error(
+
+                    data.mensaje ||
+                    'Error subiendo documento'
+
+                );
+
+            }
 
         }
 
@@ -417,7 +433,9 @@ async function subirDocumento(
 
             icon:'error',
 
-            title:'Error del servidor'
+            title:'Error del servidor',
+
+            text:error.message
 
         });
 
@@ -431,11 +449,11 @@ async function subirDocumento(
 
 async function eliminarDocumento(idDocumento){
 
-    const confirmar = confirm(
-        '¿Eliminar documento?'
-    );
+const confirmar = confirm(
+    '¿Estás seguro de eliminar este documento?\n\nEsta acción no se puede deshacer.'
+);
 
-    if(!confirmar) return;
+if (!confirmar) return;
 
     try{
 
