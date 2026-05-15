@@ -3,181 +3,352 @@
 ============================================ */
 
 .crear-container {
-    margin-top: 110px;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
+
+    margin-top:100px;
+
+    display:flex;
+
+    justify-content:center;
+
+    padding:18px;
+
+    width:100%;
+
+    box-sizing:border-box;
+
 }
+
 
 /* ============================================
    🎯 TARJETA FORMULARIO
 ============================================ */
 
 .form-card {
-    background: rgba(255,255,255,0.95);
-    padding: 35px;
-    border-radius: 20px;
-    width: 100%;
-    max-width: 900px;
 
-    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    background:rgba(255,255,255,0.97);
 
-    position: relative;
-    backdrop-filter: blur(6px);
+    padding:30px;
 
-    z-index: 10; /* 🔥 FIX */
+    border-radius:18px;
+
+    width:100%;
+
+    max-width:900px;
+
+    /* 🔥 SOMBRA MÁS LIVIANA */
+    box-shadow:0 8px 22px rgba(0,0,0,0.10);
+
+    position:relative;
+
+    z-index:10;
+
+    overflow:hidden;
+
+    /* 🔥 MEJOR RENDIMIENTO */
+    will-change:auto;
+
 }
 
-/* 🔥 BORDE GRADIENTE CORPORATIVO */
-.form-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 20px;
-    padding: 2px;
 
-    background: linear-gradient(135deg, #22c55e, #2563eb);
+/* ============================================
+   🔥 BORDE CORPORATIVO
+============================================ */
+
+.form-card::before {
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    border-radius:18px;
+
+    padding:2px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #22c55e,
+            #2563eb
+        );
 
     -webkit-mask:
         linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
 
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
+    -webkit-mask-composite:xor;
 
-    pointer-events: none; /* 🔥 FIX */
+    mask-composite:exclude;
+
+    pointer-events:none;
+
 }
+
 
 /* ============================================
    🧾 TITULO
 ============================================ */
 
 .titulo-form {
-    text-align: center;
-    font-weight: bold;
-    font-size: 22px;
-    margin-bottom: 25px;
-    color: #2563eb;
+
+    text-align:center;
+
+    font-weight:bold;
+
+    font-size:22px;
+
+    margin-bottom:22px;
+
+    color:#2563eb;
+
 }
+
 
 /* ============================================
    🧩 LABELS
 ============================================ */
 
 label {
-    font-weight: 500;
-    font-size: 14px;
-    color: #374151;
+
+    font-weight:500;
+
+    font-size:14px;
+
+    color:#374151;
+
+    margin-bottom:5px;
+
 }
+
 
 /* ============================================
    🔲 INPUTS Y SELECTS
 ============================================ */
 
 .form-control {
-    border-radius: 12px;
-    padding: 10px;
-    border: 1px solid #d1d5db;
-    font-size: 14px;
 
-    transition: all 0.2s ease;
+    border-radius:12px;
+
+    padding:10px 12px;
+
+    border:1px solid #d1d5db;
+
+    font-size:14px;
+
+    min-height:45px;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+
+    box-shadow:none !important;
+
 }
+
 
 .form-control:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+
+    border-color:#2563eb;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(37,99,235,0.12) !important;
+
 }
+
 
 /* ============================================
    🎯 BOTÓN GUARDAR
 ============================================ */
 
 .btn-guardar {
-    background: linear-gradient(135deg, #22c55e, #2563eb);
-    color: white;
-    border: none;
-    padding: 12px 45px;
-    border-radius: 30px;
-    font-weight: bold;
-    font-size: 15px;
 
-    transition: 0.3s;
+    background:
+        linear-gradient(
+            135deg,
+            #22c55e,
+            #2563eb
+        );
+
+    color:white;
+
+    border:none;
+
+    padding:12px 40px;
+
+    border-radius:30px;
+
+    font-weight:bold;
+
+    font-size:15px;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease;
+
+    min-height:48px;
+
 }
+
 
 .btn-guardar:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+
+    transform:translateY(-2px);
+
+    opacity:.95;
+
 }
+
 
 /* ============================================
    🧱 GRID ESPACIADO
 ============================================ */
 
 .row.g-3 > div {
-    margin-bottom: 5px;
-}
 
-/* ============================================
-   📱 RESPONSIVE TABLET
-============================================ */
-
-@media (max-width: 992px) {
-
-    .form-card {
-        padding: 25px;
-    }
+    margin-bottom:4px;
 
 }
 
+
 /* ============================================
-   📱 RESPONSIVE MÓVIL
+   📱 TABLET
 ============================================ */
 
-@media (max-width: 768px) {
+@media (max-width:992px) {
 
     .crear-container {
-        margin-top: 90px;
-        padding: 15px;
+
+        padding:15px;
+
     }
 
     .form-card {
-        padding: 20px;
-        border-radius: 15px;
+
+        padding:24px;
+
+        border-radius:16px;
+
+    }
+
+}
+
+
+/* ============================================
+   📱 MÓVIL
+============================================ */
+
+@media (max-width:768px) {
+
+    .crear-container {
+
+        margin-top:85px;
+
+        padding:12px;
+
+    }
+
+    .form-card {
+
+        padding:18px;
+
+        border-radius:15px;
+
+        /* 🔥 QUITAR EFECTOS PESADOS */
+        backdrop-filter:none;
+
+        box-shadow:
+            0 4px 14px
+            rgba(0,0,0,0.08);
+
     }
 
     .titulo-form {
-        font-size: 18px;
+
+        font-size:18px;
+
+        margin-bottom:18px;
+
     }
 
     label {
-        font-size: 13px;
+
+        font-size:13px;
+
     }
 
     .form-control {
-        font-size: 13px;
-        padding: 8px;
+
+        font-size:13px;
+
+        padding:8px 10px;
+
+        min-height:42px;
+
     }
 
     .btn-guardar {
-        width: 100%;
-        padding: 12px;
-        font-size: 14px;
+
+        width:100%;
+
+        padding:12px;
+
+        font-size:14px;
+
+        border-radius:14px;
+
     }
 
 }
+
 
 /* ============================================
    📱 MÓVIL PEQUEÑO
 ============================================ */
 
-@media (max-width: 480px) {
+@media (max-width:480px) {
+
+    .crear-container {
+
+        padding:10px;
+
+    }
 
     .form-card {
-        padding: 15px;
+
+        padding:14px;
+
+        border-radius:14px;
+
     }
 
     .titulo-form {
-        font-size: 16px;
+
+        font-size:16px;
+
+    }
+
+    .form-control {
+
+        font-size:12px;
+
+    }
+
+}
+
+
+/* ============================================
+   🔥 OPTIMIZACIÓN GLOBAL MÓVIL
+============================================ */
+
+@media (max-width:768px){
+
+    *{
+
+        /* 🔥 EVITA LAG EN ANDROID */
+        -webkit-tap-highlight-color:transparent;
+
     }
 
 }

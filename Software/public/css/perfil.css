@@ -1,143 +1,436 @@
-/* ================= PERFIL PRO ================= */
+/* =========================================
+   👤 PERFIL PRO OPTIMIZADO
+========================================= */
+
+
+/* =========================================
+   📦 CONTENEDOR
+========================================= */
 
 .perfil-container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 120px);
-    padding: 20px;
+
+    display:flex;
+
+    justify-content:center;
+    align-items:center;
+
+    min-height:calc(100vh - 110px);
+
+    padding:18px;
+
+    width:100%;
+
+    box-sizing:border-box;
+
+    overflow-x:hidden;
+
 }
+
+
+/* =========================================
+   🧾 CARD
+========================================= */
 
 .perfil-card{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 40px;
 
-    width: 900px;
-    max-width: 95%;
-    margin: auto;
+    display:flex;
 
-    background: #ffffff;
-    border-radius: 25px;
-    padding: 40px;
+    flex-wrap:wrap;
 
-    color: #1e293b;
+    gap:30px;
 
-    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-    border: 2px solid #33ff00;
+    width:900px;
+
+    max-width:100%;
+
+    margin:auto;
+
+    background:#ffffff;
+
+    border-radius:22px;
+
+    padding:32px;
+
+    color:#1e293b;
+
+    /* 🔥 SOMBRA MÁS LIVIANA */
+    box-shadow:
+        0 8px 22px
+        rgba(0,0,0,0.10);
+
+    border:2px solid #22c55e;
+
+    overflow:hidden;
+
 }
 
-/* FOTO */
+
+/* =========================================
+   📸 FOTO
+========================================= */
+
 .perfil-foto{
-    flex: 1 1 250px;
-    text-align: center;
+
+    flex:1 1 240px;
+
+    text-align:center;
+
 }
+
+
+/* AVATAR */
 
 .avatar{
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    object-fit: cover;
 
-    border: 4px solid #22c55e;
-    box-shadow: 0 0 25px rgba(34,197,94,0.6);
+    width:150px;
+    height:150px;
 
-    transition: 0.3s;
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:4px solid #22c55e;
+
+    /* 🔥 SOMBRA MÁS LIVIANA */
+    box-shadow:
+        0 0 16px
+        rgba(34,197,94,0.28);
+
+    transition:
+        transform .2s ease;
+
 }
+
+
+/* HOVER */
 
 .avatar:hover{
-    transform: scale(1.08);
+
+    transform:scale(1.03);
+
 }
 
-/* BOTÓN FOTO */
+
+/* =========================================
+   🔘 BOTÓN FOTO
+========================================= */
+
 .btn-upload{
-    margin-top: 12px;
-    padding: 8px 18px;
-    border-radius: 30px;
-    border: none;
 
-    background: linear-gradient(135deg, #28a745, #20c997);
-    color: white;
+    margin-top:12px;
 
-    font-size: 14px;
-    cursor: pointer;
-    transition: 0.3s;
+    padding:10px 18px;
+
+    border-radius:24px;
+
+    border:none;
+
+    background:
+        linear-gradient(
+            135deg,
+            #28a745,
+            #20c997
+        );
+
+    color:white;
+
+    font-size:14px;
+
+    cursor:pointer;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease;
+
+    min-height:44px;
+
 }
+
+
+/* HOVER */
 
 .btn-upload:hover{
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(40,167,69,0.4);
+
+    transform:translateY(-2px);
+
+    opacity:.95;
+
 }
 
-/* INFO */
+
+/* =========================================
+   📄 INFO
+========================================= */
+
 .perfil-info{
-    flex: 2 1 500px;
+
+    flex:2 1 480px;
+
+    min-width:0;
+
 }
+
+
+/* TITULO */
 
 .perfil-info h3{
-    font-size: 24px;
-    font-weight: 700;
-    color: #007bff;
+
+    font-size:24px;
+
+    font-weight:700;
+
+    color:#007bff;
+
+    margin-bottom:12px;
+
+    word-break:break-word;
+
 }
+
+
+/* TEXTO */
 
 .perfil-info p{
-    margin-bottom: 6px;
-    font-size: 14px;
-    color: #334155;
+
+    margin-bottom:8px;
+
+    font-size:14px;
+
+    color:#334155;
+
+    line-height:1.5;
+
+    word-break:break-word;
+
 }
 
-/* DIVISIÓN */
+
+/* =========================================
+   ➖ DIVISIÓN
+========================================= */
+
 .perfil-info hr{
-    border: none;
-    height: 1px;
-    background: rgba(0,0,0,0.1);
-    margin: 15px 0;
+
+    border:none;
+
+    height:1px;
+
+    background:rgba(0,0,0,0.08);
+
+    margin:16px 0;
+
 }
+
+
+/* =========================================
+   🔝 HEADER
+========================================= */
 
 .perfil-header{
-    max-width: 1100px;
-    margin: 20px auto 0;
-    padding: 0 20px;
+
+    max-width:1100px;
+
+    margin:18px auto 0;
+
+    padding:0 18px;
+
 }
 
-/* BOTÓN VOLVER */
+
+/* =========================================
+   🔙 BOTÓN VOLVER
+========================================= */
+
 .btn-back{
-    display: flex;
-    align-items: center;
-    gap: 8px;
 
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    color: white;
+    display:flex;
 
-    border: none;
-    padding: 10px 18px;
-    border-radius: 30px;
+    align-items:center;
 
-    cursor: pointer;
-    font-weight: 600;
+    gap:8px;
 
-    transition: 0.3s;
+    background:
+        linear-gradient(
+            135deg,
+            #007bff,
+            #0056b3
+        );
+
+    color:white;
+
+    border:none;
+
+    padding:10px 18px;
+
+    border-radius:24px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease;
+
+    min-height:44px;
+
 }
+
+
+/* HOVER */
 
 .btn-back:hover{
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0,123,255,0.4);
+
+    transform:translateY(-2px);
+
+    opacity:.95;
+
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px){
+
+/* =========================================
+   📱 TABLET
+========================================= */
+
+@media (max-width:992px){
+
     .perfil-card{
-        flex-direction: column;
-        text-align: center;
+
+        padding:26px;
+
+        gap:24px;
+
+    }
+
+}
+
+
+/* =========================================
+   📱 MÓVIL
+========================================= */
+
+@media (max-width:768px){
+
+    .perfil-container{
+
+        padding:12px;
+
+    }
+
+    .perfil-card{
+
+        flex-direction:column;
+
+        text-align:center;
+
+        padding:20px;
+
+        border-radius:18px;
+
+        box-shadow:
+            0 4px 12px
+            rgba(0,0,0,0.08);
+
     }
 
     .perfil-info{
-        text-align: left;
+
+        text-align:left;
+
     }
+
+    .perfil-info h3{
+
+        font-size:22px;
+
+        text-align:center;
+
+    }
+
+    .avatar{
+
+        width:130px;
+        height:130px;
+
+    }
+
+    .btn-upload{
+
+        width:100%;
+
+        border-radius:14px;
+
+    }
+
+    .btn-back{
+
+        width:100%;
+
+        justify-content:center;
+
+        border-radius:14px;
+
+    }
+
 }
 
-/* 🔥 RESET SOLO PERFIL */
+
+/* =========================================
+   📱 MÓVILES PEQUEÑOS
+========================================= */
+
+@media (max-width:480px){
+
+    .perfil-card{
+
+        padding:16px;
+
+    }
+
+    .perfil-info h3{
+
+        font-size:20px;
+
+    }
+
+    .perfil-info p{
+
+        font-size:13px;
+
+    }
+
+    .avatar{
+
+        width:115px;
+        height:115px;
+
+    }
+
+}
+
+
+/* =========================================
+   🔥 RESET SOLO PERFIL
+========================================= */
+
 .perfil-container *::before,
 .perfil-container *::after{
-    display: none !important;
+
+    display:none !important;
+
+}
+
+
+/* =========================================
+   🔥 OPTIMIZACIÓN MÓVIL
+========================================= */
+
+@media(max-width:768px){
+
+    *{
+
+        -webkit-tap-highlight-color:transparent;
+
+    }
+
 }

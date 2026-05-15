@@ -1,91 +1,317 @@
 /* =========================================
-   LOGIN
+   🔐 LOGIN OPTIMIZADO
 ========================================= */
 
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
+/* =========================================
+   🌎 BODY
+========================================= */
+
+body{
+
+    display:flex;
+
+    justify-content:center;
+    align-items:center;
+
+    min-height:100vh;
+
+    padding:15px;
+
+    overflow-x:hidden;
+
+    -webkit-font-smoothing:antialiased;
+
+    text-rendering:optimizeLegibility;
+
 }
 
-/* CARD */
-.card-custom {
-    background: white;
-    border-radius: 30px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    overflow: hidden;
-    width: 100%;
+
+/* =========================================
+   🧾 CARD
+========================================= */
+
+.card-custom{
+
+    background:#fff;
+
+    border-radius:24px;
+
+    /* 🔥 SOMBRA MÁS LIVIANA */
+    box-shadow:
+        0 8px 22px
+        rgba(0,0,0,0.12);
+
+    overflow:hidden;
+
+    width:100%;
+
+    max-width:430px;
+
+    position:relative;
+
 }
 
-/* HEADER */
-.card-header-custom {
-    text-align: center;
-    padding: 2rem 1.5rem 1rem;
+
+/* =========================================
+   🌈 BORDE SUPERIOR
+========================================= */
+
+.card-custom::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:5px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #198754,
+            #0d6efd
+        );
+
 }
 
-.card-header-custom img {
-    max-width: 100px;
+
+/* =========================================
+   🏷️ HEADER
+========================================= */
+
+.card-header-custom{
+
+    text-align:center;
+
+    padding:2rem 1.5rem 1rem;
+
 }
 
-.card-header-custom h3 {
-    color: #004085;
-    font-weight: 800;
+
+/* LOGO */
+
+.card-header-custom img{
+
+    max-width:95px;
+
+    object-fit:contain;
+
 }
 
-/* BODY */
-.card-body-custom {
-    padding: 2rem;
+
+/* TITULO */
+
+.card-header-custom h3{
+
+    color:#004085;
+
+    font-weight:800;
+
+    margin-top:12px;
+
+    font-size:28px;
+
+    line-height:1.2;
+
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
 
-    .card-custom {
-        border-radius: 20px;
+/* =========================================
+   📄 BODY
+========================================= */
+
+.card-body-custom{
+
+    padding:1.8rem;
+
+}
+
+
+/* =========================================
+   🔐 CONTENEDOR PASSWORD
+========================================= */
+
+.input-password{
+
+    position:relative;
+
+}
+
+
+/* =========================================
+   ✍️ INPUT PASSWORD
+========================================= */
+
+.input-password input{
+
+    padding-right:45px;
+
+    min-height:46px;
+
+    border-radius:12px;
+
+    border:1px solid #d1d5db;
+
+    font-size:14px;
+
+}
+
+
+/* =========================================
+   👁️ OJITO
+========================================= */
+
+.toggle-password{
+
+    position:absolute;
+
+    right:14px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    cursor:pointer;
+
+    color:#6c757d;
+
+    font-size:16px;
+
+    transition:
+        color .2s ease;
+
+}
+
+
+/* HOVER */
+
+.toggle-password:hover{
+
+    color:#198754;
+
+}
+
+
+/* =========================================
+   🔘 BOTONES
+========================================= */
+
+.btn{
+
+    min-height:46px;
+
+    border-radius:14px !important;
+
+    font-weight:600 !important;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease;
+
+}
+
+
+/* HOVER */
+
+.btn:hover{
+
+    transform:translateY(-1px);
+
+    opacity:.95;
+
+}
+
+
+/* =========================================
+   📱 TABLET
+========================================= */
+
+@media(max-width:768px){
+
+    body{
+
+        padding:12px;
+
     }
 
-    .card-header-custom h3 {
-        font-size: 20px;
+    .card-custom{
+
+        border-radius:18px;
+
+        box-shadow:
+            0 4px 12px
+            rgba(0,0,0,0.08);
+
     }
 
-    .card-body-custom {
-        padding: 1.5rem;
-    }
-}
+    .card-header-custom{
 
-@media (max-width: 576px) {
+        padding:1.5rem 1rem .8rem;
 
-    .card-body-custom {
-        padding: 1rem;
     }
 
-    .card-header-custom img {
-        max-width: 80px;
+    .card-header-custom h3{
+
+        font-size:22px;
+
     }
+
+    .card-body-custom{
+
+        padding:1.3rem;
+
+    }
+
 }
 
-/* 🔥 CONTENEDOR PASSWORD */
-.input-password {
-    position: relative;
+
+/* =========================================
+   📱 MÓVILES PEQUEÑOS
+========================================= */
+
+@media(max-width:576px){
+
+    .card-body-custom{
+
+        padding:1rem;
+
+    }
+
+    .card-header-custom img{
+
+        max-width:75px;
+
+    }
+
+    .card-header-custom h3{
+
+        font-size:20px;
+
+    }
+
+    .input-password input{
+
+        font-size:13px;
+
+    }
+
 }
 
-/* 🔥 INPUT CON ESPACIO */
-.input-password input {
-    padding-right: 45px;
-}
 
-/* 🔥 OJITO */
-.toggle-password {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #6c757d;
-    font-size: 16px;
-}
+/* =========================================
+   🔥 OPTIMIZACIÓN MÓVIL
+========================================= */
 
-/* 🔥 HOVER */
-.toggle-password:hover {
-    color: #198754;
+@media(max-width:768px){
+
+    *{
+
+        -webkit-tap-highlight-color:transparent;
+
+    }
+
 }

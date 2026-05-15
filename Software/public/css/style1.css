@@ -1,179 +1,440 @@
-/* =========================
-   RESET
-========================= */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* ============================================
+   🌿 GLOBAL ERP OPTIMIZADO
+============================================ */
+
+
+/* ============================================
+   🔄 RESET
+============================================ */
+
+*{
+
+    margin:0;
+    padding:0;
+
+    box-sizing:border-box;
+
+    -webkit-tap-highlight-color:transparent;
+
 }
 
-/* =========================
-   VARIABLES
-========================= */
-:root {
-    --verde: #22c55e;
-    --azul: #2563eb;
-    --gris: #f4f7f6;
-    --glass: rgba(255,255,255,0.85);
+
+/* ============================================
+   🎨 VARIABLES
+============================================ */
+
+:root{
+
+    --verde:#22c55e;
+
+    --verde-dark:#16a34a;
+
+    --azul:#2563eb;
+
+    --azul-dark:#1d4ed8;
+
+    --gris:#f4f7f6;
+
+    --glass:rgba(255,255,255,0.96);
+
 }
 
-/* =========================
-   BODY + FONDO (🔥 SE MANTIENE)
-========================= */
-body {
-    font-family: 'Averia Libre', cursive;
-    background: var(--gris);
-    min-height: 100vh;
-    overflow-x: hidden;
+
+/* ============================================
+   🌎 BODY
+============================================ */
+
+body{
+
+    font-family:'Averia Libre', cursive;
+
+    background:var(--gris);
+
+    min-height:100vh;
+
+    overflow-x:hidden;
+
+    position:relative;
+
+    -webkit-font-smoothing:antialiased;
+
+    text-rendering:optimizeLegibility;
+
 }
 
-/* 🔥 FONDO CON BLUR (ARREGLADO, NO DAÑA NADA) */
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background: url('../img/Fondo.png') center/cover no-repeat;
-    filter: blur(8px);
-    transform: scale(1.05); /* evita bordes blancos */
-    z-index: -1;
+
+/* ============================================
+   🌫️ FONDO
+============================================ */
+
+body::before{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+        url('../img/Fondo.webp')
+        center/cover no-repeat;
+
+    /* 🔥 MENOS PESADO */
+    filter:blur(4px);
+
+    transform:scale(1.02);
+
+    z-index:-1;
+
 }
 
-/* =========================
-   NAVBAR PRO (CORREGIDO)
-========================= */
-.navbar-custom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 
-    padding: 15px 40px;
-    background: white;
+/* ============================================
+   🔝 NAVBAR
+============================================ */
 
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+.navbar-custom{
 
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1000;
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px 28px;
+
+    background:#ffffff;
+
+    position:fixed;
+
+    width:100%;
+
+    top:0;
+
+    z-index:1000;
+
+    /* 🔥 SOMBRA MÁS LIVIANA */
+    box-shadow:
+        0 4px 12px
+        rgba(0,0,0,0.08);
+
 }
 
-.navbar-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+
+/* ============================================
+   📦 IZQUIERDA NAVBAR
+============================================ */
+
+.navbar-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    min-width:0;
+
 }
 
-.logo-navbar {
-    width: 45px;
+
+/* LOGO */
+
+.logo-navbar{
+
+    width:45px;
+
+    height:auto;
+
+    object-fit:contain;
+
 }
 
-.empresa-nombre {
-    font-weight: bold;
-    color: #15803d;
-    font-size: 16px;
+
+/* TEXTO */
+
+.empresa-nombre{
+
+    font-weight:bold;
+
+    color:#15803d;
+
+    font-size:16px;
+
+    line-height:1.2;
+
 }
 
-/* botón logout */
-.btn-logout {
-    background: #dc2626;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: 0.3s;
+
+/* ============================================
+   🚪 BOTÓN LOGOUT
+============================================ */
+
+.btn-logout{
+
+    background:#dc2626;
+
+    color:white;
+
+    padding:8px 16px;
+
+    border-radius:20px;
+
+    text-decoration:none;
+
+    font-weight:500;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:6px;
+
+    min-height:40px;
+
 }
 
-.btn-logout:hover {
-    background: #b91c1c;
+
+/* HOVER */
+
+.btn-logout:hover{
+
+    background:#b91c1c;
+
+    transform:translateY(-1px);
+
+    opacity:.95;
+
 }
 
-/* icono hamburguesa */
-.menu-toggle {
-    font-size: 20px;
-    cursor: pointer;
+
+/* ============================================
+   🍔 MENU
+============================================ */
+
+.menu-toggle{
+
+    font-size:20px;
+
+    cursor:pointer;
+
+    color:#1e293b;
+
 }
 
-/* =========================
-   BOTONES GENERALES
-========================= */
-.btn-gradient {
-    background: linear-gradient(135deg, var(--verde), var(--azul));
-    color: white;
-    border: none;
-    padding: 12px 28px;
-    border-radius: 30px;
-    font-weight: bold;
-    transition: 0.3s;
+
+/* ============================================
+   🔘 BOTONES GENERALES
+============================================ */
+
+.btn-gradient{
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--verde),
+            var(--azul)
+        );
+
+    color:white;
+
+    border:none;
+
+    padding:12px 26px;
+
+    border-radius:24px;
+
+    font-weight:bold;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease;
+
+    min-height:46px;
+
 }
 
-.btn-gradient:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+
+/* HOVER */
+
+.btn-gradient:hover{
+
+    transform:translateY(-2px);
+
+    opacity:.95;
+
 }
 
-/* =========================
-   INPUTS
-========================= */
-.form-control {
-    border-radius: 12px;
-    padding: 12px;
-    border: 1px solid #ddd;
+
+/* ============================================
+   ✍️ INPUTS
+============================================ */
+
+.form-control{
+
+    border-radius:12px;
+
+    padding:12px;
+
+    border:1px solid #d1d5db;
+
+    min-height:46px;
+
+    font-size:14px;
+
+    box-shadow:none !important;
+
 }
 
-/* =========================
-   ALERTAS
-========================= */
-.alert-custom {
-    padding: 10px;
-    border-radius: 20px;
-    text-align: center;
+
+/* FOCUS */
+
+.form-control:focus{
+
+    border-color:#2563eb;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(37,99,235,0.12) !important;
+
 }
 
-/* =========================
-   RESPONSIVE BASE
-========================= */
-@media (max-width: 768px) {
 
-    body::before {
-        filter: blur(4px); /* 🔥 corregido */
+/* ============================================
+   🚨 ALERTAS
+============================================ */
+
+.alert-custom{
+
+    padding:12px;
+
+    border-radius:18px;
+
+    text-align:center;
+
+    font-size:14px;
+
+}
+
+
+/* ============================================
+   👁️ PASSWORD
+============================================ */
+
+.toggle-password{
+
+    position:absolute;
+
+    right:15px;
+
+    top:70%;
+
+    transform:translateY(-50%);
+
+    cursor:pointer;
+
+    color:#6c757d;
+
+    transition:
+        color .2s ease;
+
+}
+
+
+/* HOVER */
+
+.toggle-password:hover{
+
+    color:#198754;
+
+}
+
+
+/* ============================================
+   📱 TABLET
+============================================ */
+
+@media (max-width:768px){
+
+    /* FONDO */
+
+    body::before{
+
+        filter:blur(2px);
+
     }
 
-    .navbar-custom {
-        padding: 10px 15px;
+    /* NAVBAR */
+
+    .navbar-custom{
+
+        padding:10px 14px;
+
     }
 
-    .empresa-nombre {
-        font-size: 14px;
+    .empresa-nombre{
+
+        font-size:14px;
+
+    }
+
+    .btn-logout{
+
+        padding:8px 12px;
+
+        border-radius:14px;
+
+        font-size:13px;
+
+    }
+
+    .btn-gradient{
+
+        border-radius:16px;
+
     }
 
 }
 
-/* =========================
-   MÓVIL
-========================= */
-@media (max-width: 576px) {
 
-    .btn-gradient {
-        width: 100%;
-        text-align: center;
+/* ============================================
+   📱 MÓVIL
+============================================ */
+
+@media (max-width:576px){
+
+    .btn-gradient{
+
+        width:100%;
+
+        text-align:center;
+
     }
 
-    .form-control {
-        font-size: 14px;
+    .form-control{
+
+        font-size:13px;
+
     }
 
-}
+    .navbar-custom{
 
-.toggle-password {
-    position: absolute;
-    right: 15px;
-    top: 70%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #6c757d;
-}
+        gap:8px;
 
-.toggle-password:hover {
-    color: #198754;
+    }
+
+    .empresa-nombre{
+
+        max-width:120px;
+
+        word-break:break-word;
+
+    }
+
 }
