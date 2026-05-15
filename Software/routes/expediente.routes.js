@@ -19,9 +19,9 @@ router.get('/api/empleado/:id', async (req, res) => {
             SELECT 
                 e.*,
 
-                c.cargo AS cargo,
-                a.area AS area,
-                s.sede AS sede
+                c.nombre AS cargo,
+                a.nombre AS area,
+                s.nombre AS sede
 
             FROM empleados e
 
