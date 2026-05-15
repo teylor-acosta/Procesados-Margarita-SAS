@@ -1,0 +1,22 @@
+{
+  "name": "Procesados Margarita ERP",
+  "short_name": "MargaritaERP",
+  "description": "ERP empresarial Procesados Margarita SAS",
+  "start_url": "/login",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#198754",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/img/Gemini_Generated_Image_bo9w5fbo9w5fbo9w-removebg-preview.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/img/Gemini_Generated_Image_bo9w5fbo9w5fbo9w-removebg-preview.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
