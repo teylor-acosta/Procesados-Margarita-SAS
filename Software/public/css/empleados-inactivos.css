@@ -1,125 +1,412 @@
-/* CONTENEDOR */
+/* =========================================
+   📦 CONTENEDOR
+========================================= */
+
 .empleados-container{
-    padding: 100px 40px 40px;
+
+    padding:95px 22px 30px;
+
+    width:100%;
+
+    box-sizing:border-box;
+
+    overflow-x:hidden;
+
 }
 
-/* TITULO */
+
+/* =========================================
+   🏷️ TITULO
+========================================= */
+
+.titulo-panel{
+
+    text-align:center;
+
+    margin-bottom:20px;
+
+}
+
 .titulo-panel h2{
-    display: inline-block;
-    padding: 12px 30px;
-    border-radius: 30px;
-    background: linear-gradient(135deg, #198754, #0d6efd);
-    color: white;
-    font-weight: bold;
+
+    display:inline-block;
+
+    padding:12px 28px;
+
+    border-radius:24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #198754,
+            #0d6efd
+        );
+
+    color:white;
+
+    font-weight:bold;
+
+    font-size:24px;
+
+    /* 🔥 SOMBRA MÁS LIVIANA */
+    box-shadow:
+        0 4px 12px
+        rgba(0,0,0,0.10);
+
 }
 
-/* FILTROS */
+
+/* =========================================
+   🔎 FILTROS
+========================================= */
+
 .filtros-barra{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 20px;
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:10px;
+
+    justify-content:center;
+
+    margin-bottom:18px;
+
 }
+
 
 .input-busqueda{
-    width: 220px;
-    border-radius: 20px;
-    padding: 8px 12px;
+
+    width:220px;
+
+    border-radius:18px;
+
+    padding:10px 14px;
+
+    border:1px solid #d1d5db;
+
+    min-height:44px;
+
+    font-size:14px;
+
+    box-shadow:none !important;
+
 }
+
 
 .filtro{
-    width: 140px;
-    border-radius: 20px;
+
+    width:150px;
+
+    border-radius:18px;
+
+    min-height:44px;
+
+    font-size:14px;
+
 }
+
+
+/* =========================================
+   🔘 BOTONES ICONOS
+========================================= */
 
 .btn-icon{
-    border-radius: 50%;
-    width: 38px;
-    height: 38px;
+
+    border-radius:50%;
+
+    width:40px;
+    height:40px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    min-width:40px;
+
 }
 
-/* TABLA CONTENEDOR */
+
+/* =========================================
+   📋 TABLA CONTENEDOR
+========================================= */
+
 .tabla-container{
-    background: rgba(255,255,255,0.95);
-    backdrop-filter: blur(8px);
-    border-radius: 20px;
-    padding: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+
+    background:rgba(255,255,255,0.97);
+
+    /* 🔥 QUITAR BLUR PESADO */
+    backdrop-filter:none;
+
+    border-radius:18px;
+
+    padding:14px;
+
+    /* 🔥 SOMBRA MÁS LIVIANA */
+    box-shadow:
+        0 6px 18px
+        rgba(0,0,0,0.10);
+
+    overflow:hidden;
+
 }
 
-/* SCROLL */
+
+/* =========================================
+   🔄 SCROLL TABLA
+========================================= */
+
 .table-responsive{
-    max-height: 420px;
-    overflow-y: auto;
+
+    max-height:420px;
+
+    overflow-y:auto;
+
+    overflow-x:auto;
+
+    -webkit-overflow-scrolling:touch;
+
 }
 
-/* TABLA */
+
+/* =========================================
+   📊 TABLA
+========================================= */
+
 .tabla-corporativa{
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    font-size: 13px;
+
+    width:100%;
+
+    border-collapse:separate;
+
+    border-spacing:0;
+
+    font-size:13px;
+
+    min-width:850px;
+
 }
 
-/* HEADER */
+
+/* =========================================
+   🟢 HEADER
+========================================= */
+
 .tabla-corporativa thead th{
-    position: sticky;
-    top: 0;
-    background: #198754;
-    color: white;
-    padding: 12px;
-    border-right: 2px solid white;
-    text-transform: uppercase;
+
+    position:sticky;
+
+    top:0;
+
+    background:#198754;
+
+    color:white;
+
+    padding:12px 10px;
+
+    border-right:1px solid rgba(255,255,255,0.3);
+
+    text-transform:uppercase;
+
+    font-size:12px;
+
+    z-index:5;
+
+    white-space:nowrap;
+
 }
+
 
 .tabla-corporativa thead th:last-child{
-    border-right: none;
+
+    border-right:none;
+
 }
 
-/* FILAS */
+
+/* =========================================
+   📄 FILAS
+========================================= */
+
 .tabla-corporativa tbody tr:nth-child(even){
-    background: #f4f9ff;
+
+    background:#f4f9ff;
+
 }
+
 
 .tabla-corporativa tbody tr:hover{
-    background: #d6ecff;
+
+    background:#d6ecff;
+
 }
 
-/* CELDAS */
+
+/* =========================================
+   🔲 CELDAS
+========================================= */
+
 .tabla-corporativa td{
-    padding: 10px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
+
+    padding:10px 8px;
+
+    text-align:center;
+
+    border-bottom:1px solid #e5e7eb;
+
+    white-space:nowrap;
+
+    font-size:13px;
+
 }
 
-/* BOTÓN REACTIVAR */
+
+/* =========================================
+   🔘 BOTÓN REACTIVAR
+========================================= */
+
 .btn-reactivar{
-    background: #198754;
-    color: white;
-    border-radius: 15px;
-    padding: 5px 10px;
-    border: none;
+
+    background:#198754;
+
+    color:white;
+
+    border-radius:14px;
+
+    padding:6px 12px;
+
+    border:none;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease;
+
+    min-height:36px;
+
 }
+
 
 .btn-reactivar:hover{
-    background: #157347;
+
+    background:#157347;
+
+    transform:translateY(-1px);
+
 }
 
-/* RESPONSIVE */
-@media(max-width: 768px){
+
+/* =========================================
+   📱 TABLET
+========================================= */
+
+@media(max-width:992px){
 
     .empleados-container{
-        padding: 90px 10px;
+
+        padding-left:15px;
+        padding-right:15px;
+
+    }
+
+}
+
+
+/* =========================================
+   📱 MÓVIL
+========================================= */
+
+@media(max-width:768px){
+
+    .empleados-container{
+
+        padding:85px 10px 20px;
+
+    }
+
+    .titulo-panel h2{
+
+        width:100%;
+
+        font-size:20px;
+
+        border-radius:16px;
+
+        padding:12px;
+
+    }
+
+    .filtros-barra{
+
+        flex-direction:column;
+
+        align-items:stretch;
+
     }
 
     .input-busqueda,
     .filtro{
-        width: 100%;
+
+        width:100%;
+
+        font-size:13px;
+
+    }
+
+    .tabla-container{
+
+        padding:10px;
+
+        border-radius:14px;
+
+        box-shadow:
+            0 4px 12px
+            rgba(0,0,0,0.08);
+
     }
 
     .tabla-corporativa th,
     .tabla-corporativa td{
-        font-size: 11px;
+
+        font-size:11px;
+
+        padding:8px 6px;
+
     }
+
+}
+
+
+/* =========================================
+   📱 MÓVILES PEQUEÑOS
+========================================= */
+
+@media(max-width:480px){
+
+    .titulo-panel h2{
+
+        font-size:18px;
+
+    }
+
+    .tabla-corporativa{
+
+        min-width:700px;
+
+    }
+
+}
+
+
+/* =========================================
+   🔥 OPTIMIZACIÓN MÓVIL
+========================================= */
+
+@media(max-width:768px){
+
+    *{
+
+        -webkit-tap-highlight-color:transparent;
+
+    }
+
 }

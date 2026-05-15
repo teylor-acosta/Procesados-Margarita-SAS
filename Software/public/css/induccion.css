@@ -1,473 +1,736 @@
-/* FUENTE GLOBAL */
-* {
-    font-family: 'Averia Libre', cursive !important;
-}
-
-/* Fix para Iconos FontAwesome */
-.fas, .far, .fab, .fa {
-    font-family: "Font Awesome 6 Free" !important;
-    font-weight: 900 !important;
-}
-
-:root {
-    --azul-margarita: #004085;
-    --verde-margarita: #198754;
-    --degradado: linear-gradient(135deg, #28a745, #007bff);
-}
-
-body {
-    margin: 0;
-    background: url('../img/Fondo.png') no-repeat center center fixed !important;
-    background-size: cover !important;
-}
-
-/* Fondo más visible - menos capa blanca encima */
-.background-overlay {
-    background: rgba(255, 255, 255, 0.75);
-    min-height: 100vh;
-}
-
-.navbar-custom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 5%;
-    background: white;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.btn-logout {
-    background-color: #d9534f;
-    color: white !important;
-    padding: 8px 20px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
-}
-
 /* ============================================
-   MARCO DE 10PX CON GRADIENTE (BORDE COMPLETO)
-   ============================================ */
-.modulo-item {
-    background: white;
-    border-radius: 20px;
-    padding: 25px;
-    margin-bottom: 30px;
-    border: 10px solid transparent; 
-    background-image: linear-gradient(white, white), 
-                      linear-gradient(135deg, var(--verde-margarita), #007bff);
-    background-origin: border-box;
-    background-clip: padding-box, border-box;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
-}
-
-.modulo-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-}
-
-/* ============================================
-   TÍTULOS CON DEGRADADO (Verde-Azul)
-   ============================================ */
-.titulo-principal {
-    background: linear-gradient(135deg, #28a745, #007bff);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent !important;
-    font-weight: 800 !important;
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 2rem;
-}
-
-/* Títulos de cada módulo (Reglamento, Políticas, etc) */
-.modulo-item h3 {
-    background: linear-gradient(135deg, #28a745, #007bff);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent !important;
-    font-weight: 700 !important;
-    margin-bottom: 15px;
-    font-size: 1.5rem;
-}
-
-/* Subtítulos o textos destacados */
-.modulo-item h4, .modulo-item .subtitulo {
-    color: #004085;
-    font-weight: 600;
-}
-
-/* Texto de progreso (ej: "10 de 10 completados") */
-.progreso-texto {
-    color: #28a745;
-    font-weight: 600;
-    background: #e8f5e9;
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-}
-
-/* ============================================
-   BOTONES DEGRADADOS
-   ============================================ */
-.btn-degradado {
-    background: linear-gradient(135deg, #28a745, #007bff) !important;
-    color: white !important;
-    border-radius: 30px;
-    padding: 10px 25px;
-    font-weight: bold;
-    border: none;
-    transition: all 0.3s ease;
-}
-
-.btn-degradado:hover {
-    transform: scale(1.02);
-    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
-}
-
-/* ============================================
-   FILAS DE VIDEOS
-   ============================================ */
-.video-fila {
-    background: #f8f9fa;
-    border-radius: 10px;
-    padding: 15px;
-    margin-bottom: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border: 1px solid #eee;
-    transition: all 0.2s ease;
-}
-
-.video-fila:hover {
-    background: #f0f7ff;
-    border-color: #007bff;
-}
-
-.video-fila.visto {
-    background: linear-gradient(135deg, #e8f5e9, #e3f2fd);
-    border-left: 8px solid #28a745;
-}
-
-.video-fila.visto .video-titulo {
-    color: #28a745;
-    font-weight: 600;
-}
-
-.video-titulo {
-    flex: 1;
-    font-weight: 500;
-}
-
-.btn-ver-video {
-    background: linear-gradient(135deg, #28a745, #007bff);
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 5px 15px;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-ver-video:hover {
-    transform: scale(1.02);
-    opacity: 0.9;
-}
-
-/* Botón de confirmar */
-.btn-confirmar {
-    background: linear-gradient(135deg, #28a745, #007bff);
-    color: white;
-    border: none;
-    border-radius: 25px;
-    padding: 8px 20px;
-    font-weight: 600;
-    transition: all 0.2s ease;
-}
-
-.btn-confirmar:hover {
-    transform: scale(1.02);
-    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
-}
-
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-@media (max-width: 768px) {
-    .modulo-item {
-        padding: 15px;
-    }
-    
-    .titulo-principal {
-        font-size: 1.5rem;
-    }
-    
-    .modulo-item h3 {
-        font-size: 1.2rem;
-    }
-    
-    .video-fila {
-        flex-direction: column;
-        gap: 10px;
-        text-align: center;
-    }
-    
-    .btn-ver-video {
-        width: 100%;
-        text-align: center;
-    }
-}
-
-/* ============================================
-   ESTILOS ADICIONALES PARA MEJORAR VISUAL
-   ============================================ */
-/* Contenedor principal con más transparencia */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-/* Tarjeta de estadísticas o resumen */
-.stats-card {
-    background: white;
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-left: 6px solid #28a745;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-}
-
-.progress-bar-custom {
-    height: 8px;
-    background: linear-gradient(90deg, #28a745, #007bff);
-    border-radius: 4px;
-}
-/* ============================================
-   ESTILOS PARA LA PÁGINA DE FIRMA
-   ============================================ */
-.firma-container {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.firma-card {
-    background: white;
-    border-radius: 32px;
-    padding: 40px;
-    box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.2);
-    position: relative;
-    overflow: hidden;
-}
-
-.firma-card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 6px;
-    background: linear-gradient(90deg, #28a745, #007bff, #28a745);
-}
-
-.firma-titulo {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.firma-titulo h2 {
-    background: linear-gradient(135deg, #28a745, #007bff);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    font-weight: 800;
-    font-size: 2rem;
-    margin-bottom: 10px;
-}
-
-.firma-titulo p {
-    color: #6c757d;
-    font-size: 1rem;
-}
-
-/* Área de firma */
-.firma-area {
-    background: #f8f9fa;
-    border: 2px dashed #28a745;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-#firmaCanvas {
-    background: white;
-    border: 1px solid #dee2e6;
-    border-radius: 12px;
-    cursor: crosshair;
-    width: 100%;
-    max-width: 500px;
-    height: auto;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.firma-botones {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-}
-
-.btn-firma-borrar {
-    background: #dc3545;
-    color: white;
-    border: none;
-    padding: 10px 25px;
-    border-radius: 60px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-firma-borrar:hover {
-    background: #c82333;
-    transform: scale(1.02);
-}
-
-.btn-firma-finalizar {
-    background: linear-gradient(135deg, #28a745, #007bff);
-    color: white;
-    border: none;
-    padding: 12px 35px;
-    border-radius: 60px;
-    font-weight: bold;
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition: 0.3s;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.btn-firma-finalizar:hover {
-    transform: scale(1.02);
-    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
-}
-
-.btn-volver-modulos {
-    background: transparent;
-    border: 2px solid #28a745;
-    color: #28a745;
-    padding: 10px 25px;
-    border-radius: 60px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-}
-
-.btn-volver-modulos:hover {
-    background: #28a745;
-    color: white;
-}
-
-/* Mensaje de éxito */
-.firma-exito {
-    text-align: center;
-    padding: 20px;
-    background: #d4edda;
-    border-radius: 16px;
-    margin-top: 20px;
-}
-
-.firma-exito i {
-    font-size: 3rem;
-    color: #28a745;
-}
-
-.firma-exito h4 {
-    color: #155724;
-    margin-top: 10px;
-}
-
-/* ============================================
-   NAVBAR PROFESIONAL
+   🌿 ERP GLOBAL OPTIMIZADO MOBILE
 ============================================ */
 
-.navbar-custom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 5%;
-    background: white;
-    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
+/* ============================================
+   🔤 FUENTE GLOBAL
+============================================ */
+
+*{
+
+    margin:0;
+    padding:0;
+
+    box-sizing:border-box;
+
+    font-family:'Averia Libre', cursive !important;
+
+    -webkit-tap-highlight-color:transparent;
+
 }
 
-/* lado izquierdo */
-.navbar-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+
+/* ============================================
+   🔥 FIX FONT AWESOME
+============================================ */
+
+.fas,
+.far,
+.fab,
+.fa{
+
+    font-family:"Font Awesome 6 Free" !important;
+
+    font-weight:900 !important;
+
 }
 
-/* logo */
-.logo-navbar {
-    height: 50px;
-    width: auto;
-    object-fit: contain;
+
+/* ============================================
+   🎨 VARIABLES
+============================================ */
+
+:root{
+
+    --azul-margarita:#004085;
+
+    --verde-margarita:#198754;
+
+    --degradado:
+        linear-gradient(
+            135deg,
+            #28a745,
+            #007bff
+        );
+
 }
 
-/* texto empresa */
-.empresa-texto {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.1;
+
+/* ============================================
+   🌎 BODY
+============================================ */
+
+body{
+
+    margin:0;
+
+    background:
+        url('../img/Fondo.webp')
+        center/cover no-repeat !important;
+
+    background-attachment:scroll !important;
+
+    overflow-x:hidden;
+
+    -webkit-font-smoothing:antialiased;
+
+    text-rendering:optimizeLegibility;
+
 }
 
-.empresa-linea1 {
-    font-size: 0.9rem;
-    color: #2f3542;
+
+/* ============================================
+   🌫️ OVERLAY
+============================================ */
+
+.background-overlay{
+
+    background:
+        rgba(255,255,255,0.75);
+
+    min-height:100vh;
+
 }
 
-.empresa-linea2 {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #28a745;
+
+/* ============================================
+   🔝 NAVBAR
+============================================ */
+
+.navbar-custom{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:10px 5%;
+
+    background:white;
+
+    position:fixed;
+
+    top:0;
+    left:0;
+    right:0;
+
+    z-index:1000;
+
+    box-shadow:
+        0 4px 12px
+        rgba(0,0,0,0.08);
+
 }
 
-/* botón logout */
-.btn-logout {
-    background: linear-gradient(135deg, #dc3545, #c82333);
-    color: white !important;
-    padding: 8px 18px;
-    border-radius: 40px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: 0.3s;
+
+/* IZQUIERDA */
+
+.navbar-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
 }
 
-.btn-logout:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+
+/* LOGO */
+
+.logo-navbar{
+
+    height:50px;
+
+    width:auto;
+
+    object-fit:contain;
+
+}
+
+
+/* TEXTO */
+
+.empresa-texto{
+
+    display:flex;
+
+    flex-direction:column;
+
+    line-height:1.1;
+
+}
+
+
+.empresa-linea1{
+
+    font-size:.9rem;
+
+    color:#2f3542;
+
+}
+
+
+.empresa-linea2{
+
+    font-size:1rem;
+
+    font-weight:bold;
+
+    color:#28a745;
+
+}
+
+
+/* ============================================
+   🚪 BOTON LOGOUT
+============================================ */
+
+.btn-logout{
+
+    background:
+        linear-gradient(
+            135deg,
+            #dc3545,
+            #c82333
+        );
+
+    color:white !important;
+
+    padding:8px 18px;
+
+    border-radius:30px;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+    font-size:.85rem;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease;
+
+}
+
+
+/* HOVER */
+
+.btn-logout:hover{
+
+    transform:translateY(-2px);
+
+    opacity:.95;
+
+}
+
+
+/* ============================================
+   📦 CONTENEDOR
+============================================ */
+
+.container{
+
+    max-width:1200px;
+
+    margin:0 auto;
+
+    padding:20px;
+
+}
+
+
+/* ============================================
+   📄 MODULOS
+============================================ */
+
+.modulo-item{
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:22px;
+
+    margin-bottom:25px;
+
+    border:6px solid transparent;
+
+    background-image:
+        linear-gradient(white,white),
+        linear-gradient(
+            135deg,
+            var(--verde-margarita),
+            #007bff
+        );
+
+    background-origin:border-box;
+
+    background-clip:
+        padding-box,
+        border-box;
+
+    box-shadow:
+        0 6px 18px
+        rgba(0,0,0,0.10);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+
+}
+
+
+/* HOVER */
+
+.modulo-item:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 10px 22px
+        rgba(0,0,0,0.12);
+
+}
+
+
+/* ============================================
+   🏷️ TITULOS
+============================================ */
+
+.titulo-principal{
+
+    background:
+        linear-gradient(
+            135deg,
+            #28a745,
+            #007bff
+        );
+
+    -webkit-background-clip:text;
+
+    background-clip:text;
+
+    color:transparent !important;
+
+    font-weight:800 !important;
+
+    text-align:center;
+
+    margin-bottom:25px;
+
+    font-size:2rem;
+
+}
+
+
+/* MODULOS */
+
+.modulo-item h3{
+
+    background:
+        linear-gradient(
+            135deg,
+            #28a745,
+            #007bff
+        );
+
+    -webkit-background-clip:text;
+
+    background-clip:text;
+
+    color:transparent !important;
+
+    font-weight:700 !important;
+
+    margin-bottom:15px;
+
+    font-size:1.4rem;
+
+}
+
+
+/* SUBTITULOS */
+
+.modulo-item h4,
+.modulo-item .subtitulo{
+
+    color:#004085;
+
+    font-weight:600;
+
+}
+
+
+/* ============================================
+   📈 PROGRESO
+============================================ */
+
+.progreso-texto{
+
+    color:#28a745;
+
+    font-weight:600;
+
+    background:#e8f5e9;
+
+    display:inline-block;
+
+    padding:4px 12px;
+
+    border-radius:20px;
+
+    font-size:.85rem;
+
+}
+
+
+/* ============================================
+   🔘 BOTONES
+============================================ */
+
+.btn-degradado{
+
+    background:
+        linear-gradient(
+            135deg,
+            #28a745,
+            #007bff
+        ) !important;
+
+    color:white !important;
+
+    border-radius:30px;
+
+    padding:10px 24px;
+
+    font-weight:bold;
+
+    border:none;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease;
+
+}
+
+
+/* HOVER */
+
+.btn-degradado:hover{
+
+    transform:translateY(-2px);
+
+    opacity:.95;
+
+}
+
+
+/* ============================================
+   🎥 VIDEOS
+============================================ */
+
+.video-fila{
+
+    background:#f8f9fa;
+
+    border-radius:12px;
+
+    padding:14px;
+
+    margin-bottom:8px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    border:1px solid #eee;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease;
+
+}
+
+
+/* HOVER */
+
+.video-fila:hover{
+
+    background:#f0f7ff;
+
+    border-color:#007bff;
+
+}
+
+
+/* VISTO */
+
+.video-fila.visto{
+
+    background:
+        linear-gradient(
+            135deg,
+            #e8f5e9,
+            #e3f2fd
+        );
+
+    border-left:6px solid #28a745;
+
+}
+
+
+/* TITULO */
+
+.video-titulo{
+
+    flex:1;
+
+    font-weight:500;
+
+}
+
+
+/* ============================================
+   ▶️ BOTON VIDEO
+============================================ */
+
+.btn-ver-video{
+
+    background:
+        linear-gradient(
+            135deg,
+            #28a745,
+            #007bff
+        );
+
+    color:white;
+
+    border:none;
+
+    border-radius:18px;
+
+    padding:6px 14px;
+
+    font-size:.8rem;
+
+    cursor:pointer;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease;
+
+}
+
+
+/* HOVER */
+
+.btn-ver-video:hover{
+
+    transform:translateY(-1px);
+
+    opacity:.92;
+
+}
+
+
+/* ============================================
+   ✅ CONFIRMAR
+============================================ */
+
+.btn-confirmar{
+
+    background:
+        linear-gradient(
+            135deg,
+            #28a745,
+            #007bff
+        );
+
+    color:white;
+
+    border:none;
+
+    border-radius:22px;
+
+    padding:8px 18px;
+
+    font-weight:600;
+
+    transition:
+        transform .2s ease;
+
+}
+
+
+/* HOVER */
+
+.btn-confirmar:hover{
+
+    transform:translateY(-1px);
+
+}
+
+
+/* ============================================
+   📊 STATS
+============================================ */
+
+.stats-card{
+
+    background:white;
+
+    border-radius:14px;
+
+    padding:18px;
+
+    margin-bottom:20px;
+
+    border-left:5px solid #28a745;
+
+    box-shadow:
+        0 4px 12px
+        rgba(0,0,0,0.08);
+
+}
+
+
+/* BARRA */
+
+.progress-bar-custom{
+
+    height:8px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #28a745,
+            #007bff
+        );
+
+    border-radius:4px;
+
+}
+
+
+/* ============================================
+   📱 RESPONSIVE
+============================================ */
+
+@media(max-width:768px){
+
+    .container{
+
+        padding:12px;
+
+    }
+
+    .navbar-custom{
+
+        padding:10px 12px;
+
+    }
+
+    .empresa-linea1{
+
+        font-size:.75rem;
+
+    }
+
+    .empresa-linea2{
+
+        font-size:.85rem;
+
+    }
+
+    .btn-logout{
+
+        padding:8px 12px;
+
+        font-size:.75rem;
+
+        border-radius:14px;
+
+    }
+
+    .modulo-item{
+
+        padding:16px;
+
+        border-width:4px;
+
+        border-radius:16px;
+
+        box-shadow:
+            0 4px 12px
+            rgba(0,0,0,0.08);
+
+    }
+
+    .titulo-principal{
+
+        font-size:1.5rem;
+
+    }
+
+    .modulo-item h3{
+
+        font-size:1.15rem;
+
+    }
+
+    .video-fila{
+
+        flex-direction:column;
+
+        gap:10px;
+
+        text-align:center;
+
+    }
+
+    .btn-ver-video{
+
+        width:100%;
+
+    }
+
+}
+
+
+/* ============================================
+   📱 MOVILES PEQUEÑOS
+============================================ */
+
+@media(max-width:480px){
+
+    .titulo-principal{
+
+        font-size:1.3rem;
+
+    }
+
+    .modulo-item{
+
+        padding:14px;
+
+    }
+
+    .btn-degradado{
+
+        width:100%;
+
+        border-radius:14px;
+
+    }
+
 }

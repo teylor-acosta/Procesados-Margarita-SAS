@@ -1,215 +1,475 @@
 /* ============================================
    📦 CONTENEDOR GENERAL
 ============================================ */
+
 .empleados-container {
-    padding-top: 120px;
-    text-align: center;
+
+    padding-top:105px;
+
+    padding-left:18px;
+    padding-right:18px;
+
+    padding-bottom:30px;
+
+    text-align:center;
+
+    overflow-x:hidden;
+
+    width:100%;
+
+    box-sizing:border-box;
+
 }
+
 
 /* ============================================
    🏷️ TITULO
 ============================================ */
+
 .titulo-empleados {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 40px;
+
+    display:flex;
+
+    justify-content:center;
+
+    margin-bottom:30px;
+
 }
+
 
 .titulo-empleados h2 {
-    background: rgba(255,255,255,0.9);
-    padding: 15px 40px;
-    border-radius: 40px;
 
-    font-weight: bold;
-    color: #2563eb;
+    background:rgba(255,255,255,0.96);
 
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    backdrop-filter: blur(10px);
+    padding:14px 34px;
 
-    position: relative;
+    border-radius:34px;
+
+    font-weight:bold;
+
+    color:#2563eb;
+
+    position:relative;
+
+    /* 🔥 SOMBRA MÁS LIVIANA */
+    box-shadow:
+        0 6px 18px
+        rgba(0,0,0,0.10);
+
+    /* 🔥 QUITAR BLUR PESADO */
+    backdrop-filter:none;
+
+    font-size:28px;
+
 }
 
-/* BORDE GRADIENTE */
-.titulo-empleados h2::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 40px;
-    padding: 2px;
 
-    background: linear-gradient(135deg, #22c55e, #2563eb);
+/* ============================================
+   🌈 BORDE TITULO
+============================================ */
+
+.titulo-empleados h2::before {
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    border-radius:34px;
+
+    padding:2px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #22c55e,
+            #2563eb
+        );
 
     -webkit-mask:
         linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
+
+    -webkit-mask-composite:xor;
+
+    mask-composite:exclude;
+
 }
+
 
 /* ============================================
    📦 MODULOS
 ============================================ */
+
 .modulos-empleados {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    flex-wrap: wrap;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:24px;
+
+    flex-wrap:wrap;
+
+    margin-top:30px;
+
 }
+
 
 /* ============================================
    🎯 TARJETAS
 ============================================ */
 
-.modulos-empleados{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:30px;
-    flex-wrap:wrap;
-    margin-top:40px;
-}
+.modulo-card {
 
-.modulo-card{
-    width:180px;
-    height:180px;
+    width:170px;
+    height:170px;
 
-    border-radius:30px;
+    border-radius:24px;
 
     display:flex;
+
     flex-direction:column;
+
     justify-content:center;
     align-items:center;
-    gap:12px;
+
+    gap:10px;
 
     cursor:pointer;
 
     font-weight:600;
 
-    transition:0.3s;
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
 
-    background:rgba(255,255,255,0.92);
-    backdrop-filter:blur(10px);
+    background:rgba(255,255,255,0.97);
 
-    box-shadow:0 15px 35px rgba(0,0,0,0.18);
+    /* 🔥 QUITAR BLUR */
+    backdrop-filter:none;
+
+    /* 🔥 SOMBRA MÁS LIVIANA */
+    box-shadow:
+        0 6px 18px
+        rgba(0,0,0,0.10);
 
     text-decoration:none;
+
     color:#333;
+
+    overflow:hidden;
+
 }
 
-.modulo-card:hover{
-    transform:translateY(-5px);
+
+/* ============================================
+   🔥 HOVER
+============================================ */
+
+.modulo-card:hover {
+
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 10px 22px
+        rgba(0,0,0,0.12);
+
 }
 
-/* ICONO */
-.icono-modulo{
-    font-size:50px;
+
+/* ============================================
+   🎨 ICONOS
+============================================ */
+
+.icono-modulo {
+
+    font-size:46px;
+
     color:#2563eb;
+
 }
 
-/* TEXTO */
-.modulo-card span{
-    font-size:18px;
-    text-align:center;
+
+.modulo-card .fa-folder-open {
+
+    color:#2563eb;
+
+    font-size:46px;
+
 }
+
+
+/* ============================================
+   🔤 TEXTO
+============================================ */
+
+.modulo-card span {
+
+    font-size:17px;
+
+    text-align:center;
+
+    line-height:1.3;
+
+    padding:0 8px;
+
+}
+
 
 /* ============================================
    🔝 NAVBAR
 ============================================ */
 
-.acciones-navbar{
+.acciones-navbar {
+
     display:flex;
+
     gap:10px;
+
     align-items:center;
+
 }
 
-/* =========================================
-   📱 FIX RESPONSIVE MODULO EMPLEADOS
-========================================= */
+
+/* ============================================
+   📱 TABLET
+============================================ */
+
 @media (max-width:900px){
 
     /* NAVBAR */
-    .navbar-custom{
+
+    .navbar-custom {
+
         display:flex;
+
         justify-content:space-between;
+
         align-items:center;
-        padding:10px;
+
+        padding:10px 12px;
+
         gap:8px;
+
         flex-wrap:nowrap;
+
     }
 
-    .navbar-left{
+    .navbar-left {
+
         display:flex;
+
         align-items:center;
+
         gap:8px;
+
         min-width:0;
+
     }
 
-    .empresa-nombre{
+    .empresa-nombre {
+
         font-size:14px !important;
+
         line-height:1.2;
+
     }
 
-    .navbar-right{
+    .navbar-right {
+
         display:flex;
+
         align-items:center;
+
         gap:6px;
+
     }
 
-    .navbar-right .btn{
+    .navbar-right .btn {
+
         padding:8px 10px !important;
+
         font-size:13px !important;
-        border-radius:14px;
+
+        border-radius:12px;
+
         white-space:nowrap;
+
     }
 
     /* BOTON CERRAR */
-    .btn-danger{
+
+    .btn-danger {
+
         width:auto !important;
-        min-width:55px;
+
+        min-width:52px;
+
         padding:8px 12px !important;
+
         overflow:hidden;
+
     }
 
-    .btn-danger span{
+    .btn-danger span {
+
         display:none;
+
     }
 
     /* TITULO */
-    .titulo-empleados{
-        display:flex !important;
-        justify-content:center;
-        margin-top:20px;
+
+    .titulo-empleados {
+
+        margin-top:12px;
+
         margin-bottom:20px;
+
     }
 
-    .titulo-empleados h2{
-        display:block !important;
+    .titulo-empleados h2 {
+
         width:90%;
-        font-size:22px !important;
+
+        font-size:22px;
+
         text-align:center;
-        padding:10px 20px;
+
+        padding:12px 18px;
+
+        border-radius:18px;
+
     }
 
-    /* CARDS */
-    .modulos-empleados{
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        gap:20px;
+    /* MODULOS */
+
+    .modulos-empleados {
+
+        gap:18px;
+
         margin-top:20px;
+
     }
 
-    .modulo-card{
+    .modulo-card {
+
         width:150px;
         height:150px;
+
+        border-radius:20px;
+
     }
+
 }
 
+
 /* ============================================
-   📁 DOCUMENTACION
+   📱 MÓVIL
 ============================================ */
 
-.modulo-card .fa-folder-open{
-    color:#2563eb;
-    font-size:50px;
+@media (max-width:768px){
+
+    .empleados-container {
+
+        padding-top:90px;
+
+        padding-left:12px;
+        padding-right:12px;
+
+    }
+
+    .titulo-empleados h2 {
+
+        font-size:20px;
+
+    }
+
+    .modulos-empleados {
+
+        flex-direction:column;
+
+        align-items:center;
+
+        gap:16px;
+
+    }
+
+    .modulo-card {
+
+        width:145px;
+        height:145px;
+
+    }
+
+    .icono-modulo,
+    .modulo-card .fa-folder-open {
+
+        font-size:40px;
+
+    }
+
+    .modulo-card span {
+
+        font-size:15px;
+
+    }
+
+}
+
+
+/* ============================================
+   📱 MÓVILES PEQUEÑOS
+============================================ */
+
+@media (max-width:480px){
+
+    .titulo-empleados h2 {
+
+        font-size:18px;
+
+        padding:12px 14px;
+
+    }
+
+    .modulo-card {
+
+        width:135px;
+        height:135px;
+
+        border-radius:18px;
+
+    }
+
+    .icono-modulo,
+    .modulo-card .fa-folder-open {
+
+        font-size:36px;
+
+    }
+
+    .modulo-card span {
+
+        font-size:14px;
+
+    }
+
+}
+
+
+/* ============================================
+   🔥 OPTIMIZACIÓN MÓVIL
+============================================ */
+
+@media(max-width:768px){
+
+    *{
+
+        -webkit-tap-highlight-color:transparent;
+
+    }
+
 }

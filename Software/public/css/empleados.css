@@ -1,196 +1,543 @@
-/* =========================
-   CONTENEDOR GENERAL
-========================= */
+/* =========================================
+   📦 CONTENEDOR GENERAL
+========================================= */
+
 .empleados-container{
-    padding: 100px 40px 40px;
+
+    padding:95px 20px 30px;
+
+    width:100%;
+
+    box-sizing:border-box;
+
+    overflow-x:hidden;
+
 }
 
-/* =========================
-   TITULO
-========================= */
+
+/* =========================================
+   🏷️ TITULO
+========================================= */
+
+.titulo-panel{
+
+    text-align:center;
+
+    margin-bottom:18px;
+
+}
+
 .titulo-panel h2{
-    display: inline-block;
-    padding: 12px 30px;
-    border-radius: 30px;
-    background: linear-gradient(135deg, #198754, #0d6efd);
-    color: white;
-    font-weight: bold;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+
+    display:inline-block;
+
+    padding:12px 28px;
+
+    border-radius:24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #198754,
+            #0d6efd
+        );
+
+    color:white;
+
+    font-weight:bold;
+
+    font-size:24px;
+
+    /* 🔥 SOMBRA MÁS LIVIANA */
+    box-shadow:
+        0 4px 12px
+        rgba(0,0,0,0.10);
+
 }
 
-/* =========================
-   FILTROS
-========================= */
+
+/* =========================================
+   🔎 FILTROS
+========================================= */
+
 .filtros-barra{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 20px;
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:10px;
+
+    justify-content:center;
+
+    align-items:center;
+
+    margin-bottom:18px;
+
 }
+
+
+/* INPUT */
 
 .input-busqueda{
-    width: 220px;
-    border-radius: 20px;
-    padding: 8px 12px;
+
+    width:220px;
+
+    border-radius:18px;
+
+    padding:10px 14px;
+
+    min-height:44px;
+
+    border:1px solid #d1d5db;
+
+    font-size:14px;
+
+    box-shadow:none !important;
+
 }
+
+
+/* SELECT */
 
 .filtro{
-    width: 140px;
-    border-radius: 20px;
-    padding: 6px;
+
+    width:150px;
+
+    border-radius:18px;
+
+    padding:8px 12px;
+
+    min-height:44px;
+
+    border:1px solid #d1d5db;
+
+    font-size:14px;
+
 }
+
+
+/* =========================================
+   🔘 BOTONES
+========================================= */
 
 .btn-icon{
-    border-radius: 50%;
-    width: 38px;
-    height: 38px;
+
+    border-radius:50%;
+
+    width:40px;
+    height:40px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    min-width:40px;
+
 }
+
+
+/* NUEVO */
 
 .btn-nuevo{
-    border-radius: 20px;
-    padding: 8px 18px;
-    background: linear-gradient(135deg, #198754, #0d6efd);
-    border: none;
-    color: white;
-    font-weight: bold;
+
+    border-radius:18px;
+
+    padding:10px 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #198754,
+            #0d6efd
+        );
+
+    border:none;
+
+    color:white;
+
+    font-weight:bold;
+
+    min-height:44px;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease;
+
 }
 
-/* =========================
-   CONTENEDOR TABLA
-========================= */
+
+.btn-nuevo:hover{
+
+    transform:translateY(-2px);
+
+    opacity:.95;
+
+}
+
+
+/* =========================================
+   📋 CONTENEDOR TABLA
+========================================= */
+
 .tabla-container{
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(8px);
-    border-radius: 20px;
-    padding: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+
+    background:rgba(255,255,255,0.97);
+
+    /* 🔥 QUITAR BLUR */
+    backdrop-filter:none;
+
+    border-radius:18px;
+
+    padding:14px;
+
+    /* 🔥 SOMBRA MÁS LIVIANA */
+    box-shadow:
+        0 6px 18px
+        rgba(0,0,0,0.10);
+
+    overflow:hidden;
+
 }
 
-/* =========================
-   SCROLL TABLA
-========================= */
+
+/* =========================================
+   🔄 SCROLL TABLA
+========================================= */
+
 .table-responsive{
-    max-height: 420px;
-    overflow-y: auto;
-    border-radius: 12px;
+
+    max-height:420px;
+
+    overflow-y:auto;
+
+    overflow-x:auto;
+
+    border-radius:12px;
+
+    -webkit-overflow-scrolling:touch;
+
 }
 
-/* =========================
-   TABLA
-========================= */
+
+/* =========================================
+   📊 TABLA
+========================================= */
+
 .tabla-corporativa{
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    font-size: 13px;
+
+    width:100%;
+
+    border-collapse:separate;
+
+    border-spacing:0;
+
+    font-size:13px;
+
+    min-width:900px;
+
 }
 
-/* =========================
-   HEADER (UN SOLO COLOR + DIVISIONES)
-========================= */
+
+/* =========================================
+   🟢 HEADER
+========================================= */
+
 .tabla-corporativa thead th{
-    position: sticky;
-    top: 0;
-    z-index: 20;
 
-    background: #198754;
-    color: white;
+    position:sticky;
 
-    padding: 12px;
-    text-align: center;
-    font-weight: bold;
+    top:0;
 
-    border-right: 2px solid white; /* 🔥 división blanca */
-    border-bottom: 3px solid #0d6efd;
+    z-index:20;
 
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    font-size: 13px;
+    background:#198754;
+
+    color:white;
+
+    padding:12px 10px;
+
+    text-align:center;
+
+    font-weight:bold;
+
+    border-right:
+        1px solid rgba(255,255,255,0.35);
+
+    border-bottom:
+        3px solid #0d6efd;
+
+    letter-spacing:.4px;
+
+    text-transform:uppercase;
+
+    font-size:12px;
+
+    white-space:nowrap;
+
 }
 
-/* quitar última línea */
+
+/* QUITAR ÚLTIMO */
+
 .tabla-corporativa thead th:last-child{
-    border-right: none;
+
+    border-right:none;
+
 }
 
-/* =========================
-   FILAS
-========================= */
+
+/* =========================================
+   📄 FILAS
+========================================= */
+
 .tabla-corporativa tbody tr{
-    transition: 0.2s;
+
+    transition:
+        background .15s ease;
+
 }
+
 
 /* ZEBRA */
+
 .tabla-corporativa tbody tr:nth-child(even){
-    background: #f4f9ff;
+
+    background:#f4f9ff;
+
 }
+
 
 .tabla-corporativa tbody tr:nth-child(odd){
-    background: #ffffff;
+
+    background:#ffffff;
+
 }
+
 
 /* HOVER */
+
 .tabla-corporativa tbody tr:hover{
-    background: #d6ecff;
+
+    background:#d6ecff;
+
 }
 
-/* =========================
-   CELDAS
-========================= */
+
+/* =========================================
+   🔲 CELDAS
+========================================= */
+
 .tabla-corporativa td{
-    padding: 10px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
-    border-right: 1px solid #eee; /* 🔥 división suave */
+
+    padding:10px 8px;
+
+    text-align:center;
+
+    border-bottom:1px solid #e5e7eb;
+
+    border-right:1px solid #f1f5f9;
+
+    font-size:13px;
+
+    white-space:nowrap;
+
 }
 
-/* quitar última línea */
+
+/* QUITAR ÚLTIMA */
+
 .tabla-corporativa td:last-child{
-    border-right: none;
+
+    border-right:none;
+
 }
+
 
 /* PRIMERA COLUMNA */
+
 .tabla-corporativa td:first-child{
-    font-weight: bold;
-    color: #198754;
+
+    font-weight:bold;
+
+    color:#198754;
+
 }
 
-/* =========================
-   PAGINACION
-========================= */
-.pagination .page-link{
-    border-radius: 10px;
-    margin: 0 3px;
-    border: none;
-    color: #198754;
+
+/* =========================================
+   📄 PAGINACIÓN
+========================================= */
+
+.pagination{
+
+    flex-wrap:wrap;
+
+    gap:4px;
+
 }
+
+
+.pagination .page-link{
+
+    border-radius:10px;
+
+    border:none;
+
+    color:#198754;
+
+    min-width:38px;
+
+    min-height:38px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:14px;
+
+}
+
+
+/* ACTIVE */
 
 .pagination .active .page-link{
-    background: linear-gradient(135deg, #198754, #0d6efd);
-    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #198754,
+            #0d6efd
+        );
+
+    color:white;
+
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
-@media(max-width: 768px){
+
+/* =========================================
+   📱 TABLET
+========================================= */
+
+@media(max-width:992px){
 
     .empleados-container{
-        padding: 90px 10px 20px;
+
+        padding-left:14px;
+        padding-right:14px;
+
     }
 
-    .input-busqueda{
-        width: 100%;
+}
+
+
+/* =========================================
+   📱 MÓVIL
+========================================= */
+
+@media(max-width:768px){
+
+    .empleados-container{
+
+        padding:85px 10px 20px;
+
     }
 
-    .filtro{
-        width: 100%;
+    .titulo-panel h2{
+
+        width:100%;
+
+        font-size:20px;
+
+        border-radius:16px;
+
+        padding:12px;
+
+    }
+
+    .filtros-barra{
+
+        flex-direction:column;
+
+        align-items:stretch;
+
+    }
+
+    .input-busqueda,
+    .filtro,
+    .btn-nuevo{
+
+        width:100%;
+
+        font-size:13px;
+
+    }
+
+    .tabla-container{
+
+        padding:10px;
+
+        border-radius:14px;
+
+        box-shadow:
+            0 4px 12px
+            rgba(0,0,0,0.08);
+
+    }
+
+    .tabla-corporativa{
+
+        min-width:750px;
+
     }
 
     .tabla-corporativa th,
     .tabla-corporativa td{
-        font-size: 11px;
-        padding: 6px;
+
+        font-size:11px;
+
+        padding:7px 6px;
+
     }
+
+}
+
+
+/* =========================================
+   📱 MÓVILES PEQUEÑOS
+========================================= */
+
+@media(max-width:480px){
+
+    .titulo-panel h2{
+
+        font-size:18px;
+
+    }
+
+    .pagination .page-link{
+
+        min-width:34px;
+        min-height:34px;
+
+        font-size:12px;
+
+    }
+
+}
+
+
+/* =========================================
+   🔥 OPTIMIZACIÓN MÓVIL
+========================================= */
+
+@media(max-width:768px){
+
+    *{
+
+        -webkit-tap-highlight-color:transparent;
+
+    }
+
 }
