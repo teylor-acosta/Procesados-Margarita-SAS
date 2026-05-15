@@ -68,22 +68,51 @@ async function renderizarCapitulos() {
     }
     
     // Verificar si todos los capítulos están aprobados
-    const todosAprobados = capitulosData.every(c => c.aprobado === 1);
-    console.log("Todos aprobados?", todosAprobados);
+const todosAprobados = capitulosData.every(c => {
+
+    // 🔥 CAPITULO 1 NO TIENE EVALUACION
+    if (c.id === 1) {
+
+        return true;
+
+    }
+
+    return c.aprobado === 1;
+
+});
     
     if (todosAprobados && capitulosData.length > 0) {
         // Verificar si ya firmó - llamada síncrona con await
-        let yaFirmo = false;
-        try {
-            const firmaResponse = await fetch('/api/obtener-firma');
-            const firmaResult = await firmaResponse.json();
-            console.log("Respuesta de firma:", firmaResult);
-            if (firmaResult.success && firmaResult.firma) {
-                yaFirmo = true;
-            }
-        } catch(e) {
-            console.log("Error al verificar firma:", e);
-        }
+// ======================================
+// 🔥 VALIDAR FIRMA REAL
+// ======================================
+
+let yaFirmo = false;
+
+try {
+
+    const responseFirma =
+        await fetch('/api/induccion-completada');
+
+    const dataFirma =
+        await responseFirma.json();
+
+    console.log(
+        'VALIDACION FIRMA:',
+        dataFirma
+    );
+
+    yaFirmo =
+        dataFirma.firmado === true;
+
+} catch(e) {
+
+    console.log(
+        "Error validando firma:",
+        e
+    );
+
+}
         
         console.log("¿Ya firmó?", yaFirmo);
         
