@@ -83,4 +83,51 @@ router.get('/api/cargos', proteger, async (req, res) => {
 
 });
 
+
+// ============================================
+// 🔥 TODOS LOS CATALOGOS
+// ============================================
+
+router.get('/api/catalogos', proteger, async (req, res) => {
+
+    try {
+
+        const db = req.app.get('db');
+
+        const [areas] = await db.query(
+            "SELECT id, nombre FROM areas"
+        );
+
+        const [sedes] = await db.query(
+            "SELECT id, nombre FROM sedes"
+        );
+
+        const [cargos] = await db.query(
+            "SELECT id, nombre FROM cargos"
+        );
+
+        res.json({
+
+            areas,
+            sedes,
+            cargos
+
+        });
+
+    } catch(error) {
+
+        console.error(error);
+
+        res.status(500).json({
+
+            areas: [],
+            sedes: [],
+            cargos: []
+
+        });
+
+    }
+
+});
+
 module.exports = router;

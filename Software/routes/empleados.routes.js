@@ -8,28 +8,60 @@ const db = require('../DB');
 // 🔥 LISTAR SOLO ACTIVOS
 // ============================================
 
-router.get('/api/empleados', proteger, soloSuperAdmin, (req, res) => {
+router.get(
 
-    const db = req.app.get('db');
+    '/api/empleados',
 
-    const sql = `
-    SELECT e.*, 
-           a.nombre AS area,
-           s.nombre AS sede,
-           c.nombre AS cargo
-    FROM empleados e
-    LEFT JOIN areas a ON e.area_id = a.id
-    LEFT JOIN sedes s ON e.sede_id = s.id
-    LEFT JOIN cargos c ON e.cargo_id = c.id
-    WHERE e.activo = 'SI'   -- 🔥 CLAVE
-    `;
+    proteger,
 
-    db.query(sql, (err, results) => {
-        if (err) return res.json([]);
-        res.json(results);
-    });
+    soloSuperAdmin,
 
-});
+    async (req, res) => {
+
+        try {
+
+            const db = req.app.get('db');
+
+            const sql = `
+
+                SELECT 
+
+                    e.*, 
+                    a.nombre AS area,
+                    s.nombre AS sede,
+                    c.nombre AS cargo
+
+                FROM empleados e
+
+                LEFT JOIN areas a
+                ON e.area_id = a.id
+
+                LEFT JOIN sedes s
+                ON e.sede_id = s.id
+
+                LEFT JOIN cargos c
+                ON e.cargo_id = c.id
+
+                WHERE e.activo = 'SI'
+
+            `;
+
+            const [results] =
+                await db.query(sql);
+
+            res.json(results);
+
+        } catch(error) {
+
+            console.log(error);
+
+            res.status(500).json([]);
+
+        }
+
+    }
+
+);
 
 
 // ============================================
@@ -231,30 +263,55 @@ db.query(
 // 🔥 EMPLEADOS INACTIVOS
 // ============================================
 
-router.get('/api/empleados-inactivos', (req, res) => {
+router.get(
 
-    const db = req.app.get('db');
+    '/api/empleados-inactivos',
 
-    const sql = `
-    SELECT 
-        e.*,
-        a.nombre AS area,
-        s.nombre AS sede,
-        c.nombre AS cargo
-    FROM empleados e
-    LEFT JOIN areas a ON e.area_id = a.id
-    LEFT JOIN sedes s ON e.sede_id = s.id
-    LEFT JOIN cargos c ON e.cargo_id = c.id
-    WHERE e.activo = 'NO'
-    `;
+    async (req, res) => {
 
-    db.query(sql, (err, results) => {
-        if (err) return res.json([]);
-        res.json(results);
-    });
+        try {
 
-});
+            const db = req.app.get('db');
 
+            const sql = `
+
+                SELECT 
+                    e.*,
+                    a.nombre AS area,
+                    s.nombre AS sede,
+                    c.nombre AS cargo
+
+                FROM empleados e
+
+                LEFT JOIN areas a
+                ON e.area_id = a.id
+
+                LEFT JOIN sedes s
+                ON e.sede_id = s.id
+
+                LEFT JOIN cargos c
+                ON e.cargo_id = c.id
+
+                WHERE e.activo = 'NO'
+
+            `;
+
+            const [results] =
+                await db.query(sql);
+
+            res.json(results);
+
+        } catch(error) {
+
+            console.log(error);
+
+            res.status(500).json([]);
+
+        }
+
+    }
+
+);
 
 // ============================================
 // 🔥 CREAR
