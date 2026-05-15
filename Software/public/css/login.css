@@ -1,61 +1,35 @@
 /* =========================================
-   🔐 LOGIN OPTIMIZADO
+   LOGIN PREMIUM
 ========================================= */
 
-
-/* =========================================
-   🌎 BODY
-========================================= */
-
-body{
-
+body.login-body{
     display:flex;
-
     justify-content:center;
     align-items:center;
-
-    min-height:100vh;
-
-    padding:15px;
-
-    overflow-x:hidden;
-
-    -webkit-font-smoothing:antialiased;
-
-    text-rendering:optimizeLegibility;
-
 }
 
-
-/* =========================================
-   🧾 CARD
-========================================= */
+/* CARD */
 
 .card-custom{
 
-    background:#fff;
+    background:rgba(255,255,255,0.96);
 
-    border-radius:24px;
+    border-radius:30px;
 
-    /* 🔥 SOMBRA MÁS LIVIANA */
     box-shadow:
-        0 8px 22px
-        rgba(0,0,0,0.12);
+        0 20px 40px
+        rgba(0,0,0,0.18);
 
     overflow:hidden;
 
     width:100%;
 
-    max-width:430px;
-
     position:relative;
 
+    backdrop-filter:blur(10px);
 }
 
-
-/* =========================================
-   🌈 BORDE SUPERIOR
-========================================= */
+/* BORDE SUPERIOR */
 
 .card-custom::before{
 
@@ -72,36 +46,35 @@ body{
     background:
         linear-gradient(
             90deg,
-            #198754,
-            #0d6efd
+            #22c55e,
+            #2563eb
         );
-
 }
 
-
-/* =========================================
-   🏷️ HEADER
-========================================= */
+/* HEADER */
 
 .card-header-custom{
 
     text-align:center;
 
-    padding:2rem 1.5rem 1rem;
-
+    padding:
+        2rem
+        1.5rem
+        1rem;
 }
-
 
 /* LOGO */
 
 .card-header-custom img{
 
-    max-width:95px;
+    width:100px;
+
+    height:auto;
 
     object-fit:contain;
 
+    margin-bottom:15px;
 }
-
 
 /* TITULO */
 
@@ -111,65 +84,44 @@ body{
 
     font-weight:800;
 
-    margin-top:12px;
-
-    font-size:28px;
-
-    line-height:1.2;
-
+    margin-bottom:8px;
 }
 
+/* TEXTO */
 
-/* =========================================
-   📄 BODY
-========================================= */
+.card-header-custom p{
+
+    color:#2563eb;
+
+    font-size:14px;
+}
+
+/* BODY */
 
 .card-body-custom{
 
-    padding:1.8rem;
-
+    padding:2rem;
 }
 
-
-/* =========================================
-   🔐 CONTENEDOR PASSWORD
-========================================= */
+/* PASSWORD */
 
 .input-password{
 
     position:relative;
-
 }
-
-
-/* =========================================
-   ✍️ INPUT PASSWORD
-========================================= */
 
 .input-password input{
 
     padding-right:45px;
-
-    min-height:46px;
-
-    border-radius:12px;
-
-    border:1px solid #d1d5db;
-
-    font-size:14px;
-
 }
 
-
-/* =========================================
-   👁️ OJITO
-========================================= */
+/* OJO */
 
 .toggle-password{
 
     position:absolute;
 
-    right:14px;
+    right:15px;
 
     top:50%;
 
@@ -181,137 +133,58 @@ body{
 
     font-size:16px;
 
-    transition:
-        color .2s ease;
-
+    transition:0.2s;
 }
-
-
-/* HOVER */
 
 .toggle-password:hover{
 
     color:#198754;
-
 }
 
+/* RESPONSIVE */
 
-/* =========================================
-   🔘 BOTONES
-========================================= */
-
-.btn{
-
-    min-height:46px;
-
-    border-radius:14px !important;
-
-    font-weight:600 !important;
-
-    transition:
-        transform .2s ease,
-        opacity .2s ease;
-
-}
-
-
-/* HOVER */
-
-.btn:hover{
-
-    transform:translateY(-1px);
-
-    opacity:.95;
-
-}
-
-
-/* =========================================
-   📱 TABLET
-========================================= */
-
-@media(max-width:768px){
-
-    body{
-
-        padding:12px;
-
-    }
+@media (max-width:768px){
 
     .card-custom{
 
-        border-radius:18px;
-
-        box-shadow:
-            0 4px 12px
-            rgba(0,0,0,0.08);
-
+        border-radius:22px;
     }
 
     .card-header-custom{
 
-        padding:1.5rem 1rem .8rem;
-
+        padding:
+            1.5rem
+            1rem
+            .8rem;
     }
 
     .card-header-custom h3{
 
         font-size:22px;
-
     }
 
     .card-body-custom{
 
-        padding:1.3rem;
-
+        padding:1.5rem;
     }
 
 }
 
+@media (max-width:576px){
 
-/* =========================================
-   📱 MÓVILES PEQUEÑOS
-========================================= */
+    .card-custom{
 
-@media(max-width:576px){
-
-    .card-body-custom{
-
-        padding:1rem;
-
+        border-radius:18px;
     }
 
     .card-header-custom img{
 
-        max-width:75px;
-
+        width:80px;
     }
 
-    .card-header-custom h3{
+    .card-body-custom{
 
-        font-size:20px;
-
-    }
-
-    .input-password input{
-
-        font-size:13px;
-
-    }
-
-}
-
-
-/* =========================================
-   🔥 OPTIMIZACIÓN MÓVIL
-========================================= */
-
-@media(max-width:768px){
-
-    *{
-
-        -webkit-tap-highlight-color:transparent;
-
+        padding:1.2rem;
     }
 
 }
