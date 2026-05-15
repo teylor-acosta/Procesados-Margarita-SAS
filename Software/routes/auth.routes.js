@@ -13,388 +13,347 @@ const SALT_ROUNDS = 10;
 
 router.post('/api/login', async (req, res) => {
 
-    const db = req.app.get('db');
+    try {
 
-    const { usuario, password } = req.body;
+        const db = req.app.get('db');
 
-    const sql = `
+        const { usuario, password } = req.body;
 
-        SELECT 
-            u.*,
-            r.nombre as rol,
-            e.activo,
-            e.id as empleado_id
+        const sql = `
 
-        FROM usuarios u
+            SELECT 
+                u.*,
+                r.nombre as rol,
+                e.activo,
+                e.id as empleado_id
 
-        JOIN rol r
-        ON u.rol_id = r.id
+            FROM usuarios u
 
-        JOIN empleados e
-        ON u.empleado_id = e.id
+            JOIN rol r
+            ON u.rol_id = r.id
 
-        WHERE u.Usuario = ?
+            JOIN empleados e
+            ON u.empleado_id = e.id
 
-    `;
+            WHERE u.Usuario = ?
 
-    db.query(sql, [usuario], async (err, results) => {
+        `;
 
-        if (err) {
-
-            console.error("🔥 ERROR SQL LOGIN:", err);
-
-            return res.status(500).json({
-                success: false
-            });
-
-        }
+        const [results] = await db.query(sql, [usuario]);
 
         if (results.length === 0) {
 
             return res.json({
                 success: false,
-                message: "usuario no encontrado"
+                message: "Usuario no encontrado"
             });
 
         }
 
         const user = results[0];
 
-
-        /* =========================================
-           🚫 EMPLEADO INACTIVO
-        ========================================= */
+        // =========================================
+        // 🚫 EMPLEADO INACTIVO
+        // =========================================
 
         if (user.activo === 'NO') {
 
             return res.json({
-
                 success: false,
-
                 inactivo: true,
+                message: 'Empleado inactivo. Comuníquese con el administrador.'
+            });
 
-                message:
-                    'Empleado inactivo. Comuníquese con el administrador.'
+        }
+
+        // =========================================
+        // 🔐 VALIDAR PASSWORD
+        // =========================================
+
+        const passwordMatch = await bcrypt.compare(
+            password,
+            user.password_hash
+        );
+
+        if (!passwordMatch) {
+
+            return res.json({
+                success: false,
+                message: "Contraseña incorrecta"
+            });
+
+        }
+
+        // =========================================
+        // 🔥 CREAR SESIÓN
+        // =========================================
+
+        req.session.usuarioID = user.ID || user.id;
+        req.session.empleadoID = user.empleado_id;
+        req.session.rol = user.rol;
+
+        // =========================================
+        // 🔥 CAMBIO PASSWORD
+        // =========================================
+
+        if (parseInt(user.cambio_password) === 1) {
+
+            return req.session.save(() => {
+
+                res.json({
+                    success: true,
+                    redirect: "/cambiar-password"
+                });
 
             });
 
         }
 
+        // =========================================
+        // 🔥 VALIDAR INDUCCIÓN
+        // =========================================
 
-        try {
+        const sqlCheck = `
 
-            const passwordMatch = await bcrypt.compare(
-                password,
-                user.password_hash
-            );
+            SELECT 
 
-            if (!passwordMatch) {
+                (SELECT COUNT(*) 
+                 FROM capitulos_induccion 
+                 WHERE activo = 1) as total,
 
-                return res.json({
+                (SELECT COUNT(DISTINCT capitulo_id) 
+                 FROM resultados_evaluaciones 
+                 WHERE usuario_id = ? 
+                 AND aprobado = 1) as aprobados,
 
-                    success: false,
-                    message: "contraseña incorrecta"
+                (SELECT COUNT(*) 
+                 FROM certificados_usuario 
+                 WHERE usuario_id = ?) as tiene_certificado
 
-                });
+        `;
 
-            }
+        const [results2] = await db.query(
+            sqlCheck,
+            [
+                req.session.usuarioID,
+                req.session.usuarioID
+            ]
+        );
 
-            req.session.usuarioID =
-                user.ID || user.id;
+        let destino = "/dashboard";
 
-            req.session.empleadoID =
-                user.empleado_id;
+        if (results2.length > 0) {
 
-            req.session.rol =
-                user.rol;
+            const total = results2[0].total || 0;
 
-
-            /* =====================================
-               🔥 CAMBIO PASSWORD
-            ===================================== */
-
-            if (parseInt(user.cambio_password) === 1) {
-
-                return req.session.save(() => {
-
-                    res.json({
-
-                        success: true,
-                        redirect: "/cambiar-password"
-
-                    });
-
-                });
-
-            }
-
-
-            /* =====================================
-               🔥 VALIDAR INDUCCIÓN
-            ===================================== */
-
-            const sqlCheck = `
-
-                SELECT 
-
-                    (SELECT COUNT(*) 
-                     FROM capitulos_induccion 
-                     WHERE activo = 1) as total,
-
-                    (SELECT COUNT(DISTINCT capitulo_id) 
-                     FROM resultados_evaluaciones 
-                     WHERE usuario_id = ? 
-                     AND aprobado = 1) as aprobados,
-
-                    (SELECT COUNT(*) 
-                     FROM certificados_usuario 
-                     WHERE usuario_id = ?) as tiene_certificado
-
-            `;
-
-            db.query(
-
-                sqlCheck,
-
-                [
-                    req.session.usuarioID,
-                    req.session.usuarioID
-                ],
-
-                (err2, results2) => {
-
-                    let destino = "/dashboard";
-
-                    if (!err2 && results2.length > 0) {
-
-                        const total =
-                            results2[0].total || 0;
-
-                        const aprobados =
-                            results2[0].aprobados || 0;
-
-                        const tieneCertificado =
-                            results2[0].tiene_certificado > 0;
-
-                        if (tieneCertificado) {
-
-                            destino = "/dashboard";
-
-                        }
-
-                        else if (aprobados < total) {
-
-                            destino = "/induccion";
-
-                        }
-
-                        else {
-
-                            destino = "/firma";
-
-                        }
-
-                    }
-
-                    req.session.save(() => {
-
-                        res.json({
-
-                            success: true,
-                            redirect: destino
-
-                        });
-
-                    });
-
-                }
-
-            );
-
-        }
-
-        catch (e) {
-
-            console.error(e);
-
-            return res.status(500).json({
-
-                success: false
-
-            });
-
-        }
-
-    });
-
-});
-
-
-// ============================================
-// 🔥 /api/me
-// ============================================
-
-router.get('/api/me', proteger, (req, res) => {
-
-    const db = req.app.get('db');
-
-    const usuario_id = req.session.usuarioID;
-
-    const sql = `
-
-        SELECT 
-
-            e.codigo,
-            e.nombre,
-            e.tipo_documento,
-            e.numero_documento,
-            e.rh,
-            e.fecha_nacimiento,
-            e.lugar_nacimiento,
-            e.estado_civil,
-            e.direccion,
-            e.barrio_localidad,
-            e.telefono,
-            e.email,
-            e.activo,
-
-            c.nombre as cargo,
-            a.nombre as area,
-            s.nombre as sede,
-
-            u.cambio_password,
-
-            e.foto,
-
-            r.nombre as rol,
-
-            (SELECT COUNT(*) 
-             FROM capitulos_induccion 
-             WHERE activo = 1) as total,
-
-            (SELECT COUNT(DISTINCT capitulo_id) 
-             FROM resultados_evaluaciones 
-             WHERE usuario_id = ? 
-             AND aprobado = 1) as aprobados,
-
-            (SELECT COUNT(*) 
-             FROM certificados_usuario 
-             WHERE usuario_id = ?) as tiene_certificado
-
-        FROM usuarios u
-
-        JOIN empleados e
-        ON u.empleado_id = e.id
-
-        LEFT JOIN cargos c
-        ON e.cargo_id = c.id
-
-        LEFT JOIN areas a
-        ON e.area_id = a.id
-
-        LEFT JOIN sedes s
-        ON e.sede_id = s.id
-
-        JOIN rol r
-        ON u.rol_id = r.id
-
-        WHERE u.id = ?
-
-    `;
-
-    db.query(
-
-        sql,
-
-        [
-            usuario_id,
-            usuario_id,
-            usuario_id
-        ],
-
-        (err, results) => {
-
-            if (err || results.length === 0) {
-
-                return res.json({
-                    success: false
-                });
-
-            }
-
-            const u = results[0];
-
-
-            // 🔥 BLOQUEAR SI ESTÁ INACTIVO
-
-            if (u.activo === 'NO') {
-
-                req.session.destroy();
-
-                return res.json({
-                    success: false
-                });
-
-            }
-
-            const total =
-                u.total || 0;
-
-            const aprobados =
-                u.aprobados || 0;
+            const aprobados = results2[0].aprobados || 0;
 
             const tieneCertificado =
-                (u.tiene_certificado || 0) > 0;
+                results2[0].tiene_certificado > 0;
 
-            const completo =
-                aprobados >= total && total > 0;
+            if (tieneCertificado) {
 
-            let redirect = "/dashboard";
-
-            if (parseInt(u.cambio_password) === 1) {
-
-                redirect = "/cambiar-password";
+                destino = "/dashboard";
 
             }
 
-            else if (!completo) {
+            else if (aprobados < total) {
 
-                redirect = "/induccion";
-
-            }
-
-            else if (!tieneCertificado) {
-
-                redirect = "/firma";
+                destino = "/induccion";
 
             }
 
             else {
 
-                redirect = "/dashboard";
+                destino = "/firma";
 
             }
 
+        }
+
+        req.session.save(() => {
+
             res.json({
-
                 success: true,
+                redirect: destino
+            });
 
-                usuario: u,
+        });
 
-                completo,
+    } catch (error) {
 
-                tiene_certificado: tieneCertificado,
+        console.error('🔥 ERROR LOGIN COMPLETO:', error);
 
-                redirect
+        return res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor',
+            error: error.message
+        });
 
+    }
+
+});
+
+// ============================================
+// 🔥 /api/me
+// ============================================
+router.get('/api/me', proteger, async (req, res) => {
+
+    try {
+
+        const db = req.app.get('db');
+
+        const usuario_id = req.session.usuarioID;
+
+        const sql = `
+
+            SELECT 
+
+                e.codigo,
+                e.nombre,
+                e.tipo_documento,
+                e.numero_documento,
+                e.rh,
+                e.fecha_nacimiento,
+                e.lugar_nacimiento,
+                e.estado_civil,
+                e.direccion,
+                e.barrio_localidad,
+                e.telefono,
+                e.email,
+                e.activo,
+
+                c.nombre as cargo,
+                a.nombre as area,
+                s.nombre as sede,
+
+                u.cambio_password,
+
+                e.foto,
+
+                r.nombre as rol,
+
+                (SELECT COUNT(*) 
+                 FROM capitulos_induccion 
+                 WHERE activo = 1) as total,
+
+                (SELECT COUNT(DISTINCT capitulo_id) 
+                 FROM resultados_evaluaciones 
+                 WHERE usuario_id = ? 
+                 AND aprobado = 1) as aprobados,
+
+                (SELECT COUNT(*) 
+                 FROM certificados_usuario 
+                 WHERE usuario_id = ?) as tiene_certificado
+
+            FROM usuarios u
+
+            JOIN empleados e
+            ON u.empleado_id = e.id
+
+            LEFT JOIN cargos c
+            ON e.cargo_id = c.id
+
+            LEFT JOIN areas a
+            ON e.area_id = a.id
+
+            LEFT JOIN sedes s
+            ON e.sede_id = s.id
+
+            JOIN rol r
+            ON u.rol_id = r.id
+
+            WHERE u.id = ?
+
+        `;
+
+        const [results] = await db.query(
+            sql,
+            [
+                usuario_id,
+                usuario_id,
+                usuario_id
+            ]
+        );
+
+        if (results.length === 0) {
+
+            return res.json({
+                success: false
             });
 
         }
 
-    );
+        const u = results[0];
+
+        if (u.activo === 'NO') {
+
+            req.session.destroy();
+
+            return res.json({
+                success: false
+            });
+
+        }
+
+        const total = u.total || 0;
+
+        const aprobados = u.aprobados || 0;
+
+        const tieneCertificado =
+            (u.tiene_certificado || 0) > 0;
+
+        const completo =
+            aprobados >= total && total > 0;
+
+        let redirect = "/dashboard";
+
+        if (parseInt(u.cambio_password) === 1) {
+
+            redirect = "/cambiar-password";
+
+        }
+
+        else if (!completo) {
+
+            redirect = "/induccion";
+
+        }
+
+        else if (!tieneCertificado) {
+
+            redirect = "/firma";
+
+        }
+
+        res.json({
+
+            success: true,
+
+            usuario: u,
+
+            completo,
+
+            tiene_certificado: tieneCertificado,
+
+            redirect
+
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            success: false
+        });
+
+    }
 
 });
-
+// ============================================
+// 🔥 RECUPERAR PASSWORD
+// ============================================
 
 // ============================================
 // 🔥 RECUPERAR PASSWORD
@@ -402,32 +361,32 @@ router.get('/api/me', proteger, (req, res) => {
 
 router.post('/api/recuperar', async (req, res) => {
 
-    const db = req.app.get('db');
+    try {
 
-    const { documento } = req.body;
+        const db = req.app.get('db');
 
-    const sql = `
+        const { documento } = req.body;
 
-        SELECT u.id 
+        const sql = `
 
-        FROM usuarios u 
+            SELECT u.id 
 
-        JOIN empleados e
-        ON u.empleado_id = e.id 
+            FROM usuarios u 
 
-        WHERE e.numero_documento = ?
+            JOIN empleados e
+            ON u.empleado_id = e.id 
 
-    `;
+            WHERE e.numero_documento = ?
 
-    db.query(sql, [documento], async (err, results) => {
+        `;
 
-        if (err || results.length === 0) {
+        const [results] = await db.query(sql, [documento]);
+
+        if (results.length === 0) {
 
             return res.json({
-
                 success: false,
                 message: "no encontrado"
-
             });
 
         }
@@ -435,7 +394,9 @@ router.post('/api/recuperar', async (req, res) => {
         const hashedTempPass =
             await bcrypt.hash('123456', SALT_ROUNDS);
 
-        db.query(`
+        await db.query(
+
+            `
 
             UPDATE usuarios 
 
@@ -445,76 +406,73 @@ router.post('/api/recuperar', async (req, res) => {
 
             WHERE id = ?
 
-        `,
+            `,
 
-        [
-            hashedTempPass,
-            results[0].id
-        ],
+            [
+                hashedTempPass,
+                results[0].id
+            ]
 
-        (errU) => {
+        );
 
-            if (errU) {
+        res.json({
 
-                return res.json({
-                    success: false
-                });
-
-            }
-
-            res.json({
-
-                success: true,
-                password: "123456"
-
-            });
+            success: true,
+            password: "123456"
 
         });
 
-    });
+    } catch (error) {
+
+        console.error('🔥 ERROR RECUPERAR:', error);
+
+        res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor'
+        });
+
+    }
 
 });
 
-
+// ============================================
+// 🔥 CAMBIAR PASSWORD
+// ============================================
 // ============================================
 // 🔥 CAMBIAR PASSWORD
 // ============================================
 
 router.post('/api/cambiar-password', proteger, async (req, res) => {
 
-    const db = req.app.get('db');
+    try {
 
-    const { password } = req.body;
+        const db = req.app.get('db');
 
-    const hash =
-        await bcrypt.hash(password, SALT_ROUNDS);
+        const { password } = req.body;
 
-    db.query(`
+        const hash =
+            await bcrypt.hash(password, SALT_ROUNDS);
 
-        UPDATE usuarios 
+        await db.query(
 
-        SET 
-            password_hash = ?,
-            cambio_password = 0 
+            `
 
-        WHERE id = ?
+            UPDATE usuarios 
 
-    `,
+            SET 
+                password_hash = ?,
+                cambio_password = 0 
 
-    [
-        hash,
-        req.session.usuarioID
-    ],
+            WHERE id = ?
 
-    (err) => {
+            `,
 
-        if (err) {
+            [
+                hash,
+                req.session.usuarioID
+            ]
 
-            return res.json({
-                success: false
-            });
-
-        }
+        );
 
         req.session.destroy(() => {
 
@@ -527,7 +485,16 @@ router.post('/api/cambiar-password', proteger, async (req, res) => {
 
         });
 
-    });
+    } catch (error) {
+
+        console.error('🔥 ERROR CAMBIAR PASSWORD:', error);
+
+        res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor'
+        });
+
+    }
 
 });
 

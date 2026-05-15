@@ -36,61 +36,51 @@ router.get('/documentacion-empleados', (req, res) => {
 /* =========================================
    🔥 API EMPLEADOS DOCUMENTACION
 ========================================= */
+router.get('/api/documentacion-empleados', async (req, res) => {
 
-router.get('/api/documentacion-empleados', (req, res) => {
+    try {
 
-    const sql = `
-    
-        SELECT 
-            e.id,
-            e.codigo,
-            e.nombre,
-            e.numero_documento,
-            e.tipo_documento,
-            e.rh,
-            e.fecha_nacimiento,
-            e.lugar_nacimiento,
-            e.estado_civil,
-            e.direccion,
-            e.barrio_localidad,
-            e.telefono,
-            e.email,
-            e.foto,
-            e.activo,
+        const sql = `
+        
+            SELECT 
+                e.id,
+                e.codigo,
+                e.nombre,
+                e.numero_documento,
+                e.tipo_documento,
+                e.rh,
+                e.fecha_nacimiento,
+                e.lugar_nacimiento,
+                e.estado_civil,
+                e.direccion,
+                e.barrio_localidad,
+                e.telefono,
+                e.email,
+                e.foto,
+                e.activo,
 
-            c.nombre AS cargo,
-            a.nombre AS area,
-            s.nombre AS sede
+                c.nombre AS cargo,
+                a.nombre AS area,
+                s.nombre AS sede
 
-        FROM empleados e
+            FROM empleados e
 
-        LEFT JOIN cargos c
-        ON e.cargo_id = c.id
+            LEFT JOIN cargos c
+            ON e.cargo_id = c.id
 
-        LEFT JOIN areas a
-        ON e.area_id = a.id
+            LEFT JOIN areas a
+            ON e.area_id = a.id
 
-        LEFT JOIN sedes s
-        ON e.sede_id = s.id
+            LEFT JOIN sedes s
+            ON e.sede_id = s.id
 
-        WHERE e.activo = 'SI'
+            WHERE e.activo = 'SI'
 
-        ORDER BY e.nombre ASC
-    
-    `;
+            ORDER BY e.nombre ASC
+        
+        `;
 
-    db.query(sql, (error, resultados) => {
-
-        if (error) {
-
-            console.log(error);
-
-            return res.status(500).json({
-                ok:false,
-                mensaje:'Error servidor'
-            });
-
-        }
+        const [resultados] = await db.query(sql);
 
         const empleados = resultados.map(emp => {
 
@@ -132,7 +122,18 @@ router.get('/api/documentacion-empleados', (req, res) => {
 
         });
 
-    });
+    } catch(error) {
+
+        console.log(error);
+
+        res.status(500).json({
+
+            ok:false,
+            mensaje:'Error servidor'
+
+        });
+
+    }
 
 });
 /* =========================================
@@ -181,20 +182,16 @@ router.post(
         try {
 
             const {
-
                 empleado_id,
                 categoria,
                 tipo_documento
-
             } = req.body;
 
             if (!req.file) {
 
                 return res.json({
-
                     ok:false,
                     mensaje:'Archivo requerido'
-
                 });
 
             }
@@ -205,27 +202,27 @@ router.post(
                 .pop();
 
             // ========================================
-            // URL CLOUDINARY
+            // ☁️ CLOUDINARY
             // ========================================
-const resultado = await cloudinary.uploader.upload(
 
-    req.file.path,
+            const resultado =
+                await cloudinary.uploader.upload(
 
-    {
+                    req.file.path,
 
-        folder: `empleados/${empleado_id}`,
+                    {
+                        folder: `empleados/${empleado_id}`,
+                        resource_type: 'auto'
+                    }
 
-        resource_type: 'auto'
+                );
 
-    }
+            const rutaArchivo =
+                resultado.secure_url;
 
-);
-
-const rutaArchivo = resultado.secure_url;
-
-            /* =====================================
-               💾 GUARDAR MYSQL
-            ===================================== */
+            // =====================================
+            // 💾 GUARDAR MYSQL
+            // =====================================
 
             const sql = `
 
@@ -245,7 +242,7 @@ const rutaArchivo = resultado.secure_url;
 
             `;
 
-            db.query(
+            await db.query(
 
                 sql,
 
@@ -265,93 +262,78 @@ const rutaArchivo = resultado.secure_url;
 
                     'APROBADO'
 
-                ],
-
-                (error) => {
-
-                    if (error) {
-
-                        console.error(error);
-
-                        return res.json({
-
-                            ok:false,
-                            mensaje:error.message
-
-                        });
-
-                    }
-
-                    /* =====================================
-                       🔥 CENTRO ACTIVIDAD
-                    ===================================== */
-
-                    db.query(
-
-                        `
-
-                        INSERT INTO centro_actividad (
-
-                            empleado_id,
-                            usuario_id,
-                            accion,
-                            modulo,
-                            descripcion,
-                            color,
-                            icono
-
-                        )
-
-                        VALUES (?, ?, ?, ?, ?, ?, ?)
-
-                        `,
-
-                        [
-
-                            empleado_id,
-
-                            req.session.usuario?.id || null,
-
-                            'DOCUMENTO',
-
-                            'DOCUMENTACION',
-
-                            `Se subió el documento ${tipo_documento}`,
-
-                            'morado',
-
-                            'fa-file-upload'
-
-                        ]
-
-                    );
-
-                    res.json({
-
-                        ok:true,
-                        mensaje:'Documento subido correctamente',
-                        url:rutaArchivo
-
-                    });
-
-                }
+                ]
 
             );
 
-} catch (error) {
+            // =====================================
+            // 🔥 CENTRO ACTIVIDAD
+            // =====================================
 
-    console.error('🔥 ERROR SUBIR DOCUMENTO:');
+            await db.query(
 
-    console.error(error);
+                `
 
-    res.status(500).json({
+                INSERT INTO centro_actividad (
 
-        ok:false,
-        mensaje:error.message
+                    empleado_id,
+                    usuario_id,
+                    accion,
+                    modulo,
+                    descripcion,
+                    color,
+                    icono
 
-    });
+                )
 
-}
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+
+                `,
+
+                [
+
+                    empleado_id,
+
+                    req.session.usuario?.id || null,
+
+                    'DOCUMENTO',
+
+                    'DOCUMENTACION',
+
+                    `Se subió el documento ${tipo_documento}`,
+
+                    'morado',
+
+                    'fa-file-upload'
+
+                ]
+
+            );
+
+            res.json({
+
+                ok:true,
+                mensaje:'Documento subido correctamente',
+                url:rutaArchivo
+
+            });
+
+        } catch (error) {
+
+            console.error(
+                '🔥 ERROR SUBIR DOCUMENTO:'
+            );
+
+            console.error(error);
+
+            res.status(500).json({
+
+                ok:false,
+                mensaje:error.message
+
+            });
+
+        }
 
     }
 
@@ -365,85 +347,84 @@ router.get(
 
     '/api/documentos/:empleado_id',
 
-    (req, res) => {
+    async (req, res) => {
 
-        const { empleado_id } = req.params;
+        try {
 
-        const sql = `
+            const { empleado_id } = req.params;
 
-            SELECT *
+            const sql = `
 
-            FROM documentos_empleado
+                SELECT *
 
-            WHERE empleado_id = ?
+                FROM documentos_empleado
 
-            ORDER BY fecha_subida DESC
+                WHERE empleado_id = ?
 
-        `;
+                ORDER BY fecha_subida DESC
 
-        db.query(
+            `;
 
-            sql,
+            const [results] = await db.query(
 
-            [empleado_id],
+                sql,
 
-            (error, results) => {
+                [empleado_id]
 
-                if (error) {
+            );
 
-                    console.error(error);
+            res.json({
 
-                    return res.json({
-                        ok:false
-                    });
+                ok:true,
+                documentos: results
 
-                }
+            });
 
-                res.json({
+        } catch(error) {
 
-                    ok:true,
-                    documentos: results
+            console.error(error);
 
-                });
+            res.status(500).json({
 
-            }
+                ok:false,
+                mensaje:'Error servidor'
 
-        );
+            });
+
+        }
 
     }
 
 );
 
-
 /* =========================================
    👁️ VER DOCUMENTO
 ========================================= */
 
-router.get('/api/ver-documento/:id', (req, res) => {
+router.get('/api/ver-documento/:id', async (req, res) => {
 
-    const id = req.params.id;
+    try {
 
-    const sql = `
-    
-        SELECT *
-        FROM documentos_empleado
-        WHERE id = ?
-    
-    `;
+        const id = req.params.id;
 
-    db.query(sql, [id], (error, results) => {
+        const sql = `
+        
+            SELECT *
+            FROM documentos_empleado
+            WHERE id = ?
+        
+        `;
 
-        if (error) {
-
-            console.error(error);
-
-            return res.send('Error servidor');
-
-        }
+        const [results] = await db.query(
+            sql,
+            [id]
+        );
 
         if (results.length === 0) {
 
-            return res.send('Documento no encontrado');
+            return res.send(
+                'Documento no encontrado'
+            );
 
         }
 
@@ -451,16 +432,27 @@ router.get('/api/ver-documento/:id', (req, res) => {
 
         if (!documento.ruta_archivo) {
 
-            return res.send('Documento sin ruta');
+            return res.send(
+                'Documento sin ruta'
+            );
 
         }
 
-        return res.redirect(documento.ruta_archivo);
+        return res.redirect(
+            documento.ruta_archivo
+        );
 
-    });
+    } catch(error) {
+
+        console.error(error);
+
+        res.status(500).send(
+            'Error servidor'
+        );
+
+    }
 
 });
-
 
 /* =========================================
    🗑️ ELIMINAR DOCUMENTO
@@ -470,65 +462,68 @@ router.delete(
 
     '/api/documento/:id',
 
-    (req, res) => {
+    async (req, res) => {
 
-        const { id } = req.params;
+        try {
 
-        db.query(
+            const { id } = req.params;
 
-            `
+            const [results] = await db.query(
 
-            SELECT *
+                `
 
-            FROM documentos_empleado
+                SELECT *
 
-            WHERE id = ?
+                FROM documentos_empleado
 
-            
-            `,
+                WHERE id = ?
 
-            [id],
+                `,
 
-            (error, results) => {
+                [id]
 
-                if (error || results.length === 0) {
+            );
 
-                    console.error(error);
+            if (results.length === 0) {
 
-                    return res.json({
-                        ok:false
-                    });
-
-                }
-
-                db.query(
-
-                    `
-
-                    DELETE FROM documentos_empleado
-
-                    WHERE id = ?
-
-                    
-                    `,
-
-                    [id],
-
-                    () => {
-
-                        res.json({
-
-                            ok:true
-
-                        });
-
-                    }
-
-                );
+                return res.json({
+                    ok:false
+                });
 
             }
 
-        );
+            await db.query(
+
+                `
+
+                DELETE FROM documentos_empleado
+
+                WHERE id = ?
+
+                `,
+
+                [id]
+
+            );
+
+            res.json({
+
+                ok:true
+
+            });
+
+        } catch(error) {
+
+            console.error(error);
+
+            res.status(500).json({
+
+                ok:false,
+                mensaje:'Error servidor'
+
+            });
+
+        }
 
     }
 

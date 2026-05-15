@@ -7,39 +7,92 @@ const { proteger } = require('../middlewares/auth');
 // 🔥 DATOS PARA EL CERTIFICADO
 // ============================================
 
-router.get('/api/datos-certificado', proteger, (req, res) => {
+router.get('/api/datos-certificado', proteger, async (req, res) => {
 
-    const db = req.app.get('db');
-    const usuario_id = req.session.usuarioID;
-    
-    const sql = `
-        SELECT 
-            e.nombre,
-            e.numero_documento,
-            c.nombre as cargo,
-            (SELECT AVG(nota) FROM resultados_evaluaciones WHERE usuario_id = ? AND aprobado = 1) as nota_promedio,
-            (SELECT fecha_firma FROM firmas_usuario WHERE usuario_id = ? ORDER BY fecha_firma DESC LIMIT 1) as fecha_firma,
-            (SELECT fecha_evaluacion FROM resultados_evaluaciones WHERE usuario_id = ? AND aprobado = 1 ORDER BY fecha_evaluacion DESC LIMIT 1) as fecha_completado
-        FROM usuarios u
-        JOIN empleados e ON u.empleado_id = e.id
-        LEFT JOIN cargos c ON e.cargo_id = c.id
-        WHERE u.id = ?
-    `;
-    
-    db.query(sql, [usuario_id, usuario_id, usuario_id, usuario_id], (err, results) => {
+    try {
 
-        if (err) {
-            console.error("Error en datos-certificado:", err);
-            return res.json({ success: false, error: err.message });
-        }
+        const db = req.app.get('db');
+
+        const usuario_id = req.session.usuarioID;
+        
+        const sql = `
+            SELECT 
+                e.nombre,
+                e.numero_documento,
+                c.nombre as cargo,
+
+                (
+                    SELECT AVG(nota) 
+                    FROM resultados_evaluaciones 
+                    WHERE usuario_id = ? 
+                    AND aprobado = 1
+                ) as nota_promedio,
+
+                (
+                    SELECT fecha_firma 
+                    FROM firmas_usuario 
+                    WHERE usuario_id = ? 
+                    ORDER BY fecha_firma DESC 
+                    LIMIT 1
+                ) as fecha_firma,
+
+                (
+                    SELECT fecha_evaluacion 
+                    FROM resultados_evaluaciones 
+                    WHERE usuario_id = ? 
+                    AND aprobado = 1 
+                    ORDER BY fecha_evaluacion DESC 
+                    LIMIT 1
+                ) as fecha_completado
+
+            FROM usuarios u
+
+            JOIN empleados e 
+            ON u.empleado_id = e.id
+
+            LEFT JOIN cargos c 
+            ON e.cargo_id = c.id
+
+            WHERE u.id = ?
+        `;
+        
+        const [results] = await db.query(
+            sql,
+            [
+                usuario_id,
+                usuario_id,
+                usuario_id,
+                usuario_id
+            ]
+        );
 
         if (results.length === 0) {
-            return res.json({ success: false, error: "No se encontraron datos del usuario" });
+
+            return res.json({
+                success: false,
+                error: "No se encontraron datos del usuario"
+            });
+
         }
         
-        res.json({ success: true, datos: results[0] });
+        res.json({
+            success: true,
+            datos: results[0]
+        });
 
-    });
+    } catch(error) {
+
+        console.error(
+            "🔥 ERROR DATOS CERTIFICADO:",
+            error
+        );
+
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+
+    }
 
 });
 
@@ -48,47 +101,83 @@ router.get('/api/datos-certificado', proteger, (req, res) => {
 // 🔥 GENERAR CERTIFICADO
 // ============================================
 
-router.post('/api/generar-certificado', proteger, (req, res) => {
+router.post('/api/generar-certificado', proteger, async (req, res) => {
 
-    const db = req.app.get('db');
-    const usuario_id = req.session.usuarioID;
+    try {
 
-    const sqlPromedio = `
-        SELECT AVG(nota) as promedio 
-        FROM resultados_evaluaciones 
-        WHERE usuario_id = ? AND aprobado = 1
-    `;
+        const db = req.app.get('db');
 
-    db.query(sqlPromedio, [usuario_id], (err, result) => {
+        const usuario_id = req.session.usuarioID;
 
-        if (err) {
-            return res.json({ success: false });
-        }
+        const sqlPromedio = `
+            SELECT AVG(nota) as promedio 
+            FROM resultados_evaluaciones 
+            WHERE usuario_id = ? 
+            AND aprobado = 1
+        `;
 
-        const promedio = result[0]?.promedio || 0;
-        const codigo = 'CERT-' + Date.now();
+        const [result] = await db.query(
+            sqlPromedio,
+            [usuario_id]
+        );
+
+        const promedio =
+            result[0]?.promedio || 0;
+
+        const codigo =
+            'CERT-' + Date.now();
 
         const sqlInsert = `
             INSERT INTO certificados_usuario 
-            (usuario_id, nota_final, fecha_emision, codigo_certificado)
+            (
+                usuario_id,
+                nota_final,
+                fecha_emision,
+                codigo_certificado
+            )
+
             VALUES (?, ?, NOW(), ?)
+
             ON DUPLICATE KEY UPDATE
+
                 nota_final = VALUES(nota_final),
                 fecha_emision = NOW()
         `;
 
-        db.query(sqlInsert, [usuario_id, promedio, codigo], (err2) => {
+        await db.query(
 
-            if (err2) {
-                console.error(err2);
-                return res.json({ success: false });
-            }
+            sqlInsert,
 
-            res.json({ success: true, codigo });
+            [
+                usuario_id,
+                promedio,
+                codigo
+            ]
+
+        );
+
+        res.json({
+
+            success: true,
+            codigo
 
         });
 
-    });
+    } catch(error) {
+
+        console.error(
+            '🔥 ERROR GENERAR CERTIFICADO:',
+            error
+        );
+
+        res.status(500).json({
+
+            success: false,
+            error: error.message
+
+        });
+
+    }
 
 });
 
