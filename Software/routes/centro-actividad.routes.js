@@ -38,45 +38,52 @@ router.get(
     '/api/centro-actividad',
     proteger,
     soloSuperAdmin,
-    (req, res) => {
 
-        const sql = `
+    async (req, res) => {
 
-            SELECT
-                ca.*,
-                e.nombre AS empleado_nombre,
-                u.usuario AS usuario_nombre
+        try {
 
-            FROM centro_actividad ca
+            const sql = `
 
-            LEFT JOIN empleados e
-            ON ca.empleado_id = e.id
+                SELECT
+                    ca.*,
+                    e.nombre AS empleado_nombre,
+                    u.usuario AS usuario_nombre
 
-            LEFT JOIN usuarios u
-            ON ca.usuario_id = u.id
+                FROM centro_actividad ca
 
-            ORDER BY ca.fecha DESC
+                LEFT JOIN empleados e
+                ON ca.empleado_id = e.id
 
-        `;
+                LEFT JOIN usuarios u
+                ON ca.usuario_id = u.id
 
-        db.query(sql, (err, results) => {
+                ORDER BY ca.fecha DESC
 
-            if (err) {
+            `;
 
-                console.log(err);
-
-                return res.json({
-                    ok: false
-                });
-
-            }
+            const [results] =
+                await db.query(sql);
 
             res.json({
+
                 ok: true,
                 actividades: results
+
             });
 
-        });
+        } catch(err) {
+
+            console.log(err);
+
+            res.status(500).json({
+
+                ok: false,
+                error: err.message
+
+            });
+
+        }
 
     }
 );

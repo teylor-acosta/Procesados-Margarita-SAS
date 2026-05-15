@@ -4,75 +4,34 @@ const path = require('path');
 const { proteger, soloSuperAdmin } = require('../middlewares/auth');
 const db = require('../DB');
 
-/* =========================================
-   🔥 OBTENER EMPLEADO POR ID
-========================================= */
+// ============================================
+// 🔥 LISTAR SOLO ACTIVOS
+// ============================================
 
-router.get('/api/empleado/:id', async (req, res) => {
+router.get('/api/empleados', proteger, soloSuperAdmin, (req, res) => {
 
-    try {
+    const db = req.app.get('db');
 
-        const { id } = req.params;
+    const sql = `
+    SELECT e.*, 
+           a.nombre AS area,
+           s.nombre AS sede,
+           c.nombre AS cargo
+    FROM empleados e
+    LEFT JOIN areas a ON e.area_id = a.id
+    LEFT JOIN sedes s ON e.sede_id = s.id
+    LEFT JOIN cargos c ON e.cargo_id = c.id
+    WHERE e.activo = 'SI'   -- 🔥 CLAVE
+    `;
 
-        const sql = `
-
-            SELECT 
-
-                e.*,
-
-                a.nombre AS area,
-                s.nombre AS sede,
-                c.nombre AS cargo
-
-            FROM empleados e
-
-            LEFT JOIN areas a
-            ON e.area_id = a.id
-
-            LEFT JOIN sedes s
-            ON e.sede_id = s.id
-
-            LEFT JOIN cargos c
-            ON e.cargo_id = c.id
-
-            WHERE e.id = $1
-
-        `;
-
-        const results = await db.query(sql, [id]);
-
-        if (results.rows.length === 0) {
-
-            return res.json({
-                ok: false,
-                mensaje: 'Empleado no encontrado'
-            });
-
-        }
-
-        res.json({
-
-            ok: true,
-
-            empleado: results.rows[0]
-
-        });
-
-    } catch (err) {
-
-        console.log(err);
-
-        res.status(500).json({
-
-            ok: false,
-            mensaje: 'Error servidor',
-            error: err.message
-
-        });
-
-    }
+    db.query(sql, (err, results) => {
+        if (err) return res.json([]);
+        res.json(results);
+    });
 
 });
+
+
 // ============================================
 // 🔥 ACTUALIZAR
 // ============================================

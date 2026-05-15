@@ -6,40 +6,81 @@ const { proteger } = require('../middlewares/auth');
 // ============================================
 // 🔥 AREAS
 // ============================================
-router.get('/api/areas', proteger, (req, res) => {
 
-    const db = req.app.get('db');
+router.get('/api/areas', proteger, async (req, res) => {
 
-    db.query("SELECT id, nombre FROM areas", (err, results) => {
-        if (err) return res.json([]);
+    try {
+
+        const db = req.app.get('db');
+
+        const [results] = await db.query(
+            "SELECT id, nombre FROM areas"
+        );
+
         res.json(results);
-    });
+
+    } catch(error) {
+
+        console.error(error);
+
+        res.json([]);
+
+    }
+
 });
+
 
 // ============================================
 // 🔥 SEDES
 // ============================================
-router.get('/api/sedes', proteger, (req, res) => {
 
-    const db = req.app.get('db');
+router.get('/api/sedes', proteger, async (req, res) => {
 
-    db.query("SELECT id, nombre FROM sedes", (err, results) => {
-        if (err) return res.json([]);
+    try {
+
+        const db = req.app.get('db');
+
+        const [results] = await db.query(
+            "SELECT id, nombre FROM sedes"
+        );
+
         res.json(results);
-    });
+
+    } catch(error) {
+
+        console.error(error);
+
+        res.json([]);
+
+    }
+
 });
+
 
 // ============================================
 // 🔥 CARGOS
 // ============================================
-router.get('/api/cargos', proteger, (req, res) => {
 
-    const db = req.app.get('db');
+router.get('/api/cargos', proteger, async (req, res) => {
 
-    db.query("SELECT id, nombre FROM cargos", (err, results) => {
-        if (err) return res.json([]);
+    try {
+
+        const db = req.app.get('db');
+
+        const [results] = await db.query(
+            "SELECT id, nombre FROM cargos"
+        );
+
         res.json(results);
-    });
+
+    } catch(error) {
+
+        console.error(error);
+
+        res.json([]);
+
+    }
+
 });
 
 module.exports = router;

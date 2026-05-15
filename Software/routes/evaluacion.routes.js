@@ -9,42 +9,50 @@ const { proteger } = require('../middlewares/auth');
 
 router.get('/api/preguntas-evaluacion/:capituloId', proteger, async (req, res) => {
 
-    const db = req.app.get('db');
-
-    const sql = `
-        SELECT 
-            id,
-            pregunta,
-            opcion_a,
-            opcion_b,
-            opcion_c,
-            opcion_d,
-            respuesta_correcta,
-            puntos 
-
-        FROM preguntas_induccion 
-
-        WHERE capitulo_id = $1
-    `;
-
     try {
 
-        const results = await db.query(sql, [
-            req.params.capituloId
-        ]);
+        const db = req.app.get('db');
+
+        const sql = `
+            SELECT 
+                id,
+                pregunta,
+                opcion_a,
+                opcion_b,
+                opcion_c,
+                opcion_d,
+                respuesta_correcta,
+                puntos 
+
+            FROM preguntas_induccion 
+
+            WHERE capitulo_id = ?
+        `;
+
+        const [results] = await db.query(
+            sql,
+            [req.params.capituloId]
+        );
 
         res.json({
+
             success: true,
-            preguntas: results.rows
+            preguntas: results
+
         });
 
-    } catch (err) {
+    } catch(err) {
 
-        console.error("Error al cargar preguntas:", err);
+        console.error(
+            "Error al cargar preguntas:",
+            err
+        );
 
-        res.json({
+        res.status(500).json({
+
             success: false,
             message: err.message
+
         });
 
     }
@@ -58,26 +66,25 @@ router.get('/api/preguntas-evaluacion/:capituloId', proteger, async (req, res) =
 
 router.post('/api/guardar-evaluacion', proteger, async (req, res) => {
 
-    const db = req.app.get('db');
-
-    const { capitulo_id, respuestas } = req.body;
-
-    const usuario_id = req.session.usuarioID;
-
-    if (!capitulo_id || !respuestas) {
-
-        return res.json({
-            success: false,
-            message: "Datos incompletos"
-        });
-
-    }
-
     try {
 
-        // =========================================
-        // 🔥 OBTENER PREGUNTAS
-        // =========================================
+        const db = req.app.get('db');
+
+        const { capitulo_id, respuestas } = req.body;
+
+        const usuario_id =
+            req.session.usuarioID;
+
+        if (!capitulo_id || !respuestas) {
+
+            return res.json({
+
+                success: false,
+                message: "Datos incompletos"
+
+            });
+
+        }
 
         const sqlGetPreguntas = `
             SELECT 
@@ -86,28 +93,24 @@ router.post('/api/guardar-evaluacion', proteger, async (req, res) => {
 
             FROM preguntas_induccion 
 
-            WHERE capitulo_id = $1
+            WHERE capitulo_id = ?
         `;
-
-        const preguntasResult = await db.query(
+        
+        const [preguntas] = await db.query(
             sqlGetPreguntas,
             [capitulo_id]
         );
 
-        const preguntas = preguntasResult.rows;
-
         if (preguntas.length === 0) {
 
             return res.json({
+
                 success: false,
                 message: "No hay preguntas para este capítulo"
+
             });
 
         }
-
-        // =========================================
-        // 🔥 CALCULAR NOTA
-        // =========================================
 
         let aciertos = 0;
 
@@ -132,22 +135,18 @@ router.post('/api/guardar-evaluacion', proteger, async (req, res) => {
         );
 
         const aprobado =
-            nota >= 70;
-
-        // =========================================
-        // 🔥 VALIDAR EXISTENTE
-        // =========================================
+            nota >= 70 ? 1 : 0;
 
         const sqlCheck = `
-            SELECT id
+            SELECT id 
 
-            FROM resultados_evaluaciones
+            FROM resultados_evaluaciones 
 
-            WHERE usuario_id = $1
-            AND capitulo_id = $2
+            WHERE usuario_id = ? 
+            AND capitulo_id = ?
         `;
-
-        const existingResult = await db.query(
+        
+        const [existing] = await db.query(
             sqlCheck,
             [
                 usuario_id,
@@ -155,109 +154,95 @@ router.post('/api/guardar-evaluacion', proteger, async (req, res) => {
             ]
         );
 
-        const existing =
-            existingResult.rows;
-
-        // =========================================
-        // 🔥 INSERT / UPDATE
-        // =========================================
+        let sqlInsert;
+        let params;
 
         if (existing.length > 0) {
 
-            const sqlUpdate = `
-                UPDATE resultados_evaluaciones
+            sqlInsert = `
+                UPDATE resultados_evaluaciones 
 
-                SET
-                    nota = $1,
-                    aprobado = $2,
-                    fecha_evaluacion = NOW()
+                SET 
+                    nota = ?,
+                    aprobado = ?,
+                    fecha_evaluacion = NOW() 
 
-                WHERE usuario_id = $3
-                AND capitulo_id = $4
+                WHERE usuario_id = ? 
+                AND capitulo_id = ?
             `;
 
-            await db.query(sqlUpdate, [
-
+            params = [
                 nota,
                 aprobado,
                 usuario_id,
                 capitulo_id
-
-            ]);
+            ];
 
         } else {
 
-            const sqlInsert = `
-                INSERT INTO resultados_evaluaciones (
+            sqlInsert = `
+                INSERT INTO resultados_evaluaciones 
 
+                (
                     usuario_id,
                     capitulo_id,
                     nota,
                     aprobado,
                     fecha_evaluacion
+                ) 
 
-                )
-
-                VALUES (
-
-                    $1,
-                    $2,
-                    $3,
-                    $4,
-                    NOW()
-
-                )
+                VALUES (?, ?, ?, ?, NOW())
             `;
 
-            await db.query(sqlInsert, [
-
+            params = [
                 usuario_id,
                 capitulo_id,
                 nota,
                 aprobado
-
-            ]);
+            ];
 
         }
 
+        await db.query(
+            sqlInsert,
+            params
+        );
+
         // =========================================
-        // 🔥 VALIDAR INDUCCIÓN COMPLETA
+        // 🔥 VALIDAR SI TERMINÓ TODO
         // =========================================
 
         const sqlTotal = `
-            SELECT COUNT(*) as total
+            SELECT COUNT(*) as total 
 
-            FROM capitulos_induccion
+            FROM capitulos_induccion 
 
-            WHERE activo = true
+            WHERE activo = 1
         `;
-
-        const totalResult =
-            await db.query(sqlTotal);
 
         const sqlAprobados = `
-            SELECT COUNT(*) as aprobados
+            SELECT COUNT(*) as aprobados 
 
-            FROM resultados_evaluaciones
+            FROM resultados_evaluaciones 
 
-            WHERE usuario_id = $1
-            AND aprobado = true
+            WHERE usuario_id = ? 
+            AND aprobado = 1
         `;
 
-        const aprobadosResult =
-            await db.query(sqlAprobados, [
-                usuario_id
-            ]);
+        const [totalResult] =
+            await db.query(sqlTotal);
+
+        const [aprobadosResult] =
+            await db.query(
+                sqlAprobados,
+                [usuario_id]
+            );
 
         const totalCapitulos =
-            totalResult.rows[0]?.total || 0;
+            totalResult?.[0]?.total || 0;
 
         const totalAprobados =
-            aprobadosResult.rows[0]?.aprobados || 0;
-
-        // =========================================
-        // 🔥 ACTUALIZAR USUARIO
-        // =========================================
+            aprobadosResult?.[0]?.aprobados || 0;
 
         if (
             totalAprobados >= totalCapitulos &&
@@ -267,11 +252,11 @@ router.post('/api/guardar-evaluacion', proteger, async (req, res) => {
             await db.query(
 
                 `
-                UPDATE usuarios
+                UPDATE usuarios 
 
-                SET primera_vez = false
+                SET primera_vez = 0 
 
-                WHERE id = $1
+                WHERE id = ?
                 `,
 
                 [usuario_id]
@@ -280,23 +265,22 @@ router.post('/api/guardar-evaluacion', proteger, async (req, res) => {
 
         }
 
-        // =========================================
-        // 🔥 RESPUESTA
-        // =========================================
-
         res.json({
 
             success: true,
             nota,
-            aprobado
+            aprobado: aprobado === 1
 
         });
 
-    } catch (err) {
+    } catch(err) {
 
-        console.error("Error guardar evaluación:", err);
+        console.error(
+            "🔥 ERROR GUARDAR EVALUACION:",
+            err
+        );
 
-        res.json({
+        res.status(500).json({
 
             success: false,
             message: err.message

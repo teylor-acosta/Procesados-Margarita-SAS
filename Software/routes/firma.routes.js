@@ -9,60 +9,69 @@ const { proteger } = require('../middlewares/auth');
 
 router.post('/api/guardar-firma', proteger, async (req, res) => {
 
-    const db = req.app.get('db');
-
-    const { firma_data } = req.body;
-
-    const usuario_id = req.session.usuarioID;
-    const empleado_id = req.session.empleadoID;
-
-    const ip =
-        req.headers['x-forwarded-for'] ||
-        req.socket.remoteAddress ||
-        '';
-
-    if (!firma_data) {
-
-        return res.json({
-            success: false,
-            message: "No se recibió la firma"
-        });
-
-    }
-
-    const sql = `
-        INSERT INTO firmas_usuario (
-            usuario_id,
-            firma_data,
-            fecha_firma,
-            ip_address
-        )
-
-        VALUES (
-            $1,
-            $2,
-            NOW(),
-            $3
-        )
-
-        ON CONFLICT (usuario_id)
-
-        DO UPDATE SET
-            firma_data = EXCLUDED.firma_data,
-            fecha_firma = NOW(),
-            ip_address = EXCLUDED.ip_address
-    `;
-
     try {
 
-        await db.query(sql, [
-            usuario_id,
-            firma_data,
-            ip
-        ]);
+        const db = req.app.get('db');
+
+        const { firma_data } = req.body;
+
+        const usuario_id =
+            req.session.usuarioID;
+
+        const empleado_id =
+            req.session.empleadoID;
+
+        const ip =
+            req.headers['x-forwarded-for'] ||
+            req.socket.remoteAddress ||
+            '';
+
+        if (!firma_data) {
+
+            return res.json({
+
+                success: false,
+                message: "No se recibió la firma"
+
+            });
+
+        }
+
+        const sql = `
+            INSERT INTO firmas_usuario 
+
+            (
+                usuario_id,
+                firma_data,
+                fecha_firma,
+                ip_address
+            )
+
+            VALUES (?, ?, NOW(), ?)
+
+            ON DUPLICATE KEY UPDATE
+
+                firma_data = VALUES(firma_data),
+                fecha_firma = NOW(),
+                ip_address = VALUES(ip_address)
+        `;
+
+        await db.query(
+
+            sql,
+
+            [
+                usuario_id,
+                firma_data,
+                ip
+            ]
+
+        );
 
         const sqlInduccion = `
-            INSERT INTO inducciones (
+            INSERT INTO inducciones 
+
+            (
                 empleado_id,
                 tipo,
                 fecha,
@@ -70,45 +79,63 @@ router.post('/api/guardar-firma', proteger, async (req, res) => {
                 firmado
             )
 
-            SELECT
-                $1,
+            SELECT 
+
+                ?,
                 'induccion_completa',
-                CURRENT_DATE,
+                CURDATE(),
 
                 (
-                    SELECT AVG(nota)
-                    FROM resultados_evaluaciones
-                    WHERE usuario_id = $2
-                    AND aprobado = true
+                    SELECT AVG(nota) 
+                    FROM resultados_evaluaciones 
+                    WHERE usuario_id = ? 
+                    AND aprobado = 1
                 ),
 
-                true
+                1
 
             WHERE NOT EXISTS (
-                SELECT 1
-                FROM inducciones
-                WHERE empleado_id = $3
+
+                SELECT 1 
+
+                FROM inducciones 
+
+                WHERE empleado_id = ? 
                 AND tipo = 'induccion_completa'
+
             )
         `;
 
-        await db.query(sqlInduccion, [
-            empleado_id,
-            usuario_id,
-            empleado_id
-        ]);
+        await db.query(
+
+            sqlInduccion,
+
+            [
+                empleado_id,
+                usuario_id,
+                empleado_id
+            ]
+
+        );
 
         res.json({
+
             success: true
+
         });
 
-    } catch (err) {
+    } catch(err) {
 
-        console.error("Error al guardar firma:", err);
+        console.error(
+            "🔥 ERROR GUARDAR FIRMA:",
+            err
+        );
 
-        res.json({
+        res.status(500).json({
+
             success: false,
-            message: "Error al guardar la firma"
+            message: err.message
+
         });
 
     }
@@ -122,42 +149,52 @@ router.post('/api/guardar-firma', proteger, async (req, res) => {
 
 router.get('/api/obtener-firma', proteger, async (req, res) => {
 
-    const db = req.app.get('db');
-
-    const usuario_id = req.session.usuarioID;
-
-    const sql = `
-        SELECT firma_data
-        FROM firmas_usuario
-        WHERE usuario_id = $1
-    `;
-
     try {
 
-        const result = await db.query(sql, [
-            usuario_id
-        ]);
+        const db = req.app.get('db');
 
-        if (result.rows.length > 0) {
+        const usuario_id =
+            req.session.usuarioID;
+
+        const sql = `
+            SELECT firma_data 
+
+            FROM firmas_usuario 
+
+            WHERE usuario_id = ?
+        `;
+
+        const [result] = await db.query(
+            sql,
+            [usuario_id]
+        );
+
+        if (result.length > 0) {
 
             return res.json({
+
                 success: true,
-                firma: result.rows[0].firma_data
+                firma: result[0].firma_data
+
             });
 
         }
 
         res.json({
+
             success: false,
             firma: null
+
         });
 
-    } catch (err) {
+    } catch(err) {
 
         console.error(err);
 
-        res.json({
+        res.status(500).json({
+
             success: false
+
         });
 
     }
@@ -171,66 +208,84 @@ router.get('/api/obtener-firma', proteger, async (req, res) => {
 
 router.get('/api/induccion-completada', proteger, async (req, res) => {
 
-    const db = req.app.get('db');
-
-    const usuario_id = req.session.usuarioID;
-
-    const sql = `
-        SELECT
-
-            (
-                SELECT COUNT(*)
-                FROM capitulos_induccion
-                WHERE activo = true
-            ) as total,
-
-            (
-                SELECT COUNT(DISTINCT capitulo_id)
-                FROM resultados_evaluaciones
-                WHERE usuario_id = $1
-                AND aprobado = true
-            ) as aprobados,
-
-            (
-                SELECT firmado
-                FROM inducciones
-                WHERE empleado_id = $2
-                AND tipo = 'induccion_completa'
-                LIMIT 1
-            ) as firmado
-    `;
-
     try {
 
-        const results = await db.query(sql, [
-            usuario_id,
-            req.session.empleadoID
-        ]);
+        const db = req.app.get('db');
 
-        const total = results.rows[0]?.total || 0;
+        const usuario_id =
+            req.session.usuarioID;
 
-        const aprobados = results.rows[0]?.aprobados || 0;
+        const sql = `
+            SELECT 
 
-        const firmado = results.rows[0]?.firmado || false;
+                (
+                    SELECT COUNT(*) 
+                    FROM capitulos_induccion 
+                    WHERE activo = 1
+                ) as total,
+
+                (
+                    SELECT COUNT(DISTINCT capitulo_id) 
+                    FROM resultados_evaluaciones 
+                    WHERE usuario_id = ? 
+                    AND aprobado = 1
+                ) as aprobados,
+
+                (
+                    SELECT firmado 
+                    FROM inducciones 
+                    WHERE empleado_id = ? 
+                    AND tipo = 'induccion_completa' 
+                    LIMIT 1
+                ) as firmado
+        `;
+        
+        const [results] = await db.query(
+
+            sql,
+
+            [
+                usuario_id,
+                req.session.empleadoID
+            ]
+
+        );
+
+        const total =
+            results[0]?.total || 0;
+
+        const aprobados =
+            results[0]?.aprobados || 0;
+
+        const firmado =
+            results[0]?.firmado || 0;
 
         const completada =
             aprobados >= total &&
             total > 0;
+        
+        res.json({ 
 
-        res.json({
             success: true,
-            completada: completada,
-            firmado: firmado === true,
-            total: total,
-            aprobados: aprobados
+
+            completada,
+
+            firmado: firmado === 1,
+
+            total,
+
+            aprobados
+
         });
 
-    } catch (err) {
+    } catch(err) {
 
         console.error(err);
 
-        res.json({
+        res.status(500).json({
+
             success: false
+
         });
 
     }

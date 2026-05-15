@@ -9,76 +9,82 @@ const { proteger } = require('../middlewares/auth');
 
 router.get('/api/capitulos-induccion', proteger, async (req, res) => {
 
-    const db = req.app.get('db');
+    try {
 
-    const sql = `
-        SELECT 
-            c.*,
+        const db = req.app.get('db');
 
-            (
-                SELECT COUNT(*) 
-                FROM sub_capitulos_induccion 
-                WHERE capitulo_id = c.id 
-                AND activo = true
-            ) as total_videos,
+        const sql = `
+            SELECT c.*, 
+            (SELECT COUNT(*) 
+             FROM sub_capitulos_induccion 
+             WHERE capitulo_id = c.id 
+             AND activo = 1) as total_videos,
 
-            (
-                SELECT COUNT(*) 
-                FROM progreso_videos p
-                WHERE p.usuario_id = $1
-                AND p.sub_capitulo_id IN (
-                    SELECT id 
-                    FROM sub_capitulos_induccion 
-                    WHERE capitulo_id = c.id
-                )
-            ) as videos_vistos,
+            (SELECT COUNT(*) 
+             FROM progreso_videos p 
+             WHERE p.usuario_id = ? 
+             AND p.sub_capitulo_id IN (
+                 SELECT id 
+                 FROM sub_capitulos_induccion 
+                 WHERE capitulo_id = c.id
+             )) as videos_vistos,
 
-            COALESCE((
-                SELECT aprobado 
-                FROM resultados_evaluaciones
-                WHERE usuario_id = $1
-                AND capitulo_id = c.id
-                LIMIT 1
-            ), false) as aprobado,
+            COALESCE(
+                (
+                    SELECT aprobado 
+                    FROM resultados_evaluaciones 
+                    WHERE usuario_id = ? 
+                    AND capitulo_id = c.id 
+                    LIMIT 1
+                ), 
+                0
+            ) as aprobado,
 
             (
                 SELECT nota 
-                FROM resultados_evaluaciones
-                WHERE usuario_id = $1
-                AND capitulo_id = c.id
+                FROM resultados_evaluaciones 
+                WHERE usuario_id = ? 
+                AND capitulo_id = c.id 
                 LIMIT 1
             ) as nota
 
-        FROM capitulos_induccion c
+            FROM capitulos_induccion c 
 
-        WHERE c.activo = true
+            WHERE c.activo = 1 
 
-        ORDER BY c.orden ASC
-    `;
+            ORDER BY c.orden ASC
+        `;
 
-    try {
-
-        const results = await db.query(sql, [
-            req.session.usuarioID
-        ]);
+        const [results] = await db.query(
+            sql,
+            [
+                req.session.usuarioID,
+                req.session.usuarioID,
+                req.session.usuarioID
+            ]
+        );
 
         res.json({
             success: true,
-            capitulos: results.rows
+            capitulos: results
         });
 
-    } catch (err) {
+    } catch (error) {
 
-        console.error("Error en capitulos-induccion:", err);
+        console.error(
+            "🔥 ERROR CAPITULOS INDUCCION:",
+            error
+        );
 
-        res.json({
+        res.status(500).json({
             success: false,
-            error: err.message
+            error: error.message
         });
 
     }
 
 });
+
 
 // ============================================
 // 🔥 SUBCAPITULOS
@@ -86,51 +92,60 @@ router.get('/api/capitulos-induccion', proteger, async (req, res) => {
 
 router.get('/api/sub-capitulos/:capituloId', proteger, async (req, res) => {
 
-    const db = req.app.get('db');
-
-    const sql = `
-        SELECT 
-            s.*,
-
-            COALESCE((
-                SELECT visto 
-                FROM progreso_videos
-                WHERE usuario_id = $1
-                AND sub_capitulo_id = s.id
-            ), false) as visto
-
-        FROM sub_capitulos_induccion s
-
-        WHERE s.capitulo_id = $2
-        AND s.activo = true
-
-        ORDER BY s.orden ASC
-    `;
-
     try {
 
-        const results = await db.query(sql, [
-            req.session.usuarioID,
-            req.params.capituloId
-        ]);
+        const db = req.app.get('db');
+
+        const sql = `
+            SELECT s.*, 
+
+            COALESCE(
+                (
+                    SELECT visto 
+                    FROM progreso_videos 
+                    WHERE usuario_id = ? 
+                    AND sub_capitulo_id = s.id
+                ), 
+                0
+            ) as visto 
+
+            FROM sub_capitulos_induccion s 
+
+            WHERE s.capitulo_id = ? 
+            AND s.activo = 1 
+
+            ORDER BY s.orden ASC
+        `;
+
+        const [results] = await db.query(
+            sql,
+            [
+                req.session.usuarioID,
+                req.params.capituloId
+            ]
+        );
 
         res.json({
             success: true,
-            sub_capitulos: results.rows
+            sub_capitulos: results
         });
 
-    } catch (err) {
+    } catch (error) {
 
-        console.error("Error sub-capitulos:", err);
+        console.error(
+            "🔥 ERROR SUBCAPITULOS:",
+            error
+        );
 
-        res.json({
+        res.status(500).json({
             success: false,
-            error: err.message
+            error: error.message
         });
 
     }
 
 });
+
 
 // ============================================
 // 🔥 MARCAR VIDEO VISTO
@@ -138,50 +153,50 @@ router.get('/api/sub-capitulos/:capituloId', proteger, async (req, res) => {
 
 router.post('/api/marcar-visto', proteger, async (req, res) => {
 
-    const db = req.app.get('db');
-
-    const { sub_capitulo_id } = req.body;
-
-    const sql = `
-        INSERT INTO progreso_videos (
-            usuario_id,
-            sub_capitulo_id,
-            visto,
-            fecha_visto
-        )
-
-        VALUES (
-            $1,
-            $2,
-            true,
-            NOW()
-        )
-
-        ON CONFLICT (usuario_id, sub_capitulo_id)
-
-        DO UPDATE SET
-            visto = true,
-            fecha_visto = NOW()
-    `;
-
     try {
 
-        await db.query(sql, [
-            req.session.usuarioID,
-            sub_capitulo_id
-        ]);
+        const db = req.app.get('db');
+
+        const { sub_capitulo_id } = req.body;
+
+        const sql = `
+            INSERT INTO progreso_videos 
+            (
+                usuario_id, 
+                sub_capitulo_id, 
+                visto, 
+                fecha_visto
+            ) 
+
+            VALUES (?, ?, 1, NOW()) 
+
+            ON DUPLICATE KEY UPDATE 
+                visto = 1, 
+                fecha_visto = NOW()
+        `;
+
+        await db.query(
+            sql,
+            [
+                req.session.usuarioID,
+                sub_capitulo_id
+            ]
+        );
 
         res.json({
             success: true
         });
 
-    } catch (err) {
+    } catch (error) {
 
-        console.error("Error marcar-visto:", err);
+        console.error(
+            "🔥 ERROR MARCAR VISTO:",
+            error
+        );
 
-        res.json({
+        res.status(500).json({
             success: false,
-            error: err.message
+            error: error.message
         });
 
     }
