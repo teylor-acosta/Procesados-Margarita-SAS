@@ -404,12 +404,32 @@ async function marcarVideoComoVisto() {
         
         const result = await response.json();
         
-        if (result.success) {
-            if (videoModalInstance) {
-                videoModalInstance.hide();
-            }
-            await cargarCapitulos();
-        } else {
+if (result.success) {
+
+    // 🔥 DETENER VIDEO
+    const videoPlayer =
+        document.getElementById('videoPlayer');
+
+    if (videoPlayer) {
+
+        videoPlayer.pause();
+
+        videoPlayer.currentTime = 0;
+
+        videoPlayer.src = '';
+
+    }
+
+    // 🔥 CERRAR MODAL
+    if (videoModalInstance) {
+
+        videoModalInstance.hide();
+
+    }
+
+    await cargarCapitulos();
+
+} else {
             alert('Error al marcar el video como visto');
             btnConfirmar.disabled = false;
             btnConfirmar.innerHTML = 'MARCAR COMO VISTO';
