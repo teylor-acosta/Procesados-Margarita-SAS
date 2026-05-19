@@ -26,20 +26,38 @@ app.use(express.json({ limit: '50mb' }));
 
 const sessionStore = new MySQLStore({}, db);
 
-app.use(session({
-    key: 'connect.sid',
-    secret: 'procesados_margarita_2026',
-    store: sessionStore,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: false,
-        httpOnly: true,
-        sameSite: 'lax',
-        maxAge: 30 * 60 * 1000
-    }
-}));
+// 🔥 IMPORTANTE PARA RENDER
+app.set('trust proxy', 1);
 
+const isProduction = process.env.NODE_ENV === 'production';
+
+app.use(session({
+
+    key: 'connect.sid',
+
+    secret: 'procesados_margarita_2026',
+
+    store: sessionStore,
+
+    resave: false,
+
+    saveUninitialized: false,
+
+    proxy: true,
+
+    cookie: {
+
+        secure: isProduction, // 🔥 true en render
+
+        httpOnly: true,
+
+        sameSite: isProduction ? 'none' : 'lax',
+
+        maxAge: 30 * 60 * 1000
+
+    }
+
+}));
 
 // ============================================
 // 🔒 NO CACHE (BOTÓN ATRÁS)
