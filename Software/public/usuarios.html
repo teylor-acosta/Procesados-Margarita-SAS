@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Módulo Usuarios</title>
+
+<!-- FUENTE -->
+<link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap" rel="stylesheet">
+
+<!-- BOOTSTRAP -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- ICONOS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- ESTILOS -->
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/usuarios.css">
+
+<link rel="icon" href="img/Gemini_Generated_Image_bo9w5fbo9w5fbo9w-removebg-preview.png">
+
+</head>
+
+<body>
+
+
+<!-- =========================================
+     🔥 NAVBAR
+========================================= -->
+
+<nav class="navbar-custom">
+
+    <div class="navbar-left">
+
+        <img 
+            src="img/logo de procesados solo.png" 
+            class="logo-navbar"
+        >
+
+        <span class="empresa-nombre">
+            Procesados Margarita SAS
+        </span>
+
+    </div>
+
+    <div class="acciones-navbar">
+
+        <a href="/recursos-humanos" class="btn btn-light">
+
+            <i class="fas fa-arrow-left"></i>
+
+            Volver
+
+        </a>
+
+        <a href="/logout" class="btn-logout">
+
+            <i class="fas fa-power-off"></i>
+
+            Cerrar sesión
+
+        </a>
+
+    </div>
+
+</nav>
+
+
+
+<!-- =========================================
+     🔥 CONTENIDO
+========================================= -->
+
+<div class="usuarios-container">
+
+
+    <!-- TITULO -->
+
+    <div class="titulo-usuarios">
+
+        <h2>
+            Gestión de Usuarios
+        </h2>
+
+    </div>
+
+
+
+    <!-- =====================================
+         🔥 MODULOS
+    ====================================== -->
+
+    <div class="modulos-usuarios">
+
+
+        <!-- 🔹 CREAR USUARIO -->
+
+        <div 
+            class="modulo-card"
+            onclick="window.location.href='/crear-usuario'"
+        >
+
+            <i class="fas fa-user-plus icono-modulo"></i>
+
+            <span>
+                Crear usuario
+            </span>
+
+        </div>
+
+
+
+        <!-- 🔹 VER USUARIOS -->
+
+        <div 
+            class="modulo-card"
+            onclick="window.location.href='/usuarios-registrados'"
+        >
+
+            <i class="fas fa-users-cog icono-modulo"></i>
+
+            <span>
+                Usuarios registrados
+            </span>
+
+        </div>
+
+
+
+        <!-- 🔹 PERMISOS -->
+
+        <div 
+            class="modulo-card"
+            onclick="window.location.href='/permisos-usuarios'"
+        >
+
+            <i class="fas fa-user-lock icono-modulo"></i>
+
+            <span>
+                Permisos
+            </span>
+
+        </div>
+
+
+
+        <!-- 🔹 HISTORIAL -->
+
+        <div 
+            class="modulo-card"
+            onclick="window.location.href='/historial-usuarios'"
+        >
+
+            <i class="fas fa-clock-rotate-left icono-modulo"></i>
+
+            <span>
+                Historial
+            </span>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+</body>
+</html>

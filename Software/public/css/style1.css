@@ -81,7 +81,7 @@ body::before{
 .empresa-nombre{
     font-weight:bold;
     color:#15803d;
-    font-size:16px;
+    font-size:italic;
     line-height:1.2;
 }
 

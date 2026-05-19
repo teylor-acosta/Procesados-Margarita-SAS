@@ -70,6 +70,7 @@ router.get('/expediente-empleado/:id', (req, res) => {
 
 });
 
+
 // ============================================
 // 🔥 RESET PASSWORD
 // ============================================
@@ -132,6 +133,34 @@ router.get('/panel', proteger, (req, res) => {
 
 router.get('/recursos-humanos', proteger, soloSuperAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'recursos-humanos.html'));
+});
+router.get('/usuarios', proteger, soloSuperAdmin, (req, res) => {
+
+    res.sendFile(
+
+        path.join(
+            __dirname,
+            '../public/usuarios.html'
+        )
+
+    );
+
+});
+/* =========================================
+   🔥 CREAR USUARIO
+========================================= */
+
+router.get('/crear-usuario', proteger, soloSuperAdmin, (req, res) => {
+
+    res.sendFile(
+
+        path.join(
+            __dirname,
+            '../public/crear-usuario.html'
+        )
+
+    );
+
 });
 
 module.exports = router;
