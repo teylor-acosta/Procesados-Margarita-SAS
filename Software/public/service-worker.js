@@ -78,31 +78,59 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
 
-    const requestURL = new URL(event.request.url);
-
-    /* 🔥 NO CACHEAR APIs */
-    if (
-        requestURL.pathname.startsWith('/api') ||
-        requestURL.pathname.startsWith('/dashboard') ||
-        requestURL.pathname.startsWith('/logout') ||
-        requestURL.pathname.startsWith('/panel')
-    ) {
+    // 🔥 SOLO GET
+    if (event.request.method !== 'GET') {
 
         return;
 
     }
 
-    /* 🔥 SOLO GET */
-    if (event.request.method !== 'GET') return;
-
-    /* 🔥 CACHE FIRST SOLO ESTÁTICOS */
     event.respondWith(
 
         caches.match(event.request)
 
-        .then(cached => {
+        .then(cacheResponse => {
 
-            return cached || fetch(event.request);
+            // ✅ CACHE
+            if (cacheResponse) {
+
+                return cacheResponse;
+
+            }
+
+            // 🌐 NETWORK
+            return fetch(event.request)
+
+            .then(networkResponse => {
+
+                // 🔥 NO CACHEAR APIs
+                if (
+
+                    event.request.url.includes('/api/')
+
+                ) {
+
+                    return networkResponse;
+
+                }
+
+                return caches.open(CACHE_NAME)
+
+                .then(cache => {
+
+                    cache.put(
+
+                        event.request,
+
+                        networkResponse.clone()
+
+                    );
+
+                    return networkResponse;
+
+                });
+
+            });
 
         })
 

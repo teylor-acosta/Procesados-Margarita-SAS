@@ -1,49 +1,213 @@
-document.getElementById('recuperarForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+console.log("🔥 recuperar.js cargado");
 
-    const documento = e.target.querySelector('input[name="documento"]').value.trim();
-    const alertBox = document.getElementById('mensaje');
-    const btnSubmit = e.target.querySelector('button[type="submit"]');
+document.addEventListener('DOMContentLoaded', () => {
 
-    if (!documento) {
-        alertBox.className = "alert alert-warning";
-        alertBox.textContent = "Por favor, ingresa tu número de documento.";
-        alertBox.style.display = 'block';
-        return;
-    }
+    // ============================================
+    // ELEMENTOS
+    // ============================================
 
-    const originalText = btnSubmit.innerHTML;
-    btnSubmit.disabled = true;
-    btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verificando...';
+    const form =
+        document.getElementById('recuperarForm');
 
-    try {
-        const res = await fetch('/api/recuperar', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ documento })
-        });
+    const btn =
+        document.getElementById('btnRecuperar');
 
-        const data = await res.json();
+    const mensaje =
+        document.getElementById('mensaje');
 
-        if (data.success) {
-            alertBox.className = "alert alert-success";
-            alertBox.innerHTML = `
-                <strong>✔ Contraseña temporal:</strong><br>
-                <span style="font-size:18px">${data.password}</span>
-                <br><small>Debes cambiarla al iniciar sesión</small>
-            `;
-        } else {
-            alertBox.className = "alert alert-danger";
-            alertBox.textContent = data.message;
+    // ============================================
+    // VALIDAR FORM
+    // ============================================
+
+    if (!form) return;
+
+    // ============================================
+    // SUBMIT
+    // ============================================
+
+    form.addEventListener('submit', async (e) => {
+
+        e.preventDefault();
+
+        // ========================================
+        // DOCUMENTO
+        // ========================================
+
+        const documento =
+            document
+            .getElementById('documento')
+            .value
+            .trim();
+
+        // ========================================
+        // VALIDACIÓN
+        // ========================================
+
+        if (!documento) {
+
+            Swal.fire({
+
+                icon:'warning',
+
+                title:'Campo requerido',
+
+                text:'Ingrese su número de documento',
+
+                confirmButtonColor:'#2563eb'
+
+            });
+
+            return;
+
         }
 
-    } catch (error) {
-        console.error(error);
-        alertBox.className = "alert alert-danger";
-        alertBox.textContent = "Error del servidor";
-    }
+        // ========================================
+        // LOADING BOTON
+        // ========================================
 
-    alertBox.style.display = 'block';
-    btnSubmit.disabled = false;
-    btnSubmit.innerHTML = originalText;
+        const originalText = btn.innerHTML;
+
+        btn.disabled = true;
+
+        btn.innerHTML = `
+
+            <i class="fas fa-spinner fa-spin me-2"></i>
+
+            Consultando...
+
+        `;
+
+        // ========================================
+        // LIMPIAR MENSAJE
+        // ========================================
+
+        mensaje.style.display = 'none';
+
+        try {
+
+            // ====================================
+            // FETCH API
+            // ====================================
+
+            const response = await fetch(
+
+                '/api/recuperar',
+
+                {
+
+                    method:'POST',
+
+                    headers:{
+                        'Content-Type':'application/json'
+                    },
+
+                    body:JSON.stringify({
+
+                        documento
+
+                    })
+
+                }
+
+            );
+
+            const data = await response.json();
+
+            // ====================================
+            // RESPUESTA EXITOSA
+            // ====================================
+
+            if (data.success) {
+
+                Swal.fire({
+
+                    icon:'success',
+
+                    title:'Solicitud procesada',
+
+                    html:`
+
+                        <p>
+
+                            Si la cuenta existe,
+                            se enviará un enlace
+                            de recuperación al
+                            correo registrado.
+
+                        </p>
+
+                    `,
+
+                    confirmButtonColor:'#198754'
+
+                });
+
+                // 🔥 LIMPIAR FORM
+                form.reset();
+
+            }
+
+            // ====================================
+            // ERROR CONTROLADO
+            // ====================================
+
+            else {
+
+                Swal.fire({
+
+                    icon:'error',
+
+                    title:'Error',
+
+                    text:
+                        data.message ||
+                        'No fue posible procesar la solicitud',
+
+                    confirmButtonColor:'#dc2626'
+
+                });
+
+            }
+
+        }
+
+        // ========================================
+        // ERROR SERVIDOR
+        // ========================================
+
+        catch (error) {
+
+            console.error(
+
+                '🔥 ERROR RECUPERAR:',
+
+                error
+
+            );
+
+            Swal.fire({
+
+                icon:'error',
+
+                title:'Error de conexión',
+
+                text:
+                    'No fue posible conectar con el servidor',
+
+                confirmButtonColor:'#dc2626'
+
+            });
+
+        }
+
+        // ========================================
+        // RESTAURAR BOTÓN
+        // ========================================
+
+        btn.disabled = false;
+
+        btn.innerHTML = originalText;
+
+    });
+
 });
