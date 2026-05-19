@@ -796,7 +796,7 @@ router.post('/api/reset-password', async (req, res) => {
 
             SET
 
-                password = ?,
+                password_hash = ?,
 
                 token_reset = NULL,
 

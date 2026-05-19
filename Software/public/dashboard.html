@@ -11,6 +11,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#198754">
+<link rel="icon" href="/img/logo de procesados solo.png">
 
 <!-- 🔥 ORDEN CORRECTO -->
 <link rel="stylesheet" href="css/style1.css">
@@ -179,39 +180,6 @@
 ========================= -->
 <script src="/js/auth.js"></script>
 <script src="js/dashboard.js"></script>
-
-
-<script>
-
-if ('serviceWorker' in navigator) {
-
-    window.addEventListener('load', () => {
-
-        navigator.serviceWorker.register('/service-worker.js')
-
-        .then(reg => {
-
-            console.log(
-                '✅ Service Worker registrado',
-                reg
-            );
-
-        })
-
-        .catch(err => {
-
-            console.log(
-                '❌ Error Service Worker',
-                err
-            );
-
-        });
-
-    });
-
-}
-
-</script>
 
 </body>
 </html>

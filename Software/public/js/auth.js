@@ -96,17 +96,19 @@
         // ✅ SI YA ESTÁ LOGUEADO
         // ============================================
 
-        if (
+    if (
 
-            currentPath === '/login'
+    currentPath === '/login' &&
 
-        ) {
+    document.referrer.indexOf('/logout') === -1
 
-            window.location.href =
+) {
 
-                data.redirect || '/dashboard';
+    window.location.href =
 
-        }
+        data.redirect || '/dashboard';
+
+}
 
     } catch (error) {
 
