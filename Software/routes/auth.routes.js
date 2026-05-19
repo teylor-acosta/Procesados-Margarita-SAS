@@ -1,10 +1,30 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+require('dotenv').config();
 
 const { proteger } = require('../middlewares/auth');
 
 const SALT_ROUNDS = 10;
+
+// ============================================
+// 🔥 CONFIG EMAIL
+// ============================================
+
+const transporter = nodemailer.createTransport({
+
+    service: 'gmail',
+
+    auth: {
+
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+
+    }
+
+});
 
 
 // ============================================
@@ -352,11 +372,7 @@ router.get('/api/me', proteger, async (req, res) => {
 
 });
 // ============================================
-// 🔥 RECUPERAR PASSWORD
-// ============================================
-
-// ============================================
-// 🔥 RECUPERAR PASSWORD
+// 🔥 RECUPERAR PASSWORD TOKEN
 // ============================================
 
 router.post('/api/recuperar', async (req, res) => {
@@ -367,77 +383,228 @@ router.post('/api/recuperar', async (req, res) => {
 
         const { documento } = req.body;
 
+        // =========================================
+        // 🔥 BUSCAR USUARIO
+        // =========================================
+
         const sql = `
 
-            SELECT u.id 
+            SELECT 
 
-            FROM usuarios u 
+                u.id,
+                e.nombre,
+                e.email
+
+            FROM usuarios u
 
             JOIN empleados e
-            ON u.empleado_id = e.id 
+            ON u.empleado_id = e.id
 
             WHERE e.numero_documento = ?
 
         `;
 
-        const [results] = await db.query(sql, [documento]);
+        const [results] =
+            await db.query(sql, [documento]);
+
+        // =========================================
+        // 🔥 NO REVELAR SI EXISTE
+        // =========================================
 
         if (results.length === 0) {
 
             return res.json({
-                success: false,
-                message: "no encontrado"
+
+                success: true,
+
+                message:
+                    'Si la cuenta existe se enviará un correo.'
+
             });
 
         }
 
-        const hashedTempPass =
-            await bcrypt.hash('123456', SALT_ROUNDS);
+        const usuario = results[0];
+
+        // =========================================
+        // 🔥 GENERAR TOKEN
+        // =========================================
+
+        const token = crypto
+
+            .randomBytes(32)
+
+            .toString('hex');
+
+        // =========================================
+        // 🔥 GUARDAR TOKEN
+        // =========================================
 
         await db.query(
 
             `
 
-            UPDATE usuarios 
+            UPDATE usuarios
 
-            SET 
-                password_hash = ?,
-                cambio_password = 1 
+            SET
+
+                token_reset = ?,
+
+                token_expira =
+                    DATE_ADD(NOW(), INTERVAL 10 MINUTE)
 
             WHERE id = ?
 
             `,
 
             [
-                hashedTempPass,
-                results[0].id
+                token,
+                usuario.id
             ]
 
         );
 
+        // =========================================
+        // 🔥 LINK RESET
+        // =========================================
+
+        const resetLink = `
+
+            http://localhost:3000/reset/${token}
+
+        `;
+
+        // =========================================
+        // 🔥 ENVIAR CORREO
+        // =========================================
+
+        try {
+
+            console.log('🔥 ENVIANDO CORREO...');
+            console.log('📧 DESTINO:', usuario.email);
+
+            const info = await transporter.sendMail({
+
+                from: process.env.EMAIL_USER,
+
+                to: usuario.email,
+
+                subject:
+                    'Recuperación de contraseña ERP',
+
+                html: `
+
+                    <div style="
+                        font-family:Arial;
+                        padding:20px;
+                    ">
+
+                        <h2>
+                            Recuperación de acceso
+                        </h2>
+
+                        <p>
+                            Hola ${usuario.nombre}.
+                        </p>
+
+                        <p>
+                            Hemos recibido una solicitud
+                            para restablecer tu contraseña.
+                        </p>
+
+                        <p>
+                            Haz clic en el siguiente botón:
+                        </p>
+
+                        <a
+                            href="${resetLink}"
+
+                            style="
+                                display:inline-block;
+                                padding:12px 25px;
+                                background:#2563eb;
+                                color:white;
+                                text-decoration:none;
+                                border-radius:10px;
+                                font-weight:bold;
+                            "
+                        >
+                            Restablecer contraseña
+                        </a>
+
+                        <p style="margin-top:20px;">
+                            Este enlace expirará en
+                            10 minutos.
+                        </p>
+
+                        <p>
+                            Si no solicitaste este cambio,
+                            puedes ignorar este mensaje.
+                        </p>
+
+                    </div>
+
+                `
+
+            });
+
+            console.log('✅ CORREO ENVIADO');
+            console.log(info);
+
+        }
+
+        catch(error){
+
+            console.log(
+                '🔥 ERROR EMAIL:',
+                error
+            );
+
+            return res.status(500).json({
+
+                success:false,
+
+                message:
+                    'Error enviando correo'
+
+            });
+
+        }
+
+        // =========================================
+        // 🔥 RESPUESTA
+        // =========================================
+
         res.json({
 
-            success: true,
-            password: "123456"
+            success:true,
+
+            message:
+                'Si la cuenta existe se enviará un correo.'
 
         });
 
-    } catch (error) {
+    }
 
-        console.error('🔥 ERROR RECUPERAR:', error);
+    catch (error) {
+
+        console.error(
+            '🔥 ERROR RECUPERAR:',
+            error
+        );
 
         res.status(500).json({
-            success: false,
-            message: 'Error interno del servidor'
+
+            success:false,
+
+            message:
+                'Error interno del servidor'
+
         });
 
     }
 
 });
-
-// ============================================
-// 🔥 CAMBIAR PASSWORD
-// ============================================
 // ============================================
 // 🔥 CAMBIAR PASSWORD
 // ============================================
@@ -529,6 +696,161 @@ router.get('/logout', (req, res) => {
         res.redirect('/login');
 
     });
+
+});
+
+// ============================================
+// 🔥 RESET PASSWORD FINAL
+// ============================================
+
+router.post('/api/reset-password', async (req, res) => {
+
+    try {
+
+        const db = req.app.get('db');
+
+        const {
+
+            token,
+            password
+
+        } = req.body;
+
+        // ========================================
+        // VALIDACIONES
+        // ========================================
+
+        if (!token || !password) {
+
+            return res.status(400).json({
+
+                success:false,
+
+                message:
+                    'Datos incompletos'
+
+            });
+
+        }
+
+        // ========================================
+        // BUSCAR TOKEN
+        // ========================================
+
+        const sql = `
+
+            SELECT *
+
+            FROM usuarios
+
+            WHERE token_reset = ?
+
+            AND token_expira > NOW()
+
+        `;
+
+        const [results] =
+            await db.query(sql, [token]);
+
+        // ========================================
+        // TOKEN INVÁLIDO
+        // ========================================
+
+        if (results.length === 0) {
+
+            return res.status(400).json({
+
+                success:false,
+
+                message:
+                    'El enlace expiró o no es válido'
+
+            });
+
+        }
+
+        const usuario = results[0];
+
+        // ========================================
+        // HASH PASSWORD
+        // ========================================
+
+        const hash =
+            await bcrypt.hash(
+
+                password,
+
+                SALT_ROUNDS
+
+            );
+
+        // ========================================
+        // ACTUALIZAR PASSWORD
+        // ========================================
+
+        await db.query(
+
+            `
+
+            UPDATE usuarios
+
+            SET
+
+                password = ?,
+
+                token_reset = NULL,
+
+                token_expira = NULL
+
+            WHERE id = ?
+
+            `,
+
+            [
+
+                hash,
+
+                usuario.id
+
+            ]
+
+        );
+
+        // ========================================
+        // RESPUESTA
+        // ========================================
+
+        res.json({
+
+            success:true,
+
+            message:
+                'Contraseña actualizada'
+
+        });
+
+    }
+
+    catch (error) {
+
+        console.error(
+
+            '🔥 ERROR RESET PASSWORD:',
+
+            error
+
+        );
+
+        res.status(500).json({
+
+            success:false,
+
+            message:
+                'Error interno del servidor'
+
+        });
+
+    }
 
 });
 

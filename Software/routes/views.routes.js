@@ -69,6 +69,23 @@ router.get('/expediente-empleado/:id', (req, res) => {
     );
 
 });
+
+// ============================================
+// 🔥 RESET PASSWORD
+// ============================================
+
+router.get('/reset/:token', (req, res) => {
+
+    res.sendFile(
+
+        path.join(
+            __dirname,
+            '../public/cambiar-password.html'
+        )
+
+    );
+
+});
 /* =========================================
    🔥 CENTRO ACTIVIDAD
 ========================================= */

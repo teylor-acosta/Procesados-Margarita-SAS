@@ -1,35 +1,113 @@
 /* =========================================
-   🔐 RECUPERAR CONTRASEÑA OPTIMIZADO
+   🌿 RECUPERAR PASSWORD PREMIUM OPTIMIZADO
 ========================================= */
-
 
 /* =========================================
-   🧾 CARD
+   RESET LOCAL
 ========================================= */
 
-.card{
+.recuperar-body *,
+.recuperar-body *::before,
+.recuperar-body *::after{
+    box-sizing:border-box;
+}
 
-    border-radius:22px;
+/* =========================================
+   BODY
+========================================= */
 
-    overflow:hidden;
+.recuperar-body{
 
-    background:#ffffff;
+    min-height:100vh;
 
-    /* 🔥 SOMBRA MÁS LIVIANA */
-    box-shadow:
-        0 8px 22px
-        rgba(0,0,0,0.10);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:20px;
 
     position:relative;
 
+    overflow-x:hidden;
+
+    font-family:'Averia Libre', cursive;
+
+    isolation:isolate;
 }
 
-
 /* =========================================
-   🌈 BORDE SUPERIOR
+   FONDO OPTIMIZADO
 ========================================= */
 
-.card::before{
+.recuperar-body::before{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+        url('../img/Fondo.webp')
+        center/cover no-repeat;
+
+    transform:scale(1.05);
+
+    z-index:-2;
+
+    will-change:transform;
+}
+
+/* CAPA OSCURA SUAVE */
+
+.recuperar-body::after{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+        rgba(255,255,255,0.45);
+
+    backdrop-filter:blur(4px);
+
+    z-index:-1;
+}
+
+/* =========================================
+   CARD
+========================================= */
+
+.card-recuperar{
+
+    width:100%;
+    max-width:500px;
+
+    background:rgba(255,255,255,0.90);
+
+    border-radius:28px;
+
+    padding:40px;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,0.18);
+
+    backdrop-filter:blur(10px);
+
+    position:relative;
+
+    overflow:hidden;
+
+    animation:fadeCard .5s ease;
+}
+
+/* =========================================
+   BORDE SUPERIOR
+========================================= */
+
+.card-recuperar::before{
 
     content:"";
 
@@ -43,130 +121,136 @@
 
     background:
         linear-gradient(
-            90deg,
+            135deg,
             #22c55e,
             #2563eb
         );
-
 }
-
 
 /* =========================================
-   🏷️ HEADER
+   LOGO
 ========================================= */
 
-.card-header{
+.logo-recuperar{
 
-    text-align:center;
+    width:105px;
 
-    padding:1.8rem 1.2rem 1rem;
-
-    background:transparent;
-
-    border:none;
-
-}
-
-
-/* LOGO */
-
-.card-header img{
-
-    width:95px;
+    margin-bottom:15px;
 
     object-fit:contain;
 
+    animation:floatLogo 3s ease-in-out infinite;
 }
 
+/* =========================================
+   TITULO
+========================================= */
 
-/* TITULO */
+.card-recuperar h3{
 
-.card-header h4{
-
-    margin-top:12px;
-
-    font-size:24px;
+    color:#198754;
 
     font-weight:700;
 
-    color:#004085;
+    font-size:2rem;
 
-    line-height:1.2;
-
+    margin-bottom:10px;
 }
 
-
 /* =========================================
-   📄 BODY
+   SUBTEXTO
 ========================================= */
 
-.card-body{
+.subtexto-recuperar{
 
-    padding:1.8rem;
-
-}
-
-
-/* =========================================
-   💬 MENSAJE
-========================================= */
-
-#mensaje{
+    color:#666;
 
     font-size:14px;
 
     line-height:1.5;
 
+    margin-bottom:30px;
 }
-
 
 /* =========================================
-   ✍️ INPUTS
+   LABEL
 ========================================= */
 
-.form-control{
+.form-label{
 
-    min-height:46px;
+    font-weight:700;
 
-    border-radius:12px;
+    color:#334155;
 
-    border:1px solid #d1d5db;
-
-    font-size:14px;
-
-    box-shadow:none !important;
-
+    margin-bottom:8px;
 }
 
+/* =========================================
+   INPUT GROUP
+========================================= */
 
-/* FOCUS */
+.input-group{
 
-.form-control:focus{
+    overflow:hidden;
+
+    border-radius:16px;
+
+    border:1px solid #dbe4ea;
+
+    transition:.3s;
+
+    background:white;
+}
+
+.input-group:focus-within{
 
     border-color:#2563eb;
 
     box-shadow:
-        0 0 0 2px
-        rgba(37,99,235,0.12) !important;
-
+        0 0 0 4px rgba(37,99,235,0.12);
 }
 
+/* ICONO */
 
-/* =========================================
-   🔘 BOTÓN
-========================================= */
+.input-group-text{
 
-.btn-gradient{
-
-    font-size:14px;
-
-    min-height:46px;
-
-    border-radius:16px;
+    background:#f8fafc;
 
     border:none;
 
-    font-weight:600;
+    color:#2563eb;
+
+    padding:0 16px;
+}
+
+/* INPUT */
+
+.form-control{
+
+    border:none !important;
+
+    box-shadow:none !important;
+
+    padding:14px 16px;
+
+    font-size:15px;
+
+    background:white;
+}
+
+/* =========================================
+   BOTON
+========================================= */
+
+.btn-recuperar{
+
+    width:100%;
+
+    border:none;
+
+    padding:15px;
+
+    border-radius:30px;
 
     background:
         linear-gradient(
@@ -177,114 +261,191 @@
 
     color:white;
 
-    transition:
-        transform .2s ease,
-        opacity .2s ease;
+    font-weight:700;
 
+    font-size:15px;
+
+    transition:.3s;
+
+    position:relative;
+
+    overflow:hidden;
 }
-
 
 /* HOVER */
 
-.btn-gradient:hover{
+.btn-recuperar:hover{
 
     transform:translateY(-2px);
 
-    opacity:.95;
-
+    box-shadow:
+        0 10px 25px rgba(37,99,235,.25);
 }
 
+/* CLICK */
+
+.btn-recuperar:active{
+
+    transform:scale(.98);
+}
 
 /* =========================================
-   📱 TABLET
+   MENSAJES
 ========================================= */
 
-@media (max-width:768px){
+.mensaje-recuperar{
 
-    .card{
+    margin-top:15px;
 
-        border-radius:18px;
+    padding:12px;
 
-        box-shadow:
-            0 4px 12px
-            rgba(0,0,0,0.08);
+    border-radius:14px;
 
-    }
+    text-align:center;
 
-    .card-header{
+    font-size:14px;
 
-        padding:1.4rem 1rem .8rem;
-
-    }
-
-    .card-header img{
-
-        width:80px;
-
-    }
-
-    .card-header h4{
-
-        font-size:20px;
-
-    }
-
-    .card-body{
-
-        padding:1.3rem;
-
-    }
-
+    font-weight:600;
 }
 
-
 /* =========================================
-   📱 MÓVILES PEQUEÑOS
+   LINK LOGIN
 ========================================= */
 
-@media (max-width:576px){
+.volver-login{
 
-    .card-body{
+    color:#198754;
 
-        padding:1rem;
+    text-decoration:none;
 
+    font-weight:700;
+
+    transition:.3s;
+}
+
+.volver-login:hover{
+
+    color:#2563eb;
+}
+
+/* =========================================
+   HR
+========================================= */
+
+hr{
+
+    opacity:.15;
+}
+
+/* =========================================
+   ANIMACIONES SUAVES
+========================================= */
+
+@keyframes fadeCard{
+
+    from{
+        opacity:0;
+        transform:translateY(20px);
     }
 
-    .btn-gradient{
-
-        font-size:13px;
-
-        padding:10px;
-
-        border-radius:14px;
-
-    }
-
-    .form-control{
-
-        font-size:13px;
-
-    }
-
-    #mensaje{
-
-        font-size:13px;
-
+    to{
+        opacity:1;
+        transform:translateY(0);
     }
 
 }
 
+@keyframes floatLogo{
+
+    0%,100%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(-5px);
+    }
+
+}
 
 /* =========================================
-   🔥 OPTIMIZACIÓN MÓVIL
+   RESPONSIVE TABLET
 ========================================= */
 
 @media(max-width:768px){
 
-    *{
+    .recuperar-body{
 
-        -webkit-tap-highlight-color:transparent;
+        padding:15px;
+    }
 
+    .card-recuperar{
+
+        padding:30px 22px;
+
+        border-radius:24px;
+    }
+
+    .logo-recuperar{
+
+        width:85px;
+    }
+
+    .card-recuperar h3{
+
+        font-size:1.7rem;
+    }
+
+    .subtexto-recuperar{
+
+        font-size:13px;
+    }
+
+}
+
+/* =========================================
+   RESPONSIVE MOVIL
+========================================= */
+
+@media(max-width:480px){
+
+    .card-recuperar{
+
+        padding:25px 18px;
+    }
+
+    .btn-recuperar{
+
+        padding:14px;
+
+        font-size:14px;
+    }
+
+    .form-control{
+
+        font-size:14px;
+    }
+
+    .card-recuperar h3{
+
+        font-size:1.5rem;
+    }
+
+}
+
+/* =========================================
+   OPTIMIZACION PERFORMANCE MOVIL
+========================================= */
+
+@media(max-width:768px){
+
+    .recuperar-body::after{
+
+        backdrop-filter:blur(2px);
+    }
+
+    .card-recuperar{
+
+        backdrop-filter:none;
     }
 
 }
