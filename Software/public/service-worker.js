@@ -1,24 +1,19 @@
-const CACHE_NAME = 'margarita-erp-v2';
+const CACHE_NAME = 'margarita-static-v1';
 
 /* ======================================
-   ARCHIVOS A CACHEAR
+   SOLO ARCHIVOS ESTÁTICOS
 ====================================== */
 
-const urlsToCache = [
-
-    '/',
-    '/login',
+const STATIC_ASSETS = [
 
     '/manifest.json',
 
     '/css/style1.css',
     '/css/login.css',
 
-    '/js/auth.js',
-    '/js/login.js',
-
     '/img/Fondo.webp',
     '/img/logo de procesados sin NIT.png',
+    '/img/logo de procesados solo.png',
     '/img/Gemini_Generated_Image_bo9w5fbo9w5fbo9w-removebg-preview.png'
 
 ];
@@ -29,7 +24,7 @@ const urlsToCache = [
 
 self.addEventListener('install', event => {
 
-    console.log('✅ SW instalado');
+    self.skipWaiting();
 
     event.waitUntil(
 
@@ -37,13 +32,11 @@ self.addEventListener('install', event => {
 
         .then(cache => {
 
-            return cache.addAll(urlsToCache);
+            return cache.addAll(STATIC_ASSETS);
 
         })
 
     );
-
-    self.skipWaiting();
 
 });
 
@@ -52,8 +45,6 @@ self.addEventListener('install', event => {
 ====================================== */
 
 self.addEventListener('activate', event => {
-
-    console.log('✅ SW activado');
 
     event.waitUntil(
 
@@ -64,8 +55,6 @@ self.addEventListener('activate', event => {
                 keys.map(key => {
 
                     if (key !== CACHE_NAME) {
-
-                        console.log('🗑 Eliminando cache vieja:', key);
 
                         return caches.delete(key);
 
@@ -89,56 +78,31 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
 
+    const requestURL = new URL(event.request.url);
+
+    /* 🔥 NO CACHEAR APIs */
+    if (
+        requestURL.pathname.startsWith('/api') ||
+        requestURL.pathname.startsWith('/dashboard') ||
+        requestURL.pathname.startsWith('/logout') ||
+        requestURL.pathname.startsWith('/panel')
+    ) {
+
+        return;
+
+    }
+
+    /* 🔥 SOLO GET */
     if (event.request.method !== 'GET') return;
 
+    /* 🔥 CACHE FIRST SOLO ESTÁTICOS */
     event.respondWith(
 
         caches.match(event.request)
 
-        .then(cacheResponse => {
+        .then(cached => {
 
-            /* 🔥 SI EXISTE EN CACHE */
-            if (cacheResponse) {
-
-                return cacheResponse;
-
-            }
-
-            /* 🔥 SI NO EXISTE */
-            return fetch(event.request)
-
-            .then(networkResponse => {
-
-                return caches.open(CACHE_NAME)
-
-                .then(cache => {
-
-                    cache.put(
-                        event.request,
-                        networkResponse.clone()
-                    );
-
-                    return networkResponse;
-
-                });
-
-            })
-
-            .catch(() => {
-
-                /* 🔥 FALLBACK */
-
-                if (
-                    event.request.destination === 'image'
-                ) {
-
-                    return caches.match(
-                        '/img/logo de procesados sin NIT.png'
-                    );
-
-                }
-
-            });
+            return cached || fetch(event.request);
 
         })
 

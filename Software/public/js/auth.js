@@ -1,7 +1,14 @@
 (async function () {
 
-    const publicPaths = ['/login', '/recuperar'];
+    const publicPaths = [
+
+        '/login',
+        '/recuperar'
+
+    ];
+
     const paginasProtegidas = [
+
         '/dashboard',
         '/induccion',
         '/evaluacion',
@@ -9,41 +16,114 @@
         '/perfil',
         '/certificado',
         '/panel'
+
     ];
 
     const currentPath = window.location.pathname;
 
-    // 🔥 SOLO ejecutar en páginas necesarias
-    if (!paginasProtegidas.includes(currentPath) && !publicPaths.includes(currentPath)) {
+    // ============================================
+    // 🔥 SOLO EJECUTAR EN PÁGINAS NECESARIAS
+    // ============================================
+
+    if (
+
+        !paginasProtegidas.includes(currentPath) &&
+
+        !publicPaths.includes(currentPath)
+
+    ) {
+
         return;
+
     }
 
     try {
 
+        // 🔥 SIN CACHE
         const res = await fetch('/api/me', {
-            credentials: 'include'
+
+            credentials: 'include',
+
+            cache: 'no-store',
+
+            headers: {
+
+                'Cache-Control': 'no-cache'
+
+            }
+
         });
+
+        // 🔥 SI FALLA
+        if (!res.ok) {
+
+            if (!publicPaths.includes(currentPath)) {
+
+                window.location.href = '/login';
+
+            }
+
+            return;
+
+        }
 
         const data = await res.json();
 
         console.log("AUTH:", data);
 
+        // ============================================
         // ❌ NO LOGUEADO
+        // ============================================
+
         if (!data.success) {
+
+            // 🔥 LIMPIAR STORAGE
+            localStorage.clear();
+
+            sessionStorage.clear();
+
             if (!publicPaths.includes(currentPath)) {
+
                 window.location.href = '/login';
+
             }
+
             return;
+
         }
 
-        // 🔥 SOLO redirigir si estás en login
-        if (currentPath === '/login') {
-            window.location.href = data.redirect;
+        // ============================================
+        // ✅ SI YA ESTÁ LOGUEADO
+        // ============================================
+
+        if (
+
+            currentPath === '/login'
+
+        ) {
+
+            window.location.href =
+
+                data.redirect || '/dashboard';
+
         }
 
     } catch (error) {
-        console.error("Error auth:", error);
+
+        console.error(
+
+            "Error auth:",
+
+            error
+
+        );
+
+        localStorage.clear();
+
+        sessionStorage.clear();
+
         window.location.href = '/login';
+
     }
 
 })();
