@@ -536,3 +536,16 @@
     }
 
 }
+/* ============================================
+   📱 FIX NAVBAR MOBILE
+============================================ */
+
+@media(max-width:768px){
+
+    .panel-container{
+
+        padding-top:125px !important;
+
+    }
+
+}
