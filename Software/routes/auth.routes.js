@@ -505,6 +505,10 @@ router.post('/api/cambiar-password', proteger, async (req, res) => {
 
 router.get('/logout', (req, res) => {
 
+    console.log('🔥 Logout iniciado');
+
+    console.log('Session antes:', req.session);
+
     req.session.destroy(err => {
 
         if (err) {
@@ -517,6 +521,8 @@ router.get('/logout', (req, res) => {
             return res.redirect('/dashboard');
 
         }
+
+        console.log('✅ Sesión destruida');
 
         res.clearCookie('connect.sid');
 
