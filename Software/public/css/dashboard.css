@@ -1,18 +1,210 @@
 /* =========================================
-   🌎 BODY
+   🌎 BODY DASHBOARD
 ========================================= */
 
 .dashboard-body {
 
-    padding-top:85px;
+    padding-top:95px;
 
     overflow-x:hidden;
 
     -webkit-font-smoothing:antialiased;
     text-rendering:optimizeLegibility;
 
+    font-family:'Averia Libre', cursive;
+
+    background:
+        url('/img/Fondo.webp')
+        center/cover no-repeat fixed;
+
+    min-height:100vh;
+
+    position:relative;
 }
 
+.dashboard-body::before{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+        rgba(255,255,255,.45);
+
+    z-index:-1;
+}
+
+/* =========================================
+   🔥 NAVBAR GLOBAL ERP
+========================================= */
+
+.navbar-custom{
+
+    width:100%;
+
+    background:
+        rgba(255,255,255,.96);
+
+    backdrop-filter:blur(10px);
+
+    display:flex;
+
+    justify-content:space-between;
+    align-items:center;
+
+    padding:14px 30px;
+
+    box-shadow:
+        0 4px 18px rgba(0,0,0,.08);
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    z-index:9999;
+}
+
+/* =========================================
+   🔥 IZQUIERDA NAVBAR
+========================================= */
+
+.navbar-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+}
+
+.logo-navbar{
+
+    width:55px;
+    height:55px;
+
+    object-fit:contain;
+}
+
+.empresa-nombre{
+
+    font-size:32px;
+
+    font-weight:700;
+
+    color:#16a34a;
+
+    font-style:italic;
+
+    letter-spacing:.5px;
+
+    margin:0;
+}
+
+/* =========================================
+   🔥 DERECHA NAVBAR
+========================================= */
+
+.navbar-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+}
+
+/* =========================================
+   🔥 BOTON PANEL
+========================================= */
+
+.btn-cerrar{
+
+    border:none;
+
+    background:#f8fafc;
+
+    color:#111827;
+
+    text-decoration:none;
+
+    padding:12px 24px;
+
+    border-radius:18px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-weight:700;
+
+    transition:.25s;
+
+    box-shadow:
+        0 4px 10px rgba(0,0,0,.05);
+}
+
+.btn-cerrar:hover{
+
+    background:#e2e8f0;
+
+    transform:
+        translateY(-2px);
+
+    color:#111827;
+}
+
+/* =========================================
+   🔥 BOTON LOGOUT
+========================================= */
+
+.btn-danger{
+
+    border:none !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ef4444,
+            #dc2626
+        ) !important;
+
+    color:white !important;
+
+    text-decoration:none;
+
+    padding:12px 24px !important;
+
+    border-radius:18px !important;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-weight:700 !important;
+
+    transition:.3s;
+
+    box-shadow:
+        0 10px 20px rgba(239,68,68,.25);
+}
+
+.btn-danger:hover{
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 15px 28px rgba(239,68,68,.35);
+
+    color:white;
+}
 
 /* =========================================
    📦 CONTENEDOR
@@ -31,7 +223,6 @@
     box-sizing:border-box;
 
 }
-
 
 /* =========================================
    📚 SIDEBAR
@@ -52,34 +243,25 @@
 
     color:white;
 
-    border-radius:18px;
+    border-radius:22px;
 
     padding:18px;
 
-    /* 🔥 SOMBRA MÁS LIVIANA */
     box-shadow:
-        0 6px 18px
-        rgba(0,0,0,0.12);
+        0 8px 22px rgba(0,0,0,0.15);
 
     transition:
         transform .2s ease,
         left .25s ease;
 
     align-self:flex-start;
-
-    will-change:auto;
-
 }
-
-
-/* 🔥 HOVER SUAVE */
 
 .sidebar:hover {
 
     transform:translateY(-2px);
 
 }
-
 
 /* =========================================
    📄 CONTENIDO
@@ -93,7 +275,6 @@
 
 }
 
-
 /* =========================================
    🎯 TARJETAS
 ========================================= */
@@ -105,12 +286,9 @@
     margin-bottom:22px;
 
     background:
-        rgba(255,255,255,0.97);
+        rgba(255,255,255,0.96);
 
-    /* 🔥 QUITAR BLUR PESADO */
-    backdrop-filter:none;
-
-    border-radius:20px;
+    border-radius:24px;
 
     padding:26px;
 
@@ -119,21 +297,18 @@
     overflow:hidden;
 
     border:
-        1px solid rgba(0,0,0,0.04);
+        1px solid rgba(255,255,255,.4);
 
-    /* 🔥 SOMBRA MÁS LIVIANA */
+    backdrop-filter:blur(8px);
+
     box-shadow:
-        0 6px 18px
-        rgba(0,0,0,0.10);
+        0 10px 25px rgba(0,0,0,0.10);
 
     transition:
         transform .2s ease,
         box-shadow .2s ease;
 
 }
-
-
-/* 🔥 BORDE SUPERIOR */
 
 .card-custom::before {
 
@@ -157,9 +332,6 @@
 
 }
 
-
-/* 🔥 BORDE INFERIOR */
-
 .card-custom::after {
 
     content:"";
@@ -182,19 +354,14 @@
 
 }
 
-
-/* 🔥 HOVER */
-
 .card-custom:hover {
 
-    transform:translateY(-3px);
+    transform:translateY(-4px);
 
     box-shadow:
-        0 10px 24px
-        rgba(0,0,0,0.12);
+        0 14px 30px rgba(0,0,0,0.14);
 
 }
-
 
 /* =========================================
    🎛 TOP ACTIONS
@@ -209,7 +376,6 @@
     margin-bottom:14px;
 
 }
-
 
 /* =========================================
    🔘 BOTÓN DASHBOARD
@@ -226,13 +392,13 @@
 
     color:white;
 
-    padding:10px 20px;
+    padding:12px 22px;
 
     border-radius:24px;
 
     border:none;
 
-    font-weight:600;
+    font-weight:700;
 
     cursor:pointer;
 
@@ -240,12 +406,14 @@
         transform .2s ease,
         opacity .2s ease;
 
-    min-height:44px;
+    min-height:46px;
+
+    font-family:'Averia Libre', cursive;
+
+    box-shadow:
+        0 10px 20px rgba(37,99,235,.18);
 
 }
-
-
-/* 🔥 HOVER */
 
 .btn-dashboard:hover {
 
@@ -255,15 +423,11 @@
 
 }
 
-
-/* 🔥 CLICK */
-
 .btn-dashboard:active {
 
     transform:scale(.97);
 
 }
-
 
 /* =========================================
    📊 VALORES
@@ -280,13 +444,13 @@
 
     color:white;
 
-    padding:14px;
+    padding:16px;
 
-    border-radius:14px;
+    border-radius:16px;
 
     text-align:center;
 
-    font-weight:500;
+    font-weight:700;
 
     transition:
         transform .2s ease;
@@ -296,24 +460,17 @@
 
 }
 
-
-/* 🔥 HOVER */
-
 .valor-card:hover {
 
     transform:translateY(-2px);
 
 }
 
-
-/* 🔥 CLICK */
-
 .valor-card:active {
 
     transform:scale(.98);
 
 }
-
 
 /* =========================================
    🔘 BOTONES ACCIONES
@@ -325,15 +482,14 @@
 
     padding:10px 18px;
 
-    font-weight:500;
+    font-weight:600;
 
     transition:
         transform .2s ease;
 
+    font-family:'Averia Libre', cursive;
+
 }
-
-
-/* 🔥 HOVER */
 
 .btn-custom:hover {
 
@@ -341,15 +497,11 @@
 
 }
 
-
-/* 🔥 CLICK */
-
 .btn-custom:active {
 
     transform:scale(.97);
 
 }
-
 
 /* =========================================
    ✨ ANIMACIÓN
@@ -361,7 +513,6 @@
         fadeInUp .4s ease;
 
 }
-
 
 @keyframes fadeInUp {
 
@@ -385,7 +536,6 @@
 
 }
 
-
 /* =========================================
    📱 TABLET
 ========================================= */
@@ -406,12 +556,11 @@
 
         width:100%;
 
-        border-radius:16px;
+        border-radius:18px;
 
     }
 
 }
-
 
 /* =========================================
    📱 MÓVIL
@@ -421,19 +570,50 @@
 
     .dashboard-body {
 
-        padding-top:75px;
+        padding-top:135px;
+
+        background-attachment:scroll;
+
+    }
+
+    .navbar-custom {
+
+        padding:14px 18px;
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:14px;
+    }
+
+    .navbar-left{
+
+        width:100%;
+    }
+
+    .navbar-right{
+
+        width:100%;
+
+        justify-content:flex-end;
+
+        flex-wrap:wrap;
+    }
+
+    .empresa-nombre {
+
+        font-size:22px;
 
     }
 
     .dashboard-container {
 
-        padding:12px;
+        padding:14px;
 
         gap:14px;
 
     }
-
-    /* 🔥 SIDEBAR MÓVIL */
 
     .sidebar {
 
@@ -450,9 +630,8 @@
 
         border-radius:0;
 
-        padding-top:80px;
+        padding-top:100px;
 
-        /* 🔥 MÁS FLUIDO */
         transition:left .25s ease;
 
     }
@@ -463,91 +642,34 @@
 
     }
 
-    /* 🔥 TARJETAS */
-
     .card-custom {
 
         padding:18px;
 
-        border-radius:16px;
+        border-radius:18px;
 
-        /* 🔥 QUITAR EFECTOS PESADOS */
         backdrop-filter:none;
 
         box-shadow:
-            0 4px 12px
-            rgba(0,0,0,0.08);
+            0 6px 14px rgba(0,0,0,0.08);
 
     }
 
-}
+    .top-actions{
 
-
-/* =========================================
-   📱 NAVBAR RESPONSIVE
-========================================= */
-
-@media (max-width:768px) {
-
-    .navbar-custom {
-
-        padding:10px 14px !important;
-
-        flex-wrap:wrap;
-
-        gap:8px;
-
+        justify-content:center;
     }
 
-    .navbar-left {
-
-        display:flex;
-
-        align-items:center;
-
-        gap:10px;
+    .btn-dashboard{
 
         width:100%;
 
-    }
+        max-width:240px;
 
-    .navbar-right {
-
-        width:100%;
-
-        display:flex;
-
-        justify-content:flex-end;
-
-    }
-
-    .empresa-nombre {
-
-        font-size:18px !important;
-
-    }
-
-    .btn-cerrar,
-    .btn-danger {
-
-        padding:8px 14px !important;
-
-        font-size:13px !important;
-
-        border-radius:12px !important;
-
-        white-space:nowrap;
-
-    }
-
-    .menu-toggle {
-
-        font-size:22px;
-
+        justify-content:center;
     }
 
 }
-
 
 /* =========================================
    📱 MÓVIL PEQUEÑO
@@ -561,15 +683,34 @@
 
     }
 
-    .card-custom {
+    .logo-navbar{
 
-        padding:15px;
-
+        width:42px;
+        height:42px;
     }
 
     .empresa-nombre {
 
-        font-size:16px !important;
+        font-size:18px;
+
+    }
+
+    .navbar-right{
+
+        flex-direction:column;
+    }
+
+    .btn-cerrar,
+    .btn-danger{
+
+        width:100%;
+
+        justify-content:center;
+    }
+
+    .card-custom {
+
+        padding:15px;
 
     }
 
@@ -577,12 +718,11 @@
 
         width:100%;
 
-        border-radius:14px;
+        border-radius:16px;
 
     }
 
 }
-
 
 /* =========================================
    🔥 OPTIMIZACIÓN MÓVIL
@@ -593,79 +733,6 @@
     *{
 
         -webkit-tap-highlight-color:transparent;
-
-    }
-
-}
-/* =========================================
-   📱 FIX BOTÓN PANEL MOBILE
-========================================= */
-
-@media (max-width:768px){
-
-    /* MÁS ESPACIO SUPERIOR */
-    .dashboard-body{
-
-        padding-top:110px !important;
-
-    }
-
-    /* CONTENEDOR */
-    .dashboard-container{
-
-        padding-top:5px !important;
-
-    }
-
-    /* ACCIONES */
-    .top-actions{
-
-        width:100%;
-
-        display:flex;
-
-        justify-content:center;
-
-        margin-bottom:18px;
-
-    }
-
-    /* BOTÓN PANEL */
-    .btn-dashboard{
-
-        width:100%;
-
-        max-width:220px;
-
-        display:flex;
-
-        justify-content:center;
-        align-items:center;
-
-        padding:12px 18px !important;
-
-        border-radius:16px;
-
-        font-size:14px;
-
-    }
-
-    /* NAVBAR */
-    .navbar-custom{
-
-        min-height:85px;
-
-        align-items:flex-start !important;
-
-    }
-
-    .navbar-right{
-
-        width:100%;
-
-        justify-content:flex-end;
-
-        margin-top:5px;
 
     }
 

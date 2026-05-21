@@ -461,47 +461,38 @@ router.get('/api/filtros-empleado', proteger, soloSuperAdmin, (req, res) => {
    🔥 OBTENER EMPLEADO POR ID
 ========================================= */
 
-router.get('/api/empleado/:id', (req, res) => {
+router.get('/api/empleado/:id', async (req, res) => {
 
-    const { id } = req.params;
+    try {
 
-    const sql = `
+        const { id } = req.params;
 
-        SELECT 
+        const sql = `
 
-            e.*,
+            SELECT 
 
-            a.nombre AS area,
-            s.nombre AS sede,
-            c.nombre AS cargo
+                e.*,
 
-        FROM empleados e
+                a.nombre AS area,
+                s.nombre AS sede,
+                c.nombre AS cargo
 
-        LEFT JOIN areas a
-        ON e.area_id = a.id
+            FROM empleados e
 
-        LEFT JOIN sedes s
-        ON e.sede_id = s.id
+            LEFT JOIN areas a
+            ON e.area_id = a.id
 
-        LEFT JOIN cargos c
-        ON e.cargo_id = c.id
+            LEFT JOIN sedes s
+            ON e.sede_id = s.id
 
-        WHERE e.id = ?
+            LEFT JOIN cargos c
+            ON e.cargo_id = c.id
 
-    `;
+            WHERE e.id = ?
 
-    db.query(sql, [id], (err, results) => {
+        `;
 
-        if (err) {
-
-            console.log(err);
-
-            return res.status(500).json({
-                ok: false,
-                mensaje: 'Error servidor'
-            });
-
-        }
+        const [results] = await db.query(sql, [id]);
 
         if (results.length === 0) {
 
@@ -517,9 +508,18 @@ router.get('/api/empleado/:id', (req, res) => {
             empleado: results[0]
         });
 
-    });
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            ok: false,
+            mensaje: 'Error servidor',
+            error: error.message
+        });
+
+    }
 
 });
-
 
 module.exports = router;

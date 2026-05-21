@@ -1,10 +1,215 @@
 /* ============================================
+   🌎 BODY
+============================================ */
+
+body{
+
+    margin:0;
+
+    font-family:'Averia Libre', cursive;
+
+    background:
+        url('/img/Fondo.webp')
+        center/cover no-repeat fixed;
+
+    min-height:100vh;
+
+    overflow-x:hidden;
+
+    position:relative;
+}
+
+body::before{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+        rgba(255,255,255,.38);
+
+    z-index:-1;
+}
+
+/* ============================================
+   🔥 NAVBAR GLOBAL ERP
+============================================ */
+
+.navbar-custom{
+
+    width:100%;
+
+    background:
+        rgba(255,255,255,.96);
+
+    backdrop-filter:blur(10px);
+
+    display:flex;
+
+    justify-content:space-between;
+    align-items:center;
+
+    padding:14px 30px;
+
+    box-shadow:
+        0 4px 18px rgba(0,0,0,.08);
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    z-index:9999;
+}
+
+/* ============================================
+   🔥 IZQUIERDA NAVBAR
+============================================ */
+
+.navbar-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+}
+
+.logo-navbar{
+
+    width:55px;
+    height:55px;
+
+    object-fit:contain;
+}
+
+.empresa-nombre{
+
+    font-size:30px;
+
+    font-weight:700;
+
+    color:#16a34a;
+
+    font-style:italic;
+
+    letter-spacing:.5px;
+
+    margin:0;
+}
+
+/* ============================================
+   🔥 DERECHA NAVBAR
+============================================ */
+
+.acciones-navbar{
+
+    display:flex;
+
+    gap:12px;
+
+    align-items:center;
+}
+
+/* ============================================
+   🔥 BOTON VOLVER
+============================================ */
+
+.btn-volver{
+
+    border:none;
+
+    background:#f8fafc;
+
+    color:#111827;
+
+    text-decoration:none;
+
+    padding:12px 24px;
+
+    border-radius:18px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-weight:700;
+
+    transition:.25s;
+
+    box-shadow:
+        0 4px 10px rgba(0,0,0,.05);
+}
+
+.btn-volver:hover{
+
+    background:#e2e8f0;
+
+    transform:
+        translateY(-2px);
+
+    color:#111827;
+}
+
+/* ============================================
+   🔥 BOTON LOGOUT
+============================================ */
+
+.btn-logout{
+
+    border:none;
+
+    text-decoration:none;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ef4444,
+            #dc2626
+        );
+
+    color:white;
+
+    padding:12px 24px;
+
+    border-radius:18px;
+
+    font-weight:700;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    transition:.3s;
+
+    box-shadow:
+        0 10px 20px rgba(239,68,68,.25);
+}
+
+.btn-logout:hover{
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 15px 28px rgba(239,68,68,.35);
+
+    color:white;
+}
+
+/* ============================================
    📦 CONTENEDOR GENERAL
 ============================================ */
 
-.empleados-container {
+.empleados-container{
 
-    padding-top:105px;
+    padding-top:120px;
 
     padding-left:18px;
     padding-right:18px;
@@ -18,28 +223,25 @@
     width:100%;
 
     box-sizing:border-box;
-
 }
-
 
 /* ============================================
    🏷️ TITULO
 ============================================ */
 
-.titulo-empleados {
+.titulo-empleados{
 
     display:flex;
 
     justify-content:center;
 
     margin-bottom:30px;
-
 }
 
+.titulo-empleados h2{
 
-.titulo-empleados h2 {
-
-    background:rgba(255,255,255,0.96);
+    background:
+        rgba(255,255,255,0.96);
 
     padding:14px 34px;
 
@@ -51,24 +253,21 @@
 
     position:relative;
 
-    /* 🔥 SOMBRA MÁS LIVIANA */
     box-shadow:
-        0 6px 18px
-        rgba(0,0,0,0.10);
+        0 6px 18px rgba(0,0,0,0.10);
 
-    /* 🔥 QUITAR BLUR PESADO */
     backdrop-filter:none;
 
     font-size:28px;
 
+    font-style:italic;
 }
-
 
 /* ============================================
    🌈 BORDE TITULO
 ============================================ */
 
-.titulo-empleados h2::before {
+.titulo-empleados h2::before{
 
     content:"";
 
@@ -94,15 +293,13 @@
     -webkit-mask-composite:xor;
 
     mask-composite:exclude;
-
 }
-
 
 /* ============================================
    📦 MODULOS
 ============================================ */
 
-.modulos-empleados {
+.modulos-empleados{
 
     display:flex;
 
@@ -115,15 +312,13 @@
     flex-wrap:wrap;
 
     margin-top:30px;
-
 }
-
 
 /* ============================================
    🎯 TARJETAS
 ============================================ */
 
-.modulo-card {
+.modulo-card{
 
     width:170px;
     height:170px;
@@ -147,67 +342,59 @@
         transform .2s ease,
         box-shadow .2s ease;
 
-    background:rgba(255,255,255,0.97);
+    background:
+        rgba(255,255,255,0.97);
 
-    /* 🔥 QUITAR BLUR */
     backdrop-filter:none;
 
-    /* 🔥 SOMBRA MÁS LIVIANA */
     box-shadow:
-        0 6px 18px
-        rgba(0,0,0,0.10);
+        0 6px 18px rgba(0,0,0,0.10);
 
     text-decoration:none;
 
     color:#333;
 
     overflow:hidden;
-
 }
-
 
 /* ============================================
    🔥 HOVER
 ============================================ */
 
-.modulo-card:hover {
+.modulo-card:hover{
 
-    transform:translateY(-3px);
+    transform:
+        translateY(-3px);
 
     box-shadow:
-        0 10px 22px
-        rgba(0,0,0,0.12);
+        0 10px 22px rgba(0,0,0,0.12);
 
+    color:#111827;
 }
-
 
 /* ============================================
    🎨 ICONOS
 ============================================ */
 
-.icono-modulo {
+.icono-modulo{
 
     font-size:46px;
 
     color:#2563eb;
-
 }
 
-
-.modulo-card .fa-folder-open {
+.modulo-card .fa-folder-open{
 
     color:#2563eb;
 
     font-size:46px;
-
 }
-
 
 /* ============================================
    🔤 TEXTO
 ============================================ */
 
-.modulo-card span {
+.modulo-card span{
 
     font-size:17px;
 
@@ -217,23 +404,8 @@
 
     padding:0 8px;
 
+    font-style:italic;
 }
-
-
-/* ============================================
-   🔝 NAVBAR
-============================================ */
-
-.acciones-navbar {
-
-    display:flex;
-
-    gap:10px;
-
-    align-items:center;
-
-}
-
 
 /* ============================================
    📱 TABLET
@@ -241,9 +413,7 @@
 
 @media (max-width:900px){
 
-    /* NAVBAR */
-
-    .navbar-custom {
+    .navbar-custom{
 
         display:flex;
 
@@ -251,87 +421,60 @@
 
         align-items:center;
 
-        padding:10px 12px;
+        padding:12px 16px;
 
-        gap:8px;
+        gap:10px;
 
-        flex-wrap:nowrap;
-
+        flex-wrap:wrap;
     }
 
-    .navbar-left {
+    .navbar-left{
 
         display:flex;
 
         align-items:center;
 
-        gap:8px;
+        gap:10px;
 
         min-width:0;
-
     }
 
-    .empresa-nombre {
+    .empresa-nombre{
 
-        font-size:14px !important;
+        font-size:20px !important;
 
         line-height:1.2;
-
     }
 
-    .navbar-right {
+    .acciones-navbar{
 
         display:flex;
 
         align-items:center;
 
-        gap:6px;
-
+        gap:8px;
     }
 
-    .navbar-right .btn {
+    .btn-volver,
+    .btn-logout{
 
-        padding:8px 10px !important;
+        padding:10px 14px !important;
 
         font-size:13px !important;
 
         border-radius:12px;
 
         white-space:nowrap;
-
     }
 
-    /* BOTON CERRAR */
-
-    .btn-danger {
-
-        width:auto !important;
-
-        min-width:52px;
-
-        padding:8px 12px !important;
-
-        overflow:hidden;
-
-    }
-
-    .btn-danger span {
-
-        display:none;
-
-    }
-
-    /* TITULO */
-
-    .titulo-empleados {
+    .titulo-empleados{
 
         margin-top:12px;
 
         margin-bottom:20px;
-
     }
 
-    .titulo-empleados h2 {
+    .titulo-empleados h2{
 
         width:90%;
 
@@ -342,30 +485,24 @@
         padding:12px 18px;
 
         border-radius:18px;
-
     }
 
-    /* MODULOS */
-
-    .modulos-empleados {
+    .modulos-empleados{
 
         gap:18px;
 
         margin-top:20px;
-
     }
 
-    .modulo-card {
+    .modulo-card{
 
         width:150px;
         height:150px;
 
         border-radius:20px;
-
     }
 
 }
-
 
 /* ============================================
    📱 MÓVIL
@@ -373,53 +510,81 @@
 
 @media (max-width:768px){
 
-    .empleados-container {
+    body{
 
-        padding-top:90px;
+        background-attachment:scroll;
+    }
+
+    .navbar-custom{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        padding:14px 18px;
+
+        gap:14px;
+    }
+
+    .navbar-left{
+
+        width:100%;
+    }
+
+    .empresa-nombre{
+
+        font-size:18px !important;
+    }
+
+    .acciones-navbar{
+
+        width:100%;
+
+        justify-content:flex-end;
+
+        flex-wrap:wrap;
+    }
+
+    .empleados-container{
+
+        padding-top:180px;
 
         padding-left:12px;
         padding-right:12px;
-
     }
 
-    .titulo-empleados h2 {
+    .titulo-empleados h2{
 
         font-size:20px;
-
     }
 
-    .modulos-empleados {
+    .modulos-empleados{
 
         flex-direction:column;
 
         align-items:center;
 
         gap:16px;
-
     }
 
-    .modulo-card {
+    .modulo-card{
 
         width:145px;
         height:145px;
-
     }
 
     .icono-modulo,
-    .modulo-card .fa-folder-open {
+    .modulo-card .fa-folder-open{
 
         font-size:40px;
-
     }
 
-    .modulo-card span {
+    .modulo-card span{
 
         font-size:15px;
-
     }
 
 }
-
 
 /* ============================================
    📱 MÓVILES PEQUEÑOS
@@ -427,38 +592,59 @@
 
 @media (max-width:480px){
 
-    .titulo-empleados h2 {
+    .empresa-nombre{
+
+        font-size:16px !important;
+    }
+
+    .logo-navbar{
+
+        width:42px;
+        height:42px;
+    }
+
+    .acciones-navbar{
+
+        flex-direction:column;
+
+        width:100%;
+    }
+
+    .btn-volver,
+    .btn-logout{
+
+        width:100%;
+
+        justify-content:center;
+    }
+
+    .titulo-empleados h2{
 
         font-size:18px;
 
         padding:12px 14px;
-
     }
 
-    .modulo-card {
+    .modulo-card{
 
         width:135px;
         height:135px;
 
         border-radius:18px;
-
     }
 
     .icono-modulo,
-    .modulo-card .fa-folder-open {
+    .modulo-card .fa-folder-open{
 
         font-size:36px;
-
     }
 
-    .modulo-card span {
+    .modulo-card span{
 
         font-size:14px;
-
     }
 
 }
-
 
 /* ============================================
    🔥 OPTIMIZACIÓN MÓVIL
@@ -469,7 +655,6 @@
     *{
 
         -webkit-tap-highlight-color:transparent;
-
     }
 
 }
