@@ -513,11 +513,9 @@ router.post('/api/recuperar', async (req, res) => {
         // 🔥 LINK
         // =========================================
 
-        const resetLink = `
+        const resetLink = `https://procesadosmargaritasas.com/reset/${token}`;
 
-            http://localhost:3000/reset/${token}
-
-        `;
+        
 
         // =========================================
         // 🔥 EMAIL
