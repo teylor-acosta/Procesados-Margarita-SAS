@@ -1,5 +1,5 @@
 /* ============================================
-   🌿 ERP GLOBAL OPTIMIZADO MOBILE
+   🌿 ERP GLOBAL PREMIUM RESPONSIVE
 ============================================ */
 
 /* ============================================
@@ -19,7 +19,6 @@
 
 }
 
-
 /* ============================================
    🔥 FIX FONT AWESOME
 ============================================ */
@@ -34,7 +33,6 @@
     font-weight:900 !important;
 
 }
-
 
 /* ============================================
    🎨 VARIABLES
@@ -55,7 +53,6 @@
 
 }
 
-
 /* ============================================
    🌎 BODY
 ============================================ */
@@ -66,9 +63,7 @@ body{
 
     background:
         url('../img/Fondo.webp')
-        center/cover no-repeat !important;
-
-    background-attachment:scroll !important;
+        center/cover no-repeat fixed !important;
 
     overflow-x:hidden;
 
@@ -76,8 +71,11 @@ body{
 
     text-rendering:optimizeLegibility;
 
-}
+    position:relative;
 
+    min-height:100vh;
+
+}
 
 /* ============================================
    🌫️ OVERLAY
@@ -86,18 +84,19 @@ body{
 .background-overlay{
 
     background:
-        rgba(255,255,255,0.75);
+        rgba(255,255,255,0.76);
 
     min-height:100vh;
 
 }
 
-
 /* ============================================
-   🔝 NAVBAR
+   🔝 NAVBAR PREMIUM
 ============================================ */
 
 .navbar-custom{
+
+    width:100%;
 
     display:flex;
 
@@ -105,26 +104,28 @@ body{
 
     align-items:center;
 
-    padding:10px 5%;
+    padding:14px 32px;
 
-    background:white;
+    background:
+        rgba(255,255,255,.96);
+
+    backdrop-filter:blur(10px);
 
     position:fixed;
 
     top:0;
     left:0;
-    right:0;
 
-    z-index:1000;
+    z-index:9999;
 
     box-shadow:
-        0 4px 12px
-        rgba(0,0,0,0.08);
+        0 4px 18px rgba(0,0,0,.08);
 
 }
 
-
-/* IZQUIERDA */
+/* ============================================
+   🔹 IZQUIERDA NAVBAR
+============================================ */
 
 .navbar-left{
 
@@ -132,25 +133,22 @@ body{
 
     align-items:center;
 
-    gap:10px;
+    gap:14px;
 
 }
-
 
 /* LOGO */
 
 .logo-navbar{
 
-    height:50px;
-
-    width:auto;
+    width:55px;
+    height:55px;
 
     object-fit:contain;
 
 }
 
-
-/* TEXTO */
+/* TEXTO EMPRESA */
 
 .empresa-texto{
 
@@ -162,29 +160,88 @@ body{
 
 }
 
-
 .empresa-linea1{
 
-    font-size:.9rem;
+    font-size:15px;
 
-    color:#2f3542;
+    color:#374151;
+
+    font-style:italic;
 
 }
-
 
 .empresa-linea2{
 
-    font-size:1rem;
+    font-size:26px;
 
-    font-weight:bold;
+    font-weight:800;
 
-    color:#28a745;
+    color:#16a34a;
+
+    font-style:italic;
+
+    letter-spacing:.4px;
 
 }
 
+/* ============================================
+   🔹 DERECHA NAVBAR
+============================================ */
+
+.acciones-navbar{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
 
 /* ============================================
-   🚪 BOTON LOGOUT
+   🔘 BOTÓN VOLVER
+============================================ */
+
+.btn-volver{
+
+    border:none;
+
+    background:#f8fafc;
+
+    color:#111827 !important;
+
+    text-decoration:none;
+
+    padding:11px 22px;
+
+    border-radius:18px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-weight:700;
+
+    transition:.25s;
+
+    box-shadow:
+        0 4px 10px rgba(0,0,0,.05);
+
+}
+
+.btn-volver:hover{
+
+    background:#e2e8f0;
+
+    transform:
+        translateY(-2px);
+
+}
+
+/* ============================================
+   🚪 BOTÓN LOGOUT
 ============================================ */
 
 .btn-logout{
@@ -198,39 +255,41 @@ body{
 
     color:white !important;
 
-    padding:8px 18px;
+    padding:11px 22px;
 
-    border-radius:30px;
+    border-radius:18px;
 
     text-decoration:none;
 
-    font-weight:600;
-
-    font-size:.85rem;
+    font-weight:700;
 
     display:flex;
 
     align-items:center;
 
-    gap:6px;
+    gap:10px;
 
     transition:
         transform .2s ease,
         opacity .2s ease;
 
-}
+    box-shadow:
+        0 10px 20px rgba(220,53,69,.22);
 
+}
 
 /* HOVER */
 
 .btn-logout:hover{
 
-    transform:translateY(-2px);
+    transform:
+        translateY(-2px);
 
     opacity:.95;
 
-}
+    color:white !important;
 
+}
 
 /* ============================================
    📦 CONTENEDOR
@@ -242,10 +301,12 @@ body{
 
     margin:0 auto;
 
-    padding:20px;
+    padding:
+        120px
+        20px
+        30px;
 
 }
-
 
 /* ============================================
    📄 MODULOS
@@ -255,9 +316,9 @@ body{
 
     background:white;
 
-    border-radius:20px;
+    border-radius:24px;
 
-    padding:22px;
+    padding:24px;
 
     margin-bottom:25px;
 
@@ -278,8 +339,7 @@ body{
         border-box;
 
     box-shadow:
-        0 6px 18px
-        rgba(0,0,0,0.10);
+        0 6px 18px rgba(0,0,0,0.10);
 
     transition:
         transform .2s ease,
@@ -287,19 +347,17 @@ body{
 
 }
 
-
 /* HOVER */
 
 .modulo-item:hover{
 
-    transform:translateY(-2px);
+    transform:
+        translateY(-2px);
 
     box-shadow:
-        0 10px 22px
-        rgba(0,0,0,0.12);
+        0 10px 22px rgba(0,0,0,0.12);
 
 }
-
 
 /* ============================================
    🏷️ TITULOS
@@ -328,8 +386,9 @@ body{
 
     font-size:2rem;
 
-}
+    font-style:italic;
 
+}
 
 /* MODULOS */
 
@@ -354,8 +413,9 @@ body{
 
     font-size:1.4rem;
 
-}
+    font-style:italic;
 
+}
 
 /* SUBTITULOS */
 
@@ -367,7 +427,6 @@ body{
     font-weight:600;
 
 }
-
 
 /* ============================================
    📈 PROGRESO
@@ -390,7 +449,6 @@ body{
     font-size:.85rem;
 
 }
-
 
 /* ============================================
    🔘 BOTONES
@@ -421,17 +479,16 @@ body{
 
 }
 
-
 /* HOVER */
 
 .btn-degradado:hover{
 
-    transform:translateY(-2px);
+    transform:
+        translateY(-2px);
 
     opacity:.95;
 
 }
-
 
 /* ============================================
    🎥 VIDEOS
@@ -441,7 +498,7 @@ body{
 
     background:#f8f9fa;
 
-    border-radius:12px;
+    border-radius:14px;
 
     padding:14px;
 
@@ -461,7 +518,6 @@ body{
 
 }
 
-
 /* HOVER */
 
 .video-fila:hover{
@@ -471,7 +527,6 @@ body{
     border-color:#007bff;
 
 }
-
 
 /* VISTO */
 
@@ -488,7 +543,6 @@ body{
 
 }
 
-
 /* TITULO */
 
 .video-titulo{
@@ -498,7 +552,6 @@ body{
     font-weight:500;
 
 }
-
 
 /* ============================================
    ▶️ BOTON VIDEO
@@ -519,7 +572,7 @@ body{
 
     border-radius:18px;
 
-    padding:6px 14px;
+    padding:7px 15px;
 
     font-size:.8rem;
 
@@ -531,17 +584,16 @@ body{
 
 }
 
-
 /* HOVER */
 
 .btn-ver-video:hover{
 
-    transform:translateY(-1px);
+    transform:
+        translateY(-1px);
 
     opacity:.92;
 
 }
-
 
 /* ============================================
    ✅ CONFIRMAR
@@ -571,15 +623,14 @@ body{
 
 }
 
-
 /* HOVER */
 
 .btn-confirmar:hover{
 
-    transform:translateY(-1px);
+    transform:
+        translateY(-1px);
 
 }
-
 
 /* ============================================
    📊 STATS
@@ -589,7 +640,7 @@ body{
 
     background:white;
 
-    border-radius:14px;
+    border-radius:16px;
 
     padding:18px;
 
@@ -598,11 +649,9 @@ body{
     border-left:5px solid #28a745;
 
     box-shadow:
-        0 4px 12px
-        rgba(0,0,0,0.08);
+        0 4px 12px rgba(0,0,0,0.08);
 
 }
-
 
 /* BARRA */
 
@@ -621,42 +670,82 @@ body{
 
 }
 
-
 /* ============================================
-   📱 RESPONSIVE
+   📱 RESPONSIVE TABLET
 ============================================ */
 
 @media(max-width:768px){
 
+    body{
+
+        background-attachment:scroll !important;
+
+    }
+
     .container{
 
-        padding:12px;
+        padding:
+            170px
+            12px
+            20px;
 
     }
 
     .navbar-custom{
 
-        padding:10px 12px;
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:14px;
+
+        padding:14px 18px;
+
+    }
+
+    .navbar-left{
+
+        width:100%;
+
+    }
+
+    .acciones-navbar{
+
+        width:100%;
+
+        justify-content:flex-end;
+
+        flex-wrap:wrap;
 
     }
 
     .empresa-linea1{
 
-        font-size:.75rem;
+        font-size:.72rem;
 
     }
 
     .empresa-linea2{
 
-        font-size:.85rem;
+        font-size:18px;
 
     }
 
     .btn-logout{
 
-        padding:8px 12px;
+        padding:10px 14px;
 
-        font-size:.75rem;
+        font-size:.78rem;
+
+        border-radius:14px;
+
+    }
+
+    .btn-volver{
+
+        padding:10px 14px;
+
+        font-size:.78rem;
 
         border-radius:14px;
 
@@ -668,11 +757,10 @@ body{
 
         border-width:4px;
 
-        border-radius:16px;
+        border-radius:18px;
 
         box-shadow:
-            0 4px 12px
-            rgba(0,0,0,0.08);
+            0 4px 12px rgba(0,0,0,0.08);
 
     }
 
@@ -706,12 +794,47 @@ body{
 
 }
 
-
 /* ============================================
    📱 MOVILES PEQUEÑOS
 ============================================ */
 
 @media(max-width:480px){
+
+    .navbar-custom{
+
+        padding:12px 14px;
+
+    }
+
+    .logo-navbar{
+
+        width:42px;
+        height:42px;
+
+    }
+
+    .empresa-linea2{
+
+        font-size:16px;
+
+    }
+
+    .acciones-navbar{
+
+        flex-direction:column;
+
+        width:100%;
+
+    }
+
+    .btn-volver,
+    .btn-logout{
+
+        width:100%;
+
+        justify-content:center;
+
+    }
 
     .titulo-principal{
 

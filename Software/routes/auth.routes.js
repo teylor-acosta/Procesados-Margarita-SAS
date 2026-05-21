@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
+
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+
 require('dotenv').config();
 
 const { proteger } = require('../middlewares/auth');
@@ -25,7 +27,6 @@ const transporter = nodemailer.createTransport({
     }
 
 });
-
 
 // ============================================
 // 🔥 LOGIN
@@ -59,13 +60,16 @@ router.post('/api/login', async (req, res) => {
 
         `;
 
-        const [results] = await db.query(sql, [usuario]);
+        const [results] =
+            await db.query(sql, [usuario]);
 
         if (results.length === 0) {
 
             return res.json({
+
                 success: false,
                 message: "Usuario no encontrado"
+
             });
 
         }
@@ -79,9 +83,12 @@ router.post('/api/login', async (req, res) => {
         if (user.activo === 'NO') {
 
             return res.json({
+
                 success: false,
                 inactivo: true,
-                message: 'Empleado inactivo. Comuníquese con el administrador.'
+                message:
+                    'Empleado inactivo. Comuníquese con el administrador.'
+
             });
 
         }
@@ -90,16 +97,21 @@ router.post('/api/login', async (req, res) => {
         // 🔐 VALIDAR PASSWORD
         // =========================================
 
-        const passwordMatch = await bcrypt.compare(
-            password,
-            user.password_hash
-        );
+        const passwordMatch =
+            await bcrypt.compare(
+
+                password,
+                user.password_hash
+
+            );
 
         if (!passwordMatch) {
 
             return res.json({
+
                 success: false,
                 message: "Contraseña incorrecta"
+
             });
 
         }
@@ -108,12 +120,17 @@ router.post('/api/login', async (req, res) => {
         // 🔥 CREAR SESIÓN
         // =========================================
 
-        req.session.usuarioID = user.ID || user.id;
-        req.session.empleadoID = user.empleado_id;
-        req.session.rol = user.rol;
+        req.session.usuarioID =
+            user.ID || user.id;
+
+        req.session.empleadoID =
+            user.empleado_id;
+
+        req.session.rol =
+            user.rol;
 
         // =========================================
-        // 🔥 CAMBIO PASSWORD
+        // 🔥 CAMBIO PASSWORD OBLIGATORIO
         // =========================================
 
         if (parseInt(user.cambio_password) === 1) {
@@ -121,8 +138,10 @@ router.post('/api/login', async (req, res) => {
             return req.session.save(() => {
 
                 res.json({
+
                     success: true,
                     redirect: "/cambiar-password"
+
                 });
 
             });
@@ -152,21 +171,27 @@ router.post('/api/login', async (req, res) => {
 
         `;
 
-        const [results2] = await db.query(
-            sqlCheck,
-            [
-                req.session.usuarioID,
-                req.session.usuarioID
-            ]
-        );
+        const [results2] =
+            await db.query(
+
+                sqlCheck,
+
+                [
+                    req.session.usuarioID,
+                    req.session.usuarioID
+                ]
+
+            );
 
         let destino = "/dashboard";
 
         if (results2.length > 0) {
 
-            const total = results2[0].total || 0;
+            const total =
+                results2[0].total || 0;
 
-            const aprobados = results2[0].aprobados || 0;
+            const aprobados =
+                results2[0].aprobados || 0;
 
             const tieneCertificado =
                 results2[0].tiene_certificado > 0;
@@ -194,20 +219,29 @@ router.post('/api/login', async (req, res) => {
         req.session.save(() => {
 
             res.json({
+
                 success: true,
                 redirect: destino
+
             });
 
         });
 
-    } catch (error) {
+    }
 
-        console.error('🔥 ERROR LOGIN COMPLETO:', error);
+    catch (error) {
+
+        console.error(
+            '🔥 ERROR LOGIN COMPLETO:',
+            error
+        );
 
         return res.status(500).json({
+
             success: false,
             message: 'Error interno del servidor',
             error: error.message
+
         });
 
     }
@@ -217,13 +251,15 @@ router.post('/api/login', async (req, res) => {
 // ============================================
 // 🔥 /api/me
 // ============================================
+
 router.get('/api/me', proteger, async (req, res) => {
 
     try {
 
         const db = req.app.get('db');
 
-        const usuario_id = req.session.usuarioID;
+        const usuario_id =
+            req.session.usuarioID;
 
         const sql = `
 
@@ -287,19 +323,25 @@ router.get('/api/me', proteger, async (req, res) => {
 
         `;
 
-        const [results] = await db.query(
-            sql,
-            [
-                usuario_id,
-                usuario_id,
-                usuario_id
-            ]
-        );
+        const [results] =
+            await db.query(
+
+                sql,
+
+                [
+                    usuario_id,
+                    usuario_id,
+                    usuario_id
+                ]
+
+            );
 
         if (results.length === 0) {
 
             return res.json({
+
                 success: false
+
             });
 
         }
@@ -311,14 +353,18 @@ router.get('/api/me', proteger, async (req, res) => {
             req.session.destroy();
 
             return res.json({
+
                 success: false
+
             });
 
         }
 
-        const total = u.total || 0;
+        const total =
+            u.total || 0;
 
-        const aprobados = u.aprobados || 0;
+        const aprobados =
+            u.aprobados || 0;
 
         const tieneCertificado =
             (u.tiene_certificado || 0) > 0;
@@ -360,17 +406,22 @@ router.get('/api/me', proteger, async (req, res) => {
 
         });
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(error);
 
         res.status(500).json({
+
             success: false
+
         });
 
     }
 
 });
+
 // ============================================
 // 🔥 RECUPERAR PASSWORD TOKEN
 // ============================================
@@ -381,11 +432,8 @@ router.post('/api/recuperar', async (req, res) => {
 
         const db = req.app.get('db');
 
-        const { documento } = req.body;
-
-        // =========================================
-        // 🔥 BUSCAR USUARIO
-        // =========================================
+        const { documento } =
+            req.body;
 
         const sql = `
 
@@ -407,10 +455,6 @@ router.post('/api/recuperar', async (req, res) => {
         const [results] =
             await db.query(sql, [documento]);
 
-        // =========================================
-        // 🔥 NO REVELAR SI EXISTE
-        // =========================================
-
         if (results.length === 0) {
 
             return res.json({
@@ -424,10 +468,11 @@ router.post('/api/recuperar', async (req, res) => {
 
         }
 
-        const usuario = results[0];
+        const usuario =
+            results[0];
 
         // =========================================
-        // 🔥 GENERAR TOKEN
+        // 🔥 TOKEN
         // =========================================
 
         const token = crypto
@@ -465,7 +510,7 @@ router.post('/api/recuperar', async (req, res) => {
         );
 
         // =========================================
-        // 🔥 LINK RESET
+        // 🔥 LINK
         // =========================================
 
         const resetLink = `
@@ -475,15 +520,12 @@ router.post('/api/recuperar', async (req, res) => {
         `;
 
         // =========================================
-        // 🔥 ENVIAR CORREO
+        // 🔥 EMAIL
         // =========================================
 
         try {
 
-            console.log('🔥 ENVIANDO CORREO...');
-            console.log('📧 DESTINO:', usuario.email);
-
-            const info = await transporter.sendMail({
+            await transporter.sendMail({
 
                 from: process.env.EMAIL_USER,
 
@@ -508,12 +550,7 @@ router.post('/api/recuperar', async (req, res) => {
                         </p>
 
                         <p>
-                            Hemos recibido una solicitud
-                            para restablecer tu contraseña.
-                        </p>
-
-                        <p>
-                            Haz clic en el siguiente botón:
+                            Haz clic aquí:
                         </p>
 
                         <a
@@ -532,24 +569,11 @@ router.post('/api/recuperar', async (req, res) => {
                             Restablecer contraseña
                         </a>
 
-                        <p style="margin-top:20px;">
-                            Este enlace expirará en
-                            10 minutos.
-                        </p>
-
-                        <p>
-                            Si no solicitaste este cambio,
-                            puedes ignorar este mensaje.
-                        </p>
-
                     </div>
 
                 `
 
             });
-
-            console.log('✅ CORREO ENVIADO');
-            console.log(info);
 
         }
 
@@ -563,17 +587,11 @@ router.post('/api/recuperar', async (req, res) => {
             return res.status(500).json({
 
                 success:false,
-
-                message:
-                    'Error enviando correo'
+                message:'Error enviando correo'
 
             });
 
         }
-
-        // =========================================
-        // 🔥 RESPUESTA
-        // =========================================
 
         res.json({
 
@@ -596,75 +614,115 @@ router.post('/api/recuperar', async (req, res) => {
         res.status(500).json({
 
             success:false,
-
-            message:
-                'Error interno del servidor'
+            message:'Error interno del servidor'
 
         });
 
     }
 
 });
+
 // ============================================
-// 🔥 CAMBIAR PASSWORD
+// 🔥 CAMBIAR PASSWORD LOGUEADO
 // ============================================
 
-router.post('/api/cambiar-password', proteger, async (req, res) => {
+router.post(
+    '/api/cambiar-password',
+    proteger,
+    async (req, res) => {
 
-    try {
+        try {
 
-        const db = req.app.get('db');
+            const db =
+                req.app.get('db');
 
-        const { password } = req.body;
+            const {
+                nuevaPassword
+            } = req.body;
 
-        const hash =
-            await bcrypt.hash(password, SALT_ROUNDS);
+            // ========================================
+            // VALIDAR
+            // ========================================
 
-        await db.query(
+            if (!nuevaPassword) {
 
-            `
+                return res.status(400).json({
 
-            UPDATE usuarios 
+                    success:false,
+                    message:'Password requerida'
 
-            SET 
-                password_hash = ?,
-                cambio_password = 0 
+                });
 
-            WHERE id = ?
+            }
 
-            `,
+            // ========================================
+            // HASH
+            // ========================================
 
-            [
-                hash,
-                req.session.usuarioID
-            ]
+            const hash =
+                await bcrypt.hash(
+                    nuevaPassword,
+                    SALT_ROUNDS
+                );
 
-        );
+            // ========================================
+            // UPDATE
+            // ========================================
 
-        req.session.destroy(() => {
+            await db.query(
+
+                `
+                UPDATE usuarios
+
+                SET
+
+                    password_hash = ?,
+
+                    cambio_password = 0,
+
+                    primera_vez = 0,
+
+                    fecha_cambio_password = NOW()
+
+                WHERE id = ?
+                `,
+
+                [
+
+                    hash,
+                    req.session.usuarioID
+
+                ]
+
+            );
 
             res.json({
 
-                success: true,
-                redirect: "/login"
+                success:true,
+                redirect:'/induccion'
 
             });
 
-        });
+        }
 
-    } catch (error) {
+        catch (error) {
 
-        console.error('🔥 ERROR CAMBIAR PASSWORD:', error);
+            console.error(
+                '🔥 ERROR CAMBIAR PASSWORD:',
+                error
+            );
 
-        res.status(500).json({
-            success: false,
-            message: 'Error interno del servidor'
-        });
+            res.status(500).json({
+
+                success:false,
+                message:'Error interno del servidor'
+
+            });
+
+        }
 
     }
-
-});
-
+);
 
 // ============================================
 // 🔥 LOGOUT
@@ -700,7 +758,7 @@ router.get('/logout', (req, res) => {
 });
 
 // ============================================
-// 🔥 RESET PASSWORD FINAL
+// 🔥 RESET PASSWORD TOKEN
 // ============================================
 
 router.post('/api/reset-password', async (req, res) => {
@@ -717,7 +775,7 @@ router.post('/api/reset-password', async (req, res) => {
         } = req.body;
 
         // ========================================
-        // VALIDACIONES
+        // VALIDAR
         // ========================================
 
         if (!token || !password) {
@@ -725,9 +783,7 @@ router.post('/api/reset-password', async (req, res) => {
             return res.status(400).json({
 
                 success:false,
-
-                message:
-                    'Datos incompletos'
+                message:'Datos incompletos'
 
             });
 
@@ -752,16 +808,11 @@ router.post('/api/reset-password', async (req, res) => {
         const [results] =
             await db.query(sql, [token]);
 
-        // ========================================
-        // TOKEN INVÁLIDO
-        // ========================================
-
         if (results.length === 0) {
 
             return res.status(400).json({
 
                 success:false,
-
                 message:
                     'El enlace expiró o no es válido'
 
@@ -769,23 +820,23 @@ router.post('/api/reset-password', async (req, res) => {
 
         }
 
-        const usuario = results[0];
+        const usuario =
+            results[0];
 
         // ========================================
-        // HASH PASSWORD
+        // HASH
         // ========================================
 
         const hash =
             await bcrypt.hash(
 
                 password,
-
                 SALT_ROUNDS
 
             );
 
         // ========================================
-        // ACTUALIZAR PASSWORD
+        // UPDATE
         // ========================================
 
         await db.query(
@@ -800,7 +851,13 @@ router.post('/api/reset-password', async (req, res) => {
 
                 token_reset = NULL,
 
-                token_expira = NULL
+                token_expira = NULL,
+
+                cambio_password = 0,
+
+                primera_vez = 0,
+
+                fecha_cambio_password = NOW()
 
             WHERE id = ?
 
@@ -809,23 +866,16 @@ router.post('/api/reset-password', async (req, res) => {
             [
 
                 hash,
-
                 usuario.id
 
             ]
 
         );
 
-        // ========================================
-        // RESPUESTA
-        // ========================================
-
         res.json({
 
             success:true,
-
-            message:
-                'Contraseña actualizada'
+            message:'Contraseña actualizada'
 
         });
 
@@ -836,7 +886,6 @@ router.post('/api/reset-password', async (req, res) => {
         console.error(
 
             '🔥 ERROR RESET PASSWORD:',
-
             error
 
         );
@@ -844,9 +893,7 @@ router.post('/api/reset-password', async (req, res) => {
         res.status(500).json({
 
             success:false,
-
-            message:
-                'Error interno del servidor'
+            message:'Error interno del servidor'
 
         });
 

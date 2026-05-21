@@ -1,19 +1,222 @@
 /* =========================================
+   🌎 BODY
+========================================= */
+
+body{
+
+    margin:0;
+
+    font-family:'Averia Libre', cursive;
+
+    background:
+        url('/img/Fondo.webp')
+        center/cover no-repeat fixed;
+
+    min-height:100vh;
+
+    overflow-x:hidden;
+
+    position:relative;
+}
+
+body::before{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+        rgba(255,255,255,.38);
+
+    z-index:-1;
+}
+
+/* =========================================
+   🔥 NAVBAR GLOBAL ERP
+========================================= */
+
+.navbar-custom{
+
+    width:100%;
+
+    background:
+        rgba(255,255,255,.96);
+
+    backdrop-filter:blur(10px);
+
+    display:flex;
+
+    justify-content:space-between;
+    align-items:center;
+
+    padding:14px 30px;
+
+    box-shadow:
+        0 4px 18px rgba(0,0,0,.08);
+
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    z-index:9999;
+}
+
+/* =========================================
+   🔥 IZQUIERDA NAVBAR
+========================================= */
+
+.navbar-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+}
+
+.logo-navbar{
+
+    width:55px;
+    height:55px;
+
+    object-fit:contain;
+}
+
+.empresa-nombre{
+
+    font-size:30px;
+
+    font-weight:700;
+
+    color:#16a34a;
+
+    font-style:italic;
+
+    letter-spacing:.5px;
+
+    margin:0;
+}
+
+/* =========================================
+   🔥 DERECHA NAVBAR
+========================================= */
+
+.acciones-navbar{
+
+    display:flex;
+
+    gap:12px;
+
+    align-items:center;
+}
+
+/* =========================================
+   🔥 BOTON VOLVER
+========================================= */
+
+.btn-volver{
+
+    border:none;
+
+    background:#f8fafc;
+
+    color:#111827;
+
+    text-decoration:none;
+
+    padding:12px 24px;
+
+    border-radius:18px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-weight:700;
+
+    transition:.25s;
+
+    box-shadow:
+        0 4px 10px rgba(0,0,0,.05);
+}
+
+.btn-volver:hover{
+
+    background:#e2e8f0;
+
+    transform:
+        translateY(-2px);
+
+    color:#111827;
+}
+
+/* =========================================
+   🔥 BOTON LOGOUT
+========================================= */
+
+.btn-logout{
+
+    border:none;
+
+    text-decoration:none;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ef4444,
+            #dc2626
+        );
+
+    color:white;
+
+    padding:12px 24px;
+
+    border-radius:18px;
+
+    font-weight:700;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    transition:.3s;
+
+    box-shadow:
+        0 10px 20px rgba(239,68,68,.25);
+}
+
+.btn-logout:hover{
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 15px 28px rgba(239,68,68,.35);
+
+    color:white;
+}
+
+/* =========================================
    📦 CONTENEDOR GENERAL
 ========================================= */
 
 .empleados-container{
 
-    padding:95px 20px 30px;
+    padding:120px 20px 30px;
 
     width:100%;
 
     box-sizing:border-box;
 
     overflow-x:hidden;
-
 }
-
 
 /* =========================================
    🏷️ TITULO
@@ -24,7 +227,6 @@
     text-align:center;
 
     margin-bottom:18px;
-
 }
 
 .titulo-panel h2{
@@ -48,13 +250,11 @@
 
     font-size:24px;
 
-    /* 🔥 SOMBRA MÁS LIVIANA */
+    font-style:italic;
+
     box-shadow:
-        0 4px 12px
-        rgba(0,0,0,0.10);
-
+        0 4px 12px rgba(0,0,0,0.10);
 }
-
 
 /* =========================================
    🔎 FILTROS
@@ -73,9 +273,7 @@
     align-items:center;
 
     margin-bottom:18px;
-
 }
-
 
 /* INPUT */
 
@@ -93,10 +291,10 @@
 
     font-size:14px;
 
+    font-family:'Averia Libre', cursive;
+
     box-shadow:none !important;
-
 }
-
 
 /* SELECT */
 
@@ -114,8 +312,8 @@
 
     font-size:14px;
 
+    font-family:'Averia Libre', cursive;
 }
-
 
 /* =========================================
    🔘 BOTONES
@@ -133,9 +331,7 @@
     justify-content:center;
 
     min-width:40px;
-
 }
-
 
 /* NUEVO */
 
@@ -158,23 +354,22 @@
 
     font-weight:bold;
 
+    font-family:'Averia Libre', cursive;
+
     min-height:44px;
 
     transition:
         transform .2s ease,
         opacity .2s ease;
-
 }
-
 
 .btn-nuevo:hover{
 
-    transform:translateY(-2px);
+    transform:
+        translateY(-2px);
 
     opacity:.95;
-
 }
-
 
 /* =========================================
    📋 CONTENEDOR TABLA
@@ -182,24 +377,20 @@
 
 .tabla-container{
 
-    background:rgba(255,255,255,0.97);
+    background:
+        rgba(255,255,255,0.97);
 
-    /* 🔥 QUITAR BLUR */
     backdrop-filter:none;
 
     border-radius:18px;
 
     padding:14px;
 
-    /* 🔥 SOMBRA MÁS LIVIANA */
     box-shadow:
-        0 6px 18px
-        rgba(0,0,0,0.10);
+        0 6px 18px rgba(0,0,0,0.10);
 
     overflow:hidden;
-
 }
-
 
 /* =========================================
    🔄 SCROLL TABLA
@@ -216,9 +407,7 @@
     border-radius:12px;
 
     -webkit-overflow-scrolling:touch;
-
 }
-
 
 /* =========================================
    📊 TABLA
@@ -235,9 +424,7 @@
     font-size:13px;
 
     min-width:900px;
-
 }
-
 
 /* =========================================
    🟢 HEADER
@@ -273,19 +460,17 @@
 
     font-size:12px;
 
+    font-style:italic;
+
     white-space:nowrap;
-
 }
-
 
 /* QUITAR ÚLTIMO */
 
 .tabla-corporativa thead th:last-child{
 
     border-right:none;
-
 }
-
 
 /* =========================================
    📄 FILAS
@@ -295,34 +480,26 @@
 
     transition:
         background .15s ease;
-
 }
-
 
 /* ZEBRA */
 
 .tabla-corporativa tbody tr:nth-child(even){
 
     background:#f4f9ff;
-
 }
-
 
 .tabla-corporativa tbody tr:nth-child(odd){
 
     background:#ffffff;
-
 }
-
 
 /* HOVER */
 
 .tabla-corporativa tbody tr:hover{
 
     background:#d6ecff;
-
 }
-
 
 /* =========================================
    🔲 CELDAS
@@ -334,25 +511,23 @@
 
     text-align:center;
 
-    border-bottom:1px solid #e5e7eb;
+    border-bottom:
+        1px solid #e5e7eb;
 
-    border-right:1px solid #f1f5f9;
+    border-right:
+        1px solid #f1f5f9;
 
     font-size:13px;
 
     white-space:nowrap;
-
 }
-
 
 /* QUITAR ÚLTIMA */
 
 .tabla-corporativa td:last-child{
 
     border-right:none;
-
 }
-
 
 /* PRIMERA COLUMNA */
 
@@ -361,9 +536,7 @@
     font-weight:bold;
 
     color:#198754;
-
 }
-
 
 /* =========================================
    📄 PAGINACIÓN
@@ -374,9 +547,7 @@
     flex-wrap:wrap;
 
     gap:4px;
-
 }
-
 
 .pagination .page-link{
 
@@ -397,8 +568,8 @@
 
     font-size:14px;
 
+    font-family:'Averia Libre', cursive;
 }
-
 
 /* ACTIVE */
 
@@ -412,9 +583,7 @@
         );
 
     color:white;
-
 }
-
 
 /* =========================================
    📱 TABLET
@@ -426,11 +595,9 @@
 
         padding-left:14px;
         padding-right:14px;
-
     }
 
 }
-
 
 /* =========================================
    📱 MÓVIL
@@ -438,10 +605,44 @@
 
 @media(max-width:768px){
 
+    body{
+
+        background-attachment:scroll;
+    }
+
+    .navbar-custom{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        padding:14px 18px;
+
+        gap:14px;
+    }
+
+    .navbar-left{
+
+        width:100%;
+    }
+
+    .empresa-nombre{
+
+        font-size:18px !important;
+    }
+
+    .acciones-navbar{
+
+        width:100%;
+
+        justify-content:flex-end;
+
+        flex-wrap:wrap;
+    }
+
     .empleados-container{
 
-        padding:85px 10px 20px;
-
+        padding:180px 10px 20px;
     }
 
     .titulo-panel h2{
@@ -453,7 +654,6 @@
         border-radius:16px;
 
         padding:12px;
-
     }
 
     .filtros-barra{
@@ -461,7 +661,6 @@
         flex-direction:column;
 
         align-items:stretch;
-
     }
 
     .input-busqueda,
@@ -471,7 +670,6 @@
         width:100%;
 
         font-size:13px;
-
     }
 
     .tabla-container{
@@ -481,15 +679,12 @@
         border-radius:14px;
 
         box-shadow:
-            0 4px 12px
-            rgba(0,0,0,0.08);
-
+            0 4px 12px rgba(0,0,0,0.08);
     }
 
     .tabla-corporativa{
 
         min-width:750px;
-
     }
 
     .tabla-corporativa th,
@@ -498,11 +693,9 @@
         font-size:11px;
 
         padding:7px 6px;
-
     }
 
 }
-
 
 /* =========================================
    📱 MÓVILES PEQUEÑOS
@@ -510,10 +703,35 @@
 
 @media(max-width:480px){
 
+    .empresa-nombre{
+
+        font-size:16px !important;
+    }
+
+    .logo-navbar{
+
+        width:42px;
+        height:42px;
+    }
+
+    .acciones-navbar{
+
+        flex-direction:column;
+
+        width:100%;
+    }
+
+    .btn-volver,
+    .btn-logout{
+
+        width:100%;
+
+        justify-content:center;
+    }
+
     .titulo-panel h2{
 
         font-size:18px;
-
     }
 
     .pagination .page-link{
@@ -522,11 +740,9 @@
         min-height:34px;
 
         font-size:12px;
-
     }
 
 }
-
 
 /* =========================================
    🔥 OPTIMIZACIÓN MÓVIL
@@ -537,7 +753,6 @@
     *{
 
         -webkit-tap-highlight-color:transparent;
-
     }
 
 }

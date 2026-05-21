@@ -1,66 +1,46 @@
 const express = require('express');
+
 const router = express.Router();
 
 const db = require('../DB');
 
 
-/* =========================================
-   👤 OBTENER EMPLEADO
-========================================= */
-
 router.get('/api/empleado/:id', async (req, res) => {
 
     try {
 
-        const { id } = req.params;
+        console.log('🔥 ENTRANDO');
 
-        const [empleados] = await db.query(`
+        const id = req.params.id;
 
-            SELECT 
-                e.*,
+        const [rows] = await db.query(
 
-                c.nombre AS cargo,
-                a.nombre AS area,
-                s.nombre AS sede
+            'SELECT * FROM empleados WHERE id = ?',
 
-            FROM empleados e
+            [id]
 
-            LEFT JOIN cargos c
-            ON e.cargo_id = c.id
+        );
 
-            LEFT JOIN areas a
-            ON e.area_id = a.id
-
-            LEFT JOIN sedes s
-            ON e.sede_id = s.id
-
-            WHERE e.id = ?
-
-        `, [id]);
-
-        if (empleados.length === 0) {
-
-            return res.json({
-                ok: false
-            });
-
-        }
+        console.log(rows);
 
         res.json({
 
             ok: true,
-            empleado: empleados[0]
+
+            empleado: rows[0]
 
         });
 
-    } catch (error) {
+    } catch(error){
 
         console.log(error);
 
         res.status(500).json({
 
             ok: false,
+
             mensaje: 'Error servidor',
+
             error: error.message
 
         });

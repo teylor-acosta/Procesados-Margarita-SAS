@@ -162,5 +162,21 @@ router.get('/crear-usuario', proteger, soloSuperAdmin, (req, res) => {
     );
 
 });
+/* =========================================
+   🔥 USUARIOS REGISTRADOS
+========================================= */
+
+router.get('/usuarios-registrados', proteger, soloSuperAdmin, (req, res) => {
+
+    res.sendFile(
+
+        path.join(
+            __dirname,
+            '../public/usuarios-registrados.html'
+        )
+
+    );
+
+});
 
 module.exports = router;

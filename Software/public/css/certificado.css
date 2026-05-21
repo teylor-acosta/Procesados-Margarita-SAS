@@ -14,6 +14,8 @@ body{
 
     overflow-x:hidden;
 
+    font-family:'Averia Libre', cursive;
+
     -webkit-font-smoothing:antialiased;
     text-rendering:optimizeLegibility;
 
@@ -28,7 +30,6 @@ body{
 
     min-height:100vh;
 
-    /* 🔥 MÁS LIVIANO */
     background:
         linear-gradient(
             135deg,
@@ -36,91 +37,169 @@ body{
             #e3f2fd
         );
 
-    padding-top:90px;
+    padding-top:110px;
 
 }
 
 
 /* ============================================
-   🧭 NAVBAR
+   🧭 NAVBAR GLOBAL ERP
 ============================================ */
 
-.navbar-custom {
+.navbar-custom{
+
+    width:100%;
+
+    background:
+        rgba(255,255,255,.96);
+
+    backdrop-filter:blur(10px);
 
     display:flex;
 
     justify-content:space-between;
     align-items:center;
 
-    padding:12px 4%;
+    padding:14px 30px;
 
-    background:#fff;
-
-    /* 🔥 SOMBRA MÁS LIVIANA */
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    box-shadow:
+        0 4px 18px rgba(0,0,0,.08);
 
     position:fixed;
 
     top:0;
+    left:0;
 
-    width:100%;
-
-    z-index:1000;
-
+    z-index:9999;
 }
 
-.navbar-left {
+/* IZQUIERDA */
+
+.navbar-left{
 
     display:flex;
+
+    align-items:center;
+
+    gap:14px;
+}
+
+.logo-navbar{
+
+    width:55px;
+    height:55px;
+
+    object-fit:contain;
+}
+
+.empresa-nombre{
+
+    font-size:32px;
+
+    font-weight:700;
+
+    color:#16a34a;
+
+    font-style:italic;
+
+    letter-spacing:.5px;
+}
+
+/* DERECHA */
+
+.acciones-navbar{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+}
+
+/* BOTON VOLVER */
+
+.btn-volver{
+
+    border:none;
+
+    background:#f8fafc;
+
+    color:#111827;
+
+    text-decoration:none;
+
+    padding:12px 24px;
+
+    border-radius:18px;
+
+    display:flex;
+
     align-items:center;
 
     gap:10px;
 
+    font-weight:700;
+
+    transition:.25s;
+
+    box-shadow:
+        0 4px 10px rgba(0,0,0,.05);
 }
 
-.logo-certificado {
+.btn-volver:hover{
 
-    height:42px;
+    background:#e2e8f0;
 
-    object-fit:contain;
+    transform:
+        translateY(-2px);
 
+    color:#111827;
 }
 
-.empresa-texto span {
+/* BOTON LOGOUT */
 
-    font-weight:bold;
+.btn-logout{
 
-    color:#28a745;
-
-}
-
-
-/* ============================================
-   🔘 LOGOUT
-============================================ */
-
-.btn-logout {
-
-    background:#dc3545;
-
-    color:white;
-
-    padding:9px 16px;
-
-    border-radius:40px;
+    border:none;
 
     text-decoration:none;
 
-    font-size:14px;
+    background:
+        linear-gradient(
+            135deg,
+            #ef4444,
+            #dc2626
+        );
 
-    transition:0.2s ease;
+    color:white;
 
+    padding:12px 24px;
+
+    border-radius:18px;
+
+    font-weight:700;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    transition:.3s;
+
+    box-shadow:
+        0 10px 20px rgba(239,68,68,.25);
 }
 
 .btn-logout:hover{
 
-    opacity:.9;
+    transform:
+        translateY(-2px);
 
+    box-shadow:
+        0 15px 28px rgba(239,68,68,.35);
+
+    color:white;
 }
 
 
@@ -154,7 +233,6 @@ body{
 
     border-radius:22px;
 
-    /* 🔥 SOMBRA MÁS LIVIANA */
     box-shadow:0 8px 22px rgba(0,0,0,0.12);
 
     position:relative;
@@ -274,6 +352,8 @@ body{
 
     color:#111;
 
+    font-style:italic;
+
 }
 
 .certificado-titulo h1 {
@@ -281,6 +361,8 @@ body{
     font-weight:800;
 
     color:#222;
+
+    font-style:italic;
 
 }
 
@@ -370,7 +452,7 @@ body{
 
     position:fixed;
 
-    top:110px;
+    top:120px;
     right:18px;
 
     display:flex;
@@ -404,6 +486,7 @@ body{
 
     font-size:14px;
 
+    font-family:'Averia Libre', cursive;
 }
 
 .btn-certificado:hover {
@@ -458,8 +541,31 @@ body{
 
     .background-overlay {
 
-        padding-top:80px;
+        padding-top:150px;
 
+    }
+
+    .navbar-custom{
+
+        padding:14px 18px;
+
+        flex-direction:column;
+
+        gap:16px;
+    }
+
+    .empresa-nombre{
+
+        font-size:22px;
+    }
+
+    .acciones-navbar{
+
+        width:100%;
+
+        justify-content:center;
+
+        flex-wrap:wrap;
     }
 
     .certificado-wrapper {
@@ -511,8 +617,34 @@ body{
 
     .background-overlay {
 
-        padding-top:70px;
+        padding-top:170px;
 
+    }
+
+    .empresa-nombre{
+
+        font-size:18px;
+    }
+
+    .logo-navbar{
+
+        width:42px;
+        height:42px;
+    }
+
+    .acciones-navbar{
+
+        flex-direction:column;
+
+        width:100%;
+    }
+
+    .btn-volver,
+    .btn-logout{
+
+        width:100%;
+
+        justify-content:center;
     }
 
     .certificado-wrapper {
@@ -579,7 +711,6 @@ body{
 
     }
 
-    /* 🔥 FIRMA OPTIMIZADA */
     .certificado-firma {
 
         flex-direction:row;
@@ -614,7 +745,6 @@ body{
 
     }
 
-    /* 🔥 BOTONES ABAJO */
     .certificado-acciones {
 
         position:static;
@@ -624,7 +754,6 @@ body{
         align-items:center;
 
         width:100%;
-
     }
 
     .btn-certificado {
@@ -634,7 +763,6 @@ body{
         max-width:240px;
 
         border-radius:16px;
-
     }
 
 }

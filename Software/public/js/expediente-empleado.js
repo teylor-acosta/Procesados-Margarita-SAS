@@ -27,18 +27,14 @@ function actualizarProgreso(documentosSubidos){
     const completados = documentosSubidos.length;
 
     const porcentaje = Math.round(
-
         (completados / total) * 100
-
     );
 
-    const barra = document.querySelector(
-        '.progress-bar'
-    );
+    const barra =
+    document.getElementById('barraGeneral');
 
-    const texto = document.querySelector(
-        '.porcentaje-documentos'
-    );
+    const texto =
+    document.getElementById('porcentajeGeneral');
 
     if(barra){
 
@@ -68,6 +64,7 @@ async function cargarEmpleado(){
 
         const data =
         await response.json();
+        console.log(data);
 
         if(!data.ok){
 

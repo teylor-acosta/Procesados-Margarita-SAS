@@ -39,7 +39,7 @@ document
 });
 
 /* =========================================
-   🔐 RESET PASSWORD
+   🔐 CAMBIO PASSWORD
 ========================================= */
 
 const form =
@@ -53,12 +53,20 @@ form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const password =
-        document.getElementById('password').value.trim();
+        document
+        .getElementById('password')
+        .value
+        .trim();
 
     const confirmPassword =
-        document.getElementById('confirmPassword').value.trim();
+        document
+        .getElementById('confirmPassword')
+        .value
+        .trim();
 
-    /* 🔥 VALIDAR */
+    /* =====================================
+       🔥 VALIDAR
+    ===================================== */
 
     if (password.length < 6) {
 
@@ -90,13 +98,69 @@ form.addEventListener('submit', async (e) => {
 
     try {
 
+        /* =====================================
+           🔥 VALIDAR SI HAY TOKEN
+        ===================================== */
+
         const token =
-    window.location.pathname
-    .split('/reset/')[1]
-    ?.split('?')[0];
+            window.location.pathname
+            .includes('/reset/')
+
+            ? window.location.pathname
+                .split('/reset/')[1]
+                ?.split('?')[0]
+
+            : null;
+
+        /* =====================================
+           🔥 URL
+        ===================================== */
+
+        let url = '';
+
+        let body = {};
+
+        // =====================================
+        // 🔥 RECUPERAR PASSWORD
+        // =====================================
+
+        if (token) {
+
+            url =
+                '/api/reset-password';
+
+            body = {
+
+                token,
+                password
+
+            };
+
+        }
+
+        // =====================================
+        // 🔥 CAMBIO PASSWORD LOGUEADO
+        // =====================================
+
+        else {
+
+            url =
+                '/api/cambiar-password';
+
+            body = {
+
+                nuevaPassword: password
+
+            };
+
+        }
+
+        /* =====================================
+           🔥 FETCH
+        ===================================== */
 
         const response =
-            await fetch('/api/reset-password', {
+            await fetch(url, {
 
                 method:'POST',
 
@@ -104,19 +168,16 @@ form.addEventListener('submit', async (e) => {
                     'Content-Type':'application/json'
                 },
 
-                body:JSON.stringify({
-
-                    token,
-                    password
-
-                })
+                body:JSON.stringify(body)
 
             });
 
         const data =
             await response.json();
 
-        /* 🔥 EXITO */
+        /* =====================================
+           🔥 EXITO
+        ===================================== */
 
         if (data.success) {
 
@@ -125,19 +186,43 @@ form.addEventListener('submit', async (e) => {
             mensaje.className =
                 'mensaje-cambiar alert alert-success';
 
-            mensaje.innerHTML =
-                '✅ Contraseña actualizada correctamente';
+            mensaje.innerHTML = token
+
+                ? '✅ Contraseña recuperada correctamente'
+
+                : '✅ Contraseña actualizada correctamente';
 
             setTimeout(() => {
 
-                window.location.href =
-                    '/login';
+                // =================================
+                // 🔥 RECUPERAR PASSWORD
+                // =================================
+
+                if (token) {
+
+                    window.location.href =
+                        '/login';
+
+                }
+
+                // =================================
+                // 🔥 CAMBIO OBLIGATORIO
+                // =================================
+
+                else {
+
+                    window.location.href =
+                        '/induccion';
+
+                }
 
             }, 2500);
 
         }
 
-        /* 🔥 ERROR */
+        /* =====================================
+           🔥 ERROR
+        ===================================== */
 
         else {
 

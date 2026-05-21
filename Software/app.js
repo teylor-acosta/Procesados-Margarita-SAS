@@ -1,14 +1,22 @@
 // ============================================
+// 🔥 CARGAR VARIABLES .ENV
+// ============================================
+
+require('dotenv').config();
+
+
+// ============================================
 // CONFIGURACIONES BASE
 // ============================================
 
 const express = require('express');
 const session = require('express-session');
-const MySQLStore = require('express-mysql-session')(session);
 const path = require('path');
+
 const db = require('./DB');
 
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 
 
@@ -17,41 +25,29 @@ const PORT = process.env.PORT || 3000;
 // ============================================
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json({ limit: '50mb' }));
+
+app.use(express.json({
+    limit: '50mb'
+}));
 
 
 // ============================================
-// SESSION STORE MYSQL
+// SESSION SIMPLE TEMPORAL
 // ============================================
-
-const sessionStore = new MySQLStore({}, db);
-
-// 🔥 IMPORTANTE PARA RENDER
-app.set('trust proxy', 1);
-
-const isProduction = process.env.NODE_ENV === 'production';
 
 app.use(session({
 
-    key: 'connect.sid',
-
     secret: 'procesados_margarita_2026',
-
-    store: sessionStore,
 
     resave: false,
 
     saveUninitialized: false,
 
-    proxy: true,
-
     cookie: {
 
-        secure: isProduction, // 🔥 true en render
+        secure: false,
 
         httpOnly: true,
-
-        sameSite: isProduction ? 'none' : 'lax',
 
         maxAge: 30 * 60 * 1000
 
@@ -59,13 +55,17 @@ app.use(session({
 
 }));
 
+
 // ============================================
 // 🔒 NO CACHE (BOTÓN ATRÁS)
 // ============================================
 
 app.use((req, res, next) => {
+
     res.set('Cache-Control', 'no-store');
+
     next();
+
 });
 
 
@@ -73,8 +73,16 @@ app.use((req, res, next) => {
 // STATIC
 // ============================================
 
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/videos', express.static(path.join(__dirname, 'public/videos')));
+app.use(express.static(
+    path.join(__dirname, 'public')
+));
+
+app.use(
+    '/videos',
+    express.static(
+        path.join(__dirname, 'public/videos')
+    )
+);
 
 
 // ============================================
@@ -89,18 +97,65 @@ app.set('db', db);
 // ============================================
 
 app.use(require('./routes/views.routes'));
+
 app.use(require('./routes/auth.routes'));
+
 app.use(require('./routes/empleados.routes'));
-app.use(require('./routes/expediente.routes')); 
+
+app.use(require('./routes/expediente.routes'));
+
 app.use(require('./routes/induccion.routes'));
+
 app.use(require('./routes/evaluacion.routes'));
+
 app.use(require('./routes/firma.routes'));
+
 app.use(require('./routes/certificado.routes'));
-app.use(require('./routes/perfil.routes')); // 🔥 importante (foto perfil)
+
+app.use(require('./routes/perfil.routes'));
+
 app.use(require('./routes/catalogos.routes'));
+
 app.use(require('./routes/documentacion.routes'));
+
 app.use(require('./routes/centro-actividad.routes'));
-app.use('/api/usuarios', require('./routes/crear-usuario.routes'));
+
+app.use(
+    '/api/usuarios',
+    require('./routes/crear-usuario.routes')
+);
+
+app.use(
+    '/api/usuarios',
+    require('./routes/usuarios-registrados.routes')
+);
+
+
+// ============================================
+// TEST DB
+// ============================================
+
+app.get('/test-db', async(req, res) => {
+
+    try {
+
+        const [rows] = await db.query(
+            'SELECT 1 AS test'
+        );
+
+        res.json(rows);
+
+    } catch(error){
+
+        console.log(error);
+
+        res.status(500).json({
+            error: error.message
+        });
+
+    }
+
+});
 
 
 // ============================================
@@ -108,5 +163,30 @@ app.use('/api/usuarios', require('./routes/crear-usuario.routes'));
 // ============================================
 
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor ejecutándose en http://localhost:${PORT}`);
+
+    console.log(
+        `🚀 Servidor ejecutándose en http://localhost:${PORT}`
+    );
+
+});
+
+
+// ============================================
+// 🔥 ERRORES GLOBALES
+// ============================================
+
+process.on('unhandledRejection', (err) => {
+
+    console.log('UNHANDLED REJECTION');
+
+    console.log(err);
+
+});
+
+process.on('uncaughtException', (err) => {
+
+    console.log('UNCAUGHT EXCEPTION');
+
+    console.log(err);
+
 });
