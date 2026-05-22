@@ -289,18 +289,23 @@ router.get('/api/me', proteger, async (req, res) => {
 
                 r.nombre as rol,
 
-                (SELECT COUNT(*) 
-                 FROM capitulos_induccion 
-                 WHERE activo = 1) as total,
+                (
+                    SELECT COUNT(DISTINCT capitulo_id)
+                    FROM preguntas_induccion
+                ) as total,
 
-                (SELECT COUNT(DISTINCT capitulo_id) 
-                 FROM resultados_evaluaciones 
-                 WHERE usuario_id = ? 
-                 AND aprobado = 1) as aprobados,
+                (
+                    SELECT COUNT(DISTINCT capitulo_id)
+                    FROM resultados_evaluaciones
+                    WHERE usuario_id = ?
+                    AND aprobado = 1
+                ) as aprobados,
 
-                (SELECT COUNT(*) 
-                 FROM certificados_usuario 
-                 WHERE usuario_id = ?) as tiene_certificado
+                (
+                    SELECT COUNT(*)
+                    FROM certificados_usuario
+                    WHERE usuario_id = ?
+                ) as tiene_certificado
 
             FROM usuarios u
 
@@ -370,27 +375,36 @@ router.get('/api/me', proteger, async (req, res) => {
             (u.tiene_certificado || 0) > 0;
 
         const completo =
-    aprobados >= total &&
-    total > 0 &&
-    tieneCertificado;
+            aprobados >= total &&
+            total > 0;
 
         let redirect = "/dashboard";
 
+        // 🔥 CAMBIO PASSWORD
         if (parseInt(u.cambio_password) === 1) {
 
             redirect = "/cambiar-password";
 
         }
 
+        // 🔥 NO COMPLETÓ
         else if (!completo) {
 
             redirect = "/induccion";
 
         }
 
-        else if (!tieneCertificado) {
+        // 🔥 COMPLETÓ PERO NO TIENE CERTIFICADO
+        else if (completo && !tieneCertificado) {
 
             redirect = "/firma";
+
+        }
+
+        // 🔥 TODO COMPLETO
+        else {
+
+            redirect = "/dashboard";
 
         }
 
