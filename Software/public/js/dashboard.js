@@ -19,16 +19,31 @@ document.addEventListener("DOMContentLoaded", async () => {
         // =========================================
 
         document.getElementById("nombre").innerHTML = `
-            ${u.nombre}
 
             <div style="
-                font-size: 14px;
-                font-weight: 500;
-                margin-top: 3px;
-                opacity: .9;
+                font-weight: 600;
+                font-size: 16px;
+                line-height: 1.2;
             ">
-                ${u.tipo_documento || 'CC'} ${u.numero_documento}
+                ${u.nombre}
             </div>
+
+            <div style="
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 6px;
+                font-size: 15px;
+                font-weight: 600;
+                color: white;
+            ">
+                <i class="fas fa-id-card"></i>
+
+                <span>
+                    ${u.tipo_documento || 'CC'} ${u.numero_documento}
+                </span>
+            </div>
+
         `;
 
         document.getElementById("rol").textContent =
@@ -37,11 +52,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("cargo").textContent =
             u.cargo || "General";
 
+        // =========================================
         // 🔥 OCULTAR DOCUMENTO ABAJO
-        const doc = document.getElementById("doc");
+        // =========================================
+
+        const doc =
+            document.getElementById("doc");
 
         if (doc) {
+
             doc.style.display = "none";
+
         }
 
         // =========================================
