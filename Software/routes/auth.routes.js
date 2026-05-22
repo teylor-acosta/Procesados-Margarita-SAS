@@ -370,7 +370,9 @@ router.get('/api/me', proteger, async (req, res) => {
             (u.tiene_certificado || 0) > 0;
 
         const completo =
-            aprobados >= total && total > 0;
+    aprobados >= total &&
+    total > 0 &&
+    tieneCertificado;
 
         let redirect = "/dashboard";
 
