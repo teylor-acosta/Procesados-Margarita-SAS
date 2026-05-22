@@ -14,17 +14,49 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const u = data.usuario;
 
-        document.getElementById("nombre").textContent = u.nombre;
-        document.getElementById("rol").textContent = "Empleado";
-        document.getElementById("cargo").textContent = u.cargo || "General";
-        document.getElementById("doc").textContent = u.numero_documento;
+        // =========================================
+        // 🔥 DATOS USUARIO
+        // =========================================
 
-        const cont = document.getElementById("acciones");
+        document.getElementById("nombre").innerHTML = `
+            ${u.nombre}
+
+            <div style="
+                font-size: 14px;
+                font-weight: 500;
+                margin-top: 3px;
+                opacity: .9;
+            ">
+                ${u.tipo_documento || 'CC'} ${u.numero_documento}
+            </div>
+        `;
+
+        document.getElementById("rol").textContent =
+            "Empleado";
+
+        document.getElementById("cargo").textContent =
+            u.cargo || "General";
+
+        // 🔥 OCULTAR DOCUMENTO ABAJO
+        const doc = document.getElementById("doc");
+
+        if (doc) {
+            doc.style.display = "none";
+        }
+
+        // =========================================
+        // 🔥 ACCIONES
+        // =========================================
+
+        const cont =
+            document.getElementById("acciones");
 
         if (data.completo) {
 
             cont.innerHTML = `
-                <h5 class="mb-3">Inducción completada ✔</h5>
+                <h5 class="mb-3">
+                    Inducción completada ✔
+                </h5>
 
                 <div class="d-flex justify-content-center gap-3 flex-wrap">
 
@@ -48,7 +80,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         } else {
 
             cont.innerHTML = `
-                <h5>Aún no completas la inducción</h5>
+                <h5>
+                    Aún no completas la inducción
+                </h5>
 
                 <a href="/induccion" class="btn btn-primary mt-3">
                     Continuar
@@ -56,17 +90,31 @@ document.addEventListener("DOMContentLoaded", async () => {
             `;
         }
 
-        // PERFIL
-        const btn = document.getElementById("btnPerfil");
+        // =========================================
+        // 🔥 PERFIL
+        // =========================================
+
+        const btn =
+            document.getElementById("btnPerfil");
 
         if (btn) {
+
             btn.addEventListener("click", () => {
-                window.location.href = "/perfil";
+
+                window.location.href =
+                    "/perfil";
+
             });
+
         }
 
     } catch (error) {
-        console.error("Error dashboard:", error);
+
+        console.error(
+            "Error dashboard:",
+            error
+        );
+
     }
 
 });
@@ -76,20 +124,40 @@ document.addEventListener("DOMContentLoaded", async () => {
 ========================= */
 
 function toggleMenu() {
-    const sidebar = document.getElementById("sidebar");
+
+    const sidebar =
+        document.getElementById("sidebar");
 
     sidebar.classList.toggle("active");
 
     if (sidebar.classList.contains("active")) {
-        document.addEventListener("click", cerrarMenuFuera);
+
+        document.addEventListener(
+            "click",
+            cerrarMenuFuera
+        );
+
     }
+
 }
 
 function cerrarMenuFuera(e) {
-    const sidebar = document.getElementById("sidebar");
 
-    if (!sidebar.contains(e.target) && !e.target.classList.contains("menu-toggle")) {
+    const sidebar =
+        document.getElementById("sidebar");
+
+    if (
+        !sidebar.contains(e.target) &&
+        !e.target.classList.contains("menu-toggle")
+    ) {
+
         sidebar.classList.remove("active");
-        document.removeEventListener("click", cerrarMenuFuera);
+
+        document.removeEventListener(
+            "click",
+            cerrarMenuFuera
+        );
+
     }
+
 }
