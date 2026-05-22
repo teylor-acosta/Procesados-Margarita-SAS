@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             u.cargo || "General";
 
         // =========================================
-        // 🔥 OCULTAR DOCUMENTO ABAJO
+        // 🔥 ELIMINAR DOCUMENTO ANTIGUO
         // =========================================
 
         const doc =
@@ -61,7 +61,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (doc) {
 
-            doc.style.display = "none";
+            const li =
+                doc.closest("li");
+
+            if (li) {
+
+                li.remove();
+
+            }
 
         }
 
