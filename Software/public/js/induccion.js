@@ -410,14 +410,28 @@ if (result.success) {
     const videoPlayer =
         document.getElementById('videoPlayer');
 
+if (result.success) {
+
+    // 🔥 DETENER VIDEO
+    const videoPlayer =
+        document.getElementById('videoPlayer');
+
     if (videoPlayer) {
+
+        const videoSource =
+            document.getElementById('videoSource');
 
         videoPlayer.pause();
 
         videoPlayer.currentTime = 0;
 
-        videoPlayer.src = '';
+        if (videoSource) {
 
+            videoSource.src = '';
+
+        }
+
+        videoPlayer.load();
     }
 
     // 🔥 CERRAR MODAL
@@ -428,6 +442,8 @@ if (result.success) {
     }
 
     await cargarCapitulos();
+
+}
 
 } else {
             alert('Error al marcar el video como visto');
@@ -443,9 +459,26 @@ if (result.success) {
 }
 
 function detenerVideo() {
-    const videoPlayer = document.getElementById('videoPlayer');
-    if (videoPlayer) {
+
+    const videoPlayer =
+        document.getElementById('videoPlayer');
+
+    const videoSource =
+        document.getElementById('videoSource');
+
+    if (videoPlayer && videoSource) {
+
+        // 🔥 PAUSAR
         videoPlayer.pause();
+
+        // 🔥 RESETEAR
+        videoPlayer.currentTime = 0;
+
+        // 🔥 LIMPIAR SOURCE
+        videoSource.src = '';
+
+        // 🔥 RECARGAR VIDEO
+        videoPlayer.load();
     }
 }
 
