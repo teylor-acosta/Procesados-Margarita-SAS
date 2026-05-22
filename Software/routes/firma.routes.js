@@ -11,6 +11,8 @@ router.post('/api/guardar-firma', proteger, async (req, res) => {
 
     try {
 
+        console.log("🔥 INICIANDO GUARDADO FIRMA");
+
         const db = req.app.get('db');
 
         const { firma_data } = req.body;
@@ -36,6 +38,12 @@ router.post('/api/guardar-firma', proteger, async (req, res) => {
             });
 
         }
+
+        // ============================================
+        // 🔥 GUARDAR FIRMA
+        // ============================================
+
+        console.log("🔥 GUARDANDO FIRMA");
 
         const sql = `
             INSERT INTO firmas_usuario 
@@ -67,6 +75,14 @@ router.post('/api/guardar-firma', proteger, async (req, res) => {
             ]
 
         );
+
+        console.log("🔥 FIRMA GUARDADA");
+
+        // ============================================
+        // 🔥 GUARDAR INDUCCION
+        // ============================================
+
+        console.log("🔥 GUARDANDO INDUCCION");
 
         const sqlInduccion = `
             INSERT INTO inducciones 
@@ -118,6 +134,74 @@ router.post('/api/guardar-firma', proteger, async (req, res) => {
 
         );
 
+        console.log("🔥 INDUCCION GUARDADA");
+
+        // ============================================
+        // 🔥 GENERAR CERTIFICADO
+        // ============================================
+
+        console.log("🔥 ENTRANDO A GENERAR CERTIFICADO");
+
+        const sqlPromedio = `
+            SELECT AVG(nota) as promedio
+            FROM resultados_evaluaciones
+            WHERE usuario_id = ?
+            AND aprobado = 1
+        `;
+
+        const [promedioResult] = await db.query(
+            sqlPromedio,
+            [usuario_id]
+        );
+
+        console.log("🔥 PROMEDIO:", promedioResult);
+
+        const promedio =
+            promedioResult[0]?.promedio || 0;
+
+        const codigo =
+            'CERT-' + Date.now();
+
+        console.log("🔥 CODIGO:", codigo);
+
+        const sqlCertificado = `
+            INSERT INTO certificados_usuario
+            (
+                usuario_id,
+                nota_final,
+                fecha_emision,
+                codigo_certificado
+            )
+
+            VALUES (?, ?, NOW(), ?)
+
+            ON DUPLICATE KEY UPDATE
+
+                nota_final = VALUES(nota_final),
+                fecha_emision = NOW(),
+                codigo_certificado = VALUES(codigo_certificado)
+        `;
+
+        console.log("🔥 EJECUTANDO INSERT CERTIFICADO");
+
+        await db.query(
+
+            sqlCertificado,
+
+            [
+                usuario_id,
+                promedio,
+                codigo
+            ]
+
+        );
+
+        console.log("🔥 CERTIFICADO GUARDADO");
+
+        // ============================================
+        // 🔥 RESPUESTA
+        // ============================================
+
         res.json({
 
             success: true
@@ -126,10 +210,8 @@ router.post('/api/guardar-firma', proteger, async (req, res) => {
 
     } catch(err) {
 
-        console.error(
-            "🔥 ERROR GUARDAR FIRMA:",
-            err
-        );
+        console.error("🔥 ERROR GUARDAR FIRMA COMPLETO:");
+        console.log(err);
 
         res.status(500).json({
 
@@ -141,7 +223,6 @@ router.post('/api/guardar-firma', proteger, async (req, res) => {
     }
 
 });
-
 
 // ============================================
 // 🔥 OBTENER FIRMA
