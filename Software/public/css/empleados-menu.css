@@ -15,9 +15,12 @@ body{
     min-height:100vh;
 
     overflow-x:hidden;
-
-    position:relative;
 }
+
+
+/* ============================================
+   🔥 OVERLAY
+============================================ */
 
 body::before{
 
@@ -28,13 +31,14 @@ body::before{
     inset:0;
 
     background:
-        rgba(255,255,255,.38);
+        rgba(255,255,255,.45);
 
     z-index:-1;
 }
 
+
 /* ============================================
-   🔥 NAVBAR GLOBAL ERP
+   🔥 NAVBAR
 ============================================ */
 
 .navbar-custom{
@@ -53,20 +57,16 @@ body::before{
 
     padding:14px 30px;
 
-    box-shadow:
-        0 4px 18px rgba(0,0,0,.08);
-
     position:fixed;
 
     top:0;
     left:0;
 
-    z-index:9999;
-}
+    z-index:999;
 
-/* ============================================
-   🔥 IZQUIERDA NAVBAR
-============================================ */
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.08);
+}
 
 .navbar-left{
 
@@ -74,90 +74,31 @@ body::before{
 
     align-items:center;
 
-    gap:14px;
+    gap:15px;
 }
 
 .logo-navbar{
 
     width:55px;
-    height:55px;
-
-    object-fit:contain;
 }
 
 .empresa-nombre{
 
-    font-size:30px;
-
-    font-weight:700;
+    font-size:32px;
 
     color:#16a34a;
 
     font-style:italic;
 
-    letter-spacing:.5px;
-
-    margin:0;
+    font-weight:800;
 }
-
-/* ============================================
-   🔥 DERECHA NAVBAR
-============================================ */
 
 .acciones-navbar{
 
     display:flex;
 
     gap:12px;
-
-    align-items:center;
 }
-
-/* ============================================
-   🔥 BOTON VOLVER
-============================================ */
-
-.btn-volver{
-
-    border:none;
-
-    background:#f8fafc;
-
-    color:#111827;
-
-    text-decoration:none;
-
-    padding:12px 24px;
-
-    border-radius:18px;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    font-weight:700;
-
-    transition:.25s;
-
-    box-shadow:
-        0 4px 10px rgba(0,0,0,.05);
-}
-
-.btn-volver:hover{
-
-    background:#e2e8f0;
-
-    transform:
-        translateY(-2px);
-
-    color:#111827;
-}
-
-/* ============================================
-   🔥 BOTON LOGOUT
-============================================ */
 
 .btn-logout{
 
@@ -185,476 +126,821 @@ body::before{
     align-items:center;
 
     gap:10px;
-
-    transition:.3s;
-
-    box-shadow:
-        0 10px 20px rgba(239,68,68,.25);
 }
 
-.btn-logout:hover{
-
-    transform:
-        translateY(-2px);
-
-    box-shadow:
-        0 15px 28px rgba(239,68,68,.35);
-
-    color:white;
-}
 
 /* ============================================
-   📦 CONTENEDOR GENERAL
+   🔥 CONTENEDOR
 ============================================ */
 
-.empleados-container{
+.container-modulo{
 
-    padding-top:120px;
+    width:95%;
 
-    padding-left:18px;
-    padding-right:18px;
+    margin:auto;
 
-    padding-bottom:30px;
+    padding-top:130px;
+
+    padding-bottom:40px;
+}
+
+
+/* ============================================
+   🔥 TITULO
+============================================ */
+
+.titulo-box{
 
     text-align:center;
-
-    overflow-x:hidden;
-
-    width:100%;
-
-    box-sizing:border-box;
-}
-
-/* ============================================
-   🏷️ TITULO
-============================================ */
-
-.titulo-empleados{
-
-    display:flex;
-
-    justify-content:center;
 
     margin-bottom:30px;
 }
 
-.titulo-empleados h2{
+.titulo-box h2{
 
-    background:
-        rgba(255,255,255,0.96);
+    display:inline-block;
 
-    padding:14px 34px;
+    padding:16px 60px;
 
-    border-radius:34px;
+    border-radius:40px;
 
-    font-weight:bold;
+    border:3px solid #2563eb;
 
     color:#2563eb;
 
-    position:relative;
+    background:
+        rgba(255,255,255,.90);
 
-    box-shadow:
-        0 6px 18px rgba(0,0,0,0.10);
+    font-size:42px;
 
-    backdrop-filter:none;
-
-    font-size:28px;
+    font-weight:800;
 
     font-style:italic;
 }
 
-/* ============================================
-   🌈 BORDE TITULO
-============================================ */
+.titulo-box p{
 
-.titulo-empleados h2::before{
+    margin-top:15px;
 
-    content:"";
+    font-size:20px;
 
-    position:absolute;
+    font-weight:700;
 
-    inset:0;
-
-    border-radius:34px;
-
-    padding:2px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #22c55e,
-            #2563eb
-        );
-
-    -webkit-mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
-
-    -webkit-mask-composite:xor;
-
-    mask-composite:exclude;
+    color:#4b5563;
 }
 
+
 /* ============================================
-   📦 MODULOS
+   🔥 GRID MODULOS
 ============================================ */
 
-.modulos-empleados{
+.grid-modulos{
 
-    display:flex;
+    display:grid;
 
-    justify-content:center;
+    grid-template-columns:
+        repeat(5,1fr);
 
-    align-items:center;
+    gap:22px;
 
-    gap:24px;
-
-    flex-wrap:wrap;
-
-    margin-top:30px;
+    margin-bottom:30px;
 }
 
+
 /* ============================================
-   🎯 TARJETAS
+   🔥 CARDS
 ============================================ */
 
 .modulo-card{
 
-    width:170px;
-    height:170px;
+    background:
+        rgba(255,255,255,.92);
 
-    border-radius:24px;
+    border-radius:28px;
 
-    display:flex;
+    padding:30px 20px;
 
-    flex-direction:column;
-
-    justify-content:center;
-    align-items:center;
-
-    gap:10px;
+    text-align:center;
 
     cursor:pointer;
 
-    font-weight:600;
-
-    transition:
-        transform .2s ease,
-        box-shadow .2s ease;
-
-    background:
-        rgba(255,255,255,0.97);
-
-    backdrop-filter:none;
+    transition:.3s;
 
     box-shadow:
-        0 6px 18px rgba(0,0,0,0.10);
-
-    text-decoration:none;
-
-    color:#333;
-
-    overflow:hidden;
+        0 10px 25px rgba(0,0,0,.08);
 }
-
-/* ============================================
-   🔥 HOVER
-============================================ */
 
 .modulo-card:hover{
 
     transform:
-        translateY(-3px);
+        translateY(-5px);
+}
+
+.icono{
+
+    font-size:65px;
+
+    margin-bottom:15px;
+}
+
+.azul{ color:#2563eb; }
+.rojo{ color:#ff3b30; }
+.morado{ color:#7c3aed; }
+.verde{ color:#10b981; }
+
+.modulo-card h3{
+
+    font-size:28px;
+
+    margin-bottom:10px;
+
+    font-weight:800;
+}
+
+.modulo-card p{
+
+    font-size:18px;
+
+    color:#4b5563;
+
+    line-height:1.5;
+}
+
+
+/* ============================================
+   🔥 MINI GRID
+============================================ */
+
+.grid-mini{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:22px;
+
+    margin-bottom:30px;
+}
+
+.mini-card{
+
+    border-radius:26px;
+
+    padding:25px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    cursor:pointer;
+
+    transition:.3s;
 
     box-shadow:
-        0 10px 22px rgba(0,0,0,0.12);
-
-    color:#111827;
+        0 10px 25px rgba(0,0,0,.08);
 }
+
+.mini-card:hover{
+
+    transform:
+        translateY(-5px);
+}
+
+.verde-claro{
+    background:#f0fff4;
+}
+
+.azul-claro{
+    background:#eff6ff;
+}
+
+.naranja-claro{
+    background:#fff7ed;
+}
+
+.mini-left i{
+
+    font-size:52px;
+}
+
+.mini-center{
+
+    flex:1;
+
+    margin-left:20px;
+}
+
+.mini-center h4{
+
+    font-size:32px;
+
+    margin-bottom:8px;
+
+    font-weight:800;
+}
+
+.mini-center p{
+
+    color:#4b5563;
+
+    font-size:18px;
+}
+
+.mini-right{
+
+    width:58px;
+    height:58px;
+
+    border-radius:50%;
+
+    background:white;
+
+    display:flex;
+
+    justify-content:center;
+    align-items:center;
+
+    font-size:22px;
+}
+
 
 /* ============================================
-   🎨 ICONOS
+   🔥 STATS
 ============================================ */
 
-.icono-modulo{
+.stats-container{
 
-    font-size:46px;
+    background:
+        rgba(255,255,255,.92);
 
-    color:#2563eb;
+    border-radius:30px;
+
+    padding:30px;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(5,1fr);
+
+    gap:20px;
+
+    margin-bottom:30px;
 }
 
-.modulo-card .fa-folder-open{
+.stat-box{
 
-    color:#2563eb;
+    display:flex;
 
-    font-size:46px;
+    align-items:center;
+
+    gap:15px;
 }
+
+.icon-stat{
+
+    width:80px;
+    height:80px;
+
+    border-radius:22px;
+
+    display:flex;
+
+    justify-content:center;
+    align-items:center;
+
+    color:white;
+
+    font-size:34px;
+}
+
+.icon-stat.verde{
+    background:#22c55e;
+}
+
+.icon-stat.azul{
+    background:#2563eb;
+}
+
+.icon-stat.morado{
+    background:#7c3aed;
+}
+
+.icon-stat.naranja{
+    background:#f59e0b;
+}
+
+.icon-stat.turquesa{
+    background:#06b6d4;
+}
+
+.stat-box h3{
+
+    font-size:42px;
+
+    margin:0;
+
+    font-weight:800;
+}
+
+.stat-box p{
+
+    margin:0;
+
+    font-size:18px;
+
+    font-weight:700;
+}
+
 
 /* ============================================
-   🔤 TEXTO
+   🔥 TABLAS
 ============================================ */
 
-.modulo-card span{
+.tablas-grid{
 
-    font-size:17px;
+    display:grid;
 
-    text-align:center;
+    grid-template-columns:
+        repeat(3,1fr);
 
-    line-height:1.3;
-
-    padding:0 8px;
-
-    font-style:italic;
+    gap:25px;
 }
 
+.tabla-card{
+
+    background:
+        rgba(255,255,255,.92);
+
+    border-radius:28px;
+
+    padding:25px;
+}
+
+.tabla-header{
+
+    margin-bottom:20px;
+}
+
+.tabla-header h3{
+
+    font-size:28px;
+
+    font-weight:800;
+}
+
+.verde-text{ color:#16a34a; }
+.azul-text{ color:#2563eb; }
+.naranja-text{ color:#f97316; }
+
+.tabla-erp{
+
+    width:100%;
+
+    border-collapse:collapse;
+}
+
+.tabla-erp th{
+
+    padding:14px;
+
+    text-align:left;
+
+    color:#6b7280;
+}
+
+.tabla-erp td{
+
+    padding:16px 14px;
+
+    border-top:
+        1px solid #e5e7eb;
+
+    font-weight:700;
+}
+
+
 /* ============================================
-   📱 TABLET
+   🔥 FOOTER
 ============================================ */
 
-@media (max-width:900px){
+.footer-erp{
 
-    .navbar-custom{
+    margin-top:30px;
 
-        display:flex;
+    background:
+        rgba(255,255,255,.92);
 
-        justify-content:space-between;
+    border-radius:22px;
 
-        align-items:center;
+    padding:20px;
 
-        padding:12px 16px;
+    display:flex;
 
-        gap:10px;
+    justify-content:space-between;
 
-        flex-wrap:wrap;
+    align-items:center;
+}
+
+
+/* ============================================
+   🔥 MODALES
+============================================ */
+
+.modal-erp{
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+        rgba(0,0,0,.45);
+
+    display:none;
+
+    justify-content:center;
+    align-items:center;
+
+    z-index:99999;
+
+    padding:20px;
+}
+
+.modal-contenido,
+.modal-gestion-contenido{
+
+    width:100%;
+
+    max-width:1000px;
+
+    background:
+        rgba(255,255,255,.96);
+
+    border-radius:35px;
+
+    padding:35px;
+
+    backdrop-filter:blur(10px);
+
+    box-shadow:
+        0 25px 60px rgba(0,0,0,.25);
+}
+
+
+/* ============================================
+   🔥 HEADER MODAL
+============================================ */
+
+.modal-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:25px;
+}
+
+.modal-header h3{
+
+    font-size:34px;
+
+    font-weight:800;
+}
+
+.header-gestion-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+}
+
+
+/* ============================================
+   🔥 BOTONES
+============================================ */
+
+.btn-nuevo-registro{
+
+    border:none;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    color:white;
+
+    padding:14px 22px;
+
+    border-radius:16px;
+
+    font-weight:800;
+
+    cursor:pointer;
+}
+
+.cerrar-modal{
+
+    width:48px;
+    height:48px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#ef4444;
+
+    color:white;
+
+    font-size:20px;
+
+    cursor:pointer;
+}
+
+
+/* ============================================
+   🔥 BUSCADOR
+============================================ */
+
+.buscador-gestion{
+
+    margin-bottom:25px;
+}
+
+.buscador-gestion input{
+
+    width:100%;
+
+    padding:18px 22px;
+
+    border-radius:18px;
+
+    border:2px solid #e5e7eb;
+
+    font-size:16px;
+
+    outline:none;
+}
+
+
+/* ============================================
+   🔥 TABLA GESTION
+============================================ */
+
+.tabla-scroll{
+
+    max-height:500px;
+
+    overflow-y:auto;
+
+    border-radius:20px;
+}
+
+.tabla-gestion{
+
+    width:100%;
+
+    border-collapse:collapse;
+}
+
+.tabla-gestion th{
+
+    padding:18px;
+
+    text-align:left;
+
+    background:#f9fafb;
+
+    color:#6b7280;
+}
+
+.tabla-gestion td{
+
+    padding:18px;
+
+    border-bottom:
+        1px solid #f3f4f6;
+
+    font-weight:700;
+}
+
+.tabla-gestion tbody tr:hover{
+
+    background:#f9fafb;
+}
+
+
+/* ============================================
+   🔥 ESTADOS
+============================================ */
+
+.estado-activo{
+
+    background:#dcfce7;
+
+    color:#15803d;
+
+    padding:8px 14px;
+
+    border-radius:12px;
+
+    font-size:13px;
+
+    font-weight:800;
+}
+
+.estado-inactivo{
+
+    background:#fee2e2;
+
+    color:#dc2626;
+
+    padding:8px 14px;
+
+    border-radius:12px;
+
+    font-size:13px;
+
+    font-weight:800;
+}
+
+
+/* ============================================
+   🔥 ACCIONES
+============================================ */
+
+.acciones-tabla{
+
+    display:flex;
+
+    gap:10px;
+}
+
+.btn-tabla{
+
+    width:42px;
+    height:42px;
+
+    border:none;
+
+    border-radius:14px;
+
+    color:white;
+
+    cursor:pointer;
+
+    display:flex;
+
+    justify-content:center;
+    align-items:center;
+}
+
+.editar{
+
+    background:#2563eb;
+}
+
+.eliminar{
+
+    background:#ef4444;
+}
+
+.activar{
+
+    background:#22c55e;
+}
+
+
+/* ============================================
+   🔥 PAGINACION
+============================================ */
+
+.paginacion-container{
+
+    margin-top:25px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+}
+
+.botones-paginacion{
+
+    display:flex;
+
+    gap:10px;
+}
+
+.btn-pagina{
+
+    min-width:42px;
+    height:42px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#f3f4f6;
+
+    cursor:pointer;
+}
+
+.pagina-activa{
+
+    background:#2563eb;
+
+    color:white;
+}
+
+
+/* ============================================
+   📱 RESPONSIVE
+============================================ */
+
+@media(max-width:1200px){
+
+    .grid-modulos{
+
+        grid-template-columns:
+            repeat(2,1fr);
     }
 
-    .navbar-left{
+    .grid-mini{
 
-        display:flex;
-
-        align-items:center;
-
-        gap:10px;
-
-        min-width:0;
+        grid-template-columns:1fr;
     }
 
-    .empresa-nombre{
+    .stats-container{
 
-        font-size:20px !important;
-
-        line-height:1.2;
+        grid-template-columns:
+            repeat(2,1fr);
     }
 
-    .acciones-navbar{
+    .tablas-grid{
 
-        display:flex;
-
-        align-items:center;
-
-        gap:8px;
-    }
-
-    .btn-volver,
-    .btn-logout{
-
-        padding:10px 14px !important;
-
-        font-size:13px !important;
-
-        border-radius:12px;
-
-        white-space:nowrap;
-    }
-
-    .titulo-empleados{
-
-        margin-top:12px;
-
-        margin-bottom:20px;
-    }
-
-    .titulo-empleados h2{
-
-        width:90%;
-
-        font-size:22px;
-
-        text-align:center;
-
-        padding:12px 18px;
-
-        border-radius:18px;
-    }
-
-    .modulos-empleados{
-
-        gap:18px;
-
-        margin-top:20px;
-    }
-
-    .modulo-card{
-
-        width:150px;
-        height:150px;
-
-        border-radius:20px;
+        grid-template-columns:1fr;
     }
 
 }
 
-/* ============================================
-   📱 MÓVIL
-============================================ */
-
-@media (max-width:768px){
-
-    body{
-
-        background-attachment:scroll;
-    }
-
-    .navbar-custom{
-
-        flex-direction:column;
-
-        align-items:flex-start;
-
-        padding:14px 18px;
-
-        gap:14px;
-    }
-
-    .navbar-left{
-
-        width:100%;
-    }
-
-    .empresa-nombre{
-
-        font-size:18px !important;
-    }
-
-    .acciones-navbar{
-
-        width:100%;
-
-        justify-content:flex-end;
-
-        flex-wrap:wrap;
-    }
-
-    .empleados-container{
-
-        padding-top:180px;
-
-        padding-left:12px;
-        padding-right:12px;
-    }
-
-    .titulo-empleados h2{
-
-        font-size:20px;
-    }
-
-    .modulos-empleados{
-
-        flex-direction:column;
-
-        align-items:center;
-
-        gap:16px;
-    }
-
-    .modulo-card{
-
-        width:145px;
-        height:145px;
-    }
-
-    .icono-modulo,
-    .modulo-card .fa-folder-open{
-
-        font-size:40px;
-    }
-
-    .modulo-card span{
-
-        font-size:15px;
-    }
-
-}
-
-/* ============================================
-   📱 MÓVILES PEQUEÑOS
-============================================ */
-
-@media (max-width:480px){
-
-    .empresa-nombre{
-
-        font-size:16px !important;
-    }
-
-    .logo-navbar{
-
-        width:42px;
-        height:42px;
-    }
-
-    .acciones-navbar{
-
-        flex-direction:column;
-
-        width:100%;
-    }
-
-    .btn-volver,
-    .btn-logout{
-
-        width:100%;
-
-        justify-content:center;
-    }
-
-    .titulo-empleados h2{
-
-        font-size:18px;
-
-        padding:12px 14px;
-    }
-
-    .modulo-card{
-
-        width:135px;
-        height:135px;
-
-        border-radius:18px;
-    }
-
-    .icono-modulo,
-    .modulo-card .fa-folder-open{
-
-        font-size:36px;
-    }
-
-    .modulo-card span{
-
-        font-size:14px;
-    }
-
-}
-
-/* ============================================
-   🔥 OPTIMIZACIÓN MÓVIL
-============================================ */
 
 @media(max-width:768px){
 
-    *{
+    .navbar-custom{
 
-        -webkit-tap-highlight-color:transparent;
+        flex-direction:column;
+
+        gap:15px;
+    }
+
+    .container-modulo{
+
+        padding-top:190px;
+    }
+
+    .grid-modulos{
+
+        grid-template-columns:1fr;
+    }
+
+    .stats-container{
+
+        grid-template-columns:1fr;
+    }
+
+    .empresa-nombre{
+
+        font-size:22px;
+    }
+
+    .titulo-box h2{
+
+        font-size:28px;
+
+        width:100%;
+    }
+
+    .modal-contenido,
+    .modal-gestion-contenido{
+
+        padding:20px;
+    }
+
+    .tabla-gestion{
+
+        min-width:650px;
     }
 
 }

@@ -146,6 +146,22 @@ router.get('/usuarios', proteger, soloSuperAdmin, (req, res) => {
     );
 
 });
+
+router.get(
+    '/gestion-organizacional',
+    proteger,
+    soloSuperAdmin,
+    (req, res) => {
+
+        res.sendFile(
+            path.join(
+                __dirname,
+                '../public/gestion-organizacional.html'
+            )
+        );
+
+    }
+);
 /* =========================================
    🔥 CREAR USUARIO
 ========================================= */
