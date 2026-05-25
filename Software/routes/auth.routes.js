@@ -44,9 +44,18 @@ router.post('/api/login', async (req, res) => {
 
             SELECT 
                 u.*,
+
                 r.nombre as rol,
+
                 e.activo,
-                e.id as empleado_id
+
+                e.id as empleado_id,
+
+                u.bloqueado,
+
+                u.intentos_fallidos,
+
+                u.fecha_ultimo_login
 
             FROM usuarios u
 
@@ -85,9 +94,49 @@ router.post('/api/login', async (req, res) => {
             return res.json({
 
                 success: false,
+
                 inactivo: true,
+
                 message:
                     'Empleado inactivo. Comuníquese con el administrador.'
+
+            });
+
+        }
+
+        // =========================================
+        // 🚫 USUARIO BLOQUEADO
+        // =========================================
+
+        if (parseInt(user.bloqueado) === 1) {
+
+            return res.json({
+
+                success: false,
+
+                bloqueado: true,
+
+                message:
+                    'Usuario bloqueado por el administrador.'
+
+            });
+
+        }
+
+        // =========================================
+        // 🚫 BLOQUEO POR INTENTOS
+        // =========================================
+
+        if (parseInt(user.intentos_fallidos) >= 3) {
+
+            return res.json({
+
+                success: false,
+
+                bloqueado: true,
+
+                message:
+                    'Usuario bloqueado por múltiples intentos fallidos.'
 
             });
 
@@ -105,11 +154,30 @@ router.post('/api/login', async (req, res) => {
 
             );
 
+        // =========================================
+        // ❌ PASSWORD INCORRECTO
+        // =========================================
+
         if (!passwordMatch) {
+
+            await db.query(
+
+                `
+                UPDATE usuarios
+
+                SET intentos_fallidos = intentos_fallidos + 1
+
+                WHERE ID = ?
+                `,
+
+                [user.ID]
+
+            );
 
             return res.json({
 
                 success: false,
+
                 message: "Contraseña incorrecta"
 
             });
@@ -117,11 +185,33 @@ router.post('/api/login', async (req, res) => {
         }
 
         // =========================================
+        // 🔥 RESETEAR INTENTOS Y LOGIN
+        // =========================================
+
+        await db.query(
+
+            `
+            UPDATE usuarios
+
+            SET
+
+                intentos_fallidos = 0,
+
+                fecha_ultimo_login = NOW()
+
+            WHERE ID = ?
+            `,
+
+            [user.ID]
+
+        );
+
+        // =========================================
         // 🔥 CREAR SESIÓN
         // =========================================
 
         req.session.usuarioID =
-            user.ID || user.id;
+            user.ID;
 
         req.session.empleadoID =
             user.empleado_id;
@@ -156,18 +246,23 @@ router.post('/api/login', async (req, res) => {
 
             SELECT 
 
-                (SELECT COUNT(*) 
-                 FROM capitulos_induccion 
-                 WHERE activo = 1) as total,
+                (
+                    SELECT COUNT(DISTINCT capitulo_id)
+                    FROM preguntas_induccion
+                ) as total,
 
-                (SELECT COUNT(DISTINCT capitulo_id) 
-                 FROM resultados_evaluaciones 
-                 WHERE usuario_id = ? 
-                 AND aprobado = 1) as aprobados,
+                (
+                    SELECT COUNT(DISTINCT capitulo_id)
+                    FROM resultados_evaluaciones
+                    WHERE usuario_id = ?
+                    AND aprobado = 1
+                ) as aprobados,
 
-                (SELECT COUNT(*) 
-                 FROM certificados_usuario 
-                 WHERE usuario_id = ?) as tiene_certificado
+                (
+                    SELECT COUNT(*)
+                    FROM certificados_usuario
+                    WHERE usuario_id = ?
+                ) as tiene_certificado
 
         `;
 
