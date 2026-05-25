@@ -317,146 +317,244 @@ router.get(
 // 🔥 CREAR
 // ============================================
 
-router.post('/api/crear-empleado', proteger, soloSuperAdmin, (req, res) => {
+router.post(
+    '/api/crear-empleado',
+    proteger,
+    soloSuperAdmin,
+    async (req, res) => {
 
-    const db = req.app.get('db');
-    const e = req.body;
+        try {
 
-    db.query("SELECT codigo FROM empleados ORDER BY id DESC LIMIT 1", (err, result) => {
+            const db = req.app.get('db');
+            const e = req.body;
 
-        if (err) {
-            console.error(err);
-            return res.json({ success: false });
-        }
+            // ============================================
+            // 🔥 OBTENER ÚLTIMO CÓDIGO
+            // ============================================
 
-        let nuevoCodigo = "EMP1";
+            const [rows] = await db.query(
+                "SELECT codigo FROM empleados ORDER BY id DESC LIMIT 1"
+            );
 
-        if (result.length > 0 && result[0].codigo) {
+            let nuevoCodigo = "EMP1";
 
-            const ultimo = result[0].codigo;
-            const numero = parseInt(ultimo.replace("EMP", "")) || 0;
+            if (rows.length > 0 && rows[0].codigo) {
 
-            nuevoCodigo = "EMP" + (numero + 1);
-        }
+                const ultimo = rows[0].codigo;
 
-        const sql = `
-        INSERT INTO empleados (
-            codigo,
-            nombre,
-            tipo_documento,
-            numero_documento,
-            rh,
-            fecha_nacimiento,
-            lugar_nacimiento,
-            estado_civil,
-            direccion,
-            barrio_localidad,
-            telefono,
-            email,
-            area_id,
-            sede_id,
-            cargo_id,
-            activo
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'SI')
-        `;
+                const numero =
+                    parseInt(
+                        ultimo.replace("EMP", "")
+                    ) || 0;
 
-        db.query(sql, [
-            nuevoCodigo,
-            e.nombre,
-            e.tipo_documento,
-            e.numero_documento,
-            e.rh,
-            e.fecha_nacimiento,
-            e.lugar_nacimiento,
-            e.estado_civil,
-            e.direccion,
-            e.barrio_localidad,
-            e.telefono,
-            e.email,
-            e.area_id || null,
-            e.sede_id || null,
-            e.cargo_id || null
-        ], (err) => {
+                nuevoCodigo =
+                    "EMP" + (numero + 1);
 
-            if (err) {
-                console.error(err);
-                return res.json({ success: false });
             }
 
-             // ============================================
-// 🔥 REGISTRAR ACTIVIDAD
-// ============================================
+            // ============================================
+            // 🔥 INSERTAR EMPLEADO
+            // ============================================
 
-db.query(
+            const sql = `
 
-    `INSERT INTO centro_actividad (
+                INSERT INTO empleados (
 
-        empleado_id,
-        usuario_id,
-        accion,
-        modulo,
-        descripcion,
-        color,
-        icono
+                    codigo,
+                    nombre,
+                    tipo_documento,
+                    numero_documento,
+                    rh,
+                    fecha_nacimiento,
+                    lugar_nacimiento,
+                    estado_civil,
+                    direccion,
+                    barrio_localidad,
+                    telefono,
+                    email,
+                    area_id,
+                    sede_id,
+                    cargo_id,
+                    activo
 
-    )
+                )
 
-    VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    
-    [
+                VALUES (
 
-        result.insertId,
-        req.session.usuario?.id || null,
-        'CREAR',
-        'EMPLEADOS',
-        `Se creó el empleado ${e.nombre}`,
-        'verde',
-        'fa-user-plus'
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'SI'
 
-    ]
+                )
 
-);
+            `;
 
+            const [result] = await db.query(
+
+                sql,
+
+                [
+                    nuevoCodigo,
+                    e.nombre,
+                    e.tipo_documento,
+                    e.numero_documento,
+                    e.rh,
+                    e.fecha_nacimiento,
+                    e.lugar_nacimiento,
+                    e.estado_civil,
+                    e.direccion,
+                    e.barrio_localidad,
+                    e.telefono,
+                    e.email,
+                    e.area_id || null,
+                    e.sede_id || null,
+                    e.cargo_id || null
+                ]
+
+            );
+
+            // ============================================
+            // 🔥 REGISTRAR ACTIVIDAD
+            // ============================================
+
+            await db.query(
+
+                `
+
+                INSERT INTO centro_actividad (
+
+                    empleado_id,
+                    usuario_id,
+                    accion,
+                    modulo,
+                    descripcion,
+                    color,
+                    icono
+
+                )
+
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+
+                `,
+
+                [
+
+                    result.insertId,
+
+                    req.session.usuarioID || null,
+
+                    'CREAR',
+
+                    'EMPLEADOS',
+
+                    `Se creó el empleado ${e.nombre}`,
+
+                    'verde',
+
+                    'fa-user-plus'
+
+                ]
+
+            );
+
+            // ============================================
+            // 🔥 RESPUESTA
+            // ============================================
 
             res.json({
+
                 success: true,
+
                 codigo: nuevoCodigo
+
             });
 
-        });
+        } catch(error){
 
-    });
+            console.log(error);
 
-});
+            res.status(500).json({
 
+                success: false,
+
+                error: error.message
+
+            });
+
+        }
+
+    }
+
+);
 
 // ============================================
 // 🔥 FILTROS
 // ============================================
 
-router.get('/api/filtros-empleado', proteger, soloSuperAdmin, (req, res) => {
+router.get(
 
-    const db = req.app.get('db');
+    '/api/filtros-empleado',
 
-    const data = {};
+    proteger,
 
-    db.query("SELECT id, nombre FROM areas", (err, areas) => {
-        data.areas = areas || [];
+    soloSuperAdmin,
 
-        db.query("SELECT id, nombre FROM sedes", (err, sedes) => {
-            data.sedes = sedes || [];
+    async (req, res) => {
 
-            db.query("SELECT id, nombre FROM cargos", (err, cargos) => {
-                data.cargos = cargos || [];
+        try {
 
-                res.json(data);
+            const db = req.app.get('db');
+
+            // ============================================
+            // 🔥 ÁREAS
+            // ============================================
+
+            const [areas] = await db.query(
+                "SELECT id, nombre FROM areas"
+            );
+
+            // ============================================
+            // 🔥 SEDES
+            // ============================================
+
+            const [sedes] = await db.query(
+                "SELECT id, nombre FROM sedes"
+            );
+
+            // ============================================
+            // 🔥 CARGOS
+            // ============================================
+
+            const [cargos] = await db.query(
+                "SELECT id, nombre FROM cargos"
+            );
+
+            // ============================================
+            // 🔥 RESPUESTA
+            // ============================================
+
+            res.json({
+
+                areas,
+                sedes,
+                cargos
+
             });
-        });
-    });
 
-});
+        } catch(error){
 
+            console.log(error);
+
+            res.status(500).json({
+
+                success: false,
+                error: error.message
+
+            });
+
+        }
+
+    }
+
+);
 /* =========================================
    🔥 OBTENER EMPLEADO POR ID
 ========================================= */
