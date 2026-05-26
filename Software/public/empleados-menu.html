@@ -554,132 +554,158 @@
 
 
     <!-- =====================================
-         🔥 TABLAS
-    ====================================== -->
+     🔥 PANEL GESTION ERP
+===================================== -->
 
-    <div class="tablas-grid">
+<div class="panel-gestion-grid">
 
 
-        <!-- AREAS -->
+    <!-- AREAS -->
 
-        <div class="tabla-card">
+    <div class="gestion-card">
 
-            <div class="tabla-header verde-text">
+        <div class="gestion-top">
 
-                <h3>
+            <div class="gestion-icon verde-bg">
 
-                    <i class="fas fa-building"></i>
+                <i class="fas fa-building"></i>
+
+            </div>
+
+            <div>
+
+                <h3 id="totalAreas">
+
+                    0
+
+                </h3>
+
+                <p>
 
                     Áreas Registradas
 
-                </h3>
+                </p>
+
+                <span id="cantidadAreas">
+
+                    0 áreas activas
+
+                </span>
 
             </div>
 
-            <table class="tabla-erp">
-
-                <thead>
-
-                    <tr>
-
-                        <th>Área</th>
-
-                        <th>Estado</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="tablaAreas">
-
-                </tbody>
-
-            </table>
-
         </div>
 
+        <button
+            class="btn-gestion verde-btn"
+            onclick="abrirGestion('area')"
+        >
 
+            Gestionar
 
-        <!-- SEDES -->
-
-        <div class="tabla-card">
-
-            <div class="tabla-header azul-text">
-
-                <h3>
-
-                    <i class="fas fa-map-marker-alt"></i>
-
-                    Sedes Registradas
-
-                </h3>
-
-            </div>
-
-            <table class="tabla-erp">
-
-                <thead>
-
-                    <tr>
-
-                        <th>Sede</th>
-
-                        <th>Estado</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="tablaSedes">
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-
-
-        <!-- CARGOS -->
-
-        <div class="tabla-card">
-
-            <div class="tabla-header naranja-text">
-
-                <h3>
-
-                    <i class="fas fa-briefcase"></i>
-
-                    Cargos Registrados
-
-                </h3>
-
-            </div>
-
-            <table class="tabla-erp">
-
-                <thead>
-
-                    <tr>
-
-                        <th>Cargo</th>
-
-                        <th>Estado</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody id="tablaCargos">
-
-                </tbody>
-
-            </table>
-
-        </div>
+        </button>
 
     </div>
 
+
+
+    <!-- SEDES -->
+
+    <div class="gestion-card">
+
+        <div class="gestion-top">
+
+            <div class="gestion-icon azul-bg">
+
+                <i class="fas fa-map-marker-alt"></i>
+
+            </div>
+
+            <div>
+
+                <h3 id="totalSedes">
+
+                    0
+
+                </h3>
+
+                <p>
+
+                    Sedes Registradas
+
+                </p>
+
+                <span id="cantidadSedes">
+
+                    0 sedes activas
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <button
+            class="btn-gestion azul-btn"
+            onclick="abrirGestion('sede')"
+        >
+
+            Gestionar
+
+        </button>
+
+    </div>
+
+
+
+    <!-- CARGOS -->
+
+    <div class="gestion-card">
+
+        <div class="gestion-top">
+
+            <div class="gestion-icon naranja-bg">
+
+                <i class="fas fa-briefcase"></i>
+
+            </div>
+
+            <div>
+
+                <h3 id="totalCargos">
+
+                    0
+
+                </h3>
+
+                <p>
+
+                    Cargos Registrados
+
+                </p>
+
+                <span id="cantidadCargos">
+
+                    0 cargos activos
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <button
+            class="btn-gestion naranja-btn"
+            onclick="abrirGestion('cargo')"
+        >
+
+            Gestionar
+
+        </button>
+
+    </div>
+
+</div>
 
 
     <!-- =====================================

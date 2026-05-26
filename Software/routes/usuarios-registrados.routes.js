@@ -9,13 +9,17 @@ const {
     soloSuperAdmin
 } = require('../middlewares/auth');
 
+
 // ============================================
 // 🔥 LISTAR USUARIOS
 // ============================================
 
 router.get(
+
     '/listar',
+
     proteger,
+
     soloSuperAdmin,
 
     async (req, res) => {
@@ -82,15 +86,20 @@ router.get(
         }
 
     }
+
 );
+
 
 // ============================================
 // 🔥 BLOQUEAR / DESBLOQUEAR
 // ============================================
 
 router.post(
+
     '/bloquear',
+
     proteger,
+
     soloSuperAdmin,
 
     async (req, res) => {
@@ -102,20 +111,59 @@ router.post(
                 bloqueado
             } = req.body;
 
-            await db.query(
 
-                `
-                UPDATE usuarios
-                SET bloqueado = ?
-                WHERE ID = ?
-                `,
+            // ========================================
+            // 🔥 ACTUALIZAR
+            // ========================================
 
-                [
-                    bloqueado,
-                    id
-                ]
+            if(bloqueado == 0){
 
-            );
+                // DESBLOQUEAR
+
+                await db.query(
+
+                    `
+
+                    UPDATE usuarios
+
+                    SET
+
+                        bloqueado = 0,
+
+                        intentos_fallidos = 0
+
+                    WHERE ID = ?
+
+                    `,
+
+                    [id]
+
+                );
+
+            }else{
+
+                // BLOQUEAR
+
+                await db.query(
+
+                    `
+
+                    UPDATE usuarios
+
+                    SET
+
+                        bloqueado = 1
+
+                    WHERE ID = ?
+
+                    `,
+
+                    [id]
+
+                );
+
+            }
+
 
             res.json({
 
@@ -140,15 +188,20 @@ router.post(
         }
 
     }
+
 );
+
 
 // ============================================
 // 🔥 RESET PASSWORD
 // ============================================
 
 router.post(
+
     '/reset-password',
+
     proteger,
+
     soloSuperAdmin,
 
     async (req, res) => {
@@ -158,13 +211,14 @@ router.post(
             const { id } = req.body;
 
             // ========================================
-            // PASSWORD TEMPORAL
+            // 🔥 PASSWORD TEMPORAL
             // ========================================
 
             const nuevaPassword = 'Pm2026*';
 
+
             // ========================================
-            // HASH
+            // 🔥 HASH
             // ========================================
 
             const hash =
@@ -173,8 +227,9 @@ router.post(
                     10
                 );
 
+
             // ========================================
-            // UPDATE
+            // 🔥 UPDATE
             // ========================================
 
             await db.query(
@@ -208,6 +263,7 @@ router.post(
 
             );
 
+
             res.json({
 
                 success: true,
@@ -232,6 +288,7 @@ router.post(
         }
 
     }
+
 );
 
 module.exports = router;

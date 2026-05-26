@@ -126,6 +126,16 @@ body::before{
     align-items:center;
 
     gap:10px;
+
+    transition:.3s;
+}
+
+.btn-logout:hover{
+
+    transform:
+        translateY(-2px);
+
+    color:white;
 }
 
 
@@ -153,7 +163,7 @@ body::before{
 
     text-align:center;
 
-    margin-bottom:30px;
+    margin-bottom:35px;
 }
 
 .titulo-box h2{
@@ -169,13 +179,16 @@ body::before{
     color:#2563eb;
 
     background:
-        rgba(255,255,255,.90);
+        rgba(255,255,255,.92);
 
     font-size:42px;
 
     font-weight:800;
 
     font-style:italic;
+
+    box-shadow:
+        0 8px 25px rgba(37,99,235,.15);
 }
 
 .titulo-box p{
@@ -203,22 +216,22 @@ body::before{
 
     gap:22px;
 
-    margin-bottom:30px;
+    margin-bottom:35px;
 }
 
 
 /* ============================================
-   🔥 CARDS
+   🔥 CARDS MODULOS
 ============================================ */
 
 .modulo-card{
 
     background:
-        rgba(255,255,255,.92);
+        rgba(255,255,255,.94);
 
-    border-radius:28px;
+    border-radius:30px;
 
-    padding:30px 20px;
+    padding:32px 22px;
 
     text-align:center;
 
@@ -228,12 +241,18 @@ body::before{
 
     box-shadow:
         0 10px 25px rgba(0,0,0,.08);
+
+    border:
+        1px solid rgba(255,255,255,.5);
 }
 
 .modulo-card:hover{
 
     transform:
-        translateY(-5px);
+        translateY(-6px);
+
+    box-shadow:
+        0 18px 35px rgba(0,0,0,.12);
 }
 
 .icono{
@@ -247,6 +266,7 @@ body::before{
 .rojo{ color:#ff3b30; }
 .morado{ color:#7c3aed; }
 .verde{ color:#10b981; }
+.naranja{ color:#f97316; }
 
 .modulo-card h3{
 
@@ -255,11 +275,13 @@ body::before{
     margin-bottom:10px;
 
     font-weight:800;
+
+    color:#111827;
 }
 
 .modulo-card p{
 
-    font-size:18px;
+    font-size:17px;
 
     color:#4b5563;
 
@@ -280,14 +302,14 @@ body::before{
 
     gap:22px;
 
-    margin-bottom:30px;
+    margin-bottom:35px;
 }
 
 .mini-card{
 
-    border-radius:26px;
+    border-radius:28px;
 
-    padding:25px;
+    padding:28px;
 
     display:flex;
 
@@ -301,6 +323,9 @@ body::before{
 
     box-shadow:
         0 10px 25px rgba(0,0,0,.08);
+
+    border:
+        1px solid rgba(255,255,255,.6);
 }
 
 .mini-card:hover{
@@ -335,18 +360,20 @@ body::before{
 
 .mini-center h4{
 
-    font-size:32px;
+    font-size:30px;
 
     margin-bottom:8px;
 
     font-weight:800;
+
+    color:#111827;
 }
 
 .mini-center p{
 
     color:#4b5563;
 
-    font-size:18px;
+    font-size:17px;
 }
 
 .mini-right{
@@ -364,6 +391,221 @@ body::before{
     align-items:center;
 
     font-size:22px;
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,.08);
+}
+
+
+/* ============================================
+   🔥 PANEL GESTION ERP
+============================================ */
+
+.panel-gestion-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:25px;
+
+    margin-bottom:35px;
+}
+
+
+/* ============================================
+   🔥 CARD GESTION
+============================================ */
+
+.gestion-card{
+
+    background:
+        rgba(255,255,255,.94);
+
+    border-radius:30px;
+
+    padding:30px;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+    border:
+        1px solid rgba(255,255,255,.6);
+}
+
+.gestion-card:hover{
+
+    transform:
+        translateY(-5px);
+
+    box-shadow:
+        0 18px 40px rgba(0,0,0,.12);
+}
+
+.gestion-top{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+    margin-bottom:25px;
+}
+
+
+/* ============================================
+   🔥 ICONOS GESTION
+============================================ */
+
+.gestion-icon{
+
+    width:85px;
+    height:85px;
+
+    border-radius:24px;
+
+    display:flex;
+
+    justify-content:center;
+    align-items:center;
+
+    font-size:34px;
+
+    color:white;
+
+    flex-shrink:0;
+}
+
+.verde-bg{
+
+    background:
+        linear-gradient(
+            135deg,
+            #16c95f,
+            #10a548
+        );
+}
+
+.azul-bg{
+
+    background:
+        linear-gradient(
+            135deg,
+            #2f6df6,
+            #1c4fe0
+        );
+}
+
+.naranja-bg{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff9800,
+            #ff6f00
+        );
+}
+
+
+/* ============================================
+   🔥 TEXTO GESTION
+============================================ */
+
+.gestion-card h3{
+
+    font-size:52px;
+
+    margin:0;
+
+    font-weight:800;
+
+    color:#111827;
+}
+
+.gestion-card p{
+
+    margin:0;
+
+    font-size:19px;
+
+    font-weight:700;
+
+    color:#374151;
+}
+
+.gestion-card span{
+
+    color:#16a34a;
+
+    font-size:15px;
+
+    font-weight:700;
+}
+
+
+/* ============================================
+   🔥 BOTONES GESTION
+============================================ */
+
+.btn-gestion{
+
+    width:100%;
+
+    border:none;
+
+    border-radius:18px;
+
+    padding:16px;
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:800;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.btn-gestion:hover{
+
+    transform:
+        scale(1.02);
+}
+
+.verde-btn{
+
+    background:
+        linear-gradient(
+            135deg,
+            #16c95f,
+            #10a548
+        );
+}
+
+.azul-btn{
+
+    background:
+        linear-gradient(
+            135deg,
+            #2f6df6,
+            #1c4fe0
+        );
+}
+
+.naranja-btn{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff9800,
+            #ff6f00
+        );
 }
 
 
@@ -374,9 +616,9 @@ body::before{
 .stats-container{
 
     background:
-        rgba(255,255,255,.92);
+        rgba(255,255,255,.94);
 
-    border-radius:30px;
+    border-radius:32px;
 
     padding:30px;
 
@@ -387,7 +629,10 @@ body::before{
 
     gap:20px;
 
-    margin-bottom:30px;
+    margin-bottom:35px;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.08);
 }
 
 .stat-box{
@@ -404,7 +649,7 @@ body::before{
     width:80px;
     height:80px;
 
-    border-radius:22px;
+    border-radius:24px;
 
     display:flex;
 
@@ -454,69 +699,9 @@ body::before{
     font-weight:700;
 }
 
+.stat-box span{
 
-/* ============================================
-   🔥 TABLAS
-============================================ */
-
-.tablas-grid{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(3,1fr);
-
-    gap:25px;
-}
-
-.tabla-card{
-
-    background:
-        rgba(255,255,255,.92);
-
-    border-radius:28px;
-
-    padding:25px;
-}
-
-.tabla-header{
-
-    margin-bottom:20px;
-}
-
-.tabla-header h3{
-
-    font-size:28px;
-
-    font-weight:800;
-}
-
-.verde-text{ color:#16a34a; }
-.azul-text{ color:#2563eb; }
-.naranja-text{ color:#f97316; }
-
-.tabla-erp{
-
-    width:100%;
-
-    border-collapse:collapse;
-}
-
-.tabla-erp th{
-
-    padding:14px;
-
-    text-align:left;
-
-    color:#6b7280;
-}
-
-.tabla-erp td{
-
-    padding:16px 14px;
-
-    border-top:
-        1px solid #e5e7eb;
+    color:#16a34a;
 
     font-weight:700;
 }
@@ -528,25 +713,48 @@ body::before{
 
 .footer-erp{
 
-    margin-top:30px;
+    margin-top:35px;
 
     background:
-        rgba(255,255,255,.92);
+        rgba(255,255,255,.94);
 
-    border-radius:22px;
+    border-radius:24px;
 
-    padding:20px;
+    padding:22px;
 
     display:flex;
 
     justify-content:space-between;
 
     align-items:center;
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,.06);
+}
+
+.footer-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    color:#2563eb;
+
+    font-weight:700;
+}
+
+.footer-right{
+
+    color:#6b7280;
+
+    font-weight:700;
 }
 
 
 /* ============================================
-   🔥 MODALES
+   🔥 MODAL ERP
 ============================================ */
 
 .modal-erp{
@@ -558,6 +766,9 @@ body::before{
     background:
         rgba(0,0,0,.45);
 
+    backdrop-filter:
+        blur(5px);
+
     display:none;
 
     justify-content:center;
@@ -568,6 +779,11 @@ body::before{
     padding:20px;
 }
 
+
+/* ============================================
+   🔥 MODAL CONTENIDO
+============================================ */
+
 .modal-contenido,
 .modal-gestion-contenido{
 
@@ -576,7 +792,7 @@ body::before{
     max-width:1000px;
 
     background:
-        rgba(255,255,255,.96);
+        rgba(255,255,255,.97);
 
     border-radius:35px;
 
@@ -586,6 +802,31 @@ body::before{
 
     box-shadow:
         0 25px 60px rgba(0,0,0,.25);
+
+    animation:
+        modalFade .25s ease;
+}
+
+@keyframes modalFade{
+
+    from{
+
+        opacity:0;
+
+        transform:
+            translateY(15px)
+            scale(.97);
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+
 }
 
 
@@ -609,6 +850,8 @@ body::before{
     font-size:34px;
 
     font-weight:800;
+
+    color:#111827;
 }
 
 .header-gestion-right{
@@ -645,6 +888,14 @@ body::before{
     font-weight:800;
 
     cursor:pointer;
+
+    transition:.3s;
+}
+
+.btn-nuevo-registro:hover{
+
+    transform:
+        scale(1.03);
 }
 
 .cerrar-modal{
@@ -663,6 +914,14 @@ body::before{
     font-size:20px;
 
     cursor:pointer;
+
+    transition:.3s;
+}
+
+.cerrar-modal:hover{
+
+    transform:
+        scale(1.05);
 }
 
 
@@ -688,6 +947,16 @@ body::before{
     font-size:16px;
 
     outline:none;
+
+    transition:.3s;
+}
+
+.buscador-gestion input:focus{
+
+    border-color:#2563eb;
+
+    box-shadow:
+        0 0 0 4px rgba(37,99,235,.1);
 }
 
 
@@ -720,6 +989,12 @@ body::before{
     background:#f9fafb;
 
     color:#6b7280;
+
+    position:sticky;
+
+    top:0;
+
+    z-index:10;
 }
 
 .tabla-gestion td{
@@ -730,6 +1005,11 @@ body::before{
         1px solid #f3f4f6;
 
     font-weight:700;
+}
+
+.tabla-gestion tbody tr{
+
+    transition:.2s;
 }
 
 .tabla-gestion tbody tr:hover{
@@ -801,6 +1081,14 @@ body::before{
 
     justify-content:center;
     align-items:center;
+
+    transition:.3s;
+}
+
+.btn-tabla:hover{
+
+    transform:
+        scale(1.08);
 }
 
 .editar{
@@ -855,6 +1143,13 @@ body::before{
     background:#f3f4f6;
 
     cursor:pointer;
+
+    transition:.3s;
+}
+
+.btn-pagina:hover{
+
+    background:#e5e7eb;
 }
 
 .pagina-activa{
@@ -882,15 +1177,15 @@ body::before{
         grid-template-columns:1fr;
     }
 
+    .panel-gestion-grid{
+
+        grid-template-columns:1fr;
+    }
+
     .stats-container{
 
         grid-template-columns:
             repeat(2,1fr);
-    }
-
-    .tablas-grid{
-
-        grid-template-columns:1fr;
     }
 
 }
@@ -941,6 +1236,22 @@ body::before{
     .tabla-gestion{
 
         min-width:650px;
+    }
+
+    .gestion-top{
+
+        flex-direction:column;
+
+        text-align:center;
+    }
+
+    .footer-erp{
+
+        flex-direction:column;
+
+        gap:15px;
+
+        text-align:center;
     }
 
 }
