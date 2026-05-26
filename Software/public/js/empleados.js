@@ -39,7 +39,10 @@ function formatearFechaInput(fecha) {
 
 // =============================
 async function cargar() {
-    const res = await fetch('/api/empleados', { credentials: 'include' });
+    const res = await fetch('/api/empleados', {
+    credentials: 'include',
+    cache: 'no-store'
+});
     empleados = await res.json();
     filtrados = [...empleados];
     llenarFiltros();
