@@ -6,453 +6,262 @@ const { proteger } = require('../middlewares/auth');
 
 
 // ============================================
-// 🔥 OBTENER AREAS
+// 🔥 GET AREAS
 // ============================================
 
-router.get('/api/areas', async (req, res) => {
+router.get(
+    '/api/areas',
+    proteger,
 
-    try{
+    async (req, res) => {
 
-        const db = req.app.get('db');
+        try{
 
-        const [results] = await db.query(`
+            const db =
+                req.app.get('db');
 
-            SELECT 
-                id,
-                nombre
-            FROM areas
-            ORDER BY nombre ASC
+            const [results] =
+                await db.query(`
 
-        `);
+                    SELECT
+                        id,
+                        nombre,
+                        activo
 
-        res.json(results);
+                    FROM areas
 
-    }catch(error){
+                    ORDER BY nombre ASC
 
-        console.error(error);
+                `);
 
-        res.json([]);
+            res.json(results);
+
+        }catch(error){
+
+            console.error(error);
+
+            res.json([]);
+
+        }
 
     }
-
-});
+);
 
 
 // ============================================
-// 🔥 OBTENER SEDES
+// 🔥 GET SEDES
 // ============================================
 
-router.get('/api/sedes', async (req, res) => {
+router.get(
+    '/api/sedes',
+    proteger,
 
-    try{
+    async (req, res) => {
 
-        const db = req.app.get('db');
+        try{
 
-        const [results] = await db.query(`
+            const db =
+                req.app.get('db');
 
-            SELECT
-                id,
-                nombre
-            FROM sedes
-            ORDER BY nombre ASC
+            const [results] =
+                await db.query(`
 
-        `);
+                    SELECT
+                        id,
+                        nombre,
+                        activo
 
-        res.json(results);
+                    FROM sedes
 
-    }catch(error){
+                    ORDER BY nombre ASC
 
-        console.error(error);
+                `);
 
-        res.json([]);
+            res.json(results);
+
+        }catch(error){
+
+            console.error(error);
+
+            res.json([]);
+
+        }
 
     }
-
-});
+);
 
 
 // ============================================
-// 🔥 OBTENER CARGOS
+// 🔥 GET CARGOS
 // ============================================
 
-router.get('/api/cargos', async (req, res) => {
+router.get(
+    '/api/cargos',
+    proteger,
 
-    try{
+    async (req, res) => {
 
-        const db = req.app.get('db');
+        try{
 
-        const [results] = await db.query(`
+            const db =
+                req.app.get('db');
 
-            SELECT
-                id,
-                nombre
-            FROM cargos
-            ORDER BY nombre ASC
+            const [results] =
+                await db.query(`
 
-        `);
+                    SELECT
+                        id,
+                        nombre,
+                        activo
 
-        res.json(results);
+                    FROM cargos
 
-    }catch(error){
+                    ORDER BY nombre ASC
 
-        console.error(error);
+                `);
 
-        res.json([]);
+            res.json(results);
+
+        }catch(error){
+
+            console.error(error);
+
+            res.json([]);
+
+        }
 
     }
-
-});
+);
 
 
 // ============================================
 // 🔥 TODOS LOS CATALOGOS
 // ============================================
 
-router.get('/api/catalogos', async (req, res) => {
+router.get(
+    '/api/catalogos',
+    proteger,
 
-    try{
+    async (req, res) => {
 
-        const db = req.app.get('db');
+        try{
 
-        const [areas] = await db.query(`
+            const db =
+                req.app.get('db');
 
-            SELECT
-                id,
-                nombre
-            FROM areas
-            ORDER BY nombre ASC
+            const [areas] =
+                await db.query(`
 
-        `);
+                    SELECT
+                        id,
+                        nombre,
+                        activo
 
-        const [sedes] = await db.query(`
+                    FROM areas
 
-            SELECT
-                id,
-                nombre
-            FROM sedes
-            ORDER BY nombre ASC
+                    ORDER BY nombre ASC
 
-        `);
+                `);
 
-        const [cargos] = await db.query(`
+            const [sedes] =
+                await db.query(`
 
-            SELECT
-                id,
-                nombre
-            FROM cargos
-            ORDER BY nombre ASC
+                    SELECT
+                        id,
+                        nombre,
+                        activo
 
-        `);
+                    FROM sedes
 
-        res.json({
+                    ORDER BY nombre ASC
 
-            areas,
-            sedes,
-            cargos
+                `);
 
-        });
+            const [cargos] =
+                await db.query(`
 
-    }catch(error){
+                    SELECT
+                        id,
+                        nombre,
+                        activo
 
-        console.error(error);
+                    FROM cargos
 
-        res.status(500).json({
+                    ORDER BY nombre ASC
 
-            areas:[],
-            sedes:[],
-            cargos:[]
+                `);
 
-        });
+            res.json({
+
+                areas,
+                sedes,
+                cargos
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                areas: [],
+                sedes: [],
+                cargos: []
+
+            });
+
+        }
 
     }
-
-});
+);
 
 
 // ============================================
 // 🔥 CREAR AREA
 // ============================================
 
-router.post('/api/areas', async (req, res) => {
+router.post(
+    '/api/areas',
+    proteger,
 
-    try{
+    async (req, res) => {
 
-        const { nombre } = req.body;
+        try{
 
-        const db = req.app.get('db');
+            const db =
+                req.app.get('db');
 
-        await db.query(`
+            const { nombre } =
+                req.body;
 
-            INSERT INTO areas(nombre)
-            VALUES(?)
+            await db.query(`
 
-        `,[nombre]);
+                INSERT INTO areas
+                (
+                    nombre,
+                    activo
+                )
 
-        res.json({
+                VALUES
+                (
+                    ?,
+                    'SI'
+                )
 
-            success:true
+            `,[nombre]);
 
-        });
+            res.json({
 
-    }catch(error){
+                success:true
 
-        console.error(error);
+            });
 
-        res.status(500).json({
+        }catch(error){
 
-            success:false
+            console.error(error);
 
-        });
-
-    }
-
-});
-
-
-// ============================================
-// 🔥 CREAR SEDE
-// ============================================
-
-router.post('/api/sedes', async (req, res) => {
-
-    try{
-
-        const { nombre } = req.body;
-
-        const db = req.app.get('db');
-
-        await db.query(`
-
-            INSERT INTO sedes(nombre)
-            VALUES(?)
-
-        `,[nombre]);
-
-        res.json({
-
-            success:true
-
-        });
-
-    }catch(error){
-
-        console.error(error);
-
-        res.status(500).json({
-
-            success:false
-
-        });
-
-    }
-
-});
-
-
-// ============================================
-// 🔥 CREAR CARGO
-// ============================================
-
-router.post('/api/cargos', async (req, res) => {
-
-    try{
-
-        const { nombre } = req.body;
-
-        const db = req.app.get('db');
-
-        await db.query(`
-
-            INSERT INTO cargos(nombre)
-            VALUES(?)
-
-        `,[nombre]);
-
-        res.json({
-
-            success:true
-
-        });
-
-    }catch(error){
-
-        console.error(error);
-
-        res.status(500).json({
-
-            success:false
-
-        });
-
-    }
-
-});
-
-
-// ============================================
-// 🔥 EDITAR AREA
-// ============================================
-
-router.put('/api/catalogos/area/:id', async (req, res) => {
-
-    try{
-
-        const { id } = req.params;
-
-        const { nombre } = req.body;
-
-        const db = req.app.get('db');
-
-        await db.query(`
-
-            UPDATE areas
-            SET nombre = ?
-            WHERE id = ?
-
-        `,[nombre, id]);
-
-        res.json({
-
-            success:true
-
-        });
-
-    }catch(error){
-
-        console.error(error);
-
-        res.status(500).json({
-
-            success:false
-
-        });
-
-    }
-
-});
-
-
-// ============================================
-// 🔥 EDITAR SEDE
-// ============================================
-
-router.put('/api/catalogos/sede/:id', async (req, res) => {
-
-    try{
-
-        const { id } = req.params;
-
-        const { nombre } = req.body;
-
-        const db = req.app.get('db');
-
-        await db.query(`
-
-            UPDATE sedes
-            SET nombre = ?
-            WHERE id = ?
-
-        `,[nombre, id]);
-
-        res.json({
-
-            success:true
-
-        });
-
-    }catch(error){
-
-        console.error(error);
-
-        res.status(500).json({
-
-            success:false
-
-        });
-
-    }
-
-});
-
-
-// ============================================
-// 🔥 EDITAR CARGO
-// ============================================
-
-router.put('/api/catalogos/cargo/:id', async (req, res) => {
-
-    try{
-
-        const { id } = req.params;
-
-        const { nombre } = req.body;
-
-        const db = req.app.get('db');
-
-        await db.query(`
-
-            UPDATE cargos
-            SET nombre = ?
-            WHERE id = ?
-
-        `,[nombre, id]);
-
-        res.json({
-
-            success:true
-
-        });
-
-    }catch(error){
-
-        console.error(error);
-
-        res.status(500).json({
-
-            success:false
-
-        });
-
-    }
-
-});
-
-
-// ============================================
-// 🔥 CAMBIAR ESTADO
-// ============================================
-
-router.put('/api/catalogos/estado/:tipo/:id', async (req, res) => {
-
-    try{
-
-        const { tipo } = req.params;
-
-        const { id } = req.params;
-
-        let tabla = '';
-
-        if(tipo === 'area'){
-
-            tabla = 'areas';
-
-        }
-
-        if(tipo === 'sede'){
-
-            tabla = 'sedes';
-
-        }
-
-        if(tipo === 'cargo'){
-
-            tabla = 'cargos';
-
-        }
-
-        if(!tabla){
-
-            return res.status(400).json({
+            res.status(500).json({
 
                 success:false
 
@@ -460,39 +269,599 @@ router.put('/api/catalogos/estado/:tipo/:id', async (req, res) => {
 
         }
 
+    }
+);
 
-        // ====================================
-        // 🔥 ELIMINAR
-        // ====================================
 
-        const db = req.app.get('db');
+// ============================================
+// 🔥 CREAR SEDE
+// ============================================
 
-        await db.query(`
+router.post(
+    '/api/sedes',
+    proteger,
 
-            DELETE FROM ${tabla}
-            WHERE id = ?
+    async (req, res) => {
 
-        `,[id]);
+        try{
 
-        res.json({
+            const db =
+                req.app.get('db');
 
-            success:true
+            const { nombre } =
+                req.body;
 
-        });
+            await db.query(`
 
-    }catch(error){
+                INSERT INTO sedes
+                (
+                    nombre,
+                    activo
+                )
 
-        console.error(error);
+                VALUES
+                (
+                    ?,
+                    'SI'
+                )
 
-        res.status(500).json({
+            `,[nombre]);
 
-            success:false
+            res.json({
 
-        });
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
 
     }
+);
 
-});
+
+// ============================================
+// 🔥 CREAR CARGO
+// ============================================
+
+router.post(
+    '/api/cargos',
+    proteger,
+
+    async (req, res) => {
+
+        try{
+
+            const db =
+                req.app.get('db');
+
+            const { nombre } =
+                req.body;
+
+            await db.query(`
+
+                INSERT INTO cargos
+                (
+                    nombre,
+                    activo
+                )
+
+                VALUES
+                (
+                    ?,
+                    'SI'
+                )
+
+            `,[nombre]);
+
+            res.json({
+
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
 
 
+// ============================================
+// 🔥 EDITAR AREA
+// ============================================
+
+router.put(
+    '/api/catalogos/area/:id',
+    proteger,
+
+    async (req, res) => {
+
+        try{
+
+            const db =
+                req.app.get('db');
+
+            const { nombre } =
+                req.body;
+
+            const { id } =
+                req.params;
+
+            await db.query(`
+
+                UPDATE areas
+
+                SET nombre = ?
+
+                WHERE id = ?
+
+            `,[nombre,id]);
+
+            res.json({
+
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+
+// ============================================
+// 🔥 EDITAR SEDE
+// ============================================
+
+router.put(
+    '/api/catalogos/sede/:id',
+    proteger,
+
+    async (req, res) => {
+
+        try{
+
+            const db =
+                req.app.get('db');
+
+            const { nombre } =
+                req.body;
+
+            const { id } =
+                req.params;
+
+            await db.query(`
+
+                UPDATE sedes
+
+                SET nombre = ?
+
+                WHERE id = ?
+
+            `,[nombre,id]);
+
+            res.json({
+
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+
+// ============================================
+// 🔥 EDITAR CARGO
+// ============================================
+
+router.put(
+    '/api/catalogos/cargo/:id',
+    proteger,
+
+    async (req, res) => {
+
+        try{
+
+            const db =
+                req.app.get('db');
+
+            const { nombre } =
+                req.body;
+
+            const { id } =
+                req.params;
+
+            await db.query(`
+
+                UPDATE cargos
+
+                SET nombre = ?
+
+                WHERE id = ?
+
+            `,[nombre,id]);
+
+            res.json({
+
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+
+// ============================================
+// 🔥 CAMBIAR ESTADO AREA
+// ============================================
+
+router.put(
+    '/api/catalogos/estado/area/:id',
+    proteger,
+
+    async (req, res) => {
+
+        try{
+
+            const db =
+                req.app.get('db');
+
+            const { id } =
+                req.params;
+
+            const [[area]] =
+                await db.query(`
+
+                    SELECT activo
+
+                    FROM areas
+
+                    WHERE id = ?
+
+                `,[id]);
+
+            const nuevoEstado =
+
+                area.activo == 'SI'
+                ? 'NO'
+                : 'SI';
+
+            await db.query(`
+
+                UPDATE areas
+
+                SET activo = ?
+
+                WHERE id = ?
+
+            `,[nuevoEstado,id]);
+
+            res.json({
+
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+
+// ============================================
+// 🔥 CAMBIAR ESTADO SEDE
+// ============================================
+
+router.put(
+    '/api/catalogos/estado/sede/:id',
+    proteger,
+
+    async (req, res) => {
+
+        try{
+
+            const db =
+                req.app.get('db');
+
+            const { id } =
+                req.params;
+
+            const [[sede]] =
+                await db.query(`
+
+                    SELECT activo
+
+                    FROM sedes
+
+                    WHERE id = ?
+
+                `,[id]);
+
+            const nuevoEstado =
+
+                sede.activo == 'SI'
+                ? 'NO'
+                : 'SI';
+
+            await db.query(`
+
+                UPDATE sedes
+
+                SET activo = ?
+
+                WHERE id = ?
+
+            `,[nuevoEstado,id]);
+
+            res.json({
+
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+
+// ============================================
+// 🔥 CAMBIAR ESTADO CARGO
+// ============================================
+
+router.put(
+    '/api/catalogos/estado/cargo/:id',
+    proteger,
+
+    async (req, res) => {
+
+        try{
+
+            const db =
+                req.app.get('db');
+
+            const { id } =
+                req.params;
+
+            const [[cargo]] =
+                await db.query(`
+
+                    SELECT activo
+
+                    FROM cargos
+
+                    WHERE id = ?
+
+                `,[id]);
+
+            const nuevoEstado =
+
+                cargo.activo == 'SI'
+                ? 'NO'
+                : 'SI';
+
+            await db.query(`
+
+                UPDATE cargos
+
+                SET activo = ?
+
+                WHERE id = ?
+
+            `,[nuevoEstado,id]);
+
+            res.json({
+
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+// ============================================
+// 🔥 ESTADISTICAS ERP
+// ============================================
+
+router.get(
+    '/api/dashboard-estadisticas',
+    proteger,
+
+    async (req, res) => {
+
+        try{
+
+            const db =
+                req.app.get('db');
+
+
+            // ====================================
+            // 🔥 EMPLEADOS
+            // ====================================
+
+            const [[empleados]] =
+                await db.query(`
+
+                    SELECT COUNT(*) total
+
+                    FROM empleados
+
+                    WHERE activo = 'ACTIVO'
+
+                `);
+
+
+            // ====================================
+            // 🔥 DOCUMENTOS
+            // ====================================
+
+            let totalDocumentos = 0;
+
+            try{
+
+                const [[documentos]] =
+                    await db.query(`
+
+                        SELECT COUNT(*) total
+
+                        FROM documentos_empleados
+
+                    `);
+
+                totalDocumentos =
+                    documentos.total || 0;
+
+            }catch{
+
+
+                totalDocumentos = 0;
+
+            }
+
+
+            // ====================================
+            // 🔥 ACTIVIDAD
+            // ====================================
+
+            let totalActividad = 0;
+
+            try{
+
+                const [[actividad]] =
+                    await db.query(`
+
+                        SELECT COUNT(*) total
+
+                        FROM logs_sistema
+
+                    `);
+
+                totalActividad =
+                    actividad.total || 0;
+
+            }catch{
+
+                totalActividad = 0;
+
+            }
+
+
+            // ====================================
+            // 🔥 RESPONSE
+            // ====================================
+
+            res.json({
+
+                success:true,
+
+                empleados:
+                    empleados.total || 0,
+
+                documentos:
+                    totalDocumentos,
+
+                actividad:
+                    totalActividad
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
 module.exports = router;

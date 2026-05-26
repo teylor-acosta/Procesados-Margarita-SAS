@@ -3,9 +3,11 @@
 // ============================================
 
 let tipoActual = '';
+
 let datosActuales = [];
 
 let paginaActual = 1;
+
 const registrosPorPagina = 6;
 
 
@@ -16,6 +18,8 @@ const registrosPorPagina = 6;
 document.addEventListener('DOMContentLoaded', () => {
 
     cargarDashboardERP();
+
+    cargarEstadisticasERP();
 
     actualizarFecha();
 
@@ -30,61 +34,89 @@ async function cargarDashboardERP(){
 
     try{
 
-        const response = await fetch('/api/catalogos');
+        const response =
+            await fetch(
 
-        const data = await response.json();
+                '/api/catalogos',
+
+                {
+
+                    credentials:'include'
+
+                }
+
+            );
+
+        const data =
+            await response.json();
 
         console.log(data);
 
-        const areas = data.areas || [];
-        const sedes = data.sedes || [];
-        const cargos = data.cargos || [];
+        const areas =
+            data.areas || [];
+
+        const sedes =
+            data.sedes || [];
+
+        const cargos =
+            data.cargos || [];
 
 
         // ====================================
-        // 🔥 ESTADISTICAS
+        // 🔥 AREAS
         // ====================================
 
-        document.getElementById('totalAreas').innerText =
+        document.getElementById(
+            'panelAreas'
+        ).innerText =
+
             areas.length;
 
-        document.getElementById('totalSedes').innerText =
+        document.getElementById(
+            'panelCantidadAreas'
+        ).innerText =
+
+            `${areas.filter(
+                x => x.activo == 'SI'
+            ).length} áreas activas`;
+
+
+        // ====================================
+        // 🔥 SEDES
+        // ====================================
+
+        document.getElementById(
+            'panelSedes'
+        ).innerText =
+
             sedes.length;
 
-        document.getElementById('totalCargos').innerText =
+        document.getElementById(
+            'panelCantidadSedes'
+        ).innerText =
+
+            `${sedes.filter(
+                x => x.activo == 'SI'
+            ).length} sedes activas`;
+
+
+        // ====================================
+        // 🔥 CARGOS
+        // ====================================
+
+        document.getElementById(
+            'panelCargos'
+        ).innerText =
+
             cargos.length;
 
-        document.getElementById('cantidadAreas').innerText =
-            `${areas.length} áreas activas`;
+        document.getElementById(
+            'panelCantidadCargos'
+        ).innerText =
 
-        document.getElementById('cantidadSedes').innerText =
-            `${sedes.length} sedes activas`;
-
-        document.getElementById('cantidadCargos').innerText =
-            `${cargos.length} cargos activos`;
-
-
-        // ====================================
-        // 🔥 TABLAS PRINCIPALES
-        // ====================================
-
-        cargarTablaPrincipal(
-            'tablaAreas',
-            areas,
-            'Activa'
-        );
-
-        cargarTablaPrincipal(
-            'tablaSedes',
-            sedes,
-            'Activa'
-        );
-
-        cargarTablaPrincipal(
-            'tablaCargos',
-            cargos,
-            'Activo'
-        );
+            `${cargos.filter(
+                x => x.activo == 'SI'
+            ).length} cargos activos`;
 
     }catch(error){
 
@@ -96,7 +128,8 @@ async function cargarDashboardERP(){
 
             title:'Error',
 
-            text:'No se pudo cargar la información'
+            text:
+                'No se pudo cargar la información'
 
         });
 
@@ -106,46 +139,63 @@ async function cargarDashboardERP(){
 
 
 // ============================================
-// 🔥 TABLAS PRINCIPALES
+// 🔥 ESTADISTICAS ERP
 // ============================================
 
-function cargarTablaPrincipal(id, datos, estado){
+async function cargarEstadisticasERP(){
 
-    const tabla = document.getElementById(id);
+    try{
 
-    if(!tabla) return;
+        const response =
+            await fetch(
 
-    tabla.innerHTML = '';
+                '/api/dashboard-estadisticas',
 
-    const limite = datos.slice(0, 6);
+                {
 
-    limite.forEach(item => {
+                    credentials:'include'
 
-        tabla.innerHTML += `
+                }
 
-            <tr>
+            );
 
-                <td>
+        const data =
+            await response.json();
 
-                    ${item.nombre}
+        console.log(data);
 
-                </td>
+        if(data.success){
 
-                <td>
+            document.getElementById(
+                'totalEmpleados'
+            ).innerText =
 
-                    <span class="estado-activo">
+                data.empleados || 0;
 
-                        ${estado}
 
-                    </span>
+            document.getElementById(
+                'totalDocumentos'
+            ).innerText =
 
-                </td>
+                data.documentos || 0;
 
-            </tr>
 
-        `;
+            document.getElementById(
+                'totalAcciones'
+            ).innerText =
 
-    });
+                data.actividad || 0;
+
+        }
+
+    }catch(error){
+
+        console.error(
+            'Error estadísticas ERP:',
+            error
+        );
+
+    }
 
 }
 
@@ -164,40 +214,81 @@ async function abrirGestion(tipo){
 
     let titulo = '';
 
+    let boton = '';
+
     if(tipo === 'area'){
 
         endpoint = '/api/areas';
+
         titulo = 'Gestión de Áreas';
+
+        boton = 'Nueva Área';
 
     }
 
     if(tipo === 'sede'){
 
         endpoint = '/api/sedes';
+
         titulo = 'Gestión de Sedes';
+
+        boton = 'Nueva Sede';
 
     }
 
     if(tipo === 'cargo'){
 
         endpoint = '/api/cargos';
+
         titulo = 'Gestión de Cargos';
+
+        boton = 'Nuevo Cargo';
 
     }
 
     try{
 
-        const response = await fetch(endpoint);
+        const response =
+            await fetch(
 
-        const data = await response.json();
+                endpoint,
 
-        datosActuales = data;
+                {
 
-        document.getElementById('tituloGestion').innerText =
-            titulo;
+                    credentials:'include'
 
-        document.getElementById('modalGestion').style.display =
-            'flex';
+                }
+
+            );
+
+        const data =
+            await response.json();
+
+        datosActuales =
+
+            Array.isArray(data)
+
+            ? data
+
+            : [];
+
+        document.getElementById(
+            'tituloGestion'
+        ).innerText = titulo;
+
+        document.querySelector(
+            '.btn-nuevo'
+        ).innerHTML = `
+
+            <i class="fas fa-plus"></i>
+
+            ${boton}
+
+        `;
+
+        document.getElementById(
+            'modalGestion'
+        ).classList.add('activo');
 
         renderizarTablaGestion();
 
@@ -211,23 +302,30 @@ async function abrirGestion(tipo){
 
 
 // ============================================
-// 🔥 RENDER TABLA GESTION
+// 🔥 TABLA GESTION
 // ============================================
 
 function renderizarTablaGestion(){
 
-    const tabla = document.getElementById('tablaGestion');
+    const tabla =
+        document.getElementById(
+            'tablaGestion'
+        );
 
     tabla.innerHTML = '';
 
     const inicio =
-        (paginaActual - 1) * registrosPorPagina;
+        (paginaActual - 1)
+        * registrosPorPagina;
 
     const fin =
         inicio + registrosPorPagina;
 
     const registros =
-        datosActuales.slice(inicio, fin);
+        datosActuales.slice(
+            inicio,
+            fin
+        );
 
 
     registros.forEach(item => {
@@ -238,15 +336,66 @@ function renderizarTablaGestion(){
 
                 <td>
 
-                    ${item.nombre}
+                    <div
+                        style="
+                            display:flex;
+                            align-items:center;
+                            gap:12px;
+                        "
+                    >
+
+                        <div
+                            style="
+                                width:42px;
+                                height:42px;
+                                border-radius:12px;
+                                background:#eff6ff;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;
+                                color:#2563eb;
+                                font-size:18px;
+                            "
+                        >
+
+                            <i class="
+                                fas
+                                ${
+                                    tipoActual == 'area'
+                                    ? 'fa-building'
+
+                                    : tipoActual == 'sede'
+                                    ? 'fa-map-marker-alt'
+
+                                    : 'fa-briefcase'
+                                }
+                            "></i>
+
+                        </div>
+
+                        <span>
+
+                            ${item.nombre}
+
+                        </span>
+
+                    </div>
 
                 </td>
 
                 <td>
 
-                    <span class="estado-activo">
+                    <span class="${
+                        item.activo == 'SI'
+                        ? 'estado-activo'
+                        : 'estado-inactivo'
+                    }">
 
-                        Activo
+                        ${
+                            item.activo == 'SI'
+                            ? 'Activo'
+                            : 'Inactivo'
+                        }
 
                     </span>
 
@@ -258,10 +407,13 @@ function renderizarTablaGestion(){
 
                         <button
                             class="btn-tabla editar"
-                            onclick="editarRegistro(
-                                ${item.id},
-                                '${item.nombre}'
-                            )"
+
+                            onclick="
+                                editarRegistro(
+                                    ${item.id},
+                                    '${item.nombre}'
+                                )
+                            "
                         >
 
                             <i class="fas fa-pen"></i>
@@ -270,13 +422,30 @@ function renderizarTablaGestion(){
 
 
                         <button
-                            class="btn-tabla eliminar"
-                            onclick="desactivarRegistro(
-                                ${item.id}
-                            )"
+                            class="
+                                btn-tabla
+                                ${
+                                    item.activo == 'SI'
+                                    ? 'eliminar'
+                                    : 'activar'
+                                }
+                            "
+
+                            onclick="
+                                desactivarRegistro(
+                                    ${item.id}
+                                )
+                            "
                         >
 
-                            <i class="fas fa-minus"></i>
+                            <i class="
+                                fas
+                                ${
+                                    item.activo == 'SI'
+                                    ? 'fa-minus'
+                                    : 'fa-check'
+                                }
+                            "></i>
 
                         </button>
 
@@ -321,12 +490,16 @@ function renderizarPaginas(){
             <button
                 class="
                     btn-pagina
-                    ${i === paginaActual
+                    ${
+                        i === paginaActual
                         ? 'pagina-activa'
                         : ''
                     }
                 "
-                onclick="irPagina(${i})"
+
+                onclick="
+                    irPagina(${i})
+                "
             >
 
                 ${i}
@@ -343,9 +516,12 @@ function renderizarPaginas(){
 
     const fin =
         Math.min(
+
             paginaActual *
             registrosPorPagina,
+
             datosActuales.length
+
         );
 
     document.getElementById(
@@ -370,6 +546,7 @@ function irPagina(numero){
 
 }
 
+
 function paginaAnterior(){
 
     if(paginaActual > 1){
@@ -381,6 +558,7 @@ function paginaAnterior(){
     }
 
 }
+
 
 function paginaSiguiente(){
 
@@ -425,8 +603,11 @@ document.addEventListener('input', e => {
                 fila.innerText.toLowerCase();
 
             fila.style.display =
+
                 texto.includes(valor)
+
                 ? ''
+
                 : 'none';
 
         });
@@ -445,6 +626,8 @@ function nuevoDesdeGestion(){
     document.getElementById(
         'modalERP'
     ).style.display = 'flex';
+
+    document.body.style.overflow = 'hidden';
 
     document.getElementById(
         'tituloModal'
@@ -488,28 +671,31 @@ async function guardarRegistro(){
 
     try{
 
-        const response = await fetch(
+        const response =
+            await fetch(
 
-            `/api/${tipoActual}s`,
+                `/api/${tipoActual}s`,
 
-            {
+                {
 
-                method:'POST',
+                    credentials:'include',
 
-                headers:{
-                    'Content-Type':
-                    'application/json'
-                },
+                    method:'POST',
 
-                body:JSON.stringify({
+                    headers:{
+                        'Content-Type':
+                        'application/json'
+                    },
 
-                    nombre
+                    body:JSON.stringify({
 
-                })
+                        nombre
 
-            }
+                    })
 
-        );
+                }
+
+            );
 
         const data =
             await response.json();
@@ -520,7 +706,14 @@ async function guardarRegistro(){
 
                 icon:'success',
 
-                title:'Registro creado'
+                title:'Registro creado',
+
+                text:
+                    'La información se guardó correctamente',
+
+                timer:1800,
+
+                showConfirmButton:false
 
             });
 
@@ -547,44 +740,52 @@ async function guardarRegistro(){
 
 async function editarRegistro(id, nombre){
 
-    const { value } = await Swal.fire({
+    const { value } =
+        await Swal.fire({
 
-        title:'Editar registro',
+            title:'Editar registro',
 
-        input:'text',
+            input:'text',
 
-        inputValue:nombre,
+            inputValue:nombre,
 
-        showCancelButton:true
+            showCancelButton:true,
 
-    });
+            confirmButtonText:'Guardar',
+
+            cancelButtonText:'Cancelar'
+
+        });
 
     if(!value) return;
 
     try{
 
-        const response = await fetch(
+        const response =
+            await fetch(
 
-            `/api/catalogos/${tipoActual}/${id}`,
+                `/api/catalogos/${tipoActual}/${id}`,
 
-            {
+                {
 
-                method:'PUT',
+                    credentials:'include',
 
-                headers:{
-                    'Content-Type':
-                    'application/json'
-                },
+                    method:'PUT',
 
-                body:JSON.stringify({
+                    headers:{
+                        'Content-Type':
+                        'application/json'
+                    },
 
-                    nombre:value
+                    body:JSON.stringify({
 
-                })
+                        nombre:value
 
-            }
+                    })
 
-        );
+                }
+
+            );
 
         const data =
             await response.json();
@@ -595,7 +796,11 @@ async function editarRegistro(id, nombre){
 
                 icon:'success',
 
-                title:'Registro actualizado'
+                title:'Registro actualizado',
+
+                timer:1600,
+
+                showConfirmButton:false
 
             });
 
@@ -615,7 +820,7 @@ async function editarRegistro(id, nombre){
 
 
 // ============================================
-// 🔥 DESACTIVAR
+// 🔥 ACTIVAR / DESACTIVAR
 // ============================================
 
 async function desactivarRegistro(id){
@@ -623,13 +828,16 @@ async function desactivarRegistro(id){
     const confirmar =
         await Swal.fire({
 
-            title:'¿Desactivar registro?',
+            title:
+                '¿Actualizar estado del registro?',
 
             icon:'warning',
 
             showCancelButton:true,
 
-            confirmButtonText:'Sí'
+            confirmButtonText:'Sí',
+
+            cancelButtonText:'Cancelar'
 
         });
 
@@ -637,17 +845,20 @@ async function desactivarRegistro(id){
 
     try{
 
-        const response = await fetch(
+        const response =
+            await fetch(
 
-            `/api/catalogos/estado/${tipoActual}/${id}`,
+                `/api/catalogos/estado/${tipoActual}/${id}`,
 
-            {
+                {
 
-                method:'PUT'
+                    credentials:'include',
 
-            }
+                    method:'PUT'
 
-        );
+                }
+
+            );
 
         const data =
             await response.json();
@@ -658,7 +869,11 @@ async function desactivarRegistro(id){
 
                 icon:'success',
 
-                title:'Registro actualizado'
+                title:'Estado actualizado',
+
+                timer:1500,
+
+                showConfirmButton:false
 
             });
 
@@ -678,7 +893,7 @@ async function desactivarRegistro(id){
 
 
 // ============================================
-// 🔥 MODALES
+// 🔥 CERRAR MODAL
 // ============================================
 
 function cerrarModal(){
@@ -687,13 +902,20 @@ function cerrarModal(){
         'modalERP'
     ).style.display = 'none';
 
+    document.body.style.overflow = 'auto';
+
 }
+
+
+// ============================================
+// 🔥 CERRAR PANEL
+// ============================================
 
 function cerrarGestion(){
 
     document.getElementById(
         'modalGestion'
-    ).style.display = 'none';
+    ).classList.remove('activo');
 
 }
 
@@ -706,12 +928,17 @@ function actualizarFecha(){
 
     const fecha = new Date();
 
-    document.getElementById(
-        'ultimaActualizacion'
-    ).innerText =
+    const elemento =
+        document.getElementById(
+            'ultimaActualizacion'
+        );
 
-        `Última actualización:
-        ${fecha.toLocaleDateString()}
-        ${fecha.toLocaleTimeString()}`;
+    if(elemento){
+
+        elemento.innerText =
+
+            fecha.toLocaleTimeString();
+
+    }
 
 }
