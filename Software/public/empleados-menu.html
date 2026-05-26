@@ -3,44 +3,74 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+/>
 
 <title>Módulo Empleados</title>
 
-<!-- GOOGLE FONT -->
+<!-- =========================================
+🔥 GOOGLE FONT
+========================================= -->
+
 <link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap" rel="stylesheet">
 
-<!-- BOOTSTRAP -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- =========================================
+🔥 BOOTSTRAP
+========================================= -->
 
-<!-- FONT AWESOME -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link
+rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+/>
 
-<!-- SWEET ALERT -->
+<!-- =========================================
+🔥 FONT AWESOME
+========================================= -->
+
+<link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+/>
+
+<!-- =========================================
+🔥 SWEET ALERT
+========================================= -->
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- CSS -->
-<link rel="stylesheet" href="/css/empleados-menu.css">
+<!-- =========================================
+🔥 CSS
+========================================= -->
 
-<link rel="icon" href="/img/Logo.png">
+<link
+rel="stylesheet"
+href="/css/empleados-menu.css"
+/>
+
+<link
+rel="icon"
+href="/img/Logo.png"
+/>
 
 </head>
 
 <body>
 
-
 <!-- =========================================
-     🔥 NAVBAR
+🔥 NAVBAR
 ========================================= -->
 
 <nav class="navbar-custom">
 
     <div class="navbar-left">
 
-        <img 
-            src="/img/Logo.png"
-            class="logo-navbar"
-        >
+        <img
+        src="/img/Logo.png"
+        class="logo-navbar"
+        />
 
         <span class="empresa-nombre">
 
@@ -50,10 +80,12 @@
 
     </div>
 
-
     <div class="acciones-navbar">
 
-        <a href="/recursos-humanos" class="btn btn-light">
+        <a
+        href="/recursos-humanos"
+        class="btn-navbar btn-volver"
+        >
 
             <i class="fas fa-arrow-left"></i>
 
@@ -61,7 +93,10 @@
 
         </a>
 
-        <a href="/logout" class="btn-logout">
+        <a
+        href="/logout"
+        class="btn-navbar btn-logout"
+        >
 
             <i class="fas fa-power-off"></i>
 
@@ -73,52 +108,51 @@
 
 </nav>
 
-
-
 <!-- =========================================
-     🔥 CONTENEDOR
+🔥 CONTENEDOR PRINCIPAL
 ========================================= -->
 
-<div class="container-modulo">
-
+<div class="dashboard-container">
 
     <!-- =====================================
-         🔥 TITULO
+    🔥 HEADER
     ====================================== -->
 
-    <div class="titulo-box">
+    <div class="dashboard-header">
 
-        <h2>
+        <h1>
 
             Módulo de Empleados
 
-        </h2>
+        </h1>
 
         <p>
 
-            Gestiona empleados, estructura organizacional y documentación.
+            Gestiona empleados, estructura organizacional
+            y documentación empresarial.
 
         </p>
 
     </div>
 
-
-
     <!-- =====================================
-         🔥 MODULOS
+    🔥 MODULOS
     ====================================== -->
 
-    <div class="grid-modulos">
-
+    <div class="modulos-grid">
 
         <!-- CREAR -->
 
-        <div 
-            class="modulo-card"
-            onclick="window.location.href='/crear-empleado'"
+        <div
+        class="modulo-card"
+        onclick="window.location.href='/crear-empleado'"
         >
 
-            <i class="fas fa-user-plus icono azul"></i>
+            <div class="icono-modulo azul">
+
+                <i class="fas fa-user-plus"></i>
+
+            </div>
 
             <h3>
 
@@ -134,16 +168,18 @@
 
         </div>
 
-
-
         <!-- VER -->
 
-        <div 
-            class="modulo-card"
-            onclick="window.location.href='/empleados'"
+        <div
+        class="modulo-card"
+        onclick="window.location.href='/empleados'"
         >
 
-            <i class="fas fa-users icono azul"></i>
+            <div class="icono-modulo azul">
+
+                <i class="fas fa-users"></i>
+
+            </div>
 
             <h3>
 
@@ -159,16 +195,18 @@
 
         </div>
 
-
-
         <!-- DESACTIVADOS -->
 
-        <div 
-            class="modulo-card"
-            onclick="window.location.href='/empleados-inactivos'"
+        <div
+        class="modulo-card"
+        onclick="window.location.href='/empleados-inactivos'"
         >
 
-            <i class="fas fa-user-slash icono rojo"></i>
+            <div class="icono-modulo rojo">
+
+                <i class="fas fa-user-slash"></i>
+
+            </div>
 
             <h3>
 
@@ -184,16 +222,18 @@
 
         </div>
 
-
-
         <!-- DOCUMENTOS -->
 
-        <div 
-            class="modulo-card"
-            onclick="window.location.href='/documentacion-empleados'"
+        <div
+        class="modulo-card"
+        onclick="window.location.href='/documentacion-empleados'"
         >
 
-            <i class="fas fa-folder-open icono morado"></i>
+            <div class="icono-modulo morado">
+
+                <i class="fas fa-folder-open"></i>
+
+            </div>
 
             <h3>
 
@@ -209,16 +249,18 @@
 
         </div>
 
-
-
         <!-- ACTIVIDAD -->
 
-        <div 
-            class="modulo-card"
-            onclick="window.location.href='/centro-actividad'"
+        <div
+        class="modulo-card"
+        onclick="window.location.href='/centro-actividad'"
         >
 
-            <i class="fas fa-clock-rotate-left icono verde"></i>
+            <div class="icono-modulo verde">
+
+                <i class="fas fa-clock-rotate-left"></i>
+
+            </div>
 
             <h3>
 
@@ -236,146 +278,166 @@
 
     </div>
 
-
-
     <!-- =====================================
-         🔥 MINI CARDS
+    🔥 PANEL ERP
     ====================================== -->
 
-    <div class="grid-mini">
+    <div class="panel-erp-grid">
 
+        <!-- AREAS -->
 
-        <!-- AREA -->
+        <div class="erp-card verde-card">
 
-        <div 
-            class="mini-card verde-claro"
+            <div class="erp-top">
+
+                <div class="erp-icon verde-bg">
+
+                    <i class="fas fa-building"></i>
+
+                </div>
+
+                <div>
+
+                    <h2 id="panelAreas">
+
+                        0
+
+                    </h2>
+
+                    <p>
+
+                        Áreas registradas
+
+                    </p>
+
+                    <span id="panelCantidadAreas">
+
+                        0 áreas activas
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <button
+            class="btn-panel verde-btn"
             onclick="abrirGestion('area')"
-        >
+            >
 
-            <div class="mini-left">
+                Gestionar
 
-                <i class="fas fa-building verde"></i>
-
-            </div>
-
-            <div class="mini-center">
-
-                <h4>
-
-                    Crear Área
-
-                </h4>
-
-                <p>
-
-                    Agregar nueva área de trabajo
-
-                </p>
-
-            </div>
-
-            <div class="mini-right">
-
-                <i class="fas fa-plus"></i>
-
-            </div>
+            </button>
 
         </div>
 
+        <!-- SEDES -->
 
+        <div class="erp-card azul-card">
 
-        <!-- SEDE -->
+            <div class="erp-top">
 
-        <div 
-            class="mini-card azul-claro"
+                <div class="erp-icon azul-bg">
+
+                    <i class="fas fa-map-marker-alt"></i>
+
+                </div>
+
+                <div>
+
+                    <h2 id="panelSedes">
+
+                        0
+
+                    </h2>
+
+                    <p>
+
+                        Sedes registradas
+
+                    </p>
+
+                    <span id="panelCantidadSedes">
+
+                        0 sedes activas
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <button
+            class="btn-panel azul-btn"
             onclick="abrirGestion('sede')"
-        >
+            >
 
-            <div class="mini-left">
+                Gestionar
 
-                <i class="fas fa-map-marker-alt azul"></i>
-
-            </div>
-
-            <div class="mini-center">
-
-                <h4>
-
-                    Crear Sede
-
-                </h4>
-
-                <p>
-
-                    Registrar nueva sede
-
-                </p>
-
-            </div>
-
-            <div class="mini-right">
-
-                <i class="fas fa-plus"></i>
-
-            </div>
+            </button>
 
         </div>
 
+        <!-- CARGOS -->
 
+        <div class="erp-card naranja-card">
 
-        <!-- CARGO -->
+            <div class="erp-top">
 
-        <div 
-            class="mini-card naranja-claro"
+                <div class="erp-icon naranja-bg">
+
+                    <i class="fas fa-briefcase"></i>
+
+                </div>
+
+                <div>
+
+                    <h2 id="panelCargos">
+
+                        0
+
+                    </h2>
+
+                    <p>
+
+                        Cargos registrados
+
+                    </p>
+
+                    <span id="panelCantidadCargos">
+
+                        0 cargos activos
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <button
+            class="btn-panel naranja-btn"
             onclick="abrirGestion('cargo')"
-        >
+            >
 
-            <div class="mini-left">
+                Gestionar
 
-                <i class="fas fa-briefcase naranja"></i>
-
-            </div>
-
-            <div class="mini-center">
-
-                <h4>
-
-                    Crear Cargo
-
-                </h4>
-
-                <p>
-
-                    Agregar nuevo cargo
-
-                </p>
-
-            </div>
-
-            <div class="mini-right">
-
-                <i class="fas fa-plus"></i>
-
-            </div>
+            </button>
 
         </div>
 
     </div>
 
-
-
     <!-- =====================================
-         🔥 ESTADISTICAS
+    🔥 ESTADISTICAS
     ====================================== -->
 
     <div class="stats-container">
-
 
         <!-- EMPLEADOS -->
 
         <div class="stat-box">
 
-            <div class="icon-stat verde">
+            <div class="stat-icon verde-bg">
 
                 <i class="fas fa-users"></i>
 
@@ -383,11 +445,11 @@
 
             <div>
 
-                <h3 id="totalEmpleados">
+                <h2 id="totalEmpleados">
 
-                    0
+    0
 
-                </h3>
+</h2>
 
                 <p>
 
@@ -405,121 +467,11 @@
 
         </div>
 
-
-
-        <!-- AREAS -->
-
-        <div class="stat-box">
-
-            <div class="icon-stat azul">
-
-                <i class="fas fa-building"></i>
-
-            </div>
-
-            <div>
-
-                <h3 id="totalAreas">
-
-                    0
-
-                </h3>
-
-                <p>
-
-                    Áreas registradas
-
-                </p>
-
-                <span id="cantidadAreas">
-
-                    0 áreas activas
-
-                </span>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- SEDES -->
-
-        <div class="stat-box">
-
-            <div class="icon-stat morado">
-
-                <i class="fas fa-map-marker-alt"></i>
-
-            </div>
-
-            <div>
-
-                <h3 id="totalSedes">
-
-                    0
-
-                </h3>
-
-                <p>
-
-                    Sedes registradas
-
-                </p>
-
-                <span id="cantidadSedes">
-
-                    0 sedes activas
-
-                </span>
-
-            </div>
-
-        </div>
-
-
-
-        <!-- CARGOS -->
-
-        <div class="stat-box">
-
-            <div class="icon-stat naranja">
-
-                <i class="fas fa-briefcase"></i>
-
-            </div>
-
-            <div>
-
-                <h3 id="totalCargos">
-
-                    0
-
-                </h3>
-
-                <p>
-
-                    Cargos registrados
-
-                </p>
-
-                <span id="cantidadCargos">
-
-                    0 cargos activos
-
-                </span>
-
-            </div>
-
-        </div>
-
-
-
         <!-- DOCUMENTOS -->
 
         <div class="stat-box">
 
-            <div class="icon-stat turquesa">
+            <div class="stat-icon morado-bg">
 
                 <i class="fas fa-file-lines"></i>
 
@@ -527,11 +479,11 @@
 
             <div>
 
-                <h3 id="totalDocumentos">
+                <h2 id="totalDocumentos">
 
-                    0
+    0
 
-                </h3>
+</h2>
 
                 <p>
 
@@ -549,220 +501,121 @@
 
         </div>
 
+        <!-- ACTIVIDAD -->
+
+        <div class="stat-box">
+
+            <div class="stat-icon turquesa-bg">
+
+                <i class="fas fa-chart-line"></i>
+
+            </div>
+
+            <div>
+
+                <h2 id="totalAcciones">
+
+    0
+
+</h2>
+
+                <p>
+
+                    Acciones realizadas
+
+                </p>
+
+                <span>
+
+                    Este mes
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <!-- FECHA -->
+
+        <div class="stat-box">
+
+            <div class="stat-icon naranja-bg">
+
+                <i class="fas fa-calendar-days"></i>
+
+            </div>
+
+            <div>
+
+                <h2>
+
+                    26/05/2026
+
+                </h2>
+
+                <p>
+
+                    Última actualización
+
+                </p>
+
+                <span id="ultimaActualizacion">
+
+                    11:32 a.m.
+
+                </span>
+
+            </div>
+
+        </div>
+
     </div>
-
-
 
     <!-- =====================================
-     🔥 PANEL GESTION ERP
-===================================== -->
-
-<div class="panel-gestion-grid">
-
-
-    <!-- AREAS -->
-
-    <div class="gestion-card">
-
-        <div class="gestion-top">
-
-            <div class="gestion-icon verde-bg">
-
-                <i class="fas fa-building"></i>
-
-            </div>
-
-            <div>
-
-                <h3 id="totalAreas">
-
-                    0
-
-                </h3>
-
-                <p>
-
-                    Áreas Registradas
-
-                </p>
-
-                <span id="cantidadAreas">
-
-                    0 áreas activas
-
-                </span>
-
-            </div>
-
-        </div>
-
-        <button
-            class="btn-gestion verde-btn"
-            onclick="abrirGestion('area')"
-        >
-
-            Gestionar
-
-        </button>
-
-    </div>
-
-
-
-    <!-- SEDES -->
-
-    <div class="gestion-card">
-
-        <div class="gestion-top">
-
-            <div class="gestion-icon azul-bg">
-
-                <i class="fas fa-map-marker-alt"></i>
-
-            </div>
-
-            <div>
-
-                <h3 id="totalSedes">
-
-                    0
-
-                </h3>
-
-                <p>
-
-                    Sedes Registradas
-
-                </p>
-
-                <span id="cantidadSedes">
-
-                    0 sedes activas
-
-                </span>
-
-            </div>
-
-        </div>
-
-        <button
-            class="btn-gestion azul-btn"
-            onclick="abrirGestion('sede')"
-        >
-
-            Gestionar
-
-        </button>
-
-    </div>
-
-
-
-    <!-- CARGOS -->
-
-    <div class="gestion-card">
-
-        <div class="gestion-top">
-
-            <div class="gestion-icon naranja-bg">
-
-                <i class="fas fa-briefcase"></i>
-
-            </div>
-
-            <div>
-
-                <h3 id="totalCargos">
-
-                    0
-
-                </h3>
-
-                <p>
-
-                    Cargos Registrados
-
-                </p>
-
-                <span id="cantidadCargos">
-
-                    0 cargos activos
-
-                </span>
-
-            </div>
-
-        </div>
-
-        <button
-            class="btn-gestion naranja-btn"
-            onclick="abrirGestion('cargo')"
-        >
-
-            Gestionar
-
-        </button>
-
-    </div>
-
-</div>
-
-
-    <!-- =====================================
-         🔥 FOOTER
+    🔥 FOOTER
     ====================================== -->
 
     <div class="footer-erp">
 
-        <div class="footer-left">
+        <i class="fas fa-circle-info"></i>
 
-            <i class="fas fa-circle-info"></i>
+        <span>
 
-            <span>
+            Consejo:
+            Mantén actualizada la estructura
+            organizacional para una mejor gestión
+            del talento humano.
 
-                Consejo:
-                Mantén actualizada la estructura organizacional
-                para una mejor gestión del talento humano.
-
-            </span>
-
-        </div>
-
-        <div 
-            class="footer-right"
-            id="ultimaActualizacion"
-        >
-
-            Cargando...
-
-        </div>
+        </span>
 
     </div>
 
 </div>
 
-
-
 <!-- =========================================
-     🔥 MODAL NUEVO
+🔥 PANEL LATERAL ADMIN
 ========================================= -->
 
-<div class="modal-erp" id="modalERP">
+<div
+class="panel-lateral"
+id="modalGestion"
+>
 
-    <div class="modal-contenido">
+    <div class="panel-contenido">
 
+        <!-- HEADER -->
 
-        <div class="modal-header">
+        <div class="panel-header">
 
-            <h3 id="tituloModal">
+            <h2 id="tituloGestion">
 
-                Nuevo Registro
+                Gestión ERP
 
-            </h3>
+            </h2>
 
-            <button 
-                class="cerrar-modal"
-                onclick="cerrarModal()"
+            <button
+            class="cerrar-panel"
+            onclick="cerrarGestion()"
             >
 
                 <i class="fas fa-xmark"></i>
@@ -771,129 +624,62 @@
 
         </div>
 
+        <!-- ACCIONES -->
 
-        <div class="form-group">
+        <div class="acciones-panel">
 
-            <label>
+            <button
+            class="btn-nuevo"
+            onclick="nuevoDesdeGestion()"
+            >
 
-                Nombre
+                <i class="fas fa-plus"></i>
 
-            </label>
+                Nueva Área
 
-            <input 
+            </button>
+
+            <div class="buscador-panel">
+
+                <input
                 type="text"
-                id="nombreRegistro"
-                class="form-control"
-                placeholder="Ingrese nombre"
-            >
+                id="buscarGestion"
+                placeholder="Buscar..."
+                />
 
-        </div>
-
-
-        <div class="d-flex justify-content-end gap-3 mt-4">
-
-            <button 
-                class="btn btn-secondary"
-                onclick="cerrarModal()"
-            >
-
-                Cancelar
-
-            </button>
-
-            <button 
-                class="btn btn-success"
-                onclick="guardarRegistro()"
-            >
-
-                Guardar
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-
-<!-- =========================================
-     🔥 MODAL GESTION
-========================================= -->
-
-<div class="modal-erp" id="modalGestion">
-
-    <div class="modal-gestion-contenido">
-
-
-        <!-- HEADER -->
-
-        <div class="modal-header">
-
-            <h3 id="tituloGestion">
-
-                Gestión
-
-            </h3>
-
-            <div class="header-gestion-right">
-
-                <button 
-                    class="btn-nuevo-registro"
-                    onclick="nuevoDesdeGestion()"
-                >
-
-                    <i class="fas fa-plus"></i>
-
-                    Nuevo
-
-                </button>
-
-                <button 
-                    class="cerrar-modal"
-                    onclick="cerrarGestion()"
-                >
-
-                    <i class="fas fa-xmark"></i>
-
-                </button>
+                <i class="fas fa-search"></i>
 
             </div>
 
         </div>
 
-
-
-        <!-- BUSCADOR -->
-
-        <div class="buscador-gestion">
-
-            <input 
-                type="text"
-                id="buscarGestion"
-                placeholder="Buscar..."
-            >
-
-        </div>
-
-
-
         <!-- TABLA -->
 
-        <div class="tabla-scroll">
+        <div class="tabla-panel">
 
-            <table class="tabla-gestion">
+            <table>
 
                 <thead>
 
                     <tr>
 
-                        <th>Nombre</th>
+                        <th>
 
-                        <th>Estado</th>
+                            Nombre
 
-                        <th>Acciones</th>
+                        </th>
+
+                        <th>
+
+                            Estado
+
+                        </th>
+
+                        <th>
+
+                            Acciones
+
+                        </th>
 
                     </tr>
 
@@ -907,44 +693,17 @@
 
         </div>
 
-
-
         <!-- PAGINACION -->
 
-        <div class="paginacion-container">
+        <div class="footer-tabla">
 
-            <div 
-                class="info-paginacion"
-                id="infoPaginacion"
-            >
+            <span id="infoPaginacion">
 
                 Mostrando registros
 
-            </div>
+            </span>
 
-            <div class="botones-paginacion">
-
-                <button 
-                    class="btn-pagina"
-                    onclick="paginaAnterior()"
-                >
-
-                    <i class="fas fa-chevron-left"></i>
-
-                </button>
-
-                <div id="numerosPaginas">
-
-                </div>
-
-                <button 
-                    class="btn-pagina"
-                    onclick="paginaSiguiente()"
-                >
-
-                    <i class="fas fa-chevron-right"></i>
-
-                </button>
+            <div id="numerosPaginas">
 
             </div>
 
@@ -954,10 +713,81 @@
 
 </div>
 
+<!-- =========================================
+🔥 MODAL NUEVO
+========================================= -->
 
+<div
+class="modal-erp"
+id="modalERP"
+>
+
+    <div class="modal-contenido">
+
+        <div class="modal-header">
+
+            <h2 id="tituloModal">
+
+                Nuevo Registro
+
+            </h2>
+
+            <button
+            class="cerrar-panel"
+            onclick="cerrarModal()"
+            >
+
+                <i class="fas fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>
+
+                Nombre
+
+            </label>
+
+            <input
+            type="text"
+            id="nombreRegistro"
+            class="form-control"
+            placeholder="Ingrese nombre"
+            />
+
+        </div>
+
+        <div class="modal-botones">
+
+            <button
+            class="btn-cancelar"
+            onclick="cerrarModal()"
+            >
+
+                Cancelar
+
+            </button>
+
+            <button
+            class="btn-guardar"
+            onclick="guardarRegistro()"
+            >
+
+                Guardar
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 <!-- =========================================
-     🔥 JS
+🔥 JS
 ========================================= -->
 
 <script src="/js/empleados-menu.js"></script>
