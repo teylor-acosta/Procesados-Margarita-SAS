@@ -68,86 +68,100 @@ router.get(
 // 🔥 ACTUALIZAR
 // ============================================
 
-router.put('/api/actualizar-empleado', (req, res) => {
+router.put('/api/actualizar-empleado', async (req, res) => {
 
-    const db = req.app.get('db');
-    const e = req.body;
+    try {
 
-    const sql = `
-    UPDATE empleados SET
-        nombre=?,
-        tipo_documento=?,
-        numero_documento=?,
-        rh=?,
-        fecha_nacimiento=?,
-        lugar_nacimiento=?,
-        estado_civil=?,
-        direccion=?,
-        barrio_localidad=?,
-        telefono=?,
-        email=?,
-        area_id=?,
-        sede_id=?,
-        cargo_id=?
-    WHERE id=?
-    `;
+        const db = req.app.get('db');
+        const e = req.body;
 
-    db.query(sql, [
-        e.nombre,
-        e.tipo_documento,
-        e.numero_documento,
-        e.rh,
-        e.fecha_nacimiento,
-        e.lugar_nacimiento,
-        e.estado_civil,
-        e.direccion,
-        e.barrio_localidad,
-        e.telefono,
-        e.email,
-        e.area_id,
-        e.sede_id,
-        e.cargo_id,
-        e.id
-    ], (err) => {
+        const sql = `
+        UPDATE empleados SET
+            nombre=?,
+            tipo_documento=?,
+            numero_documento=?,
+            rh=?,
+            fecha_nacimiento=?,
+            lugar_nacimiento=?,
+            estado_civil=?,
+            direccion=?,
+            barrio_localidad=?,
+            telefono=?,
+            email=?,
+            area_id=?,
+            sede_id=?,
+            cargo_id=?
+        WHERE id=?
+        `;
 
-        if (err) return res.json({ success: false });
+        await db.query(sql, [
+            e.nombre,
+            e.tipo_documento,
+            e.numero_documento,
+            e.rh,
+            e.fecha_nacimiento,
+            e.lugar_nacimiento,
+            e.estado_civil,
+            e.direccion,
+            e.barrio_localidad,
+            e.telefono,
+            e.email,
+            e.area_id || null,
+            e.sede_id || null,
+            e.cargo_id || null,
+            e.id
+        ]);
+
         // ============================================
-// 🔥 REGISTRAR ACTIVIDAD
-// ============================================
+        // 🔥 REGISTRAR ACTIVIDAD
+        // ============================================
 
-db.query(
+        await db.query(
 
-    `INSERT INTO centro_actividad (
+            `INSERT INTO centro_actividad (
 
-        empleado_id,
-        usuario_id,
-        accion,
-        modulo,
-        descripcion,
-        color,
-        icono
+                empleado_id,
+                usuario_id,
+                accion,
+                modulo,
+                descripcion,
+                color,
+                icono
 
-    )
+            )
 
-    VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    
-    [
+            VALUES (?, ?, ?, ?, ?, ?, ?)`,
 
-        e.id,
-        req.session.usuario?.id || null,
-        'ACTUALIZAR',
-        'EMPLEADOS',
-        `Se actualizó el empleado ${e.nombre}`,
-        'azul',
-        'fa-pen'
+            [
 
-    ]
+                e.id,
+                req.session.usuarioID || null,
+                'ACTUALIZAR',
+                'EMPLEADOS',
+                `Se actualizó el empleado ${e.nombre}`,
+                'azul',
+                'fa-pen'
 
-);
-        res.json({ success: true });
-    });
+            ]
+
+        );
+
+        res.json({
+            success: true
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+
+    }
+
 });
-
 
 // ============================================
 // 🔥 DESACTIVAR
