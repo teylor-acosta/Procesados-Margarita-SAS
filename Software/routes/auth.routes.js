@@ -127,20 +127,42 @@ router.post('/api/login', async (req, res) => {
         // 🚫 BLOQUEO POR INTENTOS
         // =========================================
 
-        if (parseInt(user.intentos_fallidos) >= 3) {
+// =========================================
+// 🚫 BLOQUEO POR INTENTOS
+// =========================================
 
-            return res.json({
+if (parseInt(user.intentos_fallidos) >= 3) {
 
-                success: false,
+    // 🔥 BLOQUEAR USUARIO
 
-                bloqueado: true,
+    await db.query(
 
-                message:
-                    'Usuario bloqueado por múltiples intentos fallidos.'
+        `
 
-            });
+        UPDATE usuarios
 
-        }
+        SET bloqueado = 1
+
+        WHERE ID = ?
+
+        `,
+
+        [user.ID]
+
+    );
+
+    return res.json({
+
+        success: false,
+
+        bloqueado: true,
+
+        message:
+            'Usuario bloqueado por múltiples intentos fallidos.'
+
+    });
+
+}
 
         // =========================================
         // 🔐 VALIDAR PASSWORD
@@ -158,32 +180,97 @@ router.post('/api/login', async (req, res) => {
         // ❌ PASSWORD INCORRECTO
         // =========================================
 
-        if (!passwordMatch) {
+if (!passwordMatch) {
 
-            await db.query(
+    // =====================================
+    // 🔥 SUMAR INTENTOS
+    // =====================================
 
-                `
-                UPDATE usuarios
+    await db.query(
 
-                SET intentos_fallidos = intentos_fallidos + 1
+        `
 
-                WHERE ID = ?
-                `,
+        UPDATE usuarios
 
-                [user.ID]
+        SET intentos_fallidos =
+            intentos_fallidos + 1
 
-            );
+        WHERE ID = ?
 
-            return res.json({
+        `,
 
-                success: false,
+        [user.ID]
 
-                message: "Contraseña incorrecta"
+    );
 
-            });
+    // =====================================
+    // 🔥 CONSULTAR NUEVOS INTENTOS
+    // =====================================
 
-        }
+    const [nuevoIntento] = await db.query(
 
+        `
+
+        SELECT intentos_fallidos
+
+        FROM usuarios
+
+        WHERE ID = ?
+
+        `,
+
+        [user.ID]
+
+    );
+
+    const intentos =
+        nuevoIntento[0].intentos_fallidos;
+
+    // =====================================
+    // 🔥 BLOQUEAR SI LLEGA A 3
+    // =====================================
+
+    if(intentos >= 3){
+
+        await db.query(
+
+            `
+
+            UPDATE usuarios
+
+            SET bloqueado = 1
+
+            WHERE ID = ?
+
+            `,
+
+            [user.ID]
+
+        );
+
+        return res.json({
+
+            success:false,
+
+            bloqueado:true,
+
+            message:
+                'Usuario bloqueado por múltiples intentos fallidos.'
+
+        });
+
+    }
+
+    return res.json({
+
+        success:false,
+
+        message:
+            `Contraseña incorrecta. Intento ${intentos} de 3`
+
+    });
+
+}
         // =========================================
         // 🔥 RESETEAR INTENTOS Y LOGIN
         // =========================================
