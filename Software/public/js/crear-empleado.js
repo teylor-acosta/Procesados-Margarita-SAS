@@ -1,333 +1,194 @@
-document.addEventListener("DOMContentLoaded", () => {
+// ============================================
+// 🔥 VARIABLES
+// ============================================
 
-    /* =========================================
-       🔥 LIMPIAR LOCALSTORAGE SI ES NUEVO
-    ========================================= */
+const form =
+    document.getElementById(
+        'formEmpleado'
+    );
 
-    const url = window.location.pathname;
-
-    if (url.includes("crear-empleado")) {
-
-        if (!localStorage.getItem("modoEditar")) {
-
-            localStorage.removeItem("empleadoEditar");
-
-        }
-
-    }
-
-
-    /* =========================================
-       📦 OBTENER EMPLEADO
-    ========================================= */
-
-    const emp = JSON.parse(
-        localStorage.getItem("empleadoEditar")
+const empleadoId =
+    document.getElementById(
+        'empleado_id'
     );
 
 
-    /* =========================================
-       🚀 FORMULARIO NUEVO
-    ========================================= */
+// ============================================
+// 🔥 INICIO
+// ============================================
 
-    if (!emp) {
+document.addEventListener(
 
-        document.getElementById("formEmpleado").reset();
+    'DOMContentLoaded',
 
-        cargarCatalogos();
+    async () => {
 
-        return;
+        await cargarCatalogos();
+
+        obtenerEmpleadoEditar();
 
     }
 
-
-    /* =========================================
-       ✏️ MODO EDITAR
-    ========================================= */
-
-    document.getElementById("empleado_id").value =
-        emp.id || '';
-
-    document.getElementById("nombres").value =
-        emp.nombre || '';
-
-    document.getElementById("apellidos").value =
-        emp.apellidos || '';
-
-    document.getElementById("tipo_documento").value =
-        emp.tipo_documento || '';
-
-    document.getElementById("numero_documento").value =
-        emp.numero_documento || '';
-
-    document.getElementById("fecha_nacimiento").value =
-        emp.fecha_nacimiento || '';
-
-    document.getElementById("lugar_nacimiento").value =
-        emp.lugar_nacimiento || '';
-
-    document.getElementById("rh").value =
-        emp.rh || '';
-
-    document.getElementById("estado_civil").value =
-        emp.estado_civil || '';
-
-    document.getElementById("direccion").value =
-        emp.direccion || '';
-
-    document.getElementById("barrio_localidad").value =
-        emp.barrio_localidad || '';
-
-    document.getElementById("telefono").value =
-        emp.telefono || '';
-
-    document.getElementById("email").value =
-        emp.email || '';
-
-    cargarCatalogos(emp);
-
-});
+);
 
 
-/* =========================================
-   📚 CARGAR CATÁLOGOS
-========================================= */
+// ============================================
+// 🔥 CARGAR CATALOGOS
+// ============================================
 
-async function cargarCatalogos(emp = null) {
+async function cargarCatalogos(){
 
-    try {
+    try{
 
-        const response = await fetch('/api/catalogos');
+        const response =
+            await fetch(
 
-        const data = await response.json();
+                '/api/catalogos',
 
+                {
 
-        /* =====================================
-           📍 AREAS
-        ===================================== */
+                    credentials:'include'
 
-        const selectArea =
-            document.getElementById("area");
+                }
 
-        selectArea.innerHTML =
-            `<option value="">Seleccione</option>`;
+            );
 
-        data.areas.forEach(area => {
+        const data =
+            await response.json();
 
-            selectArea.innerHTML += `
-                <option value="${area.id}">
-                    ${area.nombre}
-                </option>
-            `;
+        cargarSelect(
 
-        });
+            'area',
 
+            data.areas
 
-        /* =====================================
-           📍 SEDES
-        ===================================== */
+        );
 
-        const selectSede =
-            document.getElementById("sede");
+        cargarSelect(
 
-        selectSede.innerHTML =
-            `<option value="">Seleccione</option>`;
+            'sede',
 
-        data.sedes.forEach(sede => {
+            data.sedes
 
-            selectSede.innerHTML += `
-                <option value="${sede.id}">
-                    ${sede.nombre}
-                </option>
-            `;
+        );
 
-        });
+        cargarSelect(
 
+            'cargo',
 
-        /* =====================================
-           📍 CARGOS
-        ===================================== */
+            data.cargos
 
-        const selectCargo =
-            document.getElementById("cargo");
+        );
 
-        selectCargo.innerHTML =
-            `<option value="">Seleccione</option>`;
+    }catch(error){
 
-        data.cargos.forEach(cargo => {
-
-            selectCargo.innerHTML += `
-                <option value="${cargo.id}">
-                    ${cargo.nombre}
-                </option>
-            `;
-
-        });
-
-
-        /* =====================================
-           🔥 SI ES EDITAR
-        ===================================== */
-
-        if (emp) {
-
-            document.getElementById("area").value =
-                emp.area_id || '';
-
-            document.getElementById("sede").value =
-                emp.sede_id || '';
-
-            document.getElementById("cargo").value =
-                emp.cargo_id || '';
-
-        }
-
-    } catch (error) {
-
-        console.log(error);
+        console.error(error);
 
     }
 
 }
 
 
-/* =========================================
-   💾 GUARDAR EMPLEADO
-========================================= */
+// ============================================
+// 🔥 LLENAR SELECTS
+// ============================================
 
-document.getElementById("formEmpleado")
-.addEventListener("submit", async (e) => {
+function cargarSelect(id, datos){
 
-    e.preventDefault();
+    const select =
+        document.getElementById(id);
 
-    const empleado_id =
-        document.getElementById("empleado_id").value;
+    select.innerHTML = `
+        <option value="">
+            Seleccione
+        </option>
+    `;
 
+    datos
+    .filter(x => x.activo == 'SI')
+    .forEach(item => {
 
-    /* =====================================
-       📦 DATOS
-    ===================================== */
+        select.innerHTML += `
 
-    const datos = {
+            <option value="${item.id}">
+                ${item.nombre}
+            </option>
 
-        nombre:
-            document.getElementById("nombres").value
-            + ' ' +
-            document.getElementById("apellidos").value,
+        `;
 
-        tipo_documento:
-            document.getElementById("tipo_documento").value,
+    });
 
-        numero_documento:
-            document.getElementById("numero_documento").value,
-
-        fecha_nacimiento:
-            document.getElementById("fecha_nacimiento").value,
-
-        lugar_nacimiento:
-            document.getElementById("lugar_nacimiento").value,
-
-        rh:
-            document.getElementById("rh").value,
-
-        estado_civil:
-            document.getElementById("estado_civil").value,
-
-        direccion:
-            document.getElementById("direccion").value,
-
-        barrio_localidad:
-            document.getElementById("barrio_localidad").value,
-
-        telefono:
-            document.getElementById("telefono").value,
-
-        email:
-            document.getElementById("email").value,
-
-        area_id:
-            document.getElementById("area").value,
-
-        sede_id:
-            document.getElementById("sede").value,
-
-        cargo_id:
-            document.getElementById("cargo").value
-
-    };
+}
 
 
-    try {
+// ============================================
+// 🔥 OBTENER PARAMETRO
+// ============================================
 
-        let response;
+function obtenerParametro(nombre){
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    return params.get(nombre);
+
+}
 
 
-        /* =====================================
-           ✏️ EDITAR
-        ===================================== */
+// ============================================
+// 🔥 EDITAR EMPLEADO
+// ============================================
 
-        if (empleado_id) {
+async function obtenerEmpleadoEditar(){
 
-            datos.id = empleado_id;
+    const id =
+        obtenerParametro('id');
 
-            response = await fetch(
-                '/api/actualizar-empleado',
+    if(!id) return;
+
+    try{
+
+        Swal.fire({
+
+            title:'Cargando empleado...',
+
+            allowOutsideClick:false,
+
+            didOpen:() => {
+
+                Swal.showLoading();
+
+            }
+
+        });
+
+        const response =
+            await fetch(
+
+                `/api/empleado/${id}`,
+
                 {
-                    method: 'PUT',
 
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    credentials:'include'
 
-                    body: JSON.stringify(datos)
                 }
+
             );
 
-        }
+        const data =
+            await response.json();
 
+        Swal.close();
 
-        /* =====================================
-           ➕ CREAR
-        ===================================== */
-
-        else {
-
-            response = await fetch(
-                '/api/crear-empleado',
-                {
-                    method: 'POST',
-
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-
-                    body: JSON.stringify(datos)
-                }
-            );
-
-        }
-
-
-        const result = await response.json();
-
-
-        /* =====================================
-           ❌ ERROR
-        ===================================== */
-
-        if (!result.success) {
+        if(!data.ok){
 
             Swal.fire({
 
-                icon: 'error',
+                icon:'error',
 
-                title: 'Error',
-
-                text:
-                    result.message ||
-                    'No se pudo guardar el empleado',
-
-                confirmButtonColor: '#dc3545'
+                title:'Empleado no encontrado'
 
             });
 
@@ -335,57 +196,259 @@ document.getElementById("formEmpleado")
 
         }
 
+        const e =
+            data.empleado;
 
-        /* =====================================
-           ✅ ALERTA
-        ===================================== */
+        empleadoId.value =
+            e.id || '';
 
-        Swal.fire({
+        document.getElementById(
+            'nombres'
+        ).value =
+            e.nombre || '';
 
-            icon: 'success',
+        document.getElementById(
+            'tipo_documento'
+        ).value =
+            e.tipo_documento || '';
 
-            title: empleado_id
-                ? 'Empleado actualizado'
-                : 'Empleado creado',
+        document.getElementById(
+            'numero_documento'
+        ).value =
+            e.numero_documento || '';
 
-            text: empleado_id
-                ? 'El empleado fue actualizado correctamente'
-                : 'El empleado fue creado correctamente',
+        document.getElementById(
+            'fecha_nacimiento'
+        ).value =
+            e.fecha_nacimiento
+            ?.split('T')[0] || '';
 
-            confirmButtonColor: '#2563eb',
+        document.getElementById(
+            'lugar_nacimiento'
+        ).value =
+            e.lugar_nacimiento || '';
 
-            background: '#ffffff',
+        document.getElementById(
+            'rh'
+        ).value =
+            e.rh || '';
 
-            color: '#111'
+        document.getElementById(
+            'estado_civil'
+        ).value =
+            e.estado_civil || '';
 
-        }).then(() => {
+        document.getElementById(
+            'direccion'
+        ).value =
+            e.direccion || '';
 
-            localStorage.removeItem("empleadoEditar");
+        document.getElementById(
+            'barrio_localidad'
+        ).value =
+            e.barrio_localidad || '';
 
-            localStorage.removeItem("modoEditar");
+        document.getElementById(
+            'telefono'
+        ).value =
+            e.telefono || '';
 
-            window.location.href = "/empleados";
+        document.getElementById(
+            'email'
+        ).value =
+            e.email || '';
 
-        });
+        document.getElementById(
+            'area'
+        ).value =
+            e.area_id || '';
+
+        document.getElementById(
+            'sede'
+        ).value =
+            e.sede_id || '';
+
+        document.getElementById(
+            'cargo'
+        ).value =
+            e.cargo_id || '';
+
+    }catch(error){
+
+        console.error(error);
 
     }
 
-    catch (error) {
+}
 
-        console.log(error);
 
-        Swal.fire({
+// ============================================
+// 🔥 GUARDAR
+// ============================================
 
-            icon: 'error',
+form.addEventListener(
 
-            title: 'Error del servidor',
+    'submit',
 
-            text: 'Ocurrió un problema al guardar',
+    async e => {
 
-            confirmButtonColor: '#dc3545'
+        e.preventDefault();
 
-        });
+        const datos =
+            Object.fromEntries(
+
+                new FormData(form)
+
+            );
+
+        // ====================================
+        // VALIDACIONES
+        // ====================================
+
+        if(!datos.nombre){
+
+            Swal.fire({
+
+                icon:'warning',
+
+                title:'Ingrese nombres'
+
+            });
+
+            return;
+
+        }
+
+        if(!datos.numero_documento){
+
+            Swal.fire({
+
+                icon:'warning',
+
+                title:'Ingrese documento'
+
+            });
+
+            return;
+
+        }
+
+        try{
+
+            Swal.fire({
+
+                title:'Guardando información...',
+
+                allowOutsideClick:false,
+
+                didOpen:() => {
+
+                    Swal.showLoading();
+
+                }
+
+            });
+
+            const endpoint =
+
+                datos.id
+
+                ? '/api/actualizar-empleado'
+
+                : '/api/crear-empleado';
+
+            const response =
+                await fetch(
+
+                    endpoint,
+
+                    {
+
+                        method:
+
+                            datos.id
+                            ? 'PUT'
+                            : 'POST',
+
+                        credentials:'include',
+
+                        headers:{
+
+                            'Content-Type':
+                            'application/json'
+
+                        },
+
+                        body:JSON.stringify(datos)
+
+                    }
+
+                );
+
+            const data =
+                await response.json();
+
+            Swal.close();
+
+            if(data.success){
+
+                await Swal.fire({
+
+                    icon:'success',
+
+                    title:
+
+                        datos.id
+
+                        ? 'Empleado actualizado'
+
+                        : 'Empleado creado',
+
+                    text:
+
+                        datos.id
+
+                        ? 'La información fue actualizada'
+
+                        : 'El empleado fue registrado correctamente',
+
+                    confirmButtonColor:'#2563eb'
+
+                });
+
+                window.location.href =
+                    '/empleados';
+
+            }else{
+
+                Swal.fire({
+
+                    icon:'error',
+
+                    title:'Error',
+
+                    text:
+                        data.error ||
+                        'No se pudo guardar'
+
+                });
+
+            }
+
+        }catch(error){
+
+            console.error(error);
+
+            Swal.fire({
+
+                icon:'error',
+
+                title:'Error servidor'
+
+            });
+
+        }
 
     }
 
-});
+);
