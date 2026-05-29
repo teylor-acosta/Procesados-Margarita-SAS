@@ -175,7 +175,7 @@ router.post(
 
     '/api/subir-documento',
 
-    upload.single('archivo'),
+    upload.array('archivo',20),
 
     async (req, res) => {
 
@@ -201,70 +201,71 @@ router.post(
                 .split('.')
                 .pop();
 
-            // ========================================
-            // ☁️ CLOUDINARY
-            // ========================================
+// ========================================
+// 📁 HOSTINGER / SERVIDOR LOCAL
+// ========================================
 
-            const resultado =
-                await cloudinary.uploader.upload(
-
-                    req.file.path,
-
-                    {
-                        folder: `empleados/${empleado_id}`,
-                        resource_type: 'auto'
-                    }
-
-                );
-
-            const rutaArchivo =
-                resultado.secure_url;
+const rutaArchivo =
+    '/archivos-empleados/' +
+    req.file.filename;
 
             // =====================================
             // 💾 GUARDAR MYSQL
             // =====================================
 
-            const sql = `
+const fechaVencimiento =
+    req.body.fecha_vencimiento || null;
 
-                INSERT INTO documentos_empleado (
+const sql = `
 
-                    empleado_id,
-                    categoria,
-                    tipo_documento,
-                    nombre_archivo,
-                    ruta_archivo,
-                    extension,
-                    estado
+    INSERT INTO documentos_empleado (
 
-                )
+        empleado_id,
+        categoria,
+        tipo_documento,
+        nombre_archivo,
+        ruta_archivo,
+        extension,
+        estado,
+        fecha_vencimiento,
+        estado_vigencia,
+        activo
 
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+    )
 
-            `;
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 
-            await db.query(
+`;
 
-                sql,
+await db.query(
 
-                [
+    sql,
 
-                    empleado_id,
+    [
 
-                    categoria || tipo_documento,
+        empleado_id,
 
-                    tipo_documento,
+        categoria || tipo_documento,
 
-                    req.file.originalname,
+        tipo_documento,
 
-                    rutaArchivo,
+        req.file.originalname,
 
-                    extension,
+        rutaArchivo,
 
-                    'APROBADO'
+        extension,
 
-                ]
+        'APROBADO',
 
-            );
+        fechaVencimiento,
+
+        'VIGENTE',
+
+        1
+
+    ]
+
+);
 
             // =====================================
             // 🔥 CENTRO ACTIVIDAD
