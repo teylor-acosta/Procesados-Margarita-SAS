@@ -740,22 +740,34 @@ async function guardarRegistro(){
 
 async function editarRegistro(id, nombre){
 
-    const { value } =
-        await Swal.fire({
+const { value } =
+    await Swal.fire({
 
-            title:'Editar registro',
+        title:'Editar registro',
 
-            input:'text',
+        input:'text',
 
-            inputValue:nombre,
+        inputValue:nombre,
 
-            showCancelButton:true,
+        showCancelButton:true,
 
-            confirmButtonText:'Guardar',
+        confirmButtonText:'Guardar',
 
-            cancelButtonText:'Cancelar'
+        cancelButtonText:'Cancelar',
 
-        });
+        width:'500px',
+
+        backdrop:true,
+
+        allowOutsideClick:false,
+
+        customClass:{
+
+            popup:'swal-erp-popup'
+
+        }
+
+    });
 
     if(!value) return;
 
