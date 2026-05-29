@@ -634,4 +634,70 @@ router.get('/api/empleado/:id', async (req, res) => {
 
 });
 
+// ============================================
+// 🔥 DASHBOARD ESTADISTICAS
+// ============================================
+
+router.get('/api/dashboard-estadisticas', async (req, res) => {
+
+    try {
+
+        const db = req.app.get('db');
+
+        // ====================================
+        // EMPLEADOS ACTIVOS
+        // ====================================
+
+        const [empleados] = await db.query(`
+            SELECT COUNT(*) AS total
+            FROM empleados
+            WHERE activo = 'SI'
+        `);
+
+        // ====================================
+        // DOCUMENTOS
+        // ====================================
+
+        const [documentos] = await db.query(`
+    SELECT COUNT(*) AS total
+    FROM documentos_empleado
+`);
+
+        // ====================================
+        // ACTIVIDAD
+        // ====================================
+
+        const [actividad] = await db.query(`
+            SELECT COUNT(*) AS total
+            FROM centro_actividad
+        `);
+
+        res.json({
+
+            success: true,
+
+            empleados:
+                empleados[0].total,
+
+            documentos:
+                documentos[0].total,
+
+            actividad:
+                actividad[0].total
+
+        });
+
+    } catch(error){
+
+        console.log(error);
+
+        res.status(500).json({
+
+            success: false
+
+        });
+
+    }
+
+});
 module.exports = router;

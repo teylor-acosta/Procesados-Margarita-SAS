@@ -580,7 +580,8 @@ body{
 
     transition:.4s;
 
-    overflow-y:auto;
+    overflow-y:scroll;
+overflow-x:hidden;
 }
 
 .panel-lateral.activo{
@@ -1008,4 +1009,21 @@ body{
 
         gap:18px;
     }
+}
+/* =========================================
+🔥 FIX SWEET ALERT
+========================================= */
+
+.swal2-container{
+
+    z-index:999999999 !important;
+
+}
+
+.swal-erp-popup{
+
+    border-radius:24px !important;
+
+    padding:25px !important;
+
 }

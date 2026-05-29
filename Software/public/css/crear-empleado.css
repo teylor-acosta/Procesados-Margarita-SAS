@@ -1,68 +1,80 @@
-/* ============================================
-   🌎 BODY GLOBAL ERP
-============================================ */
+/* =========================================
+🔥 RESET GLOBAL
+========================================= */
+
+*{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+}
 
 body{
 
     margin:0;
-    padding:0;
+
+    font-family:'Averia Libre', cursive;
 
     min-height:100vh;
 
     overflow-x:hidden;
 
-    font-family:'Averia Libre', cursive;
+    position:relative;
 
     background:
         linear-gradient(
-            135deg,
-            rgba(34,197,94,.10),
-            rgba(37,99,235,.10)
+            rgba(255,255,255,.76),
+            rgba(255,255,255,.76)
         ),
         url('/img/Fondo.webp');
 
     background-size:cover;
-    background-position:center;
-    background-attachment:fixed;
 
-    -webkit-font-smoothing:antialiased;
-    text-rendering:optimizeLegibility;
+    background-position:center;
+
+    background-attachment:fixed;
 
 }
 
 
-/* ============================================
-   🧭 NAVBAR GLOBAL ERP
-============================================ */
+/* =========================================
+🔥 NAVBAR
+========================================= */
 
 .navbar-custom{
 
     width:100%;
 
-    background:
-        rgba(255,255,255,.96);
+    height:90px;
 
-    backdrop-filter:blur(10px);
+    background:#ffffffee;
 
     display:flex;
 
     justify-content:space-between;
+
     align-items:center;
 
-    padding:14px 30px;
-
-    box-shadow:
-        0 4px 18px rgba(0,0,0,.08);
+    padding:0 30px;
 
     position:fixed;
 
     top:0;
+
     left:0;
 
-    z-index:9999;
-}
+    z-index:99999;
 
-/* IZQUIERDA */
+    border-bottom:
+        1px solid #e5e7eb;
+
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.06);
+
+}
 
 .navbar-left{
 
@@ -71,14 +83,17 @@ body{
     align-items:center;
 
     gap:14px;
+
 }
 
 .logo-navbar{
 
     width:55px;
+
     height:55px;
 
     object-fit:contain;
+
 }
 
 .empresa-nombre{
@@ -91,10 +106,14 @@ body{
 
     font-style:italic;
 
-    letter-spacing:.5px;
+    letter-spacing:.4px;
+
 }
 
-/* DERECHA */
+
+/* =========================================
+🔥 BOTONES NAVBAR
+========================================= */
 
 .acciones-navbar{
 
@@ -103,9 +122,8 @@ body{
     align-items:center;
 
     gap:14px;
-}
 
-/* BOTON VOLVER */
+}
 
 .btn-volver{
 
@@ -115,11 +133,11 @@ body{
 
     color:#111827;
 
-    text-decoration:none;
-
     padding:12px 24px;
 
     border-radius:18px;
+
+    font-weight:700;
 
     display:flex;
 
@@ -127,12 +145,15 @@ body{
 
     gap:10px;
 
-    font-weight:700;
+    cursor:pointer;
 
     transition:.25s;
 
+    font-family:'Averia Libre', cursive;
+
     box-shadow:
         0 4px 10px rgba(0,0,0,.05);
+
 }
 
 .btn-volver:hover{
@@ -142,14 +163,9 @@ body{
     transform:
         translateY(-2px);
 
-    color:#111827;
 }
 
-/* BOTON LOGOUT */
-
 .btn-logout{
-
-    border:none;
 
     text-decoration:none;
 
@@ -160,7 +176,7 @@ body{
             #dc2626
         );
 
-    color:white;
+    color:#fff;
 
     padding:12px 24px;
 
@@ -176,8 +192,11 @@ body{
 
     transition:.3s;
 
+    font-family:'Averia Libre', cursive;
+
     box-shadow:
-        0 10px 20px rgba(239,68,68,.25);
+        0 10px 20px rgba(239,68,68,.20);
+
 }
 
 .btn-logout:hover{
@@ -185,68 +204,65 @@ body{
     transform:
         translateY(-2px);
 
-    box-shadow:
-        0 15px 28px rgba(239,68,68,.35);
+    color:#fff;
 
-    color:white;
+    box-shadow:
+        0 15px 28px rgba(239,68,68,.30);
+
 }
 
 
-/* ============================================
-   📌 CONTENEDOR PRINCIPAL
-============================================ */
+/* =========================================
+🔥 CONTENEDOR PRINCIPAL
+========================================= */
 
-.crear-container {
+.crear-container{
 
-    margin-top:120px;
+    width:100%;
 
     display:flex;
 
     justify-content:center;
 
-    padding:18px;
-
-    width:100%;
-
-    box-sizing:border-box;
+    padding:130px 20px 40px;
 
 }
 
 
-/* ============================================
-   🎯 TARJETA FORMULARIO
-============================================ */
+/* =========================================
+🔥 TARJETA PRINCIPAL
+========================================= */
 
-.form-card {
-
-    background:rgba(255,255,255,0.97);
-
-    padding:30px;
-
-    border-radius:18px;
+.form-card{
 
     width:100%;
 
-    max-width:900px;
+    max-width:1050px;
 
-    box-shadow:0 8px 22px rgba(0,0,0,0.10);
+    background:#ffffffee;
+
+    border-radius:30px;
+
+    border:
+        1px solid #dbeafe;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.10);
+
+    padding:40px;
 
     position:relative;
 
-    z-index:10;
-
-    overflow:hidden;
-
-    will-change:auto;
+    animation:fadeUp .45s ease;
 
 }
 
 
-/* ============================================
-   🔥 BORDE CORPORATIVO
-============================================ */
+/* =========================================
+🔥 BORDE CORPORATIVO
+========================================= */
 
-.form-card::before {
+.form-card::before{
 
     content:"";
 
@@ -254,7 +270,7 @@ body{
 
     inset:0;
 
-    border-radius:18px;
+    border-radius:30px;
 
     padding:2px;
 
@@ -278,89 +294,214 @@ body{
 }
 
 
-/* ============================================
-   🧾 TITULO
-============================================ */
+/* =========================================
+🔥 HEADER FORMULARIO
+========================================= */
 
-.titulo-form {
+.header-formulario{
 
-    text-align:center;
+    display:flex;
 
-    font-weight:bold;
+    align-items:center;
 
-    font-size:22px;
+    gap:24px;
 
-    margin-bottom:22px;
+    margin-bottom:35px;
+
+}
+
+.avatar-empleado{
+
+    width:78px;
+
+    height:78px;
+
+    border-radius:22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #06b6d4
+        );
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:#fff;
+
+    font-size:32px;
+
+    box-shadow:
+        0 12px 24px rgba(37,99,235,.28);
+
+}
+
+.titulo-form{
+
+    font-size:38px;
+
+    font-weight:700;
+
+    font-family:'Averia Libre', cursive !important;
+
+}
+
+.subtitulo-form{
+
+    color:#6b7280;
+
+    font-size:15px;
+
+}
+
+
+/* =========================================
+🔥 SECCIONES
+========================================= */
+
+.seccion-form{
+
+    background:#f8fafc;
+
+    border:
+        1px solid #edf2f7;
+
+    border-radius:24px;
+
+    padding:24px;
+
+    margin-bottom:28px;
+
+}
+
+.titulo-seccion{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    font-size:20px;
+
+    font-weight:700;
+
+    color:#1d4ed8;
+
+    margin-bottom:25px;
+
+}
+
+.titulo-seccion i{
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:14px;
+
+    background:
+        rgba(37,99,235,.10);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
 
     color:#2563eb;
 
-    font-style:italic;
-
 }
 
 
-/* ============================================
-   🧩 LABELS
-============================================ */
+/* =========================================
+🔥 LABELS
+========================================= */
 
-label {
-
-    font-weight:600;
+label{
 
     font-size:14px;
+
+    font-weight:700;
 
     color:#374151;
 
-    margin-bottom:5px;
+    margin-bottom:8px;
 
-    font-style:italic;
+    display:block;
 
 }
 
 
-/* ============================================
-   🔲 INPUTS Y SELECTS
-============================================ */
+/* =========================================
+🔥 INPUTS
+========================================= */
 
-.form-control {
+.form-control{
 
-    border-radius:12px;
+    border-radius:16px;
 
-    padding:10px 12px;
+    padding:14px 16px;
 
-    border:1px solid #d1d5db;
+    border:
+        1px solid #dbe3f0;
 
-    font-size:14px;
+    background:#fff;
 
-    min-height:45px;
+    min-height:56px;
 
-    transition:
-        border-color .2s ease,
-        box-shadow .2s ease;
-
-    box-shadow:none !important;
+    font-size:15px;
 
     font-family:'Averia Libre', cursive;
 
+    transition:.3s ease;
+
+    box-shadow:none !important;
+
 }
 
-
-.form-control:focus {
+.form-control:focus{
 
     border-color:#2563eb;
 
     box-shadow:
-        0 0 0 2px
-        rgba(37,99,235,0.12) !important;
+        0 0 0 4px rgba(37,99,235,.12) !important;
+
+    transform:
+        translateY(-1px);
+
+}
+
+select.form-control{
+
+    cursor:pointer;
 
 }
 
 
-/* ============================================
-   🎯 BOTÓN GUARDAR
-============================================ */
+/* =========================================
+🔥 BOTON
+========================================= */
 
-.btn-guardar {
+.contenedor-boton{
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:center;
+
+    margin-top:10px;
+
+}
+
+.btn-guardar{
+
+    border:none;
 
     background:
         linear-gradient(
@@ -369,90 +510,114 @@ label {
             #2563eb
         );
 
-    color:white;
+    color:#fff;
 
-    border:none;
+    padding:15px 45px;
 
-    padding:12px 40px;
+    border-radius:18px;
 
-    border-radius:30px;
+    font-size:16px;
 
-    font-weight:bold;
+    font-weight:700;
 
-    font-size:15px;
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    cursor:pointer;
+
+    transition:.3s;
 
     font-family:'Averia Libre', cursive;
 
-    transition:
-        transform .2s ease,
-        opacity .2s ease;
+    box-shadow:
+        0 12px 25px rgba(37,99,235,.25);
 
-    min-height:48px;
+}
+
+.btn-guardar:hover{
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        0 18px 35px rgba(37,99,235,.35);
 
 }
 
 
-.btn-guardar:hover {
+/* =========================================
+🔥 ANIMACION
+========================================= */
 
-    transform:translateY(-2px);
+@keyframes fadeUp{
 
-    opacity:.95;
+    from{
 
-}
+        opacity:0;
 
-
-/* ============================================
-   🧱 GRID ESPACIADO
-============================================ */
-
-.row.g-3 > div {
-
-    margin-bottom:4px;
-
-}
-
-
-/* ============================================
-   📱 TABLET
-============================================ */
-
-@media (max-width:992px) {
-
-    .crear-container {
-
-        padding:15px;
+        transform:
+            translateY(20px);
 
     }
 
-    .form-card {
+    to{
 
-        padding:24px;
+        opacity:1;
 
-        border-radius:16px;
+        transform:
+            translateY(0);
 
     }
 
 }
 
 
-/* ============================================
-   📱 MÓVIL
-============================================ */
+/* =========================================
+🔥 RESPONSIVE TABLET
+========================================= */
 
-@media (max-width:768px) {
+@media(max-width:992px){
+
+    .form-card{
+
+        padding:30px;
+
+    }
+
+    .titulo-form{
+
+        font-size:30px;
+
+    }
+
+}
+
+
+/* =========================================
+🔥 RESPONSIVE MOVIL
+========================================= */
+
+@media(max-width:768px){
 
     .navbar-custom{
 
-        padding:14px 18px;
-
         flex-direction:column;
 
+        height:auto;
+
+        padding:18px;
+
         gap:16px;
+
     }
 
     .empresa-nombre{
 
         font-size:22px;
+
     }
 
     .acciones-navbar{
@@ -462,140 +627,119 @@ label {
         justify-content:center;
 
         flex-wrap:wrap;
-    }
-
-    .crear-container {
-
-        margin-top:170px;
-
-        padding:12px;
 
     }
 
-    .form-card {
+    .crear-container{
 
-        padding:18px;
-
-        border-radius:15px;
-
-        backdrop-filter:none;
-
-        box-shadow:
-            0 4px 14px
-            rgba(0,0,0,0.08);
+        padding-top:180px;
 
     }
 
-    .titulo-form {
+    .form-card{
 
-        font-size:18px;
+        padding:22px;
 
-        margin-bottom:18px;
-
-    }
-
-    label {
-
-        font-size:13px;
+        border-radius:22px;
 
     }
 
-    .form-control {
+    .header-formulario{
 
-        font-size:13px;
+        flex-direction:column;
 
-        padding:8px 10px;
-
-        min-height:42px;
+        text-align:center;
 
     }
 
-    .btn-guardar {
+    .titulo-form{
 
-        width:100%;
+        font-size:24px;
 
-        padding:12px;
+    }
+
+    .subtitulo-form{
 
         font-size:14px;
 
-        border-radius:14px;
+    }
+
+    .btn-guardar{
+
+        width:100%;
+
+        justify-content:center;
 
     }
 
 }
 
 
-/* ============================================
-   📱 MÓVIL PEQUEÑO
-============================================ */
+/* =========================================
+🔥 RESPONSIVE PEQUEÑO
+========================================= */
 
-@media (max-width:480px) {
+@media(max-width:480px){
 
     .empresa-nombre{
 
         font-size:18px;
+
     }
 
     .logo-navbar{
 
         width:42px;
+
         height:42px;
-    }
-
-    .acciones-navbar{
-
-        flex-direction:column;
-
-        width:100%;
-    }
-
-    .btn-volver,
-    .btn-logout{
-
-        width:100%;
-
-        justify-content:center;
-    }
-
-    .crear-container {
-
-        padding:10px;
 
     }
 
-    .form-card {
+    .form-card{
 
-        padding:14px;
-
-        border-radius:14px;
+        padding:18px;
 
     }
 
-    .titulo-form {
+    .avatar-empleado{
 
-        font-size:16px;
+        width:65px;
+
+        height:65px;
+
+        font-size:28px;
 
     }
 
-    .form-control {
+    .titulo-form{
 
-        font-size:12px;
+        font-size:22px;
 
     }
 
 }
+/* =========================================
+🔥 FORZAR FUENTE ERP
+========================================= */
 
+body,
+input,
+select,
+textarea,
+button,
+label,
+option,
+.form-control,
+.btn-guardar,
+.btn-volver,
+.btn-logout,
+.titulo-form,
+.subtitulo-form,
+.titulo-seccion,
+.seccion-form,
+.navbar-custom,
+.navbar-custom *{
 
-/* ============================================
-   🔥 OPTIMIZACIÓN GLOBAL MÓVIL
-============================================ */
-
-@media (max-width:768px){
-
-    *{
-
-        -webkit-tap-highlight-color:transparent;
-
-    }
+    font-family:'Averia Libre', cursive !important;
 
 }
