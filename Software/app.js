@@ -43,13 +43,15 @@ app.use(session({
 
     saveUninitialized: false,
 
+    rolling: true,
+
     cookie: {
 
         secure: false,
 
         httpOnly: true,
 
-        maxAge: 30 * 60 * 1000
+        maxAge: 8 * 60 * 60 * 1000
 
     }
 
