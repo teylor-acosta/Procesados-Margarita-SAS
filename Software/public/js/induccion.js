@@ -402,25 +402,29 @@ async function marcarVideoComoVisto() {
 
     try {
 
-        const response =
-            await fetch('/api/marcar-visto', {
+const response = await fetch('/api/marcar-visto', {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        sub_capitulo_id: currentSubCapituloId
+    })
+});
 
-                method: 'POST',
+if (response.status === 401) {
 
-                credentials: 'include',
+    alert(
+        'Su sesión expiró. Recargue la página para continuar.'
+    );
 
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+    location.reload();
 
-                body: JSON.stringify({
-                    sub_capitulo_id:
-                        currentSubCapituloId
-                })
-            });
+    return;
+}
 
-        const result =
-            await response.json();
+const result = await response.json();
 
         console.log(
             'Respuesta API:',
