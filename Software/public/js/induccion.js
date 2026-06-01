@@ -389,96 +389,103 @@ function verVideo(subCapituloId, capituloId, videoUrl) {
 }
 
 async function marcarVideoComoVisto() {
+
     if (!currentSubCapituloId) return;
-    
-    const btnConfirmar = document.getElementById('btnConfirmarVisto');
+
+    const btnConfirmar =
+        document.getElementById('btnConfirmarVisto');
+
     btnConfirmar.disabled = true;
-    btnConfirmar.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> GUARDANDO...';
-    
+
+    btnConfirmar.innerHTML =
+        '<i class="fas fa-spinner fa-spin me-1"></i> GUARDANDO...';
+
     try {
-        const response = await fetch('/api/marcar-visto', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ sub_capitulo_id: currentSubCapituloId })
-        });
-        
-        const result = await response.json();
-        
-if (result.success) {
 
-    // 🔥 DETENER VIDEO
-    const videoPlayer =
-        document.getElementById('videoPlayer');
+        const response =
+            await fetch('/api/marcar-visto', {
 
-if (result.success) {
+                method: 'POST',
 
-    // 🔥 DETENER VIDEO
-    const videoPlayer =
-        document.getElementById('videoPlayer');
+                credentials: 'include',
 
-    if (videoPlayer) {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
 
-        const videoSource =
-            document.getElementById('videoSource');
+                body: JSON.stringify({
+                    sub_capitulo_id:
+                        currentSubCapituloId
+                })
+            });
 
-        videoPlayer.pause();
+        const result =
+            await response.json();
 
-        videoPlayer.currentTime = 0;
+        console.log(
+            'Respuesta API:',
+            result
+        );
 
-        if (videoSource) {
+        if (result.success) {
 
-            videoSource.src = '';
+            const videoPlayer =
+                document.getElementById('videoPlayer');
 
-        }
+            if (videoPlayer) {
 
-        videoPlayer.load();
-    }
+                const videoSource =
+                    document.getElementById('videoSource');
 
-    // 🔥 CERRAR MODAL
-    if (videoModalInstance) {
+                videoPlayer.pause();
 
-        videoModalInstance.hide();
+                videoPlayer.currentTime = 0;
 
-    }
+                if (videoSource) {
 
-    await cargarCapitulos();
+                    videoSource.src = '';
 
-}
+                }
 
-} else {
-            alert('Error al marcar el video como visto');
+                videoPlayer.load();
+            }
+
+            if (videoModalInstance) {
+
+                videoModalInstance.hide();
+
+            }
+
+            await cargarCapitulos();
+
+        } else {
+
+            alert(
+                result.message ||
+                'Error al marcar el video como visto'
+            );
+
             btnConfirmar.disabled = false;
-            btnConfirmar.innerHTML = 'MARCAR COMO VISTO';
+
+            btnConfirmar.innerHTML =
+                'MARCAR COMO VISTO';
         }
+
     } catch (error) {
-        console.error('Error:', error);
-        alert('Error de conexión');
+
+        console.error(
+            'Error:',
+            error
+        );
+
+        alert(
+            'Error de conexión con el servidor'
+        );
+
         btnConfirmar.disabled = false;
-        btnConfirmar.innerHTML = 'MARCAR COMO VISTO';
-    }
-}
 
-function detenerVideo() {
-
-    const videoPlayer =
-        document.getElementById('videoPlayer');
-
-    const videoSource =
-        document.getElementById('videoSource');
-
-    if (videoPlayer && videoSource) {
-
-        // 🔥 PAUSAR
-        videoPlayer.pause();
-
-        // 🔥 RESETEAR
-        videoPlayer.currentTime = 0;
-
-        // 🔥 LIMPIAR SOURCE
-        videoSource.src = '';
-
-        // 🔥 RECARGAR VIDEO
-        videoPlayer.load();
+        btnConfirmar.innerHTML =
+            'MARCAR COMO VISTO';
     }
 }
 
