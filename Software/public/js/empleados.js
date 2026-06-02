@@ -746,67 +746,93 @@ document.addEventListener("DOMContentLoaded", () => {
     // =========================================
 
     window.desactivarDesdeModal =
-    async () => {
+async () => {
 
-        const id =
-            edit_id.value;
+    const id =
+        edit_id.value;
 
-        const confirmacion =
-            await Swal.fire({
+    modal.hide();
 
-                title:
-                    '¿Deseas desactivar el empleado?',
+    const confirmacion =
+        await Swal.fire({
 
-                icon:'warning',
+            title:
+                '¿Deseas desactivar el empleado?',
 
-                showCancelButton:true,
+            text:
+                'Esta acción desactivará el empleado.',
 
-                confirmButtonText:'Sí',
+            icon:'warning',
 
-                cancelButtonText:'Cancelar'
+            showCancelButton:true,
 
-            });
+            confirmButtonText:'Sí, desactivar',
 
-        if(!confirmacion.isConfirmed)
-            return;
+            cancelButtonText:'Cancelar',
 
-        try{
+            allowOutsideClick:false
 
-            await fetch('/api/desactivar-empleado', {
+        });
 
-                method:'PUT',
+    if(!confirmacion.isConfirmed){
 
-                headers:{
+        modal.show();
 
-                    'Content-Type':
-                    'application/json'
+        return;
 
-                },
+    }
 
-                body:
-                    JSON.stringify({id})
+    try{
 
-            });
+        await fetch('/api/desactivar-empleado', {
 
-            Swal.fire({
+            method:'PUT',
 
-                icon:'success',
+            headers:{
 
-                title:'Empleado desactivado'
+                'Content-Type':
+                'application/json'
 
-            });
+            },
 
-            modal.hide();
+            body:
+                JSON.stringify({id})
 
-            cargar();
+        });
 
-        }catch(error){
+        await Swal.fire({
 
-            console.error(error);
+            icon:'success',
 
-        }
+            title:'Empleado desactivado',
 
-    };
+            text:'El empleado fue desactivado correctamente',
+
+            confirmButtonText:'Aceptar'
+
+        });
+
+        cargar();
+
+    }catch(error){
+
+        console.error(error);
+
+        await Swal.fire({
+
+            icon:'error',
+
+            title:'Error',
+
+            text:'No fue posible desactivar el empleado'
+
+        });
+
+        modal.show();
+
+    }
+
+};
 
     // =========================================
     // 🔥 INICIAR

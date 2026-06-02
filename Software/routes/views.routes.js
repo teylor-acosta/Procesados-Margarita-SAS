@@ -134,6 +134,28 @@ router.get('/panel', proteger, (req, res) => {
 router.get('/recursos-humanos', proteger, soloSuperAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'recursos-humanos.html'));
 });
+
+/* =========================================
+   🔥 CAPACITACIONES
+========================================= */
+
+router.get(
+    '/capacitaciones',
+    proteger,
+    (req, res) => {
+
+        res.sendFile(
+
+            path.join(
+                __dirname,
+                '../public/capacitaciones.html'
+            )
+
+        );
+
+    }
+);
+
 router.get('/usuarios', proteger, soloSuperAdmin, (req, res) => {
 
     res.sendFile(
@@ -189,6 +211,23 @@ router.get('/usuarios-registrados', proteger, soloSuperAdmin, (req, res) => {
         path.join(
             __dirname,
             '../public/usuarios-registrados.html'
+        )
+
+    );
+
+});
+
+/* =========================================
+   🔥 ROLES Y ACCESOS
+========================================= */
+
+router.get('/roles-accesos', proteger, soloSuperAdmin, (req, res) => {
+
+    res.sendFile(
+
+        path.join(
+            __dirname,
+            '../public/roles-accesos.html'
         )
 
     );

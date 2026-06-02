@@ -1,0 +1,436 @@
+/* =========================================
+   DASHBOARD CAPACITACIONES
+========================================= */
+
+.capacitaciones-dashboard{
+
+    max-width:1500px;
+
+    margin:40px auto;
+
+    padding:20px;
+
+}
+
+/* =========================================
+   CABECERA
+========================================= */
+
+.cabecera-capacitaciones{
+
+    text-align:center;
+
+    margin-bottom:40px;
+
+}
+
+.cabecera-capacitaciones h1{
+
+    font-size:3rem;
+
+    font-weight:700;
+
+    color:#1e293b;
+
+    margin-bottom:12px;
+
+}
+
+.cabecera-capacitaciones h1 i{
+
+    color:#f97316;
+
+    margin-right:12px;
+
+}
+
+.cabecera-capacitaciones p{
+
+    color:#64748b;
+
+    font-size:1.05rem;
+
+}
+
+/* =========================================
+   GRID ESTADISTICAS
+========================================= */
+
+.estadisticas-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(260px,1fr)
+        );
+
+    gap:25px;
+
+    margin-bottom:35px;
+
+}
+
+/* =========================================
+   TARJETAS
+========================================= */
+
+.card-estadistica{
+
+    border-radius:25px;
+
+    padding:30px;
+
+    color:white;
+
+    position:relative;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 20px 40px rgba(0,0,0,.15);
+
+    transition:.3s;
+
+}
+
+.card-estadistica:hover{
+
+    transform:
+        translateY(-6px);
+
+}
+
+/* =========================================
+   ICONO
+========================================= */
+
+.card-estadistica i{
+
+    font-size:2.5rem;
+
+    opacity:.85;
+
+    margin-bottom:15px;
+
+}
+
+/* =========================================
+   NUMERO
+========================================= */
+
+.card-estadistica h2{
+
+    font-size:3rem;
+
+    font-weight:700;
+
+    margin:0;
+
+}
+
+/* =========================================
+   TEXTO
+========================================= */
+
+.card-estadistica span{
+
+    font-size:1rem;
+
+    opacity:.95;
+
+}
+
+/* =========================================
+   COMPLETADAS
+========================================= */
+
+.completadas{
+
+    background:
+        linear-gradient(
+            135deg,
+            #16a34a,
+            #22c55e
+        );
+
+}
+
+/* =========================================
+   EN PROCESO
+========================================= */
+
+.proceso{
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #3b82f6
+        );
+
+}
+
+/* =========================================
+   PENDIENTES
+========================================= */
+
+.pendientes{
+
+    background:
+        linear-gradient(
+            135deg,
+            #dc2626,
+            #ef4444
+        );
+
+}
+
+/* =========================================
+   CERTIFICADOS
+========================================= */
+
+.certificados{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ea580c,
+            #f97316
+        );
+
+}
+
+/* =========================================
+   TABLA
+========================================= */
+
+.contenedor-tabla{
+
+    background:white;
+
+    border-radius:25px;
+
+    padding:25px;
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.08);
+
+}
+
+/* =========================================
+   BARRA SUPERIOR
+========================================= */
+
+.barra-superior{
+
+    margin-bottom:20px;
+
+}
+
+/* =========================================
+   BUSCADOR
+========================================= */
+
+#buscador{
+
+    max-width:400px;
+
+}
+
+/* =========================================
+   TABLA BOOTSTRAP
+========================================= */
+
+.table{
+
+    margin-bottom:0;
+
+}
+
+.table thead{
+
+    background:#f8fafc;
+
+}
+
+.table thead th{
+
+    border:none;
+
+    color:#334155;
+
+    font-weight:700;
+
+}
+
+.table tbody td{
+
+    vertical-align:middle;
+
+}
+
+/* =========================================
+   BARRA PROGRESO
+========================================= */
+
+.barra-progreso{
+
+    width:180px;
+
+    height:12px;
+
+    border-radius:20px;
+
+    background:#e2e8f0;
+
+    overflow:hidden;
+
+}
+
+.barra-progreso span{
+
+    display:block;
+
+    height:100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #22c55e,
+            #16a34a
+        );
+
+}
+
+/* =========================================
+   BADGES
+========================================= */
+
+.badge-completado{
+
+    background:#dcfce7;
+
+    color:#166534;
+
+    padding:8px 14px;
+
+    border-radius:20px;
+
+    font-weight:600;
+
+}
+
+.badge-proceso{
+
+    background:#dbeafe;
+
+    color:#1d4ed8;
+
+    padding:8px 14px;
+
+    border-radius:20px;
+
+    font-weight:600;
+
+}
+
+.badge-pendiente{
+
+    background:#fee2e2;
+
+    color:#991b1b;
+
+    padding:8px 14px;
+
+    border-radius:20px;
+
+    font-weight:600;
+
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:768px){
+
+    .capacitaciones-dashboard{
+
+        padding:15px;
+
+    }
+
+    .cabecera-capacitaciones h1{
+
+        font-size:2rem;
+
+    }
+
+    .estadisticas-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .card-estadistica{
+
+        padding:25px;
+
+    }
+
+}
+/* =========================================
+   PAGINACION
+========================================= */
+
+.contenedor-paginacion{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin-top:25px;
+
+    flex-wrap:wrap;
+
+}
+
+.btn-pagina{
+
+    width:42px;
+
+    height:42px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#e2e8f0;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.btn-pagina:hover{
+
+    background:#cbd5e1;
+
+}
+
+.btn-pagina.activa{
+
+    background:#f97316;
+
+    color:white;
+
+}

@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Roles y Accesos</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap" rel="stylesheet">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="/css/style1.css">
+<link rel="stylesheet" href="/css/roles-accesos.css">
+
+<link rel="icon" href="/img/Logo.png">
+
+</head>
+
+<body>
+
+<!-- =========================================
+NAVBAR
+========================================= -->
+
+<nav class="navbar-custom">
+
+    <div class="navbar-left">
+
+        <img
+            src="/img/Logo.png"
+            class="logo-navbar"
+            alt="Logo">
+
+        <span class="empresa-nombre">
+
+            Procesados Margarita SAS
+
+        </span>
+
+    </div>
+
+    <div class="acciones-navbar">
+
+        <a
+            href="/usuarios"
+            class="btn btn-light">
+
+            <i class="fas fa-arrow-left"></i>
+
+            Volver
+
+        </a>
+
+        <a
+            href="/logout"
+            class="btn-logout">
+
+            <i class="fas fa-power-off"></i>
+
+            Cerrar sesión
+
+        </a>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================================
+CONTENIDO
+========================================= -->
+
+<div class="roles-page">
+
+    <!-- HERO -->
+
+    <section class="hero-roles">
+
+        <div class="hero-info">
+
+            <div class="hero-icon">
+
+                <i class="fas fa-key"></i>
+
+            </div>
+
+            <div>
+
+                <h1>
+
+                    Roles y Accesos
+
+                </h1>
+
+                <p>
+
+                    Gestiona los permisos,
+                    accesos y módulos
+                    asignados a cada rol
+                    del sistema ERP.
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <button
+            id="btnNuevoRol"
+            class="btn-nuevo-rol">
+
+            <i class="fas fa-plus"></i>
+
+            Nuevo Rol
+
+        </button>
+
+    </section>
+
+
+    <!-- ESTADISTICAS -->
+
+    <section class="estadisticas-grid">
+
+        <div class="card-estadistica verde">
+
+            <div class="icono-estadistica">
+
+                <i class="fas fa-user-shield"></i>
+
+            </div>
+
+            <div>
+
+                <h2 id="totalRoles">
+
+                    0
+
+                </h2>
+
+                <span>
+
+                    Roles creados
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="card-estadistica azul">
+
+            <div class="icono-estadistica">
+
+                <i class="fas fa-th-large"></i>
+
+            </div>
+
+            <div>
+
+                <h2 id="totalModulos">
+
+                    0
+
+                </h2>
+
+                <span>
+
+                    Módulos disponibles
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="card-estadistica morado">
+
+            <div class="icono-estadistica">
+
+                <i class="fas fa-users"></i>
+
+            </div>
+
+            <div>
+
+                <h2 id="totalUsuarios">
+
+                    0
+
+                </h2>
+
+                <span>
+
+                    Usuarios asignados
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ROLES -->
+
+    <section class="roles-section">
+
+        <div class="section-header">
+
+            <h2>
+
+                Roles del Sistema
+
+            </h2>
+
+            <p>
+
+                Configura permisos,
+                módulos y accesos.
+
+            </p>
+
+        </div>
+
+        <div
+            id="rolesGrid"
+            class="roles-grid">
+
+        </div>
+
+    </section>
+
+
+    <!-- TABLA -->
+
+    <section class="tabla-section">
+
+        <div class="section-header">
+
+            <h2>
+
+                Administración General
+
+            </h2>
+
+            <p>
+
+                Consulta todos los roles
+                registrados en el sistema.
+
+            </p>
+
+        </div>
+
+        <div class="tabla-card">
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Rol</th>
+
+                            <th>Descripción</th>
+
+                            <th>Usuarios</th>
+
+                            <th>Módulos</th>
+
+                            <th>Estado</th>
+
+                            <th>Acciones</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody
+                        id="tablaRoles">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- =========================================
+MODAL NUEVO ROL
+========================================= -->
+
+<div
+    class="modal fade"
+    id="modalNuevoRol">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5>
+
+                    Crear Nuevo Rol
+
+                </h5>
+
+                <button
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+
+                    <div class="col-md-4">
+
+                        <label>
+
+                            Código
+
+                        </label>
+
+                        <input
+                            type="text"
+                            maxlength="4"
+                            id="codigoRol"
+                            class="form-control">
+
+                    </div>
+
+                    <div class="col-md-8">
+
+                        <label>
+
+                            Nombre
+
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nombreRolNuevo"
+                            class="form-control">
+
+                    </div>
+
+                </div>
+
+                <div class="mt-3">
+
+                    <label>
+
+                        Descripción
+
+                    </label>
+
+                    <textarea
+                        id="descripcionRol"
+                        rows="4"
+                        class="form-control">
+                    </textarea>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Cancelar
+
+                </button>
+
+                <button
+                    id="btnGuardarRol"
+                    class="btn btn-success">
+
+                    Crear Rol
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================
+MODAL PERMISOS
+========================================= -->
+
+<div
+    class="modal fade"
+    id="modalPermisos">
+
+    <div class="modal-dialog modal-xl">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5
+                    id="nombreRol">
+
+                    Configurar Permisos
+
+                </h5>
+
+                <button
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div
+                    id="contenedorModulos"
+                    class="modulos-grid">
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Cancelar
+
+                </button>
+
+                <button
+                    id="guardarPermisos"
+                    class="btn btn-success">
+
+                    Guardar Permisos
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="/js/roles-accesos.js"></script>
+
+</body>
+</html>

@@ -132,6 +132,13 @@ app.use(
     require('./routes/usuarios-registrados.routes')
 );
 
+app.use(require('./routes/roles-acceso.routes'));
+
+app.use(
+    require(
+        './routes/capacitaciones.routes'
+    )
+);
 
 // ============================================
 // TEST DB
