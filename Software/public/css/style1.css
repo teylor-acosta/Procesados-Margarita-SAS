@@ -1,4 +1,7 @@
-/* RESET */
+/* =========================================
+   RESET
+========================================= */
+
 *{
     margin:0;
     padding:0;
@@ -6,125 +9,270 @@
     -webkit-tap-highlight-color:transparent;
 }
 
-/* VARIABLES */
+/* =========================================
+   VARIABLES
+========================================= */
+
 :root{
+
     --verde:#22c55e;
     --verde-dark:#16a34a;
+
     --azul:#2563eb;
     --azul-dark:#1d4ed8;
+
+    --rojo:#ef4444;
+    --rojo-dark:#dc2626;
+
     --gris:#f4f7f6;
-    --glass:rgba(255,255,255,0.96);
+
 }
 
-/* BODY */
+/* =========================================
+   BODY
+========================================= */
+
 body{
+
     font-family:'Averia Libre', cursive;
+
     background:var(--gris);
+
     min-height:100vh;
+
     overflow-x:hidden;
+
     position:relative;
+
+    padding-top:95px;
+
     -webkit-font-smoothing:antialiased;
+
     text-rendering:optimizeLegibility;
+
 }
 
-/* FONDO */
+/* =========================================
+   FONDO
+========================================= */
+
 body::before{
+
     content:"";
+
     position:fixed;
+
     inset:0;
 
     background:
         url('../img/Fondo.webp')
-        center/cover no-repeat;
+        center/cover
+        no-repeat;
 
     filter:blur(4px);
+
     transform:scale(1.02);
 
     z-index:-1;
+
 }
 
-/* NAVBAR */
+/* =========================================
+   NAVBAR GLOBAL
+========================================= */
+
 .navbar-custom{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    padding:12px 28px;
-
-    background:#ffffff;
 
     position:fixed;
 
-    width:100%;
     top:0;
+    left:0;
 
-    z-index:1000;
+    width:100%;
+
+    height:85px;
+
+    background:#ffffff;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:0 28px;
+
+    z-index:9999;
 
     box-shadow:
-        0 4px 12px
-        rgba(0,0,0,0.08);
+        0 4px 15px rgba(0,0,0,.08);
+
 }
+
+/* =========================================
+   IZQUIERDA NAVBAR
+========================================= */
 
 .navbar-left{
+
     display:flex;
+
     align-items:center;
-    gap:10px;
+
+    gap:15px;
+
     min-width:0;
+
 }
+
+/* =========================================
+   LOGO
+========================================= */
 
 .logo-navbar{
-    width:45px;
+
+    width:58px;
+
     height:auto;
+
     object-fit:contain;
+
 }
+
+/* =========================================
+   EMPRESA
+========================================= */
 
 .empresa-nombre{
-    font-weight:bold;
-    color:#15803d;
-    font-size:italic;
-    line-height:1.2;
+
+    font-family:'Averia Libre', cursive;
+
+    font-size:24px;
+
+    font-weight:700;
+
+    color:#16a34a;
+
+    line-height:1.1;
+
 }
 
-/* LOGOUT */
-.btn-logout{
-    background:#dc2626;
-    color:white;
+/* =========================================
+   DERECHA NAVBAR
+========================================= */
 
-    padding:8px 16px;
+.acciones-navbar{
 
-    border-radius:20px;
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+/* =========================================
+   BOTON VOLVER
+========================================= */
+
+.acciones-navbar .btn-light{
+
+    background:#f8fafc;
+
+    border:none;
+
+    color:#111827;
+
+    padding:12px 22px;
+
+    border-radius:18px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    font-weight:600;
+
+    transition:.25s;
 
     text-decoration:none;
 
-    font-weight:500;
+}
 
-    transition:
-        transform .2s ease,
-        opacity .2s ease;
+.acciones-navbar .btn-light:hover{
+
+    background:#e2e8f0;
+
+    transform:translateY(-2px);
+
+    color:#111827;
+
+}
+
+/* =========================================
+   BOTON LOGOUT
+========================================= */
+
+.btn-logout{
+
+    background:var(--rojo);
+
+    color:white;
+
+    padding:12px 22px;
+
+    border-radius:18px;
+
+    text-decoration:none;
+
+    font-weight:600;
 
     display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
 
-    min-height:40px;
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    transition:.25s;
+
+    min-height:44px;
+
 }
 
 .btn-logout:hover{
-    background:#b91c1c;
-    transform:translateY(-1px);
-    opacity:.95;
+
+    background:var(--rojo-dark);
+
+    color:white;
+
+    transform:translateY(-2px);
+
 }
 
-/* MENU */
+/* =========================================
+   MENU
+========================================= */
+
 .menu-toggle{
+
     font-size:20px;
+
     cursor:pointer;
+
     color:#1e293b;
+
 }
 
-/* BOTONES */
+/* =========================================
+   BOTON GRADIENTE
+========================================= */
+
 .btn-gradient{
+
     background:
         linear-gradient(
             135deg,
@@ -147,84 +295,207 @@ body::before{
         opacity .2s ease;
 
     min-height:46px;
+
 }
 
 .btn-gradient:hover{
+
     transform:translateY(-2px);
+
     opacity:.95;
+
 }
 
-/* INPUTS */
+/* =========================================
+   INPUTS
+========================================= */
+
 .form-control{
+
     border-radius:12px;
+
     padding:12px;
+
     border:1px solid #d1d5db;
+
     min-height:46px;
+
     font-size:14px;
+
     box-shadow:none !important;
+
 }
 
 .form-control:focus{
+
     border-color:#2563eb;
 
     box-shadow:
         0 0 0 2px
         rgba(37,99,235,0.12) !important;
+
 }
 
-/* ALERTAS */
+/* =========================================
+   ALERTAS
+========================================= */
+
 .alert-custom{
+
     padding:12px;
+
     border-radius:18px;
+
     text-align:center;
+
     font-size:14px;
+
 }
 
-/* RESPONSIVE */
+/* =========================================
+   TABLET
+========================================= */
+
 @media (max-width:768px){
 
+    body{
+
+        padding-top:85px;
+
+    }
+
     body::before{
+
         filter:blur(2px);
+
     }
 
     .navbar-custom{
-        padding:10px 14px;
+
+        height:75px;
+
+        padding:0 14px;
+
+    }
+
+    .logo-navbar{
+
+        width:48px;
+
     }
 
     .empresa-nombre{
-        font-size:14px;
+
+        font-size:18px;
+
+    }
+
+    .acciones-navbar{
+
+        gap:8px;
+
+    }
+
+    .acciones-navbar .btn-light{
+
+        padding:10px 14px;
+
+        border-radius:14px;
+
+        font-size:13px;
+
     }
 
     .btn-logout{
-        padding:8px 12px;
+
+        padding:10px 14px;
+
         border-radius:14px;
+
         font-size:13px;
+
     }
 
     .btn-gradient{
+
         border-radius:16px;
+
     }
 
 }
 
+/* =========================================
+   MOVIL
+========================================= */
+
 @media (max-width:576px){
 
-    .btn-gradient{
-        width:100%;
-        text-align:center;
-    }
+    body{
 
-    .form-control{
-        font-size:13px;
+        padding-top:80px;
+
     }
 
     .navbar-custom{
-        gap:8px;
+
+        height:72px;
+
+        padding:0 10px;
+
+    }
+
+    .logo-navbar{
+
+        width:42px;
+
     }
 
     .empresa-nombre{
-        max-width:120px;
+
+        font-size:14px;
+
+        max-width:140px;
+
+        line-height:1.1;
+
         word-break:break-word;
+
+    }
+
+    .acciones-navbar{
+
+        gap:5px;
+
+    }
+
+    .acciones-navbar .btn-light{
+
+        padding:8px 10px;
+
+        font-size:12px;
+
+    }
+
+    .btn-logout{
+
+        padding:8px 10px;
+
+        font-size:12px;
+
+    }
+
+    .btn-gradient{
+
+        width:100%;
+
+        text-align:center;
+
+    }
+
+    .form-control{
+
+        font-size:13px;
+
     }
 
 }
