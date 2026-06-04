@@ -202,92 +202,169 @@ CONTENIDO
 
     <!-- TABLA -->
 
-    <div class="contenedor-tabla">
+<div class="contenedor-tabla">
 
-        <div class="barra-superior">
+    <div class="barra-superior">
 
-            <input
-                type="text"
-                id="buscador"
-                class="form-control"
-                placeholder="Buscar empleado..."
+        <input
+            type="text"
+            id="buscador"
+            class="form-control"
+            placeholder="Buscar empleado..."
+        >
+
+        <button
+            id="btnExcel"
+            class="btn-exportar"
+        >
+
+            <i class="fas fa-file-excel"></i>
+
+            Exportar Excel
+
+        </button>
+
+    </div>
+
+    <div class="filtros-capacitacion">
+
+        <button
+            class="btn-filtro activo"
+            data-filtro="todos"
+        >
+            Todos
+        </button>
+
+        <button
+            class="btn-filtro"
+            data-filtro="completada"
+        >
+            Completadas
+        </button>
+
+        <button
+            class="btn-filtro"
+            data-filtro="proceso"
+        >
+            En Proceso
+        </button>
+
+        <button
+            class="btn-filtro"
+            data-filtro="pendiente"
+        >
+            Sin Iniciar
+        </button>
+
+        <button
+            class="btn-filtro"
+            data-filtro="certificado"
+        >
+            Con Certificado
+        </button>
+
+        <button
+            class="btn-filtro"
+            data-filtro="sin-certificado"
+        >
+            Sin Certificado
+        </button>
+
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Código</th>
+
+                    <th>Empleado</th>
+
+                    <th>Usuario</th>
+
+                    <th>Progreso</th>
+
+                    <th>Evaluación</th>
+
+                    <th>Certificado</th>
+
+                    <th>Estado</th>
+
+                    <th>Acciones</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody
+                id="tablaSeguimiento"
             >
 
+            </tbody>
+
+        </table>
+
+        <div
+            id="contenedorPaginacion"
+            class="contenedor-paginacion"
+        >
         </div>
 
-        <div class="table-responsive">
+    </div>
 
-            <table class="table">
+</div>
+<div
+    class="modal fade"
+    id="modalDetalle"
+    tabindex="-1"
+>
 
-                <thead>
+    <div
+        class="modal-dialog modal-lg"
+    >
 
-                    <tr>
+        <div
+            class="modal-content"
+        >
 
+            <div
+                class="modal-header"
+            >
 
-                        <th>
-
-                            Código 
-
-                        </th>
-
-                        <th>
-
-                            Empleado
-
-                        </th>
-
-                        <th>
-
-                            Usuario
-
-                        </th>
-
-                        <th>
-
-                            Progreso
-
-                        </th>
-
-                        <th>
-
-                            Evaluación
-
-                        </th>
-
-                        <th>
-
-                            Certificado
-
-                        </th>
-
-                        <th>
-
-                            Estado
-
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody
-                    id="tablaSeguimiento"
+                <h5
+                    class="modal-title"
                 >
 
-                </tbody>
+                    Detalle de Capacitación
 
-            </table>
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                ></button>
+
+            </div>
+
             <div
-    id="contenedorPaginacion"
-    class="contenedor-paginacion"
->
-</div>
+                class="modal-body"
+                id="contenidoDetalle"
+            >
+
+            </div>
 
         </div>
 
     </div>
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script src="/js/capacitaciones.js"></script>
 

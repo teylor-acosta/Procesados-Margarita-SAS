@@ -17,13 +17,13 @@ const SALT_ROUNDS = 10;
 
 const transporter = nodemailer.createTransport({
 
-    service: 'gmail',
+    host: "smtp.hostinger.com",
+    port: 465,
+    secure: true,
 
     auth: {
-
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-
     }
 
 });
@@ -723,7 +723,7 @@ router.post('/api/recuperar', async (req, res) => {
 
             await transporter.sendMail({
 
-                from: process.env.EMAIL_USER,
+                from: `"Procesados Margarita SAS" <${process.env.EMAIL_USER}>`,
 
                 to: usuario.email,
 
