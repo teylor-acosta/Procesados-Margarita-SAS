@@ -5,7 +5,7 @@ document.addEventListener(
 
 let registros = [];
 let registrosOriginales = [];
-
+let filtroActual = 'todos';
 let paginaActual = 1;
 
 const registrosPorPagina = 10;
@@ -17,7 +17,7 @@ async function iniciar(){
     await cargarSeguimiento();
 
     configurarBuscador();
-
+    configurarFiltros();
 }
 
 /* =========================================
@@ -212,6 +212,18 @@ function renderTabla(datos){
                 ${badgeEstado}
 
             </td>
+            <td>
+
+    <button
+        class="btn-ver-detalle"
+        onclick="verDetalle('${item.usuario}')"
+    >
+
+        <i class="fas fa-eye"></i>
+
+    </button>
+
+</td>
 
         </tr>
 
@@ -356,3 +368,300 @@ function configurarBuscador(){
     );
 
 }
+async function verDetalle(usuario){
+
+    try{
+
+        const response =
+        await fetch(
+
+            `/api/capacitaciones/detalle/${usuario}`
+
+        );
+
+        const data =
+        await response.json();
+
+        let htmlCapitulos = '';
+
+        data.capitulos.forEach(c=>{
+
+            htmlCapitulos += `
+
+                <div
+                    style="
+                        padding:8px;
+                        border-bottom:1px solid #eee;
+                    "
+                >
+
+                    ${
+                        c.visto
+                        ?
+                        '✅'
+                        :
+                        '❌'
+                    }
+
+                    ${c.titulo}
+
+                </div>
+
+            `;
+
+        });
+
+        document.getElementById(
+            'contenidoDetalle'
+        ).innerHTML = `
+
+            <div class="row mb-3">
+
+                <div class="col-md-4">
+
+                    <strong>Código:</strong><br>
+
+                    ${data.empleado.codigo}
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <strong>Usuario:</strong><br>
+
+                    ${data.empleado.Usuario}
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <strong>Empleado:</strong><br>
+
+                    ${data.empleado.nombre}
+
+                </div>
+
+            </div>
+
+            <hr>
+
+            <h5>
+
+                <i class="fas fa-list-check"></i>
+
+                Capítulos
+
+            </h5>
+
+            <div
+                style="
+                    max-height:250px;
+                    overflow:auto;
+                    border:1px solid #eee;
+                    border-radius:10px;
+                    padding:10px;
+                    margin-bottom:20px;
+                "
+            >
+
+                ${htmlCapitulos}
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <strong>Evaluación:</strong>
+
+                    ${
+                        data.evaluacion
+                        ?
+                        (
+                            data.evaluacion.aprobado
+                            ?
+                            `✅ Aprobado (${data.evaluacion.nota})`
+                            :
+                            `❌ Reprobado (${data.evaluacion.nota})`
+                        )
+                        :
+                        'Pendiente'
+                    }
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <strong>Certificado:</strong>
+
+                    ${
+                        data.certificado
+                        ?
+                        '📄 Emitido'
+                        :
+                        '⏳ No emitido'
+                    }
+
+                </div>
+
+            </div>
+
+        `;
+
+        new bootstrap.Modal(
+
+            document.getElementById(
+                'modalDetalle'
+            )
+
+        ).show();
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+window.verDetalle =
+verDetalle;
+
+function configurarFiltros(){
+
+    document
+    .querySelectorAll(
+        '.btn-filtro'
+    )
+    .forEach(btn=>{
+
+        btn.addEventListener(
+            'click',
+            ()=>{
+
+                document
+                .querySelectorAll(
+                    '.btn-filtro'
+                )
+                .forEach(b=>
+
+                    b.classList.remove(
+                        'activo'
+                    )
+
+                );
+
+                btn.classList.add(
+                    'activo'
+                );
+
+                filtroActual =
+                btn.dataset.filtro;
+
+                aplicarFiltros();
+
+            }
+        );
+
+    });
+
+}
+
+function aplicarFiltros(){
+
+    let resultado =
+    [...registrosOriginales];
+
+    switch(
+        filtroActual
+    ){
+
+        case 'completada':
+
+            resultado =
+            resultado.filter(x=>
+
+                x.estado ===
+                'Completada'
+
+            );
+
+        break;
+
+        case 'proceso':
+
+            resultado =
+            resultado.filter(x=>
+
+                x.estado ===
+                'En Proceso'
+
+            );
+
+        break;
+
+        case 'pendiente':
+
+            resultado =
+            resultado.filter(x=>
+
+                x.estado ===
+                'Sin Iniciar'
+
+            );
+
+        break;
+
+        case 'certificado':
+
+            resultado =
+            resultado.filter(x=>
+
+                x.certificado ===
+                'Sí'
+
+            );
+
+        break;
+
+        case 'sin-certificado':
+
+            resultado =
+            resultado.filter(x=>
+
+                x.certificado ===
+                'No'
+
+            );
+
+        break;
+
+    }
+
+    registros =
+    resultado;
+
+    paginaActual = 1;
+
+    renderTablaPaginada();
+
+}
+
+document
+.getElementById(
+    'btnExcel'
+)
+.addEventListener(
+    'click',
+    ()=>{
+
+        window.open(
+
+            '/api/capacitaciones/exportar-excel',
+
+            '_blank'
+
+        );
+
+    }
+);
