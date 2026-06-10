@@ -1,83 +1,227 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Perfil</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<link rel="icon" href="img/Gemini_Generated_Image_bo9w5fbo9w5fbo9w-removebg-preview.png">
-
-<!-- 🔥 ESTILOS GENERALES -->
-<link rel="stylesheet" href="css/style1.css">
-
-<!-- 🔥 ESTILOS SOLO PERFIL -->
-<link rel="stylesheet" href="css/perfil.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procesados Margarita - Mi Perfil</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Averia+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <link rel="stylesheet" href="css/style1.css">
+    <link rel="stylesheet" href="css/perfil.css"> 
+    <link rel="stylesheet" href="css/dashboard.css"> 
 </head>
-
 <body>
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
-<div class="perfil-header">
-    <button class="btn-back" onclick="volverDashboard()">
-        <i class="fas fa-arrow-left"></i>
-        <span>Volver al inicio</span>
-    </button>
-</div>
-
-<div class="perfil-container">
-    <div class="perfil-card">
-
-        <!-- FOTO -->
-        <div class="perfil-foto text-center">
-            <img id="foto" class="avatar" src="img/defecto.jpg">
-
-            <input type="file" id="inputFoto" hidden>
-
-            <button class="btn btn-success mt-2" onclick="subirFoto()">
-                Cambiar foto
-            </button>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-top">
+            <div class="sidebar-header">
+                <img src="img/Logo.png" alt="Logo Margarita" class="sidebar-logo">
+                <h4>Procesados Margarita</h4>
+                <span>ERP Empresarial</span>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <span class="menu-section-title">Navegación</span>
+                <a href="/dashboard" class="menu-item">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
+                <a href="/panel" class="menu-item">
+                    <i class="fas fa-th-large"></i> Panel
+                </a>
+                <a href="/perfil" class="menu-item active">
+                    <i class="fas fa-user-circle"></i> Mi Perfil
+                </a>
+            </nav>
         </div>
 
-        <!-- INFO -->
-        <div class="perfil-info">
+        <div class="sidebar-bottom">
+            <div class="usuario-sidebar" id="btnPerfil" style="cursor: pointer;">
+                <div class="usuario-info-block">
+                    <div class="avatar-sidebar">
+                        <div class="default-avatar-green" style="width: 100%; height: 100%; background-color: #198754; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                    <div class="datos-sidebar">
+                        <span id="nombre">Cargando...</span>
+                        <small id="rol">...</small>
+                        <small id="cargo" class="text-muted" style="font-size: 11px;"></small>
+                    </div>
+                </div>
+            </div>
+            <a href="#" id="btnLogout" class="sidebar-logout">
+                <i class="fas fa-power-off"></i> Cerrar Sesión
+            </a>
+        </div>
+    </aside>
 
-            <h3 id="nombre"></h3>
-            <p id="cargo"></p>
+    <nav class="navbar-custom">
+        <div class="navbar-left">
+            <i class="fas fa-bars menu-toggle d-lg-none" onclick="toggleMenu()"></i>
+            <span class="section-main-title d-none d-md-inline">Procesados Margarita</span>
+        </div>
+    </nav>
 
-            <hr>
+    <main class="dashboard-container">
+        <div class="content">
+            
+            <div class="mb-3">
+                <a href="/dashboard" class="btn btn-light btn-sm text-muted shadow-sm">
+                    <i class="fas fa-arrow-left me-1"></i> Volver al inicio
+                </a>
+            </div>
 
-            <div class="row">
+            <section class="bienvenida-card mb-4" style="background: linear-gradient(135deg, #02412e 0%, #036245 100%);">
+                <div class="d-flex align-items-center gap-4 p-2 text-white flex-wrap">
+                    <div style="width: 90px; height: 90px; position: relative;" class="d-flex align-items-center justify-content-center bg-white rounded-circle shadow border border-3 border-white overflow-hidden">
+                        
+                        <img id="perfFoto" src="" alt="Foto Perfil" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                        
+                        <i class="fas fa-user text-secondary" id="perfFotoDefault" style="font-size: 2.5rem;"></i>
+                    
+                    </div>
+                    <div>
+                        <h1 class="text-white mb-1" style="font-size: 1.8rem;"><span id="nombreBienvenida">Cargando Nombre...</span></h1>
+                        <p class="mb-0 opacity-75" id="subCargo">Cargando puesto...</p>
+                        <span class="badge bg-white text-success mt-2" id="rolBadgeBienvenida">...</span>
+                    </div>
+                </div>
+            </section>
 
-                <div class="col-md-6">
-                    <p><strong>Código:</strong> <span id="codigo"></span></p>
-                    <p><strong>Tipo Documento:</strong> <span id="tipo_doc"></span></p>
-                    <p><strong>Documento:</strong> <span id="doc"></span></p>
-                    <p><strong>RH:</strong> <span id="rh"></span></p>
-                    <p><strong>Fecha Nacimiento:</strong> <span id="fecha"></span></p>
-                    <p><strong>Lugar Nacimiento:</strong> <span id="lugar"></span></p>
-                    <p><strong>Estado Civil:</strong> <span id="estado"></span></p>
+            <div class="row g-3">
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-fingerprint text-success me-1"></i> Código</small>
+                        <span class="fw-semibold" id="perfilCodigo">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-id-card text-success me-1"></i> Tipo Documento</small>
+                        <span class="fw-semibold" id="perfilTipoDoc">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-hashtag text-success me-1"></i> Documento</small>
+                        <span class="fw-semibold" id="perfilDoc">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-tint text-danger me-1"></i> RH</small>
+                        <span class="fw-semibold" id="perfilRh">--</span>
+                    </div>
                 </div>
 
-                <div class="col-md-6">
-                    <p><strong>Dirección:</strong> <span id="direccion"></span></p>
-                    <p><strong>Barrio:</strong> <span id="barrio"></span></p>
-                    <p><strong>Teléfono:</strong> <span id="telefono"></span></p>
-                    <p><strong>Email:</strong> <span id="email"></span></p>
-                    <p><strong>Área:</strong> <span id="area"></span></p>
-                    <p><strong>Sede:</strong> <span id="sede"></span></p>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-map-marker-alt text-success me-1"></i> Dirección</small>
+                        <span class="fw-semibold" id="perfilDireccion">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-building text-success me-1"></i> Barrio / Localidad</small>
+                        <span class="fw-semibold" id="perfilBarrio">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-phone text-success me-1"></i> Teléfono</small>
+                        <span class="fw-semibold" id="perfilTelefono">--</span>
+                    </div>
                 </div>
 
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-envelope text-success me-1"></i> Email</small>
+                        <span class="fw-semibold text-break" id="perfilEmail">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-calendar-alt text-success me-1"></i> Fecha Nacimiento</small>
+                        <span class="fw-semibold" id="perfilFechaNac">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-map text-success me-1"></i> Lugar Nacimiento</small>
+                        <span class="fw-semibold" id="perfilLugarNac">--</span>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-heart text-success me-1"></i> Estado Civil</small>
+                        <span class="fw-semibold" id="perfilEstadoCivil">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-briefcase text-success me-1"></i> Área</small>
+                        <span class="fw-semibold" id="perfilArea">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-warehouse text-success me-1"></i> Sede Asignada</small>
+                        <span class="fw-semibold" id="perfilSede">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap mt-4">
+                <button class="btn btn-success d-flex align-items-center gap-2 px-3 shadow-sm"><i class="fas fa-camera"></i> Cambiar Foto</button>
+                <button class="btn btn-primary d-flex align-items-center gap-2 px-3 shadow-sm"><i class="fas fa-file-pdf"></i> Descargar PDF</button>
+                <button class="btn btn-warning text-dark d-flex align-items-center gap-2 px-3 shadow-sm fw-semibold"><i class="fas fa-key"></i> Cambiar Contraseña</button>
             </div>
 
         </div>
+    </main>
 
-    </div>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
 
-<script src="js/perfil.js"></script>
+function toggleMenu() {
 
+    const sidebar =
+        document.getElementById("sidebar");
+
+    const overlay =
+        document.getElementById("sidebarOverlay");
+
+    sidebar.classList.toggle("active");
+
+    overlay.classList.toggle("active");
+
+}
+
+document.getElementById("sidebarOverlay")
+?.addEventListener("click", () => {
+
+    document
+        .getElementById("sidebar")
+        .classList
+        .remove("active");
+
+    document
+        .getElementById("sidebarOverlay")
+        .classList
+        .remove("active");
+
+});
+
+</script>
+    <script src="js/perfil.js"></script>
 </body>
 </html>

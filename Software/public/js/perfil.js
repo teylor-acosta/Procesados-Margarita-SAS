@@ -1,128 +1,129 @@
-document.addEventListener("DOMContentLoaded", async () => {
-    try {
-        const res = await fetch('/api/me', {
-            credentials: 'include'
-        });
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("Controlador de perfil de producción unificado (Seguro).");
 
-        const data = await res.json();
+    // ==========================================================================
+    // 📡 2. CARGA DE DATOS 100% DINÁMICA DESDE LA API (PROTECCIÓN DE PRIVACIDAD)
+    // ==========================================================================
+    
+function cargarFichaEmpleado(data) {
 
-        if (!data.success) {
-            window.location.href = '/login';
-            return;
-        }
+    console.log("USUARIO RECIBIDO:", data);
 
-        const u = data.usuario;
+    if (!data) return;
 
-        // 🔥 FOTO
-        if (u.foto) {
-            document.getElementById("foto").src = u.foto;
-        }
+    const mapeo = {
 
-        // 🔥 DATOS BÁSICOS
-        document.getElementById("nombre").textContent = u.nombre || "Sin nombre";
-        document.getElementById("cargo").textContent = u.cargo || "Empleado";
+        "nombreBienvenida": data.nombre,
+        "subCargo": data.cargo,
+        "rolBadgeBienvenida": data.rol,
 
-        document.getElementById("codigo").textContent = u.codigo || "No asignado";
-        document.getElementById("tipo_doc").textContent = u.tipo_documento || "No asignado";
-        document.getElementById("doc").textContent = u.numero_documento || "No asignado";
-        document.getElementById("rh").textContent = u.rh || "No asignado";
+        "nombre": data.nombre,
+        "rol": data.rol,
+        "cargo": data.cargo,
 
-        // 🔥 FECHA (ARREGLA INVALID DATE)
-        if (u.fecha_nacimiento) {
-            const fecha = new Date(u.fecha_nacimiento);
-            document.getElementById("fecha").textContent = fecha.toLocaleDateString("es-CO", {
-                year: "numeric",
-                month: "long",
-                day: "numeric"
-            });
-        } else {
-            document.getElementById("fecha").textContent = "No asignado";
-        }
+        "perfilCodigo": data.codigo,
+        "perfilTipoDoc": data.tipo_documento,
+        "perfilDoc": data.numero_documento,
+        "perfilRh": data.rh,
 
-        document.getElementById("lugar").textContent = u.lugar_nacimiento || "No asignado";
-        document.getElementById("estado").textContent = u.estado_civil || "No asignado";
+        "perfilDireccion": data.direccion,
+        "perfilBarrio": data.barrio_localidad,
+        "perfilTelefono": data.telefono,
 
-        // 🔥 CONTACTO
-        document.getElementById("direccion").textContent = u.direccion || "No asignado";
-        document.getElementById("barrio").textContent = u.barrio_localidad || "No asignado";
-        document.getElementById("telefono").textContent = u.telefono || "No asignado";
-        document.getElementById("email").textContent = u.email || "No asignado";
+        "perfilEmail": data.email,
+        "perfilFechaNac": data.fecha_nacimiento
+    ? data.fecha_nacimiento.split('T')[0]
+    : "--",
+        "perfilLugarNac": data.lugar_nacimiento,
 
-        // 🔥 EMPRESA
-        document.getElementById("area").textContent = u.area || "No asignado";
-        document.getElementById("sede").textContent = u.sede || "No asignado";
+        "perfilEstadoCivil": data.estado_civil,
+        "perfilArea": data.area,
+        "perfilSede": data.sede
 
-    } catch (error) {
-        console.error("Error perfil:", error);
-        window.location.href = '/login';
-    }
-});
-
-// ============================================
-// 🔥 SUBIR FOTO
-// ============================================
-
-function subirFoto(){
-    document.getElementById("inputFoto").click();
-}
-
-document.getElementById("inputFoto").addEventListener("change", function(){
-
-    const file = this.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = async function(e){
-
-        const base64 = e.target.result;
-
-        // mostrar inmediatamente
-        document.getElementById("foto").src = base64;
-
-        try {
-            // enviar al backend
-            await fetch('/api/subir-foto', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ foto: base64 })
-            });
-
-            // 🔥 CAMBIO AQUÍ: Usamos SweetAlert2 en lugar de alert()
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
-
-            Toast.fire({
-                icon: 'success',
-                title: 'Foto actualizada correctamente'
-            });
-
-        } catch (err) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'No se pudo subir la foto'
-            });
-        }
     };
 
-    reader.readAsDataURL(file);
-});
+    Object.keys(mapeo).forEach(id => {
 
-// ============================================
-// 🔥 VOLVER
-// ============================================
+        const el = document.getElementById(id);
 
-function volverDashboard(){
-    window.location.href = "/dashboard";
+        if (el) {
+
+            el.textContent = mapeo[id] || "--";
+
+        }
+
+    });
+
+    if (data.foto) {
+
+        const foto =
+            document.getElementById("perfFoto");
+
+        const icono =
+            document.getElementById("perfFotoDefault");
+
+        if (foto) {
+
+            if (data.foto.startsWith("data:image")) {
+
+                foto.src = data.foto;
+
+            } else {
+
+                foto.src =
+                    `/uploads/fotos/${data.foto}`;
+
+            }
+
+            foto.style.display = "block";
+
+        }
+
+        if (icono) {
+
+            icono.style.display = "none";
+
+        }
+
+    }
+
 }
+
+    // Petición asíncrona real y segura
+    fetch('/api/me', {
+    credentials: 'include'
+}) 
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("No se pudo conectar con la sesión del usuario.");
+            }
+            return response.json();
+        })
+        .then(datosUsuarioLogueado => {
+
+    console.log("DATOS API:", datosUsuarioLogueado);
+
+    if (!datosUsuarioLogueado.success) {
+
+        throw new Error(
+            "No se pudieron obtener los datos del usuario"
+        );
+
+    }
+
+    cargarFichaEmpleado(
+        datosUsuarioLogueado.usuario
+    );
+
+})
+        .catch(error => {
+            console.error("Error de conexión con el servidor ERP:", error);
+            
+            // Plan de contingencia anónimo: Si falla, jamás expone datos privados.
+            const elementosPrincipales = ["perfNombreCompleto", "sbUserName"];
+            elementosPrincipales.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = "Error al cargar";
+            });
+        });
+}); // <--- Aquí estaba el cierre faltante que causaba el error en Visual Studio Code

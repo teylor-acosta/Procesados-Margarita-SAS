@@ -1,739 +1,572 @@
-/* =========================================
-   🌎 BODY DASHBOARD
-========================================= */
-
-.dashboard-body {
-
-    padding-top:95px;
-
-    overflow-x:hidden;
-
-    -webkit-font-smoothing:antialiased;
-    text-rendering:optimizeLegibility;
-
-    font-family:'Averia Libre', cursive;
-
-    background:
-        url('/img/Fondo.webp')
-        center/cover no-repeat fixed;
-
-    min-height:100vh;
-
-    position:relative;
-}
-
-.dashboard-body::before{
-
-    content:"";
-
-    position:fixed;
-
-    inset:0;
-
-    background:
-        rgba(255,255,255,.45);
-
-    z-index:-1;
-}
-
-/* =========================================
-   🔥 NAVBAR GLOBAL ERP
-========================================= */
-
-.navbar-custom{
-
-    width:100%;
-
-    background:
-        rgba(255,255,255,.96);
-
-    backdrop-filter:blur(10px);
-
-    display:flex;
-
-    justify-content:space-between;
-    align-items:center;
-
-    padding:14px 30px;
-
-    box-shadow:
-        0 4px 18px rgba(0,0,0,.08);
-
-    position:fixed;
-
-    top:0;
-    left:0;
-
-    z-index:9999;
-}
-
-/* =========================================
-   🔥 IZQUIERDA NAVBAR
-========================================= */
-
-.navbar-left{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-}
-
-.logo-navbar{
-
-    width:55px;
-    height:55px;
-
-    object-fit:contain;
-}
-
-.empresa-nombre{
-
-    font-size:32px;
-
-    font-weight:700;
-
-    color:#16a34a;
-
-    font-style:italic;
-
-    letter-spacing:.5px;
-
-    margin:0;
-}
-
-/* =========================================
-   🔥 DERECHA NAVBAR
-========================================= */
-
-.navbar-right{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-}
-
-/* =========================================
-   🔥 BOTON PANEL
-========================================= */
-
-.btn-cerrar{
-
-    border:none;
-
-    background:#f8fafc;
-
-    color:#111827;
-
-    text-decoration:none;
-
-    padding:12px 24px;
-
-    border-radius:18px;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    font-weight:700;
-
-    transition:.25s;
-
-    box-shadow:
-        0 4px 10px rgba(0,0,0,.05);
-}
-
-.btn-cerrar:hover{
-
-    background:#e2e8f0;
-
-    transform:
-        translateY(-2px);
-
-    color:#111827;
-}
-
-/* =========================================
-   🔥 BOTON LOGOUT
-========================================= */
-
-.btn-danger{
-
-    border:none !important;
-
-    background:
-        linear-gradient(
-            135deg,
-            #ef4444,
-            #dc2626
-        ) !important;
-
-    color:white !important;
-
-    text-decoration:none;
-
-    padding:12px 24px !important;
-
-    border-radius:18px !important;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    font-weight:700 !important;
-
-    transition:.3s;
-
-    box-shadow:
-        0 10px 20px rgba(239,68,68,.25);
-}
-
-.btn-danger:hover{
-
-    transform:
-        translateY(-2px);
-
-    box-shadow:
-        0 15px 28px rgba(239,68,68,.35);
-
-    color:white;
-}
-
-/* =========================================
-   📦 CONTENEDOR
-========================================= */
-
+/* ==========================================================================
+   DASHBOARD ERP - PROCESADOS MARGARITA (VISTA PRINCIPAL / MAQUETA CORRIDA)
+   ========================================================================== */
+
+/* Contenedor maestro desplazado para respetar el menú lateral fijo */
 .dashboard-container {
-
-    display:flex;
-
-    gap:24px;
-
-    padding:25px 40px;
-
-    width:100%;
-
-    box-sizing:border-box;
-
+    display: flex;
+    padding: 0 35px 35px 35px;
+    /* Margen izquierdo idéntico al ancho del sidebar fijo */
+    margin-left: 280px; 
+    width: calc(100% - 280px);
+    gap: 30px;
 }
 
-/* =========================================
-   📚 SIDEBAR
-========================================= */
-
+/* ==========================================================================
+   SIDEBAR COMPLETO DESDE ARRIBA (BLOQUE IZQUIERDO ABSOLUTO)
+   ========================================================================== */
 .sidebar {
-
-    width:230px;
-
-    height:fit-content;
-
-    background:
-        linear-gradient(
-            180deg,
-            #1e293b,
-            #0f172a
-        );
-
-    color:white;
-
-    border-radius:22px;
-
-    padding:18px;
-
-    box-shadow:
-        0 8px 22px rgba(0,0,0,0.15);
-
-    transition:
-        transform .2s ease,
-        left .25s ease;
-
-    align-self:flex-start;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh; /* Ocupa toda la pantalla verticalmente */
+    background: var(--sidebar-bg); /* Verde oscuro institucional */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 35px 22px;
+    z-index: 1000; /* Queda sobrepuesto de arriba a abajo */
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.sidebar:hover {
+/* Encabezado Único de la Empresa */
+.sidebar-header {
+    text-align: center;
+    padding-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
 
-    transform:translateY(-2px);
+.sidebar-logo {
+    width: 80px;
+    height: auto;
+    margin-bottom: 15px;
+    background: white;
+    padding: 10px;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
 
+.sidebar-header h4 {
+    font-size: 21px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #ffffff;
+}
+
+.sidebar-header span {
+    font-size: 14px;
+    color: var(--verde);
+    font-weight: 600;
+    display: block;
+}
+
+/* Menú del Sidebar */
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 30px;
+    flex-grow: 1;
+}
+
+.menu-section-title {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 15px 0 8px 10px;
+    font-weight: 700;
+}
+
+.menu-item {
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    border-radius: 14px;
+    font-size: 16px; /* Letras grandes y muy legibles */
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.menu-item i {
+    font-size: 20px;
+    width: 24px;
+    text-align: center;
+}
+
+.menu-item:hover {
+    background: var(--sidebar-hover);
+    color: white;
+    padding-left: 24px;
+}
+
+.menu-item.active {
+    background: var(--sidebar-active);
+    color: white;
+    border-left: 5px solid var(--verde); 
+}
+
+/* Bloque del Perfil (Abajo en el Sidebar) */
+.usuario-sidebar {
+    padding-top: 25px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: auto;
+}
+
+.usuario-info-block {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    margin-bottom: 15px;
+}
+
+.avatar-sidebar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--verde-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+}
+
+.datos-sidebar {
+    display: flex;
+    flex-direction: column;
+}
+
+#nombre {
+    font-size: 15px;
+    font-weight: 700;
+    color: white;
+}
+
+#rol, #cargo {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Botón Cerrar Sesión Rojo Integrado */
+.sidebar-logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: transparent;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #f87171;
+    text-decoration: none;
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    transition: all 0.25s;
+}
+
+.sidebar-logout:hover {
+    background: var(--rojo);
+    color: white;
+    border-color: var(--rojo);
 }
 
 /* =========================================
-   📄 CONTENIDO
+   ÁREA DE CONTENIDO PRINCIPAL
 ========================================= */
-
 .content {
+    flex: 1;
+    min-width: 0;
+}
 
-    flex:1;
+/* TARJETA DE BIENVENIDA CON EL MUNDO ECOLÓGICO DE FONDO */
+.bienvenida-card {
+    background-color: #ffffff;
+    background-image: linear-gradient(90deg, #ffffff 40%, rgba(255, 255, 255, 0.1) 75%), url('../img/Bienvenida.png');
+    background-position: right center;
+    background-size: cover;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
 
-    min-width:0;
+.bienvenida-info h1 {
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin: 0;
+}
 
+.rol-texto {
+    font-size: 17px;
+    color: var(--texto-mutated);
+    margin-top: 12px;
+    margin-bottom: 0;
+}
+
+.badge-rol {
+    background-color: #dcfce7;
+    color: #166534;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 14px;
+    display: inline-block;
+    margin-left: 8px;
 }
 
 /* =========================================
-   🎯 TARJETAS
+   KPIs (TARJETAS ESTADÍSTICAS)
 ========================================= */
-
-.card-custom {
-
-    width:100%;
-
-    margin-bottom:22px;
-
-    background:
-        rgba(255,255,255,0.96);
-
-    border-radius:24px;
-
-    padding:26px;
-
-    position:relative;
-
-    overflow:hidden;
-
-    border:
-        1px solid rgba(255,255,255,.4);
-
-    backdrop-filter:blur(8px);
-
-    box-shadow:
-        0 10px 25px rgba(0,0,0,0.10);
-
-    transition:
-        transform .2s ease,
-        box-shadow .2s ease;
-
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    margin-bottom: 35px;
 }
 
-.card-custom::before {
-
-    content:"";
-
-    position:absolute;
-
-    top:0;
-    left:0;
-
-    width:100%;
-
-    height:4px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #22c55e,
-            #2563eb
-        );
-
+.stat-card {
+    background: white;
+    border-radius: 22px;
+    padding: 26px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 15px;
 }
 
-.card-custom::after {
-
-    content:"";
-
-    position:absolute;
-
-    bottom:0;
-    left:0;
-
-    width:100%;
-
-    height:4px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #2563eb,
-            #22c55e
-        );
-
+.stat-card-main {
+    display: flex;
+    align-items: center;
+    gap: 18px;
 }
 
-.card-custom:hover {
+.stat-card h3 {
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin: 0;
+}
 
-    transform:translateY(-4px);
+.stat-card span {
+    font-size: 17px;
+    font-weight: 700;
+    color: #334155;
+    display: block;
+}
 
-    box-shadow:
-        0 14px 30px rgba(0,0,0,0.14);
+.stat-subtext {
+    font-size: 14px;
+    color: var(--texto-mutated);
+}
 
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+.icon-empleados { background: #e8f5e9; color: #22c55e; }
+.icon-usuarios { background: #eff6ff; color: #2563eb; }
+.icon-capacitaciones { background: #faf5ff; color: #a855f7; }
+.icon-certificados { background: #fff7ed; color: #f97316; }
+
+/* Gráficos incrustados */
+.stat-chart-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.trend-badge {
+    font-size: 13px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 8px;
+}
+.trend-badge.positive { background: #dcfce7; color: #15803d; }
+
+.mini-chart {
+    width: 95px;
+    height: 32px;
+    opacity: 0.9;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.green-trend { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30" fill="none" stroke="%2322c55e" stroke-width="3"><path d="M0,25 Q20,10 40,20 T80,5 T100,12"/></svg>'); }
+.blue-trend { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30" fill="none" stroke="%232563eb" stroke-width="3"><path d="M0,20 Q25,25 50,10 T100,5"/></svg>'); }
+.purple-trend { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30" fill="none" stroke="%23a855f7" stroke-width="3"><path d="M0,28 Q30,25 60,12 T100,2"/></svg>'); }
+.orange-trend { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30" fill="none" stroke="%23f97316" stroke-width="3"><path d="M0,22 Q20,20 40,25 T80,8 T100,15"/></svg>'); }
+
+/* TÍTULOS DE BLOQUES */
+.section-title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 35px 0 20px 0;
+}
+.section-main-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--texto-principal);
+}
+.view-all-link {
+    font-size: 15px;
+    color: var(--azul);
+    text-decoration: none;
+    font-weight: 600;
 }
 
 /* =========================================
-   🎛 TOP ACTIONS
+   ACCESOS RÁPIDOS
 ========================================= */
+.accesos-rapidos {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+    margin-bottom: 40px;
+}
 
-.top-actions {
+.acceso-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+.acceso-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
+}
 
-    display:flex;
+.acceso-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+.ico-emp { background: #eafaf1; color: #22c55e; }
+.ico-usr { background: #ebf3fe; color: #2563eb; }
+.ico-cap { background: #f7f1fe; color: #a855f7; }
+.ico-prf { background: #fffaf0; color: #f59e0b; }
 
-    justify-content:flex-end;
-
-    margin-bottom:14px;
-
+.acceso-text .title {
+    color: var(--texto-principal);
+    font-weight: 700;
+    font-size: 16px;
+    display: block;
+}
+.acceso-text .desc {
+    color: var(--texto-mutated);
+    font-size: 14px;
 }
 
 /* =========================================
-   🔘 BOTÓN DASHBOARD
+   REJILLA DE DOS COLUMNAS (EMPRESA + ACTIVIDAD)
 ========================================= */
-
-.btn-dashboard {
-
-    background:
-        linear-gradient(
-            135deg,
-            #22c55e,
-            #2563eb
-        );
-
-    color:white;
-
-    padding:12px 22px;
-
-    border-radius:24px;
-
-    border:none;
-
-    font-weight:700;
-
-    cursor:pointer;
-
-    transition:
-        transform .2s ease,
-        opacity .2s ease;
-
-    min-height:46px;
-
-    font-family:'Averia Libre', cursive;
-
-    box-shadow:
-        0 10px 20px rgba(37,99,235,.18);
-
+.content-layout {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 30px;
+    align-items: start;
+    margin-bottom: 35px;
 }
 
-.btn-dashboard:hover {
-
-    transform:translateY(-2px);
-
-    opacity:.95;
-
+.block-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin-bottom: 22px;
 }
 
-.btn-dashboard:active {
-
-    transform:scale(.97);
-
+/* Tarjeta de Información de Empresa */
+.empresa-section-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 30px;
 }
+
+.empresa-header-inline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+.empresa-header-inline h5 {
+    font-weight: 700;
+    font-size: 19px;
+    margin: 0;
+}
+.empresa-desc {
+    font-size: 16px;
+    color: #475569;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.mision-vision-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin: 30px 0;
+}
+.mv-box h6 {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.mv-box p {
+    font-size: 15px;
+    color: #475569;
+    line-height: 1.6;
+}
+
+.sub-block-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #334155;
+    margin: 30px 0 15px 0;
+}
+.valores-inline-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+/* Corregidos selectores cruzados de tags */
+.tag-val, .valor-tag {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Tarjeta de Actividades Recientes */
+.actividad-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 30px;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 25px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Adaptadas clases del CSS a las reales en tu HTML */
+.activity-icon-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    background: #eff6ff; 
+    color: #2563eb;
+}
+
+.activity-info { flex: 1; }
+.activity-title { font-size: 15px; font-weight: 700; color: var(--texto-principal); margin-bottom: 3px; display: block;}
+.activity-desc { font-size: 14px; color: var(--texto-mutated); margin: 0; display: block;}
+.activity-time { font-size: 13px; color: var(--texto-mutated); white-space: nowrap; }
+
+.btn-view-activity {
+    width: 100%;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-view-activity:hover { background: #f1f5f9; }
 
 /* =========================================
-   📊 VALORES
+   RESPONSIVE DESIGN INTERNO
 ========================================= */
-
-.valor-card {
-
-    background:
-        linear-gradient(
-            135deg,
-            #22c55e,
-            #2563eb
-        );
-
-    color:white;
-
-    padding:16px;
-
-    border-radius:16px;
-
-    text-align:center;
-
-    font-weight:700;
-
-    transition:
-        transform .2s ease;
-
-    border:
-        1px solid rgba(255,255,255,0.15);
-
+@media(max-width: 1200px) {
+    .dashboard-stats, .accesos-rapidos { grid-template-columns: repeat(2, 1fr); }
+    .content-layout { grid-template-columns: 1fr; }
 }
 
-.valor-card:hover {
-
-    transform:translateY(-2px);
-
-}
-
-.valor-card:active {
-
-    transform:scale(.98);
-
-}
-
-/* =========================================
-   🔘 BOTONES ACCIONES
-========================================= */
-
-.btn-custom {
-
-    border-radius:22px;
-
-    padding:10px 18px;
-
-    font-weight:600;
-
-    transition:
-        transform .2s ease;
-
-    font-family:'Averia Libre', cursive;
-
-}
-
-.btn-custom:hover {
-
-    transform:translateY(-2px);
-
-}
-
-.btn-custom:active {
-
-    transform:scale(.97);
-
-}
-
-/* =========================================
-   ✨ ANIMACIÓN
-========================================= */
-
-.fade-in {
-
-    animation:
-        fadeInUp .4s ease;
-
-}
-
-@keyframes fadeInUp {
-
-    from {
-
-        opacity:0;
-
-        transform:
-            translateY(12px);
-
-    }
-
-    to {
-
-        opacity:1;
-
-        transform:
-            translateY(0);
-
-    }
-
-}
-
-/* =========================================
-   📱 TABLET
-========================================= */
-
-@media (max-width:992px) {
-
+@media(max-width: 992px) {
     .dashboard-container {
-
-        flex-direction:column;
-
-        padding:18px;
-
-        gap:18px;
-
+        margin-left: 0;
+        width: 100%;
+        padding: 20px;
     }
-
     .sidebar {
-
-        width:100%;
-
-        border-radius:18px;
-
+        position: fixed;
+        left: -100%;
+        transition: .3s;
     }
-
+    .sidebar.active { left: 0; }
+    .bienvenida-card { flex-direction: column; text-align: center; padding: 30px; }
+    .bienvenida-info h1 { font-size: 28px; }
+    .dashboard-stats, .accesos-rapidos, .mision-vision-container { grid-template-columns: 1fr; }
 }
 
-/* =========================================
-   📱 MÓVIL
-========================================= */
-
-@media (max-width:768px) {
-
-    .dashboard-body {
-
-        padding-top:135px;
-
-        background-attachment:scroll;
-
-    }
-
-    .navbar-custom {
-
-        padding:14px 18px;
-
-        flex-direction:column;
-
-        align-items:flex-start;
-
-        gap:14px;
-    }
-
-    .navbar-left{
-
-        width:100%;
-    }
-
-    .navbar-right{
-
-        width:100%;
-
-        justify-content:flex-end;
-
-        flex-wrap:wrap;
-    }
-
-    .empresa-nombre {
-
-        font-size:22px;
-
-    }
-
-    .dashboard-container {
-
-        padding:14px;
-
-        gap:14px;
-
-    }
-
-    .sidebar {
-
-        position:fixed;
-
-        top:0;
-        left:-100%;
-
-        width:250px;
-
-        height:100vh;
-
-        z-index:9999;
-
-        border-radius:0;
-
-        padding-top:100px;
-
-        transition:left .25s ease;
-
-    }
-
-    .sidebar.active {
-
-        left:0;
-
-    }
-
-    .card-custom {
-
-        padding:18px;
-
-        border-radius:18px;
-
-        backdrop-filter:none;
-
-        box-shadow:
-            0 6px 14px rgba(0,0,0,0.08);
-
-    }
-
-    .top-actions{
-
-        justify-content:center;
-    }
-
-    .btn-dashboard{
-
-        width:100%;
-
-        max-width:240px;
-
-        justify-content:center;
-    }
-
-}
-
-/* =========================================
-   📱 MÓVIL PEQUEÑO
-========================================= */
-
-@media (max-width:480px) {
-
-    .dashboard-container {
-
-        padding:10px;
-
-    }
-
-    .logo-navbar{
-
-        width:42px;
-        height:42px;
-    }
-
-    .empresa-nombre {
-
-        font-size:18px;
-
-    }
-
-    .navbar-right{
-
-        flex-direction:column;
-    }
-
-    .btn-cerrar,
-    .btn-danger{
-
-        width:100%;
-
-        justify-content:center;
-    }
-
-    .card-custom {
-
-        padding:15px;
-
-    }
-
-    .btn-dashboard {
-
-        width:100%;
-
-        border-radius:16px;
-
-    }
-
-}
-
-/* =========================================
-   🔥 OPTIMIZACIÓN MÓVIL
-========================================= */
-
-@media (max-width:768px){
-
-    *{
-
-        -webkit-tap-highlight-color:transparent;
-
-    }
-
+/* ==========================================================================
+   🔥 FORCE FIX: ENFORZAR FUENTE AVERIA LIBRE EN COMPONENTES DEL DASHBOARD
+   ========================================================================== */
+.dashboard-container,
+.sidebar,
+.bienvenida-card,
+.stat-card,
+.acceso-card,
+.empresa-section-card,
+.actividad-card,
+#acciones,
+#acciones * {
+    font-family: 'Averia Libre', cursive !important;
 }
