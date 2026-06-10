@@ -66,57 +66,79 @@ totalSubCapitulos +
 totalCapitulos;
 
             const [progresos] =
-            await db.query(`
+await db.query(`
 
-                SELECT
+    SELECT
 
-                    u.ID,
+        u.ID,
 
-                    COUNT(pv.id) vistos
+        COUNT(
+            DISTINCT pv.id
+        ) vistos,
 
-                FROM usuarios u
+        CASE
 
-                LEFT JOIN progreso_videos pv
-                    ON pv.usuario_id = u.ID
-                    AND pv.visto = 1
+            WHEN MAX(cu.id)
+            IS NOT NULL
 
-                GROUP BY u.ID
+            THEN 1
 
-            `);
+            ELSE 0
+
+        END certificado
+
+    FROM usuarios u
+
+    LEFT JOIN progreso_videos pv
+
+        ON pv.usuario_id = u.ID
+
+        AND pv.visto = 1
+
+    LEFT JOIN certificados_usuario cu
+
+        ON cu.usuario_id = u.ID
+
+    GROUP BY u.ID
+
+`);
 
             let completadas = 0;
-            let proceso = 0;
-            let pendientes = 0;
+let proceso = 0;
+let pendientes = 0;
 
-            progresos.forEach(usuario=>{
+progresos.forEach(usuario => {
 
-                const porcentaje =
-                Math.round(
-                    (
-                        usuario.vistos /
-                        totalSubCapitulos
-                    ) * 100
-                );
+    const porcentaje =
+    Math.round(
 
-                if(porcentaje >= 100){
+        (
+            usuario.vistos /
+            totalSubCapitulos
+        ) * 100
 
-                    completadas++;
+    );
 
-                }
-                else if(
-                    porcentaje > 0
-                ){
+    const tieneCertificado =
+        usuario.certificado === 1;
 
-                    proceso++;
+    if (tieneCertificado) {
 
-                }
-                else{
+        completadas++;
 
-                    pendientes++;
+    }
+    else if (porcentaje > 0) {
 
-                }
+        proceso++;
 
-            });
+    }
+    else {
+
+        pendientes++;
+
+    }
+
+});
 
             res.json({
 
