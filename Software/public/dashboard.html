@@ -1,186 +1,265 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#198754">
-<link rel="icon" href="/img/logo de procesados solo.png">
-
-<!-- 🔥 ORDEN CORRECTO -->
-<link rel="stylesheet" href="css/style1.css">
-<link rel="stylesheet" href="css/dashboard.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procesados Margarita - Dashboard ERP</title>
+    
+    <!-- 1. Google Fonts: Averia Libre -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Averia+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    
+    <!-- 2. Frameworks: Bootstrap 5 & FontAwesome Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- 3. Hojas de Estilo Propias -->
+    <link rel="stylesheet" href="css/style1.css">
+    <link rel="stylesheet" href="css/dashboard.css">
 </head>
+<body>
 
-<body class="dashboard-body">
-
-<!-- =========================
-     NAVBAR
-========================= -->
-<nav class="navbar-custom">
-
-    <div class="navbar-left">
-        <i class="fas fa-bars menu-toggle" onclick="toggleMenu()"></i>
-
-        <img src="/img/Logo.png" class="logo-navbar">
-
-        <span class="empresa-nombre">
-            Procesados Margarita SAS
-        </span>
-    </div>
-
-    <div class="navbar-right">
-        <a href="/logout" class="btn-logout">
-            <i class="fas fa-power-off"></i> Cerrar sesión
-        </a>
-    </div>
-
-</nav>
-
-<!-- =========================
-     CONTENEDOR
-========================= -->
-<div class="dashboard-container">
-
-    <!-- =========================
-         SIDEBAR
-    ========================= -->
+   <!-- ==========================================================================
+        SIDEBAR LATERAL FIJO (MENÚ SIMPLIFICADO - 3 ELEMENTOS)
+        ========================================================================== -->
     <aside class="sidebar" id="sidebar">
-
-        <div class="sesion-activa" id="btnPerfil">
-
-            <h5>
-                <i class="fas fa-user-circle me-2"></i>Sesión Activa
-            </h5>
-
-            <div class="sidebar-item">
-                <i class="fas fa-user"></i> <span id="nombre"></span>
+        <div class="sidebar-top">
+            <div class="sidebar-header">
+                <img src="img/Logo.png" alt="Logo Margarita" class="sidebar-logo">
+                <h4>Procesados Margarita</h4>
+                <span>ERP Empresarial</span>
             </div>
-
-            <div class="sidebar-item">
-                <i class="fas fa-id-badge"></i> <span id="rol"></span>
-            </div>
-
-            <div class="sidebar-item">
-                <i class="fas fa-briefcase"></i> <span id="cargo"></span>
-            </div>
-
-            <div class="sidebar-item">
-                <i class="fas fa-id-card"></i> <span id="doc"></span>
-            </div>
-
+            
+            <nav class="sidebar-menu">
+                <span class="menu-section-title">Navegación</span>
+                <a href="/dashboard" class="menu-item active">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
+                <a href="/panel" class="menu-item">
+                    <i class="fas fa-th-large"></i> Panel
+                </a>
+                <a href="/perfil" class="menu-item">
+                    <i class="fas fa-user-circle"></i> Mi Perfil
+                </a>
+            </nav>
         </div>
 
-    </aside>
-
-    <!-- =========================
-         CONTENIDO
-    ========================= -->
-    <main class="content">
-
-        <!-- 🔥 BOTÓN PANEL -->
-        <div class="top-actions d-flex justify-content-end mb-3">
-            <a href="/panel" class="btn-dashboard">
-                <i class="fas fa-plus"></i> Panel
+        <div class="sidebar-bottom">
+            <div class="usuario-sidebar" id="btnPerfil" style="cursor: pointer;">
+                <div class="usuario-info-block">
+                    <div class="avatar-sidebar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="datos-sidebar">
+                        <span id="nombre">Cargando...</span>
+                        <small id="rol">...</small>
+                        <small id="cargo" class="text-muted" style="font-size: 11px;"></small>
+                    </div>
+                </div>
+            </div>
+            <a href="#" id="btnLogout" class="sidebar-logout">
+                <i class="fas fa-power-off"></i> Cerrar Sesión
             </a>
         </div>
+    </aside>
 
-        <!-- =========================
-             TARJETA EMPRESA
-        ========================= -->
-        <div class="card card-custom fade-in">
-
-            <h4>
-                <i class="fas fa-building text-success me-2"></i>
-                Procesados Margarita S.A.S
-            </h4>
-
-            <p>
-                Somos una empresa colombiana especializada en la gestión y aprovechamiento de materiales plásticos, operando bajo estrictos estándares de seguridad, salud en el trabajo y cuidado ambiental. En Procesados Margarita S.A.S. trabajamos para ofrecer soluciones eficientes en el tratamiento de residuos, garantizando el cumplimiento de la normativa legal y contribuyendo al desarrollo industrial sostenible desde nuestras sedes en Bogotá.
-            </p>
-
-            <!-- MISION / VISION -->
-            <div class="row mt-3">
-
-                <div class="col-md-6">
-                    <h6>
-                        <i class="fas fa-leaf text-success"></i> Misión
-                    </h6>
-                    <p>
-                        Contribuir activamente al cuidado y conservación del medio ambiente a través de un manejo integral y responsable de los residuos sólidos post-industriales, transformándolos en recursos útiles bajo estrictos estándares técnicos.
-                    </p>
-                </div>
-
-                <div class="col-md-6">
-                    <h6>
-                        <i class="fas fa-rocket text-primary"></i> Visión 2030
-                    </h6>
-                    <p>
-                        Consolidarse como una de las empresas líderes en el manejo integral de residuos sólidos en Bogotá, con una proyección de expansión regional apoyada en la innovación técnica y tecnológica para promover el uso racional de los recursos naturales.
-                    </p>
-                </div>
-
-            </div>
-
-            <hr>
-
-            <!-- VALORES -->
-            <h6>
-                <i class="fas fa-handshake text-success"></i> Valores
-            </h6>
-
-            <div class="row text-center mt-3">
-
-                <div class="col-md-4 col-6 mb-3">
-                    <div class="valor-card"><i class="fas fa-shield-alt"></i> Responsabilidad</div>
-                </div>
-
-                <div class="col-md-4 col-6 mb-3">
-                    <div class="valor-card"><i class="fas fa-star"></i> Calidad</div>
-                </div>
-
-                <div class="col-md-4 col-6 mb-3">
-                    <div class="valor-card"><i class="fas fa-users"></i> Trabajo en equipo</div>
-                </div>
-
-                <div class="col-md-4 col-6 mb-3">
-                    <div class="valor-card"><i class="fas fa-lightbulb"></i> Innovación</div>
-                </div>
-
-                <div class="col-md-4 col-6 mb-3">
-                    <div class="valor-card"><i class="fas fa-globe"></i> Compromiso ambiental</div>
-                </div>
-
-                <div class="col-md-4 col-6 mb-3">
-                    <div class="valor-card"><i class="bi bi-box2-heart-fill"></i> Respeto</div>
-                </div>
-
-            </div>
-
+    <!-- ==========================================================================
+        BARRA DE NAVEGACIÓN SUPERIOR (NAVBAR INTERSECTADA)
+        ========================================================================== -->
+    <nav class="navbar-custom">
+        <div class="navbar-left">
+            <i class="fas fa-bars menu-toggle d-lg-none" onclick="toggleMenu()"></i>
+            <span class="section-main-title d-none d-md-inline">Procesados Margarita</span>
         </div>
+    </nav>
 
-        <!-- =========================
-             ACCIONES DINÁMICAS
-        ========================= -->
-        <div class="card card-custom text-center mt-4 fade-in" id="acciones"></div>
+    <!-- ==========================================================================
+        ÁREA DE CONTENIDO PRINCIPAL
+        ========================================================================== -->
+    <main class="dashboard-container">
+        <div class="content">
+            
+            <!-- 👋 Tarjeta de Bienvenida Principal -->
+            <section class="bienvenida-card">
+                <div class="bienvenida-info">
+                    <h1>¡Hola, <span id="nombreBienvenida">Usuario</span>!</h1>
+                    <p class="rol-texto">
+                        Bienvenido de vuelta al módulo administrativo de SST. Tu rol actual es: 
+                        <span class="badge-rol" id="rolBadgeBienvenida">...</span>
+                    </p>
+                </div>
+            </section>
 
+            <!-- 🛡️ Panel de Estadísticas Globales (KPIs) -->
+            <section class="dashboard-stats" id="panelEstadisticas" style="display: none;">
+                <div class="stat-card">
+                    <div class="stat-card-main">
+                        <div class="stat-icon icon-empleados">
+                            <i class="fas fa-user-friends"></i>
+                        </div>
+                        <div>
+                            <h3 id="totalEmpleados">0</h3>
+                            <span>Empleados</span>
+                        </div>
+                    </div>
+                    <div class="stat-chart-wrapper">
+                        <span class="trend-badge positive">+12%</span>
+                        <div class="mini-chart green-trend"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-main">
+                        <div class="stat-icon icon-usuarios">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div>
+                            <h3 id="totalUsuarios">0</h3>
+                            <span>Usuarios Activos</span>
+                        </div>
+                    </div>
+                    <div class="stat-chart-wrapper">
+                        <span class="trend-badge positive">Al día</span>
+                        <div class="mini-chart blue-trend"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-main">
+                        <div class="stat-icon icon-capacitaciones">
+                            <i class="fas fa-book-reader"></i>
+                        </div>
+                        <div>
+                            <h3 id="totalCapacitaciones">0</h3>
+                            <span>Capacitaciones</span>
+                        </div>
+                    </div>
+                    <div class="stat-chart-wrapper">
+                        <span class="trend-badge positive">Módulo Activo</span>
+                        <div class="mini-chart purple-trend"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-main">
+                        <div class="stat-icon icon-certificados">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <div>
+                            <h3 id="totalCertificados">0</h3>
+                            <span>Certificados</span>
+                        </div>
+                    </div>
+                    <div class="stat-chart-wrapper">
+                        <span class="trend-badge positive">Emitidos</span>
+                        <div class="mini-chart orange-trend"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 🔗 Sección de Accesos Rápidos -->
+            <div class="section-title-container">
+                <h3 class="section-main-title">Accesos Directos</h3>
+            </div>
+            <section class="accesos-rapidos">
+                <!-- Tarjeta Contratación (Ocultable por JS) -->
+                <a href="/empleados" class="acceso-card" id="cardContratacion">
+                    <div class="acceso-icon-wrapper ico-emp"><i class="fas fa-user-plus"></i></div>
+                    <div class="acceso-text">
+                        <span class="title">Contratación</span>
+                        <small class="desc">Añadir personal</small>
+                    </div>
+                </a>
+                
+                <!-- Tarjeta Credenciales (Ocultable por JS) -->
+                <a href="/usuarios" class="acceso-card" id="cardCredenciales">
+                    <div class="acceso-icon-wrapper ico-usr"><i class="fas fa-user-lock"></i></div>
+                    <div class="acceso-text">
+                        <span class="title">Credenciales</span>
+                        <small class="desc">Accesos de sistema</small>
+                    </div>
+                </a>
+                
+                <!-- Tarjeta Cursos (Siempre Visible) -->
+                <a href="/capacitaciones" class="acceso-card" id="cardCursos">
+                    <div class="acceso-icon-wrapper ico-cap"><i class="fas fa-chalkboard-teacher"></i></div>
+                    <div class="acceso-text">
+                        <span class="title">Cursos</span>
+                        <small class="desc">Aulas de inducción</small>
+                    </div>
+                </a>
+                
+                <!-- Tarjeta Mi Cuenta (Siempre Visible) -->
+                <a href="/perfil" class="acceso-card" id="cardMiCuenta">
+                    <div class="acceso-icon-wrapper ico-prf"><i class="fas fa-id-card"></i></div>
+                    <div class="acceso-text">
+                        <span class="title">Mi Cuenta</span>
+                        <small class="desc">Ver expediente</small>
+                    </div>
+                </a>
+            </section>
+
+            <!-- =========================================
+                REJILLA INFERIOR: EMPRESA + ACTIVIDADES DINÁMICAS
+            ========================================= -->
+            <div class="content-layout">
+                
+                <!-- Columna Izquierda: Información Corporativa -->
+                <article class="empresa-section-card">
+                    <div class="empresa-header-inline">
+                        <i class="fas fa-industry text-success fs-4"></i>
+                        <h5>Procesados Margarita S.A.S.</h5>
+                    </div>
+                    <p class="empresa-desc">
+                        Líderes en el procesamiento y distribución de productos agroalimentarios de alta calidad. 
+                        Comprometidos férreamente con la seguridad de nuestros colaboradores y la sustentabilidad productiva de la región.
+                    </p>
+
+                    <div class="mision-vision-container">
+                        <div class="mv-box">
+                            <h6><i class="fas fa-bullseye text-success"></i> Nuestra Misión</h6>
+                            <p>Abastecer al mercado alimenticio con altos estándares de inocuidad, promoviendo el bienestar integral de la familia trabajadora.</p>
+                        </div>
+                        <div class="mv-box">
+                            <h6><i class="fas fa-eye text-primary"></i> Visión Futura</h6>
+                            <p>Ser reconocidos a nivel nacional como referentes de la industria verde, operando con accidentes cero bajo la normativa SG-SST.</p>
+                        </div>
+                    </div>
+
+                    <h5 class="sub-block-title">Valores corporativos</h5>
+                    <div class="valores-inline-tags" id="contenedorValores">
+                        <span class="tag-val"><i class="fas fa-shield-alt text-success"></i> Responsabilidad</span>
+                        <span class="tag-val"><i class="fas fa-star text-warning"></i> Calidad</span>
+                        <span class="tag-val"><i class="fas fa-users text-primary"></i> Trabajo en equipo</span>
+                        <span class="tag-val"><i class="fas fa-lightbulb text-info"></i> Innovación</span>
+                        <span class="tag-val"><i class="fas fa-globe text-success"></i> Compromiso ambiental</span>
+                        <span class="tag-val"><i class="bi bi-box2-heart-fill text-danger"></i> Respeto</span>
+                    </div>
+                </article>
+
+                <!-- Columna Derecha: Bloque de Control Dinámico / Inducción -->
+                <aside class="actividad-card" style="position: relative; overflow: hidden;">
+                    <h5 class="block-title" style="font-size: 1.1rem; margin-bottom: 15px;"><i class="fas fa-tasks text-primary me-2"></i>Estado de Inducción</h5>
+                    
+                    <!-- Contenedor dinámico controlado por js/dashboard.js -->
+                    <div id="acciones">
+                        <div class="p-4 text-center text-muted">
+                            <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+                            <p class="mb-0" style="font-size: 0.8rem;">Sincronizando expediente con recursos humanos...</p>
+                        </div>
+                    </div>
+                </aside>
+
+            </div> <!-- /content-layout -->
+        </div> <!-- /content -->
     </main>
 
-</div>
-
-<!-- =========================
-     SCRIPTS
-========================= -->
-<script src="/js/auth.js"></script>
-<script src="js/dashboard.js"></script>
-<script src="/js/sidebar.js"></script>
-
+    <!-- ==========================================================================
+        SCRIPTS DE CONTROL DE DATOS Y LÓGICA ERP
+        ========================================================================== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/dashboard.js"></script>
 </body>
 </html>

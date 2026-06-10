@@ -1,501 +1,188 @@
+/* ==========================================================================
+   PROCESADOS MARGARITA ERP - ESTILOS GENERALES Y BASE (NAVBAR INTERSECTADA)
+   ========================================================================== */
+
 /* =========================================
    RESET
 ========================================= */
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* =========================================
-   VARIABLES
+   VARIABLES GLOBALES
 ========================================= */
-
-:root{
-
-    --verde:#22c55e;
-    --verde-dark:#16a34a;
-
-    --azul:#2563eb;
-    --azul-dark:#1d4ed8;
-
-    --rojo:#ef4444;
-    --rojo-dark:#dc2626;
-
-    --gris:#f4f7f6;
-
+:root {
+    --verde: #22c55e;
+    --verde-dark: #16a34a;
+    --azul: #2563eb;
+    --azul-dark: #1d4ed8;
+    --rojo: #ef4444;
+    --rojo-dark: #dc2626;
+    --gris: #f4f7f6;
+    
+    /* Variables institucionales de la imagen */
+    --sidebar-bg: #032b1d; 
+    --sidebar-hover: #04432c;
+    --sidebar-active: #055337;
+    --texto-principal: #0f172a;
+    --texto-mutated: #64748b;
 }
 
 /* =========================================
-   BODY
+   BODY Y FONDO CONFIGURACIÓN
 ========================================= */
+body {
+    font-family: 'Averia Libre', cursive;
+    background: var(--gris);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    /* Dejamos el espacio superior para la barra alta */
+    padding-top: 105px; 
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    color: var(--texto-principal);
+}
 
-body{
-
-    font-family:'Averia Libre', cursive;
-
-    background:var(--gris);
-
-    min-height:100vh;
-
-    overflow-x:hidden;
-
-    position:relative;
-
-    padding-top:95px;
-
-    -webkit-font-smoothing:antialiased;
-
-    text-rendering:optimizeLegibility;
-
+/* Fondo global con desenfoque (Blur) */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: url('../img/Fondo.webp') center/cover no-repeat;
+    filter: blur(4px);
+    transform: scale(1.02);
+    z-index: -1;
 }
 
 /* =========================================
-   FONDO
+   NAVBAR GLOBAL (CORTADA POR EL SIDEBAR)
 ========================================= */
+.navbar-custom {
+    position: fixed;
+    top: 0;
+    /* Se desplaza 280px a la derecha para dejarle su espacio al Sidebar continuo */
+    left: 280px; 
+    width: calc(100% - 280px);
+    height: 85px;
+    background: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 35px;
+    z-index: 999; /* Por debajo del sidebar que es el bloque maestro */
+    box-shadow: 0 4px 15px rgba(0,0,0,.04);
+    border-bottom: 1px solid #e2e8f0;
+}
 
-body::before{
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 
-    content:"";
+/* Desaparecemos el duplicado si llega a estar en el HTML de la barra superior */
+.navbar-custom .logo-navbar, 
+.navbar-custom .empresa-nombre {
+    display: none; 
+}
 
-    position:fixed;
+.acciones-navbar {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 
-    inset:0;
+/* Botón Volver / Luz del Navbar */
+.acciones-navbar .btn-light {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #111827;
+    padding: 12px 24px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: .25s;
+    text-decoration: none;
+}
 
-    background:
-        url('../img/Fondo.webp')
-        center/cover
-        no-repeat;
+.acciones-navbar .btn-light:hover {
+    background: #e2e8f0;
+    transform: translateY(-2px);
+}
 
-    filter:blur(4px);
-
-    transform:scale(1.02);
-
-    z-index:-1;
-
+.menu-toggle {
+    font-size: 24px;
+    cursor: pointer;
+    color: #1e293b;
 }
 
 /* =========================================
-   NAVBAR GLOBAL
+   ELEMENTOS DE FORMULARIO COMUNES
 ========================================= */
-
-.navbar-custom{
-
-    position:fixed;
-
-    top:0;
-    left:0;
-
-    width:100%;
-
-    height:85px;
-
-    background:#ffffff;
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    padding:0 28px;
-
-    z-index:9999;
-
-    box-shadow:
-        0 4px 15px rgba(0,0,0,.08);
-
+.form-control {
+    border-radius: 12px;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    min-height: 46px;
+    font-size: 15px;
 }
 
 /* =========================================
-   IZQUIERDA NAVBAR
+   VALORES CORPORATIVOS CLASES UNIFICADAS
 ========================================= */
-
-.navbar-left{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:15px;
-
-    min-width:0;
-
+.tag-val, .valor-tag {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 /* =========================================
-   LOGO
+   RESPONSIVE GENERAL
 ========================================= */
-
-.logo-navbar{
-
-    width:58px;
-
-    height:auto;
-
-    object-fit:contain;
-
+@media (max-width: 992px) {
+    .navbar-custom {
+        left: 0;
+        width: 100%;
+    }
+    .navbar-custom .logo-navbar {
+        display: block;
+    }
 }
 
-/* =========================================
-   EMPRESA
-========================================= */
-
-.empresa-nombre{
-
-    font-family:'Averia Libre', cursive;
-
-    font-size:24px;
-
-    font-weight:700;
-
-    color:#16a34a;
-
-    line-height:1.1;
-
+/* ==========================================================================
+   🔥 FIX MAESTRO: SOBREESCRITURA DE FUENTE SOBRE BOOTSTRAP Y JS DINÁMICO
+   ========================================================================== */
+body, 
+h1, h2, h3, h4, h5, h6, 
+.h1, .h2, .h3, .h4, .h5, .h6,
+p, span, a, button, input, select, textarea,
+.btn, .badge, .card, .menu-item, .acceso-card, .stat-card {
+    font-family: 'Averia Libre', cursive !important;
 }
 
-/* =========================================
-   DERECHA NAVBAR
-========================================= */
-
-.acciones-navbar{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:12px;
-
-}
-
-/* =========================================
-   BOTON VOLVER
-========================================= */
-
-.acciones-navbar .btn-light{
-
-    background:#f8fafc;
-
-    border:none;
-
-    color:#111827;
-
-    padding:12px 22px;
-
-    border-radius:18px;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:8px;
-
-    font-weight:600;
-
-    transition:.25s;
-
-    text-decoration:none;
-
-}
-
-.acciones-navbar .btn-light:hover{
-
-    background:#e2e8f0;
-
-    transform:translateY(-2px);
-
-    color:#111827;
-
-}
-
-/* =========================================
-   BOTON LOGOUT
-========================================= */
-
-.btn-logout{
-
-    background:var(--rojo);
-
-    color:white;
-
-    padding:12px 22px;
-
-    border-radius:18px;
-
-    text-decoration:none;
-
-    font-weight:600;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:8px;
-
-    transition:.25s;
-
-    min-height:44px;
-
-}
-
-.btn-logout:hover{
-
-    background:var(--rojo-dark);
-
-    color:white;
-
-    transform:translateY(-2px);
-
-}
-
-/* =========================================
-   MENU
-========================================= */
-
-.menu-toggle{
-
-    font-size:20px;
-
-    cursor:pointer;
-
-    color:#1e293b;
-
-}
-
-/* =========================================
-   BOTON GRADIENTE
-========================================= */
-
-.btn-gradient{
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--verde),
-            var(--azul)
-        );
-
-    color:white;
-
-    border:none;
-
-    padding:12px 26px;
-
-    border-radius:24px;
-
-    font-weight:bold;
-
-    transition:
-        transform .2s ease,
-        opacity .2s ease;
-
-    min-height:46px;
-
-}
-
-.btn-gradient:hover{
-
-    transform:translateY(-2px);
-
-    opacity:.95;
-
-}
-
-/* =========================================
-   INPUTS
-========================================= */
-
-.form-control{
-
-    border-radius:12px;
-
-    padding:12px;
-
-    border:1px solid #d1d5db;
-
-    min-height:46px;
-
-    font-size:14px;
-
-    box-shadow:none !important;
-
-}
-
-.form-control:focus{
-
-    border-color:#2563eb;
-
-    box-shadow:
-        0 0 0 2px
-        rgba(37,99,235,0.12) !important;
-
-}
-
-/* =========================================
-   ALERTAS
-========================================= */
-
-.alert-custom{
-
-    padding:12px;
-
-    border-radius:18px;
-
-    text-align:center;
-
-    font-size:14px;
-
-}
-
-/* =========================================
-   TABLET
-========================================= */
-
-@media (max-width:768px){
-
-    body{
-
-        padding-top:85px;
-
-    }
-
-    body::before{
-
-        filter:blur(2px);
-
-    }
-
-    .navbar-custom{
-
-        height:75px;
-
-        padding:0 14px;
-
-    }
-
-    .logo-navbar{
-
-        width:48px;
-
-    }
-
-    .empresa-nombre{
-
-        font-size:18px;
-
-    }
-
-    .acciones-navbar{
-
-        gap:8px;
-
-    }
-
-    .acciones-navbar .btn-light{
-
-        padding:10px 14px;
-
-        border-radius:14px;
-
-        font-size:13px;
-
-    }
-
-    .btn-logout{
-
-        padding:10px 14px;
-
-        border-radius:14px;
-
-        font-size:13px;
-
-    }
-
-    .btn-gradient{
-
-        border-radius:16px;
-
-    }
-
-}
-
-/* =========================================
-   MOVIL
-========================================= */
-
-@media (max-width:576px){
-
-    body{
-
-        padding-top:80px;
-
-    }
-
-    .navbar-custom{
-
-        height:72px;
-
-        padding:0 10px;
-
-    }
-
-    .logo-navbar{
-
-        width:42px;
-
-    }
-
-    .empresa-nombre{
-
-        font-size:14px;
-
-        max-width:140px;
-
-        line-height:1.1;
-
-        word-break:break-word;
-
-    }
-
-    .acciones-navbar{
-
-        gap:5px;
-
-    }
-
-    .acciones-navbar .btn-light{
-
-        padding:8px 10px;
-
-        font-size:12px;
-
-    }
-
-    .btn-logout{
-
-        padding:8px 10px;
-
-        font-size:12px;
-
-    }
-
-    .btn-gradient{
-
-        width:100%;
-
-        text-align:center;
-
-    }
-
-    .form-control{
-
-        font-size:13px;
-
-    }
-
+/* Regla ultra específica para asegurar el HTML inyectado desde JavaScript */
+#acciones, 
+#acciones *, 
+#acciones .btn, 
+#acciones h6, 
+#acciones p,
+.activity-item,
+.activity-info,
+.activity-title {
+    font-family: 'Averia Libre', cursive !important;
 }

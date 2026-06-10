@@ -342,9 +342,10 @@ router.post(
             const db = req.app.get('db');
             const e = req.body;
 
-            // ============================================
-            // 🔥 OBTENER ÚLTIMO CÓDIGO
-            // ============================================
+            const nombreCompleto =
+                `${e.nombres || ''} ${e.apellidos || ''}`
+                    .replace(/\s+/g, ' ')
+                    .trim();
 
             const [rows] = await db.query(
                 "SELECT codigo FROM empleados ORDER BY id DESC LIMIT 1"
@@ -365,10 +366,6 @@ router.post(
                     "EMP" + (numero + 1);
 
             }
-
-            // ============================================
-            // 🔥 INSERTAR EMPLEADO
-            // ============================================
 
             const sql = `
 
@@ -407,7 +404,7 @@ router.post(
 
                 [
                     nuevoCodigo,
-                    e.nombre,
+                    nombreCompleto,
                     e.tipo_documento,
                     e.numero_documento,
                     e.rh,
@@ -424,10 +421,6 @@ router.post(
                 ]
 
             );
-
-            // ============================================
-            // 🔥 REGISTRAR ACTIVIDAD
-            // ============================================
 
             await db.query(
 
@@ -459,7 +452,7 @@ router.post(
 
                     'EMPLEADOS',
 
-                    `Se creó el empleado ${e.nombre}`,
+                    `Se creó el empleado ${nombreCompleto}`,
 
                     'verde',
 
@@ -468,10 +461,6 @@ router.post(
                 ]
 
             );
-
-            // ============================================
-            // 🔥 RESPUESTA
-            // ============================================
 
             res.json({
 

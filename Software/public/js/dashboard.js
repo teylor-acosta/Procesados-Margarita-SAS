@@ -1,191 +1,209 @@
+/* ==========================================================================
+   PROCESADOS MARGARITA ERP - CONTROLADOR DINÁMICO DEL DASHBOARD (USER/SST)
+   ========================================================================= */
+
 document.addEventListener("DOMContentLoaded", async () => {
 
     try {
-
+        // 🔄 1. Hacer la petición para obtener los datos del usuario logueado
         const res = await fetch('/api/me', {
             credentials: 'include'
         });
 
         const data = await res.json();
+        console.log("Datos de sesión ERP:", data);
 
-        console.log("ME:", data);
-
+        // Si la petición falla o no hay sesión activa, de inmediato detenemos
         if (!data.success) return;
 
         const u = data.usuario;
+        // Si el backend no envía conteos, inicializamos por defecto en 0
+        const c = data.conteos || { empleados: 0, usuarios: 0, capacitaciones: 0, certificados: 0 };
+        const rolUsuario = (u.rol || "empleado").toLowerCase();
 
-        // =========================================
-        // 🔥 DATOS USUARIO
-        // =========================================
+        // ==========================================================================
+        // 👋 2. RENDERIZAR DATOS DEL USUARIO (SIDEBAR Y BIENVENIDA)
+        // ==========================================================================
+        
+        // Nombre en la parte inferior del Sidebar
+        const txtNombre = document.getElementById("nombre");
+        if (txtNombre) {
+            txtNombre.textContent = u.nombre;
+        }
 
-        document.getElementById("nombre").innerHTML = `
+        // Rol en la parte inferior del Sidebar
+        const txtRol = document.getElementById("rol");
+        if (txtRol) {
+            txtRol.textContent = u.rol || "Empleado";
+        }
 
-            <div style="
-                font-weight: 600;
-                font-size: 16px;
-                line-height: 1.2;
-            ">
-                ${u.nombre}
-            </div>
+        // Cargo en la parte inferior del Sidebar
+        const txtCargo = document.getElementById("cargo");
+        if (txtCargo) {
+            txtCargo.textContent = u.cargo || "General";
+        }
 
-            <div style="
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                margin-top: 6px;
-                font-size: 15px;
-                font-weight: 600;
-                color: white;
-            ">
-                <i class="fas fa-id-card"></i>
+        // Nombre en la Card de Bienvenida Principal
+        const txtNombreBienvenida = document.getElementById("nombreBienvenida");
+        if (txtNombreBienvenida) {
+            txtNombreBienvenida.textContent = u.nombre;
+        }
 
-                <span>
-                    ${u.tipo_documento || 'CC'} ${u.numero_documento}
-                </span>
-            </div>
+        // Badge de Rol en la Card de Bienvenida Principal
+        const txtRolBadgeBienvenida = document.getElementById("rolBadgeBienvenida");
+        if (txtRolBadgeBienvenida) {
+            txtRolBadgeBienvenida.textContent = u.rol || "Empleado";
+        }
 
-        `;
+        // ==========================================================================
+        // 🛡️ 3. CONTROL DE RESTRICCIONES VISUALES SEGÚN EL ROL DEL USUARIO
+        // ==========================================================================
+        const panelEstadisticas = document.getElementById("panelEstadisticas");
+        const cardContratacion = document.getElementById("cardContratacion");
+        const cardCredenciales = document.getElementById("cardCredenciales");
 
-        document.getElementById("rol").textContent =
-            "Empleado";
-
-        document.getElementById("cargo").textContent =
-            u.cargo || "General";
-
-        // =========================================
-        // 🔥 ELIMINAR DOCUMENTO ANTIGUO
-        // =========================================
-
-        const doc =
-            document.getElementById("doc");
-
-        if (doc) {
-
-            const li =
-                doc.closest("li");
-
-            if (li) {
-
-                li.remove();
-
+        if (rolUsuario === "auxiliar" || rolUsuario === "empleado") {
+            // 🚫 Ocultar KPIs globales del sistema
+            if (panelEstadisticas) panelEstadisticas.style.display = "none";
+            
+            // 🚫 Ocultar accesos administrativos que no corresponden a su nivel
+            if (cardContratacion) cardContratacion.style.display = "none";
+            if (cardCredenciales) cardCredenciales.style.display = "none";
+            
+        } else {
+            // 🔓 Si es Admin, SuperAdmin o SST, mostrar estadísticas globales e inyectar contadores
+            if (panelEstadisticas) {
+                panelEstadisticas.style.display = "grid"; 
+                
+                if (document.getElementById("totalEmpleados")) document.getElementById("totalEmpleados").textContent = c.empleados;
+                if (document.getElementById("totalUsuarios")) document.getElementById("totalUsuarios").textContent = c.usuarios;
+                if (document.getElementById("totalCapacitaciones")) document.getElementById("totalCapacitaciones").textContent = c.capacitaciones;
+                if (document.getElementById("totalCertificados")) document.getElementById("totalCertificados").textContent = c.certificados;
             }
 
+            // 🔓 Asegurar que las tarjetas administrativas se vean
+            if (cardContratacion) cardContratacion.style.display = "flex";
+            if (cardCredenciales) cardCredenciales.style.display = "flex";
         }
 
-        // =========================================
-        // 🔥 ACCIONES
-        // =========================================
+        // ==========================================================================
+        // 🎯 4. APARTADO DINÁMICO DE INDUCCIÓN / ACCIONES (Bloque Lateral Derecho)
+        // ==========================================================================
+        const cont = document.getElementById("acciones");
 
-        const cont =
-            document.getElementById("acciones");
-
-        if (data.completo) {
-
-            cont.innerHTML = `
-                <h5 class="mb-3">
-                    Inducción completada ✔
-                </h5>
-
-                <div class="d-flex justify-content-center gap-3 flex-wrap">
-
-                    ${data.tiene_certificado ? `
-                    <a href="/certificado" class="btn btn-success btn-custom">
-                        Ver Certificado
-                    </a>
-                    ` : `
-                    <a href="/firma" class="btn btn-warning btn-custom">
-                        Generar Certificado
-                    </a>
-                    `}
-
-                    <a href="/induccion" class="btn btn-primary btn-custom">
-                        Ver Inducción
-                    </a>
-
-                </div>
-            `;
-
-        } else {
-
-            cont.innerHTML = `
-                <h5>
-                    Aún no completas la inducción
-                </h5>
-
-                <a href="/induccion" class="btn btn-primary mt-3">
-                    Continuar
-                </a>
-            `;
+        if (cont) {
+            if (data.completo) {
+                // Estado: Completada exitosamente ✔️
+                cont.innerHTML = `
+                    <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #22c55e, #2563eb);"></div>
+                    <div class="p-4 text-center">
+                        <h6 class="fw-bold text-dark mb-2" style="font-size: 1rem;">
+                            Inducción completada <i class="fas fa-check-circle text-success ms-1"></i>
+                        </h6>
+                        <p class="text-muted mb-3" style="font-size: 0.78rem; line-height: 1.4;">Tus capacitaciones obligatorias de SG-SST están al día.</p>
+                        
+                        <div class="d-grid gap-2">
+                            ${data.tiene_certificado ? `
+                            <a href="/certificado" class="btn btn-success btn-sm rounded-pill fw-bold py-2 shadow-sm d-inline-flex align-items-center justify-content-center gap-2" style="font-size: 0.85rem;">
+                                <i class="fas fa-award"></i> Ver Certificado
+                            </a>
+                            ` : `
+                            <a href="/firma" class="btn btn-warning btn-sm text-dark rounded-pill fw-bold py-2 shadow-sm d-inline-flex align-items-center justify-content-center gap-2" style="font-size: 0.85rem;">
+                                <i class="fas fa-pen-nib"></i> Generar Certificado
+                            </a>
+                            `}
+                            <a href="/induccion" class="btn btn-primary btn-sm rounded-pill fw-bold py-2 shadow-sm d-inline-flex align-items-center justify-content-center gap-2" style="font-size: 0.85rem;">
+                                <i class="fas fa-play-circle"></i> Ver Inducción
+                            </a>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Estado: Pendiente de realizar o continuar ⏳
+                cont.innerHTML = `
+                    <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: #2563eb;"></div>
+                    <div class="p-4 text-center">
+                        <h6 class="fw-bold text-dark mb-2" style="font-size: 1rem;">
+                            Inducción pendiente ⏳
+                        </h6>
+                        <p class="text-muted mb-3" style="font-size: 0.78rem; line-height: 1.4;">Es necesario finalizar tu capacitación de seguridad y salud antes de operar.</p>
+                        
+                        <a href="/induccion" class="btn btn-primary btn-sm w-100 rounded-pill fw-bold py-2 shadow-sm d-inline-flex align-items-center justify-content-center gap-2" style="font-size: 0.85rem;">
+                            <i class="fas fa-arrow-right"></i> Continuar Inducción
+                        </a>
+                    </div>
+                `;
+            }
         }
 
-        // =========================================
-        // 🔥 PERFIL
-        // =========================================
-
-        const btn =
-            document.getElementById("btnPerfil");
-
-        if (btn) {
-
-            btn.addEventListener("click", () => {
-
-                window.location.href =
-                    "/perfil";
-
+        // ==========================================================================
+        // 🔗 5. ENLACE DE REDIRECCIÓN AL CLIC EN EL CUADRO DE PERFIL
+        // ==========================================================================
+        const btnPerfil = document.getElementById("btnPerfil");
+        if (btnPerfil) {
+            btnPerfil.addEventListener("click", () => {
+                window.location.href = "/perfil";
             });
+        }
 
+        // ==========================================================================
+        // 🚪 6. CONTROL DE CERRAR SESIÓN (INTERCEPTOR SEGURO CON LIMPIEZA)
+        // ==========================================================================
+        const btnLogout = document.getElementById("btnLogout");
+        if (btnLogout) {
+            btnLogout.addEventListener("click", async (e) => {
+                e.preventDefault(); 
+
+                try {
+                    // 1. Intentamos cerrar sesión mediante POST
+                    let response = await fetch('/api/logout', { 
+                        method: 'POST',
+                        credentials: 'include' 
+                    });
+
+                    // 2. Si el backend responde 404, reintentamos con GET
+                    if (response.status === 404) {
+                        response = await fetch('/api/logout', { 
+                            method: 'GET',
+                            credentials: 'include' 
+                        });
+                    }
+
+                    // 3. Reemplazamos la localización borrando el historial inmediato
+                    window.location.replace("/"); 
+
+                } catch (err) {
+                    console.error("Error al intentar cerrar sesión:", err);
+                    window.location.replace("/");
+                }
+            });
         }
 
     } catch (error) {
-
-        console.error(
-            "Error dashboard:",
-            error
-        );
-
+        console.error("Error crítico procesando el dashboard de usuario:", error);
     }
-
 });
 
-/* =========================
-   🔥 MENU HAMBURGUESA PRO
-========================= */
-
+/* ==========================================================================
+   🔥 7. CONTROL DEL MENÚ HAMBURGUESA INTERACTIVO RESPONSIVE
+   ========================================================================== */
 function toggleMenu() {
-
-    const sidebar =
-        document.getElementById("sidebar");
-
+    const sidebar = document.getElementById("sidebar");
+    if (!sidebar) return;
+    
     sidebar.classList.toggle("active");
 
     if (sidebar.classList.contains("active")) {
-
-        document.addEventListener(
-            "click",
-            cerrarMenuFuera
-        );
-
+        document.addEventListener("click", cerrarMenuFuera);
     }
-
 }
 
 function cerrarMenuFuera(e) {
+    const sidebar = document.getElementById("sidebar");
+    if (!sidebar) return;
 
-    const sidebar =
-        document.getElementById("sidebar");
-
-    if (
-        !sidebar.contains(e.target) &&
-        !e.target.classList.contains("menu-toggle")
-    ) {
-
+    if (!sidebar.contains(e.target) && !e.target.classList.contains("menu-toggle")) {
         sidebar.classList.remove("active");
-
-        document.removeEventListener(
-            "click",
-            cerrarMenuFuera
-        );
-
+        document.removeEventListener("click", cerrarMenuFuera);
     }
-
 }
