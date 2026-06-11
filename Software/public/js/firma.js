@@ -23,12 +23,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // VALIDAR PESO
-        if (file.size > 2000000) {
+        const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 
-            alert("La imagen supera los 2MB");
-            limpiarFirma();
-            return;
-        }
+if (file.size > MAX_SIZE) {
+
+    alert("La imagen supera los 10MB");
+    limpiarFirma();
+    return;
+}
 
         const reader = new FileReader();
 
