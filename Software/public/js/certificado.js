@@ -1,110 +1,361 @@
 document.addEventListener('DOMContentLoaded', async () => {
+
     console.log("Cargando certificado...");
+
+    cargarDatosUsuarioSidebar();
+
+    const btn = document.getElementById('btnDescargarPDF');
+
+    if (btn) {
+
+        btn.addEventListener('click', async () => {
+
+            const textoOriginal = btn.innerHTML;
+
+            btn.disabled = true;
+
+            btn.innerHTML = `
+                <div class="icono-pdf">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <div class="texto-pdf">
+                    <span>Generando PDF...</span>
+                    <small>Por favor espera</small>
+                </div>
+            `;
+
+            try {
+
+                await generarPDF();
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert('Error al generar el PDF');
+
+            } finally {
+
+                btn.disabled = false;
+                btn.innerHTML = textoOriginal;
+            }
+        });
+    }
+
     await cargarDatosCertificado();
 });
 
-async function cargarDatosCertificado() {
-    const loadingDiv = document.getElementById('loadingCertificado');
-    const contenidoDiv = document.getElementById('contenidoCertificado');
-    const accionesDiv = document.getElementById('accionesCertificado');
-    
+
+/* ==========================================================
+   SIDEBAR
+========================================================== */
+
+function cargarDatosUsuarioSidebar() {
+
     try {
-        const response = await fetch('/api/datos-certificado');
-        const result = await response.json();
-        
-        if (result.success && result.datos) {
-            const datos = result.datos;
-            
-            document.getElementById('nombreEmpleado').textContent = datos.nombre || 'Empleado';
-            document.getElementById('documentoEmpleado').textContent = `Identificado(a) con documento de identidad No ${datos.numero_documento || 'N/A'}`;
-            document.getElementById('nombreEmpleadoFirma').textContent = datos.nombre || 'Empleado';
-            
-            const notaPromedio = Math.round(datos.nota_promedio || 0);
-            document.getElementById('notaPromedio').textContent = notaPromedio;
-            
-            const fecha = datos.fecha_completado ? new Date(datos.fecha_completado) : new Date();
-            const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-            const fechaFormateada = `${fecha.getDate()} de ${meses[fecha.getMonth()]} de ${fecha.getFullYear()}`;
-            
-            document.getElementById('fechaCertificado').innerHTML = `
-                <i class="fas fa-calendar-alt me-2"></i> 
+
+        const usuario =
+            JSON.parse(
+                localStorage.getItem('usuario') || '{}'
+            );
+
+        const nombre =
+            document.getElementById('nombre');
+
+        const rol =
+            document.getElementById('rol');
+
+        const cargo =
+            document.getElementById('cargo');
+
+        if (nombre) {
+            nombre.textContent =
+                usuario.nombre || 'Usuario';
+        }
+
+        if (rol) {
+            rol.textContent =
+                usuario.rol || 'Empleado';
+        }
+
+        if (cargo) {
+            cargo.textContent =
+                usuario.cargo || '';
+        }
+
+    } catch (error) {
+
+        console.error(
+            'Error cargando sidebar:',
+            error
+        );
+    }
+}
+
+
+/* ==========================================================
+   CERTIFICADO
+========================================================== */
+
+async function cargarDatosCertificado() {
+
+    const loadingDiv =
+        document.getElementById(
+            'loadingCertificado'
+        );
+
+    const contenidoDiv =
+        document.getElementById(
+            'contenidoCertificado'
+        );
+
+    try {
+
+        const response =
+            await fetch(
+                '/api/datos-certificado'
+            );
+
+        const result =
+            await response.json();
+
+        if (
+            result.success &&
+            result.datos
+        ) {
+
+            const datos =
+                result.datos;
+
+            document.getElementById(
+                'nombreEmpleado'
+            ).textContent =
+                datos.nombre ||
+                'Empleado';
+
+            document.getElementById(
+                'documentoEmpleado'
+            ).textContent =
+                `Identificado(a) con documento de identidad No ${datos.numero_documento || 'N/A'}`;
+
+            document.getElementById(
+                'nombreEmpleadoFirma'
+            ).textContent =
+                datos.nombre ||
+                'Empleado';
+
+            const notaPromedio =
+                Math.round(
+                    datos.nota_promedio || 0
+                );
+
+            document.getElementById(
+                'notaPromedio'
+            ).textContent =
+                notaPromedio;
+
+            const fecha =
+                datos.fecha_completado
+                    ? new Date(
+                        datos.fecha_completado
+                    )
+                    : new Date();
+
+            const meses = [
+                'enero',
+                'febrero',
+                'marzo',
+                'abril',
+                'mayo',
+                'junio',
+                'julio',
+                'agosto',
+                'septiembre',
+                'octubre',
+                'noviembre',
+                'diciembre'
+            ];
+
+            const fechaFormateada =
+                `${fecha.getDate()} de ${meses[fecha.getMonth()]} de ${fecha.getFullYear()}`;
+
+            document.getElementById(
+                'fechaCertificado'
+            ).innerHTML = `
+                <i class="fas fa-calendar-alt me-2"></i>
                 Bogotá, Colombia, ${fechaFormateada}
             `;
-            
+
             await cargarFirmaEmpleado();
-            
-            loadingDiv.style.display = 'none';
-            contenidoDiv.style.display = 'block';
-            accionesDiv.style.display = 'flex';
+
+            loadingDiv.style.display =
+                'none';
+
+            contenidoDiv.style.display =
+                'block';
 
         } else {
-            throw new Error(result.error || 'No se pudieron cargar los datos');
+
+            throw new Error(
+                result.error ||
+                'No se pudieron cargar los datos'
+            );
         }
 
     } catch (error) {
-        console.error('Error:', error);
-        loadingDiv.innerHTML = `
-            <div class="text-center text-danger">
-                <i class="fas fa-exclamation-triangle fa-4x mb-3"></i>
-                <h4>Error al cargar el certificado</h4>
-                <p>${error.message}</p>
-            </div>
-        `;
+
+        console.error(
+            'Error:',
+            error
+        );
+
+        if (loadingDiv) {
+
+            loadingDiv.innerHTML = `
+                <div class="text-center text-danger">
+                    <i class="fas fa-exclamation-triangle fa-4x mb-3"></i>
+                    <h4>Error al cargar el certificado</h4>
+                    <p>${error.message}</p>
+                </div>
+            `;
+        }
     }
 }
+
+
+/* ==========================================================
+   FIRMA EMPLEADO
+========================================================== */
 
 async function cargarFirmaEmpleado() {
+
     try {
-        const response = await fetch('/api/obtener-firma');
-        const result = await response.json();
-        
-        const firmaContainer = document.getElementById('firmaEmpleado');
-        
-        if (result.success && result.firma) {
-            firmaContainer.innerHTML = `<img src="${result.firma}" style="max-width: 140px; max-height: 65px;">`;
+
+        const response =
+            await fetch(
+                '/api/obtener-firma'
+            );
+
+        const result =
+            await response.json();
+
+        const firmaContainer =
+            document.getElementById(
+                'firmaEmpleado'
+            );
+
+        if (
+            result.success &&
+            result.firma
+        ) {
+
+            firmaContainer.innerHTML = `
+                <img
+                    src="${result.firma}"
+                    style="
+                        max-width:140px;
+                        max-height:65px;
+                    "
+                >
+            `;
+
         } else {
-            firmaContainer.innerHTML = `<i class="fas fa-signature fa-3x text-muted"></i>`;
+
+            firmaContainer.innerHTML = `
+                <i class="fas fa-signature fa-3x text-muted"></i>
+            `;
         }
+
     } catch (error) {
-        console.error('Error:', error);
+
+        console.error(
+            'Error firma:',
+            error
+        );
     }
 }
 
+
+/* ==========================================================
+   GENERAR PDF
+========================================================== */
+
 async function generarPDF() {
-    const element = document.getElementById('certificadoCard');
 
-    // 🔥 ACTIVAR MODO PDF
-    document.body.classList.add("certificado-pdf");
+    const element =
+        document.getElementById(
+            'certificadoCard'
+        );
 
-    // 🔥 Crear contenedor centrador
-    const wrapper = document.createElement("div");
+    document.body.classList.add(
+        'certificado-pdf'
+    );
 
-    wrapper.style.width = "279mm";
-    wrapper.style.height = "216mm";
-    wrapper.style.display = "flex";
-    wrapper.style.justifyContent = "center";
-    wrapper.style.alignItems = "center";
-    wrapper.style.background = "#ffffff";
+    const wrapper =
+        document.createElement(
+            'div'
+        );
 
-    const clone = element.cloneNode(true);
+    wrapper.style.width =
+        '279mm';
 
-    clone.style.margin = "0";
-    clone.style.boxShadow = "none";
+    wrapper.style.height =
+        '216mm';
 
-    wrapper.appendChild(clone);
-    document.body.appendChild(wrapper);
+    wrapper.style.display =
+        'flex';
 
-    await new Promise(resolve => setTimeout(resolve, 300));
+    wrapper.style.justifyContent =
+        'center';
+
+    wrapper.style.alignItems =
+        'center';
+
+    wrapper.style.background =
+        '#ffffff';
+
+    const clone =
+        element.cloneNode(true);
+
+    clone.style.margin = '0';
+
+    clone.style.boxShadow =
+        'none';
+
+    wrapper.appendChild(
+        clone
+    );
+
+    document.body.appendChild(
+        wrapper
+    );
+
+    await new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                300
+            )
+    );
 
     const opt = {
+
         margin: 0,
-        filename: `Certificado_${new Date().toISOString().split('T')[0]}.pdf`,
-        image: { type: 'jpeg', quality: 1 },
+
+        filename:
+            `Certificado_${new Date().toISOString().split('T')[0]}.pdf`,
+
+        image: {
+            type: 'jpeg',
+            quality: 1
+        },
+
         html2canvas: {
             scale: 3,
             useCORS: true,
-            backgroundColor: "#ffffff"
+            backgroundColor: '#ffffff'
         },
+
         jsPDF: {
             unit: 'mm',
             format: 'letter',
@@ -113,44 +364,33 @@ async function generarPDF() {
     };
 
     try {
-        await html2pdf().set(opt).from(wrapper).save();
+
+        await html2pdf()
+            .set(opt)
+            .from(wrapper)
+            .save();
 
     } catch (error) {
-        console.error("Error generando PDF:", error);
+
+        console.error(
+            'Error generando PDF:',
+            error
+        );
 
     } finally {
-        // 🔥 LIMPIEZA TOTAL (CLAVE PARA QUE NO DESAPAREZCAN BOTONES)
-        if (document.body.contains(wrapper)) {
-            document.body.removeChild(wrapper);
+
+        if (
+            document.body.contains(
+                wrapper
+            )
+        ) {
+            document.body.removeChild(
+                wrapper
+            );
         }
 
-        document.body.classList.remove("certificado-pdf");
+        document.body.classList.remove(
+            'certificado-pdf'
+        );
     }
-}
-
-// 🔥 ESPERAR A QUE EL DOM CARGUE EL BOTÓN
-document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('btnDescargarPDF');
-
-    if (btn) {
-        btn.addEventListener('click', async () => {
-            const textoOriginal = btn.innerHTML;
-
-            btn.disabled = true;
-            btn.innerHTML = 'Generando PDF...';
-
-            try {
-                await generarPDF();
-            } catch (error) {
-                alert('Error al generar el PDF');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = textoOriginal;
-            }
-        });
-    }
-});
-
-function irADashboard() {
-    window.location.href = '/dashboard';
 }

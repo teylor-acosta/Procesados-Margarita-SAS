@@ -35,20 +35,20 @@ router.post('/api/login', async (req, res) => {
         const { usuario, password } = req.body;
 
         const sql = `
-            SELECT 
-                u.*,
-                r.nombre as rol,
-                e.activo,
-                e.id as empleado_id,
-                u.bloqueado,
-                u.intentos_fallidos,
-                u.fecha_ultimo_login
-            FROM usuarios u
-            JOIN rol r ON u.rol_id = r.id
-            JOIN empleados e ON u.empleado_id = e.id
-            WHERE u.Usuario = ?
-        `;
-
+    SELECT 
+        u.*,
+        r.nombre as rol,
+        e.nombre as nombre,
+        e.activo,
+        e.id as empleado_id,
+        u.bloqueado,
+        u.intentos_fallidos,
+        u.fecha_ultimo_login
+    FROM usuarios u
+    JOIN rol r ON u.rol_id = r.id
+    JOIN empleados e ON u.empleado_id = e.id
+    WHERE u.Usuario = ?
+`;
         const [results] = await db.query(sql, [usuario]);
 
         if (results.length === 0) {
@@ -206,11 +206,19 @@ router.post('/api/login', async (req, res) => {
         }
 
         req.session.save(() => {
-            res.json({
-                success: true,
-                redirect: destino
-            });
-        });
+    res.json({
+        success: true,
+        redirect: destino,
+        usuario: {
+            id: user.ID,
+            empleado_id: user.empleado_id,
+            nombre: user.nombre,
+            rol: user.rol,
+            activo: user.activo,
+            fecha_ultimo_login: user.fecha_ultimo_login
+        }
+    });
+});
 
     } catch (error) {
         console.error('🔥 ERROR LOGIN COMPLETO:', error);

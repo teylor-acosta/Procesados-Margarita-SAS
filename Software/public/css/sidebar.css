@@ -1,0 +1,294 @@
+/* ==========================================================
+   SIDEBAR GLOBAL ERP
+========================================================== */
+
+.sidebar{
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 280px;
+    height: 100vh;
+
+    background: linear-gradient(
+        180deg,
+        #012e1f 0%,
+        #013726 100%
+    );
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    padding: 20px;
+
+    z-index: 9999;
+
+    border-right: 1px solid rgba(255,255,255,.08);
+
+    overflow-y: auto;
+}
+
+/* ==========================================================
+   PARTE SUPERIOR
+========================================================== */
+
+.sidebar-top{
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header{
+    text-align:center;
+    padding-bottom:30px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.sidebar-logo{
+    width: 80px;
+    height: auto;
+    margin-bottom: 15px;
+
+    background: white;
+    padding: 10px;
+    border-radius: 50%;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,.15);
+}
+
+.sidebar-header h4{
+    font-size:21px;
+    font-weight:700;
+    margin-bottom:4px;
+    color:#ffffff;
+}
+
+.sidebar-header span{
+    color: #22c55e;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* ==========================================================
+   MENÚ
+========================================================== */
+
+.sidebar-menu{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:30px;
+    flex-grow:1;
+}
+
+.menu-section-title{
+    display: block;
+
+    color: rgba(255,255,255,.55);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.menu-item{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    padding: 16px 18px;
+
+    color: #ffffff;
+    text-decoration: none;
+
+    border-radius: 16px;
+
+    margin-bottom: 10px;
+
+    font-size: 18px;
+    font-weight: 600;
+
+    transition: .25s;
+}
+
+.menu-item i{
+    width: 24px;
+    text-align: center;
+}
+
+.menu-item:hover{
+    background:#04432c;
+    color:white;
+    padding-left:24px;
+}
+
+.menu-item.active{
+    background:#055337;
+    color:white;
+    border-left:5px solid #22c55e;
+}
+
+/* ==========================================================
+   BLOQUE USUARIO
+========================================================== */
+
+.sidebar-bottom{
+    margin-top: auto;
+}
+
+.usuario-sidebar{
+    padding-top:25px;
+    border-top:1px solid rgba(255,255,255,.08);
+    margin-top:auto;
+}
+
+.usuario-info-block{
+    display:flex;
+    align-items:center;
+    gap:14px;
+
+    padding:12px;
+
+    background:rgba(0,0,0,.2);
+
+    border-radius:16px;
+
+    margin-bottom:15px;
+}
+
+.avatar-sidebar{
+    width:48px;
+    height:48px;
+
+    min-width: 54px;
+
+    border-radius: 50%;
+
+    background:#16a34a;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+    font-size: 22px;
+}
+
+.datos-sidebar{
+    display: flex;
+    flex-direction: column;
+}
+
+.datos-sidebar span{
+    font-size:15px;
+    font-weight:700;
+    color:white;
+}
+
+#rol,
+#cargo{
+    font-size:13px;
+    color:rgba(255,255,255,.6);
+}
+
+#cargo{
+    color: rgba(255,255,255,.55);
+    font-size: 12px;
+}
+
+/* ==========================================================
+   BOTÓN LOGOUT
+========================================================== */
+
+.sidebar-logout{
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    height: 60px;
+
+    border: 1px solid #ef4444;
+    border-radius: 18px;
+
+    text-decoration: none;
+
+    color: #ff5b5b;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    transition: .25s;
+}
+
+.sidebar-logout:hover{
+    background: #ef4444;
+    color: white;
+}
+
+/* ==========================================================
+   OVERLAY MOBILE
+========================================================== */
+
+.sidebar-overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    background: rgba(0,0,0,.45);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: .3s;
+
+    z-index: 9998;
+}
+
+.sidebar-overlay.active{
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media(max-width:992px){
+
+    .sidebar{
+
+        transform: translateX(-100%);
+
+        transition: transform .3s ease;
+
+        z-index: 9999;
+    }
+
+    .sidebar.active{
+
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay{
+
+        z-index:9998;
+    }
+
+    .sidebar-logo{
+        width:75px;
+        height:75px;
+    }
+
+    .menu-item{
+        font-size:16px;
+    }
+}

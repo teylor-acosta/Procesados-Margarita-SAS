@@ -1,833 +1,266 @@
-/* ============================================
-   🎓 CERTIFICADO PRO FINAL OPTIMIZADO
-============================================ */
+/* ==========================================================================
+   CERTIFICADO - PROCESADOS MARGARITA
+   ========================================================================== */
 
+/* =========================================
+   CONTENEDOR PRINCIPAL
+========================================= */
 
-/* ============================================
-   🌎 BODY
-============================================ */
-
-body{
-
-    margin:0;
-    padding:0;
-
-    overflow-x:hidden;
-
-    font-family:'Averia Libre', cursive;
-
-    -webkit-font-smoothing:antialiased;
-    text-rendering:optimizeLegibility;
-
-}
-
-
-/* ============================================
-   🌈 FONDO GENERAL
-============================================ */
-
-.background-overlay {
-
+.certificado-main{
+    margin-left:280px;
+    width:calc(100% - 280px);
     min-height:100vh;
-
-    background:
-        linear-gradient(
-            135deg,
-            #e8f5e9,
-            #e3f2fd
-        );
-
-    padding-top:110px;
-
+    padding:40px;
 }
 
+/* =========================================
+   WRAPPER
+========================================= */
 
-/* ============================================
-   🧭 NAVBAR GLOBAL ERP
-============================================ */
-
-.navbar-custom{
-
-    width:100%;
-
-    background:
-        rgba(255,255,255,.96);
-
-    backdrop-filter:blur(10px);
-
-    display:flex;
-
-    justify-content:space-between;
-    align-items:center;
-
-    padding:14px 30px;
-
-    box-shadow:
-        0 4px 18px rgba(0,0,0,.08);
-
-    position:fixed;
-
-    top:0;
-    left:0;
-
-    z-index:9999;
+.certificado-wrapper{
+    max-width:1400px;
+    margin:0 auto;
 }
 
-/* IZQUIERDA */
-
-.navbar-left{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-}
-
-.logo-navbar{
-
-    width:55px;
-    height:55px;
-
-    object-fit:contain;
-}
-
-.empresa-nombre{
-
-    font-size:32px;
-
-    font-weight:700;
-
-    color:#16a34a;
-
-    font-style:italic;
-
-    letter-spacing:.5px;
-}
-
-/* DERECHA */
-
-.acciones-navbar{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-}
-
-/* BOTON VOLVER */
-
-.btn-volver{
-
-    border:none;
-
-    background:#f8fafc;
-
-    color:#111827;
-
-    text-decoration:none;
-
-    padding:12px 24px;
-
-    border-radius:18px;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    font-weight:700;
-
-    transition:.25s;
-
-    box-shadow:
-        0 4px 10px rgba(0,0,0,.05);
-}
-
-.btn-volver:hover{
-
-    background:#e2e8f0;
-
-    transform:
-        translateY(-2px);
-
-    color:#111827;
-}
-
-/* BOTON LOGOUT */
-
-.btn-logout{
-
-    border:none;
-
-    text-decoration:none;
-
-    background:
-        linear-gradient(
-            135deg,
-            #ef4444,
-            #dc2626
-        );
-
-    color:white;
-
-    padding:12px 24px;
-
-    border-radius:18px;
-
-    font-weight:700;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    transition:.3s;
-
-    box-shadow:
-        0 10px 20px rgba(239,68,68,.25);
-}
-
-.btn-logout:hover{
-
-    transform:
-        translateY(-2px);
-
-    box-shadow:
-        0 15px 28px rgba(239,68,68,.35);
-
-    color:white;
-}
-
-
-/* ============================================
-   📦 WRAPPER
-============================================ */
-
-.certificado-wrapper {
-
-    display:flex;
-
-    justify-content:center;
-    align-items:center;
-
-    padding:25px;
-
-}
-
-
-/* ============================================
-   🎓 TARJETA
-============================================ */
-
-.certificado-card {
-
-    max-width:1000px;
-
-    width:100%;
-
-    background:#fff;
-
-    border-radius:22px;
-
-    box-shadow:0 8px 22px rgba(0,0,0,0.12);
-
+/* =========================================
+   TARJETA CERTIFICADO
+========================================= */
+
+.certificado-card{
+    background:#ffffff;
+    border-radius:24px;
+    padding:40px;
     position:relative;
-
-    overflow:hidden;
-
+    box-shadow:0 15px 40px rgba(0,0,0,.08);
+    border:1px solid rgba(255,255,255,.3);
 }
 
+/* =========================================
+   MARCA DE AGUA
+========================================= */
 
-/* ============================================
-   🌈 BORDES
-============================================ */
-
-.certificado-card::before,
-.certificado-card::after {
-
-    content:"";
-
+.marca-agua{
     position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%) rotate(-30deg);
 
-    left:0;
-    right:0;
+    font-size:80px;
+    font-weight:700;
 
-    height:5px;
+    color:rgba(0,0,0,.03);
 
+    pointer-events:none;
+    user-select:none;
+    white-space:nowrap;
 }
 
-.certificado-card::before {
+/* =========================================
+   HEADER CERTIFICADO
+========================================= */
 
-    top:0;
-
-    background:
-        linear-gradient(
-            90deg,
-            #28a745,
-            #007bff
-        );
-
+.certificado-header{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:30px;
+    margin-bottom:40px;
 }
 
-.certificado-card::after {
-
-    bottom:0;
-
-    background:
-        linear-gradient(
-            90deg,
-            #007bff,
-            #28a745
-        );
-
+.certificado-logo{
+    width:100px;
+    height:100px;
+    object-fit:contain;
 }
 
-
-/* ============================================
-   📄 CONTENIDO
-============================================ */
-
-.certificado-contenido {
-
-    padding:35px 45px;
-
+.certificado-titulo{
+    text-align:center;
 }
 
-.certificado-marco {
+.certificado-titulo h1{
+    font-size:42px;
+    font-weight:700;
+    color:#032b1d;
+    margin-bottom:10px;
+}
 
-    border:2px solid rgba(40,167,69,0.25);
+.certificado-titulo p{
+    font-size:18px;
+    color:#64748b;
+}
 
-    padding:25px;
+/* =========================================
+   CUERPO
+========================================= */
+
+.certificado-cuerpo{
+    text-align:center;
+    font-size:18px;
+    line-height:1.8;
+    color:#334155;
+}
+
+.certificado-nombre{
+    font-size:38px;
+    font-weight:700;
+    color:#032b1d;
+    margin:25px 0;
+}
+
+#documentoEmpleado{
+    margin-bottom:25px;
+}
+
+#fechaCertificado{
+    margin-top:25px;
+    font-weight:600;
+    color:#475569;
+}
+
+/* =========================================
+   FIRMAS
+========================================= */
+
+.certificado-firma{
+    display:flex;
+    justify-content:space-between;
+    gap:30px;
+    margin-top:70px;
+}
+
+.firma-area{
+    flex:1;
+    text-align:center;
+}
+
+.firma-linea{
+    width:100%;
+    height:2px;
+    background:#1e293b;
+    margin:12px 0;
+}
+
+.firma-img{
+    max-width:140px;
+    max-height:70px;
+    object-fit:contain;
+}
+
+/* =========================================
+   BOTON PDF SIDEBAR
+========================================= */
+
+.sidebar-pdf{
+    width:100%;
+    border:none;
+    margin-top:15px;
+    padding:16px;
 
     border-radius:18px;
 
-}
-
-
-/* ============================================
-   🏆 HEADER
-============================================ */
-
-.certificado-header {
+    background:#ffffff;
 
     display:flex;
-
-    justify-content:space-between;
     align-items:center;
-
-    gap:20px;
-
-}
-
-.certificado-header img {
-
-    max-width:100px;
-
-    height:auto;
-
-    object-fit:contain;
-
-}
-
-
-/* ============================================
-   ✍ TEXTO
-============================================ */
-
-.certificado-cuerpo {
-
-    text-align:center;
-
-}
-
-.certificado-nombre {
-
-    font-size:1.5rem;
-
-    font-weight:bold;
-
-    color:#111;
-
-    font-style:italic;
-
-}
-
-.certificado-titulo h1 {
-
-    font-weight:800;
-
-    color:#222;
-
-    font-style:italic;
-
-}
-
-.certificado-titulo p {
-
-    margin:0;
-
-    color:#555;
-
-}
-
-
-/* ============================================
-   ✍ FIRMA
-============================================ */
-
-.certificado-firma {
-
-    display:flex;
-
-    justify-content:space-between;
-    align-items:center;
-
-    gap:20px;
-
-    margin-top:28px;
-
-    flex-wrap:wrap;
-
-}
-
-.firma-area {
-
-    flex:1;
-
-    text-align:center;
-
-}
-
-.firma-area img {
-
-    max-width:110px;
-
-    max-height:55px;
-
-    object-fit:contain;
-
-}
-
-.firma-area img[src*="firma"] {
-
-    max-width:120px;
-
-}
-
-.firma-area img[src*="sello"] {
-
-    max-width:90px;
-
-    max-height:65px;
-
-}
-
-.firma-linea {
-
-    width:130px;
-
-    height:2px;
-
-    margin:6px auto;
-
-    background:
-        linear-gradient(
-            90deg,
-            #28a745,
-            #007bff
-        );
-
-}
-
-
-/* ============================================
-   🎛 BOTONES
-============================================ */
-
-.certificado-acciones {
-
-    position:fixed;
-
-    top:120px;
-    right:18px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:10px;
-
-}
-
-.btn-certificado {
-
-    background:
-        linear-gradient(
-            135deg,
-            #28a745,
-            #007bff
-        );
-
-    color:white;
-
-    border-radius:40px;
-
-    padding:10px 18px;
-
-    border:none;
+    gap:14px;
 
     cursor:pointer;
 
-    transition:.2s ease;
-
-    font-size:14px;
-
-    font-family:'Averia Libre', cursive;
+    transition:.3s;
 }
 
-.btn-certificado:hover {
-
+.sidebar-pdf:hover{
     transform:translateY(-2px);
 
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
 }
 
+.sidebar-pdf i{
+    width:52px;
+    height:52px;
 
-/* ============================================
-   💧 MARCA AGUA
-============================================ */
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
-.marca-agua {
+    border-radius:14px;
 
-    position:absolute;
+    color:#ffffff;
 
-    top:50%;
-    left:50%;
+    font-size:22px;
 
-    transform:
-        translate(-50%, -50%)
-        rotate(-45deg);
-
-    font-size:36px;
-
-    opacity:0.04;
-
-    pointer-events:none;
-
+    background:linear-gradient(
+        135deg,
+        #22c55e,
+        #2563eb
+    );
 }
 
-
-/* ============================================
-   ⏳ LOADING
-============================================ */
-
-.loading-spinner {
-
-    text-align:center;
-
-    padding:40px;
-
+.pdf-info{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
 }
 
+.pdf-info span{
+    font-weight:700;
+    color:#0f172a;
+}
 
-/* ============================================
-   📱 TABLET
-============================================ */
+.pdf-info small{
+    color:#64748b;
+}
 
-@media (max-width:768px) {
+/* =========================================
+   LOADING
+========================================= */
 
-    .background-overlay {
+.loading-spinner{
+    padding:100px 0;
+}
 
-        padding-top:150px;
+/* =========================================
+   CERTIFICADO PDF
+========================================= */
 
+.certificado-pdf .sidebar,
+.certificado-pdf .navbar-custom{
+    display:none !important;
+}
+
+.certificado-pdf .certificado-main{
+    margin:0 !important;
+    width:100% !important;
+    padding:0 !important;
+}
+
+.certificado-pdf .certificado-card{
+    box-shadow:none !important;
+    border:none !important;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:992px){
+
+    .certificado-main{
+        margin-left:0;
+        width:100%;
+        padding:20px;
     }
 
-    .navbar-custom{
-
-        padding:14px 18px;
-
+    .certificado-header{
         flex-direction:column;
-
-        gap:16px;
     }
 
-    .empresa-nombre{
-
-        font-size:22px;
-    }
-
-    .acciones-navbar{
-
-        width:100%;
-
-        justify-content:center;
-
-        flex-wrap:wrap;
-    }
-
-    .certificado-wrapper {
-
-        padding:15px;
-
-    }
-
-    .certificado-contenido {
-
-        padding:22px;
-
-    }
-
-    .certificado-header {
-
+    .certificado-firma{
         flex-direction:column;
-
-        text-align:center;
-
     }
 
-    .certificado-firma {
-
-        flex-direction:column;
-
-    }
-
-    .certificado-card {
-
-        border-radius:18px;
-
-    }
-
-}
-
-
-/* ============================================
-   📱 MÓVIL
-============================================ */
-
-@media (max-width:576px) {
-
-    body {
-
-        overflow-x:hidden;
-
-    }
-
-    .background-overlay {
-
-        padding-top:170px;
-
-    }
-
-    .empresa-nombre{
-
-        font-size:18px;
-    }
-
-    .logo-navbar{
-
-        width:42px;
-        height:42px;
-    }
-
-    .acciones-navbar{
-
-        flex-direction:column;
-
-        width:100%;
-    }
-
-    .btn-volver,
-    .btn-logout{
-
-        width:100%;
-
-        justify-content:center;
-    }
-
-    .certificado-wrapper {
-
-        padding:10px;
-
-    }
-
-    .certificado-card {
-
-        width:100%;
-
-        border-radius:15px;
-
-        box-shadow:0 4px 14px rgba(0,0,0,0.08);
-
-    }
-
-    .certificado-contenido {
-
-        padding:14px;
-
-    }
-
-    .certificado-marco {
-
-        padding:14px;
-
-        border-radius:14px;
-
-    }
-
-    .certificado-header {
-
-        flex-direction:column;
-
-        text-align:center;
-
-        gap:8px;
-
-    }
-
-    .certificado-header img {
-
-        max-width:65px;
-
-    }
-
-    .certificado-titulo h1 {
-
-        font-size:1.1rem;
-
-    }
-
-    .certificado-nombre {
-
-        font-size:1rem;
-
-    }
-
-    .certificado-cuerpo p {
-
-        font-size:14px;
-
-    }
-
-    .certificado-firma {
-
-        flex-direction:row;
-
-        justify-content:space-between;
-
-        flex-wrap:wrap;
-
-        gap:10px;
-
-    }
-
-    .firma-area {
-
-        flex:1 1 30%;
-
-        min-width:85px;
-
-    }
-
-    .firma-area img {
-
-        max-width:75px;
-
-        max-height:38px;
-
-    }
-
-    .firma-linea {
-
-        width:75px;
-
-    }
-
-    .certificado-acciones {
-
-        position:static;
-
-        margin-top:20px;
-
-        align-items:center;
-
-        width:100%;
-    }
-
-    .btn-certificado {
-
-        width:100%;
-
-        max-width:240px;
-
-        border-radius:16px;
-    }
-
-}
-
-
-/* ============================================
-   📱 MÓVILES PEQUEÑOS
-============================================ */
-
-@media (max-width:380px) {
-
-    .certificado-titulo h1 {
-
-        font-size:1rem;
-
-    }
-
-    .certificado-nombre {
-
-        font-size:.95rem;
-
-    }
-
-    .certificado-cuerpo p {
-
-        font-size:13px;
-
-    }
-
-}
-
-
-/* ============================================
-   🖨 PRINT
-============================================ */
-
-@media print {
-
-    body {
-
-        background:#fff;
-
-    }
-
-    .background-overlay {
-
-        padding:0;
-
-    }
-
-    .certificado-card {
-
-        width:750px;
-
-        box-shadow:none;
-
-        border-radius:0;
-
-    }
-
-    .certificado-acciones,
-    .navbar-custom {
-
-        display:none !important;
-
+    .marca-agua{
+        font-size:45px;
     }
 
 }

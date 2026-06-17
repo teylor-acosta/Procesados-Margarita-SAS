@@ -1,9 +1,75 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
 const router = express.Router();
 const path = require('path');
+const multer = require('multer');
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
 const { proteger, soloSuperAdmin } = require('../middlewares/auth');
 const db = require('../DB');
 
+const carpetaFotos =
+    path.join(
+        __dirname,
+        '../public/uploads/fotos'
+    );
+
+if (!fs.existsSync(carpetaFotos)) {
+
+    fs.mkdirSync(
+        carpetaFotos,
+        { recursive:true }
+    );
+
+}
+
+const storage =
+    multer.diskStorage({
+
+        destination(
+            req,
+            file,
+            cb
+        ) {
+
+            cb(
+                null,
+                carpetaFotos
+            );
+
+        },
+
+        filename(
+            req,
+            file,
+            cb
+        ) {
+
+            const extension =
+                path.extname(
+                    file.originalname
+                );
+
+            cb(
+                null,
+                `perfil_${Date.now()}${extension}`
+            );
+
+        }
+
+    });
+
+const upload =
+    multer({
+
+        storage,
+
+        limits: {
+            fileSize:
+            10 * 1024 * 1024
+        }
+
+    });
 // ============================================
 // 🔥 LISTAR SOLO ACTIVOS
 // ============================================
@@ -689,4 +755,498 @@ router.get('/api/dashboard-estadisticas', async (req, res) => {
     }
 
 });
+
+/* =========================================
+   ACTUALIZAR FOTO PERFIL
+========================================= */
+
+router.post(
+    '/api/perfil/foto',
+    proteger,
+    upload.single('foto'),
+    async (req, res) => {
+
+        try {
+
+            const db =
+                req.app.get('db');
+
+            const empleadoID =
+                req.session.empleadoID;
+
+            if (!req.file) {
+
+                return res.status(400).json({
+
+                    success:false,
+                    message:'No se recibió imagen'
+
+                });
+
+            }
+
+            await db.query(
+
+                `
+                UPDATE empleados
+                SET foto = ?
+                WHERE id = ?
+                `,
+
+                [
+                    req.file.filename,
+                    empleadoID
+                ]
+
+            );
+
+            res.json({
+
+                success:true,
+
+                foto:
+                req.file.filename
+
+            });
+
+        } catch(error) {
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false,
+                message:error.message
+
+            });
+
+        }
+
+    }
+);
+router.get(
+    '/api/perfil/pdf',
+    proteger,
+    async (req, res) => {
+
+        try {
+
+            const db =
+                req.app.get('db');
+
+            const usuarioId =
+                req.session.usuarioID;
+
+            const empleadoId =
+                req.session.empleadoID;
+
+            const [empleadoRows] =
+                await db.query(`
+                    SELECT
+                        e.*,
+                        c.nombre AS cargo,
+                        a.nombre AS area,
+                        s.nombre AS sede
+                    FROM empleados e
+                    LEFT JOIN cargos c
+                        ON e.cargo_id = c.id
+                    LEFT JOIN areas a
+                        ON e.area_id = a.id
+                    LEFT JOIN sedes s
+                        ON e.sede_id = s.id
+                    WHERE e.id = ?
+                `, [empleadoId]);
+
+            if (!empleadoRows.length) {
+
+                return res.status(404).json({
+                    success: false,
+                    message: 'Empleado no encontrado'
+                });
+
+            }
+
+            const empleado =
+                empleadoRows[0];
+
+            const [firmaRows] =
+                await db.query(`
+                    SELECT firma_data
+                    FROM firmas_usuario
+                    WHERE usuario_id = ?
+                    LIMIT 1
+                `, [usuarioId]);
+
+            const firma =
+                firmaRows[0]?.firma_data || null;
+
+            const doc =
+                new PDFDocument({
+                    margin: 40,
+                    size: 'A4'
+                });
+
+            res.setHeader(
+                'Content-Type',
+                'application/pdf'
+            );
+
+            res.setHeader(
+                'Content-Disposition',
+                `attachment; filename=Perfil_${empleado.codigo}.pdf`
+            );
+
+            doc.pipe(res);
+
+            // ============================================
+            // MARCA DE AGUA
+            // ============================================
+
+            const logoPath =
+                path.join(
+                    __dirname,
+                    '../public/img/logo de procesados solo.jpg'
+                );
+
+            if (fs.existsSync(logoPath)) {
+
+                doc.opacity(0.08);
+
+                doc.image(
+                    logoPath,
+                    110,
+                    180,
+                    {
+                        width: 350
+                    }
+                );
+
+                doc.opacity(1);
+            }
+
+            // ============================================
+            // TITULO
+            // ============================================
+
+            doc
+                .fillColor('#02412e')
+                .fontSize(26)
+                .text(
+                    'PROCESADOS MARGARITA SAS',
+                    {
+                        align: 'center'
+                    }
+                );
+
+            doc
+                .fontSize(18)
+                .text(
+                    'PERFIL DEL EMPLEADO',
+                    {
+                        align: 'center'
+                    }
+                );
+
+            doc.moveDown(2);
+
+            // ============================================
+            // FOTO EMPLEADO
+            // ============================================
+
+            try {
+
+                if (
+                    empleado.foto &&
+                    empleado.foto.startsWith('data:image')
+                ) {
+
+                    const fotoBase64 =
+                        empleado.foto.split(',')[1];
+
+                    const fotoBuffer =
+                        Buffer.from(
+                            fotoBase64,
+                            'base64'
+                        );
+
+                    doc.image(
+                        fotoBuffer,
+                        450,
+                        95,
+                        {
+                            width: 90,
+                            height: 90
+                        }
+                    );
+
+                }
+
+            } catch (err) {
+
+                console.log(
+                    'No se pudo cargar la foto:',
+                    err.message
+                );
+
+            }
+
+            // ============================================
+            // FECHA BONITA
+            // ============================================
+
+            const fechaNacimiento =
+                empleado.fecha_nacimiento
+                ? new Date(
+                    empleado.fecha_nacimiento
+                  )
+                    .toISOString()
+                    .split('T')[0]
+                : '';
+
+            // ============================================
+            // DATOS EMPLEADO
+            // ============================================
+
+            doc
+                .fillColor('black')
+                .fontSize(12);
+
+            const datos = [
+
+                `Código: ${empleado.codigo || ''}`,
+                `Nombre: ${empleado.nombre || ''}`,
+                `Tipo Documento: ${empleado.tipo_documento || ''}`,
+                `Documento: ${empleado.numero_documento || ''}`,
+                `RH: ${empleado.rh || ''}`,
+                `Fecha Nacimiento: ${fechaNacimiento}`,
+                `Lugar Nacimiento: ${empleado.lugar_nacimiento || ''}`,
+                `Estado Civil: ${empleado.estado_civil || ''}`,
+                `Dirección: ${empleado.direccion || ''}`,
+                `Barrio: ${empleado.barrio_localidad || ''}`,
+                `Teléfono: ${empleado.telefono || ''}`,
+                `Email: ${empleado.email || ''}`,
+                `Área: ${empleado.area || ''}`,
+                `Cargo: ${empleado.cargo || ''}`,
+                `Sede: ${empleado.sede || ''}`
+
+            ];
+
+            datos.forEach(texto => {
+
+                doc.text(texto);
+
+            });
+
+            doc.moveDown(2);
+
+            // ============================================
+            // FIRMA
+            // ============================================
+
+            doc
+                .fontSize(13)
+                .text('Firma registrada:');
+
+            if (firma) {
+
+                try {
+
+                    const firmaBase64 =
+                        firma.split(',')[1];
+
+                    const firmaBuffer =
+                        Buffer.from(
+                            firmaBase64,
+                            'base64'
+                        );
+
+                    const posicionFirma =
+                        doc.y + 5;
+
+                    doc.image(
+                        firmaBuffer,
+                        60,
+                        posicionFirma,
+                        {
+                            width: 170
+                        }
+                    );
+
+                    doc.y =
+                        posicionFirma + 80;
+
+                    doc.text(
+                        '____________________________',
+                        60
+                    );
+
+                    doc.text(
+                        empleado.nombre,
+                        60
+                    );
+
+                } catch (err) {
+
+                    doc.text(
+                        'No fue posible mostrar la firma.'
+                    );
+
+                }
+
+            } else {
+
+                doc.text(
+                    'No registra firma.'
+                );
+
+            }
+
+            doc.moveDown(2);
+
+            // ============================================
+            // PIE DE PAGINA
+            // ============================================
+
+            doc
+                .fontSize(10)
+                .fillColor('gray')
+                .text(
+                    `Generado el ${new Date().toLocaleString('es-CO')}`
+                );
+
+            doc.moveDown();
+
+            doc
+                .fontSize(9)
+                .fillColor('#555')
+                .text(
+                    'Este documento fue generado automáticamente por el ERP de Procesados Margarita SAS.',
+                    {
+                        align: 'center'
+                    }
+                );
+
+            doc.end();
+
+        } catch (error) {
+
+            console.error(
+                'Error generando PDF:',
+                error
+            );
+
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+
+        }
+
+    }
+);
+
+router.post(
+    '/api/perfil/cambiar-password',
+    proteger,
+    async (req, res) => {
+
+        try {
+
+            const db =
+                req.app.get('db');
+
+            const usuarioId =
+                req.session.usuarioID;
+
+            const {
+                actual,
+                nueva
+            } = req.body;
+
+            if (!actual || !nueva) {
+
+                return res.status(400).json({
+                    success: false,
+                    message: 'Debe ingresar la contraseña actual y la nueva.'
+                });
+
+            }
+
+            const [rows] =
+                await db.query(
+                    `
+                    SELECT password_hash
+                    FROM usuarios
+                    WHERE ID = ?
+                    `,
+                    [usuarioId]
+                );
+
+            if (!rows.length) {
+
+                return res.status(404).json({
+                    success: false,
+                    message: 'Usuario no encontrado'
+                });
+
+            }
+
+            const usuario =
+                rows[0];
+
+            const coincide =
+                await bcrypt.compare(
+                    actual,
+                    usuario.password_hash
+                );
+
+            if (!coincide) {
+
+                return res.status(400).json({
+                    success: false,
+                    message: 'La contraseña actual es incorrecta'
+                });
+
+            }
+
+            const hash = await bcrypt.hash(
+    nueva,
+    10
+);
+
+            await db.query(
+                `
+                UPDATE usuarios
+                SET
+                    password_hash = ?,
+                    fecha_cambio_password = NOW()
+                WHERE ID = ?
+                `,
+                [
+                    hash,
+                    usuarioId
+                ]
+            );
+
+            res.json({
+                success: true,
+                message: 'Contraseña actualizada correctamente'
+            });
+
+        } catch (error) {
+
+            console.error(
+                '🔥 ERROR CAMBIANDO PASSWORD PERFIL:',
+                error
+            );
+
+            res.status(500).json({
+                success: false,
+                message: 'Error interno del servidor'
+            });
+
+        }
+
+    }
+);
 module.exports = router;

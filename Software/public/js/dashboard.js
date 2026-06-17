@@ -98,23 +98,26 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #22c55e, #2563eb);"></div>
                     <div class="p-4 text-center">
                         <h6 class="fw-bold text-dark mb-2" style="font-size: 1rem;">
-                            Inducción completada <i class="fas fa-check-circle text-success ms-1"></i>
-                        </h6>
+    Inducción completada
+    <i class="fas fa-check-circle text-success ms-1"></i>
+</h6>
                         <p class="text-muted mb-3" style="font-size: 0.78rem; line-height: 1.4;">Tus capacitaciones obligatorias de SG-SST están al día.</p>
                         
                         <div class="d-grid gap-2">
                             ${data.tiene_certificado ? `
                             <a href="/certificado" class="btn btn-success btn-sm rounded-pill fw-bold py-2 shadow-sm d-inline-flex align-items-center justify-content-center gap-2" style="font-size: 0.85rem;">
-                                <i class="fas fa-award"></i> Ver Certificado
-                            </a>
+    <i class="fas fa-certificate"></i>
+    Ver Certificado
+</a>
                             ` : `
                             <a href="/firma" class="btn btn-warning btn-sm text-dark rounded-pill fw-bold py-2 shadow-sm d-inline-flex align-items-center justify-content-center gap-2" style="font-size: 0.85rem;">
                                 <i class="fas fa-pen-nib"></i> Generar Certificado
                             </a>
                             `}
                             <a href="/induccion" class="btn btn-primary btn-sm rounded-pill fw-bold py-2 shadow-sm d-inline-flex align-items-center justify-content-center gap-2" style="font-size: 0.85rem;">
-                                <i class="fas fa-play-circle"></i> Ver Inducción
-                            </a>
+    <i class="fas fa-circle-play"></i>
+    Ver Inducción
+</a>
                         </div>
                     </div>
                 `;
@@ -124,8 +127,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: #2563eb;"></div>
                     <div class="p-4 text-center">
                         <h6 class="fw-bold text-dark mb-2" style="font-size: 1rem;">
-                            Inducción pendiente ⏳
-                        </h6>
+    Inducción pendiente
+    <i class="fas fa-clock text-warning ms-1"></i>
+</h6>
                         <p class="text-muted mb-3" style="font-size: 0.78rem; line-height: 1.4;">Es necesario finalizar tu capacitación de seguridad y salud antes de operar.</p>
                         
                         <a href="/induccion" class="btn btn-primary btn-sm w-100 rounded-pill fw-bold py-2 shadow-sm d-inline-flex align-items-center justify-content-center gap-2" style="font-size: 0.85rem;">
@@ -184,26 +188,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 });
 
-/* ==========================================================================
-   🔥 7. CONTROL DEL MENÚ HAMBURGUESA INTERACTIVO RESPONSIVE
-   ========================================================================== */
-function toggleMenu() {
-    const sidebar = document.getElementById("sidebar");
-    if (!sidebar) return;
-    
-    sidebar.classList.toggle("active");
-
-    if (sidebar.classList.contains("active")) {
-        document.addEventListener("click", cerrarMenuFuera);
-    }
-}
-
-function cerrarMenuFuera(e) {
-    const sidebar = document.getElementById("sidebar");
-    if (!sidebar) return;
-
-    if (!sidebar.contains(e.target) && !e.target.classList.contains("menu-toggle")) {
-        sidebar.classList.remove("active");
-        document.removeEventListener("click", cerrarMenuFuera);
-    }
-}

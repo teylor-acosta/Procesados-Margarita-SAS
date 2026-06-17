@@ -1,20 +1,21 @@
-console.log("🔥 login.js cargado");
+/* ==========================================================================
+   🌿 ERP GLOBAL - CONTROLADOR CENTRAL DE AUTENTICACIÓN Y ACCESO DINÁMICO
+   ========================================================================== */
+
+console.log("🔥 login.js cargado y optimizado");
 
 document.addEventListener('DOMContentLoaded', () => {
 
     const loginForm = document.getElementById('loginForm');
     const mensajeDiv = document.getElementById('mensaje');
 
-    // 🔥 OJITO
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('password');
 
     if (togglePassword) {
         togglePassword.addEventListener('click', () => {
-
             const type = passwordInput.type === 'password' ? 'text' : 'password';
             passwordInput.type = type;
-
             togglePassword.classList.toggle('fa-eye');
             togglePassword.classList.toggle('fa-eye-slash');
         });
@@ -31,12 +32,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const usuario = loginForm.usuario.value.trim();
         const password = loginForm.password.value.trim();
 
-        mensajeDiv.style.display = 'none';
+        if (mensajeDiv) mensajeDiv.style.display = 'none';
 
         if (!usuario || !password) {
-            mensajeDiv.textContent = "Debes ingresar usuario y contraseña";
-            mensajeDiv.className = "alert alert-warning mt-3";
-            mensajeDiv.style.display = 'block';
+            if (mensajeDiv) {
+                mensajeDiv.textContent = "Debes ingresar usuario y contraseña";
+                mensajeDiv.className = "alert alert-warning mt-3";
+                mensajeDiv.style.display = 'block';
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Campos vacíos',
+                    text: 'Debes ingresar usuario y contraseña',
+                    confirmButtonColor: '#dc3545'
+                });
+            }
             return;
         }
 
@@ -44,52 +54,107 @@ document.addEventListener('DOMContentLoaded', () => {
         btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Validando...';
 
         try {
-
             const response = await fetch('/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
+                credentials: 'include', 
                 body: JSON.stringify({ usuario, password })
             });
 
             const data = await response.json();
 
             if (data.success) {
+                // Limpieza absoluta de sesiones anteriores
+                localStorage.clear();
+                sessionStorage.clear();
 
-    window.location.href =
-        data.redirect || "/dashboard";
+                /* ==========================================================================
+                   🎯 EXTRACCIÓN DINÁMICA DE CAMPOS DE BASE DE DATOS
+                   ========================================================================== */
+                /* ==========================================================================
+   🎯 EXTRACCIÓN DINÁMICA DE CAMPOS DE BASE DE DATOS
+   ========================================================================== */
+const uSource = data.usuario || data;
 
-} else {
+console.log("📦 RESPUESTA LOGIN:", data);
+console.log("👤 DATOS USUARIO:", uSource);
 
-    Swal.fire({
+let nombreReal = "";
 
-        icon: data.inactivo
-            ? 'warning'
-            : 'error',
+const posiblesCamposNombre = [
+    'nombre_completo',
+    'nombre',
+    'nombres',
+    'empleado',
+    'full_name',
+    'fullName',
+    'usuario_nombre',
+    'nombre_usuario',
+    'username',
+    'usuario'
+];
 
-        title: data.inactivo
-            ? 'Empleado inactivo'
-            : 'Error de acceso',
-
-        text:
-            data.message ||
-            'Credenciales incorrectas',
-
-        confirmButtonColor: '#dc3545'
-
-    });
-
+for (const campo of posiblesCamposNombre) {
+    if (uSource[campo]) {
+        nombreReal = String(uSource[campo]).trim();
+        break;
+    }
 }
 
-        } catch (error) {
+if (!nombreReal && (uSource.nombres || uSource.apellidos)) {
+    nombreReal = `${uSource.nombres || ''} ${uSource.apellidos || ''}`.trim();
+}
 
-            mensajeDiv.textContent = "Error de conexión con el servidor";
-            mensajeDiv.className = "alert alert-danger mt-3";
-            mensajeDiv.style.display = 'block';
+if (!nombreReal) {
+    nombreReal = "Usuario del Sistema";
+}
+
+console.log("✅ NOMBRE DETECTADO:", nombreReal);
+
+                // 2. Mapeo inteligente del Cargo / Rol del empleado
+                const rolReal = uSource.puesto || 
+                                uSource.rol || 
+                                uSource.role || 
+                                uSource.rol_name || 
+                                uSource.cargo || 
+                                "Colaborador";
+
+                // Guardamos la identidad real estructurada
+                const sesionUsuario = {
+                    nombre: nombreReal,
+                    rol: rolReal
+                };
+                
+                localStorage.setItem('usuario', JSON.stringify(sesionUsuario));
+                sessionStorage.setItem('usuario', JSON.stringify(sesionUsuario));
+                
+                const tokenValido = data.token || 'session_cookie_active';
+                localStorage.setItem('token', tokenValido);
+                sessionStorage.setItem('token', tokenValido);
+
+                console.log(`🔒 Sesión enrutada para: ${nombreReal}`);
+                window.location.href = data.redirect || "/dashboard";
+
+            } else {
+                Swal.fire({
+                    icon: data.inactivo ? 'warning' : 'error',
+                    title: data.inactivo ? 'Empleado inactivo' : 'Error de acceso',
+                    text: data.message || 'Credenciales incorrectas',
+                    confirmButtonColor: '#dc3545'
+                });
+            }
+
+        } catch (error) {
+            console.error("Error en la petición de login:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de Red',
+                text: 'No se pudo establecer conexión con el servidor local.',
+                confirmButtonColor: '#dc3545'
+            });
         }
 
         btnSubmit.disabled = false;
         btnSubmit.innerHTML = originalBtnText;
     });
-
 });
