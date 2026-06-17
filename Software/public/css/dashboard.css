@@ -12,173 +12,6 @@
     gap: 30px;
 }
 
-/* ==========================================================================
-   SIDEBAR COMPLETO DESDE ARRIBA (BLOQUE IZQUIERDO ABSOLUTO)
-   ========================================================================== */
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 280px;
-    height: 100vh; /* Ocupa toda la pantalla verticalmente */
-    background: var(--sidebar-bg); /* Verde oscuro institucional */
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 35px 22px;
-    z-index: 1000; /* Queda sobrepuesto de arriba a abajo */
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* Encabezado Único de la Empresa */
-.sidebar-header {
-    text-align: center;
-    padding-bottom: 30px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.sidebar-logo {
-    width: 80px;
-    height: auto;
-    margin-bottom: 15px;
-    background: white;
-    padding: 10px;
-    border-radius: 50%;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-}
-
-.sidebar-header h4 {
-    font-size: 21px;
-    font-weight: 700;
-    margin-bottom: 4px;
-    color: #ffffff;
-}
-
-.sidebar-header span {
-    font-size: 14px;
-    color: var(--verde);
-    font-weight: 600;
-    display: block;
-}
-
-/* Menú del Sidebar */
-.sidebar-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 30px;
-    flex-grow: 1;
-}
-
-.menu-section-title {
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: rgba(255, 255, 255, 0.4);
-    margin: 15px 0 8px 10px;
-    font-weight: 700;
-}
-
-.menu-item {
-    text-decoration: none;
-    color: rgba(255, 255, 255, 0.8);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 20px;
-    border-radius: 14px;
-    font-size: 16px; /* Letras grandes y muy legibles */
-    font-weight: 600;
-    transition: all 0.25s ease;
-}
-
-.menu-item i {
-    font-size: 20px;
-    width: 24px;
-    text-align: center;
-}
-
-.menu-item:hover {
-    background: var(--sidebar-hover);
-    color: white;
-    padding-left: 24px;
-}
-
-.menu-item.active {
-    background: var(--sidebar-active);
-    color: white;
-    border-left: 5px solid var(--verde); 
-}
-
-/* Bloque del Perfil (Abajo en el Sidebar) */
-.usuario-sidebar {
-    padding-top: 25px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    margin-top: auto;
-}
-
-.usuario-info-block {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 12px;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 16px;
-    margin-bottom: 15px;
-}
-
-.avatar-sidebar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: var(--verde-dark);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: bold;
-    color: white;
-}
-
-.datos-sidebar {
-    display: flex;
-    flex-direction: column;
-}
-
-#nombre {
-    font-size: 15px;
-    font-weight: 700;
-    color: white;
-}
-
-#rol, #cargo {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.6);
-}
-
-/* Botón Cerrar Sesión Rojo Integrado */
-.sidebar-logout {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background: transparent;
-    border: 1px solid rgba(239, 68, 68, 0.4);
-    color: #f87171;
-    text-decoration: none;
-    padding: 14px;
-    border-radius: 14px;
-    font-size: 15px;
-    font-weight: 700;
-    transition: all 0.25s;
-}
-
-.sidebar-logout:hover {
-    background: var(--rojo);
-    color: white;
-    border-color: var(--rojo);
-}
 
 /* =========================================
    ÁREA DE CONTENIDO PRINCIPAL
@@ -567,6 +400,20 @@
 .empresa-section-card,
 .actividad-card,
 #acciones,
-#acciones * {
+#acciones h6,
+#acciones p,
+#acciones a,
+#acciones span {
     font-family: 'Averia Libre', cursive !important;
+}
+
+/* Mantener Font Awesome para iconos */
+#acciones i,
+.fas,
+.fa,
+.fa-solid,
+.far,
+.fab {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
 }

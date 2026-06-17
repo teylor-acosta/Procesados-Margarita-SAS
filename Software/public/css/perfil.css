@@ -1,534 +1,491 @@
 /* ==========================================================================
-   HOJA DE ESTILOS UNIFICADA - VISTA MI PERFIL (PROCESADOS MARGARITA ERP)
+   HOJA DE ESTILOS UNIFICADA - VISTA MI PERFIL
+   PROCESADOS MARGARITA ERP
    ========================================================================== */
 
-/* 🌐 INYECCIÓN DIRECTA DE ICONOS (Font Awesome CDN oficial) 
-   Esto soluciona los cuadros vacíos cargando las fuentes tipográficas necesarias */
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 
-/* 🎨 1. REGLAS GENERALES Y FUENTES */
-body {
-    background-color: #f4f6f9;
-    font-family: 'Averia Libre', sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
-/* 💻 Disposición Base: Añade margen a la izquierda para no tapar el menú fijo */
-.perfil-container-main {
-    margin-left: 280px; /* Ajustado a 280px idéntico al dashboard */
-    padding: 40px;
-    min-height: 100vh;
-    transition: all 0.3s ease;
-}
-
-/* 🟩 2. BANNER PRINCIPAL DEGRADADO */
-.perfil-banner {
-    background: linear-gradient(135deg, #00b894 0%, #0984e3 60%, #0652dd 100%);
-    border-radius: 16px;
-    padding: 35px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-}
-
-.banner-left-content {
-    display: flex;
-    align-items: center;
-    gap: 25px;
-}
-
-/* 📸 CONTENEDOR DE LA FOTO DE PERFIL */
-.avatar-container-profile {
-    position: relative;
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    border: 4px solid rgba(255, 255, 255, 0.9);
-    background: #ffffff;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    flex-shrink: 0;
-    overflow: hidden;
-}
-
-.avatar-container-profile img {
-    width: 100% !important;
-    height: 100% !important;
-    max-width: 100% !important;
-    max-height: 100% !important;
-    object-fit: cover !important;
-    border-radius: 50%;
-    display: block;
-}
-
-/* Botón flotante para cambiar la foto */
-.btn-change-photo {
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-    background: #00b894;
-    color: white;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    border: 2px solid white;
-    z-index: 10;
-    transition: transform 0.2s ease;
-}
-
-.btn-change-photo:hover {
-    transform: scale(1.1);
-}
-
-.empleado-identity h1 {
-    font-size: 28px;
-    font-weight: 700;
-    margin: 0 0 6px 0;
-    color: #ffffff;
-}
-
-.empleado-identity p {
-    font-size: 16px;
-    margin: 0 0 12px 0;
-    opacity: 0.95;
-    color: #ffffff;
-}
-
-/* Indicador de estado (Activo) */
-.status-badge {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 5px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    color: #ffffff;
-}
-
-.status-badge .dot {
-    width: 9px;
-    height: 9px;
-    background: #2ecc71;
-    border-radius: 50%;
-}
-
-/* 🗂️ 3. GRILLA DE INFORMACIÓN DEL EMPLEADO e ICONOS NATIVOS */
-.perfil-info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 16px;
-    margin-top: 25px;
-}
-
-.info-card-item {
-    background: white;
-    border-radius: 12px;
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.01);
-    border: 1px solid #edf1f7;
-}
-
-/* Cajas contenedoras para los Iconos de las tarjetas */
-.icon-box-wrapper {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    flex-shrink: 0;
-}
-
-/* Variaciones de color para los iconos de los campos */
-.icon-box-wrapper.green { background: #e8f8f5; color: #00b894; }
-.icon-box-wrapper.purple { background: #f3eafb; color: #9b59b6; }
-.icon-box-wrapper.blue { background: #e8f4fd; color: #2980b9; }
-.icon-box-wrapper.orange { background: #fef5e7; color: #e67e22; }
-
-/* 🛠️ REGLA MAESTRA ANTI-CUADROS VACÍOS: Forzar motor de renderizado de iconos */
-.icon-box-wrapper i,
-.menu-item i,
-.sidebar-logout i {
-    font-family: "Font Awesome 6 Free", "Font Awesome 5 Free", sans-serif !important;
-    font-weight: 900 !important; /* Esencial para que se muestren los iconos sólidos (fas) */
-    font-style: normal !important;
-    font-variant: normal !important;
-    text-rendering: auto !important;
-    -webkit-font-smoothing: antialiased !important;
-    display: inline-block !important;
-}
-
-.info-card-texts {
-    display: flex;
-    flex-direction: column;
-}
-
-.info-card-texts label {
-    font-size: 11px;
-    color: #7f8c8d;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 2px;
-}
-
-.info-card-texts span {
-    font-size: 14px;
-    color: #2c3e50;
-    font-weight: 600;
-    word-break: break-all;
-}
-
-/* ⚡ 4. BOTONES DE ACCIÓN (Cambiar Foto, Reportes, etc.) */
-.perfil-action-buttons-container {
-    display: flex;
-    gap: 15px;
-    margin-top: 25px;
-    flex-wrap: wrap;
-}
-
-.btn-perfil-action {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 22px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 700;
-    color: white;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-perfil-action.green { background-color: #218c74; }
-.btn-perfil-action.green:hover { background-color: #1b745f; }
-.btn-perfil-action.blue { background-color: #0652dd; }
-.btn-perfil-action.blue:hover { background-color: #0442b3; }
-.btn-perfil-action.orange { background-color: #ff9f43; color: #2c3e50; }
-.btn-perfil-action.orange:hover { background-color: #f0932b; }
-
-
 /* ==========================================================================
-   ⚙️ 5. REPLICACIÓN EXACTA DEL SIDEBAR DEL DASHBOARD (VERDE CORPORATIVO)
+   GENERAL
    ========================================================================== */
 
-:root {
-    --sidebar-bg: #01291d;      /* Verde oscuro institucional exacto */
-    --sidebar-hover: #02412e;   /* Efecto hover sobre módulos */
-    --sidebar-active: #006241;  /* Tono activo nativo de "Mi Perfil" */
-    --verde-resaltado: #22c55e; 
-    --rojo-logout: #eb4d4b;     
+body{
+    background-color:#f4f6f9;
+    font-family:'Averia Libre',sans-serif;
+    margin:0;
+    padding:0;
+    padding-top:105px;
 }
-
-/* Asegurar tipografía del Sidebar respetando la carga de los iconos */
-.sidebar, 
-.sidebar h4, 
-.sidebar span, 
-.sidebar strong {
-    font-family: 'Averia Libre', sans-serif !important;
-}
-
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 280px;
-    height: 100vh;
-    background: var(--sidebar-bg);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 30px 20px;
-    z-index: 1000;
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
-    box-sizing: border-box;
-}
-
-/* Encabezado e Imagen Institucional del Sidebar */
-.sidebar-header {
-    text-align: center;
-    padding-bottom: 25px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.logo-circle-container {
-    width: 75px;
-    height: 75px;
-    background: #ffffff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 12px auto;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-.sidebar-logo {
-    width: 55px !important;
-    height: 55px !important;
-    object-fit: contain !important;
-}
-
-.sidebar-header h4 {
-    font-size: 18px;
-    font-weight: 700;
-    color: #ffffff;
-    margin: 0 0 2px 0;
-    letter-spacing: 0.5px;
-}
-
-.sidebar-header span.erp-tag {
-    font-size: 12px;
-    color: #00b894;
-    font-weight: 600;
-    display: block;
-}
-
-/* Menú de Módulos e Iconos */
-.sidebar-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 25px;
-    flex-grow: 1;
-}
-
-.menu-section-title {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: rgba(255, 255, 255, 0.35);
-    margin: 15px 0 6px 10px;
-    font-weight: 700;
-}
-
-.menu-item {
-    text-decoration: none;
-    color: #a4b0be;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    transition: all 0.2s ease;
-}
-
-.menu-item i {
-    font-size: 18px;
-    width: 22px;
-    text-align: center;
-}
-
-.menu-item:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: #ffffff;
-    padding-left: 20px;
-}
-
-/* Estado Activo para la vista Actual (Módulo Mi Perfil) */
-.menu-item.active {
-    background: var(--sidebar-active) !important;
-    color: #ffffff !important;
-    font-weight: 700;
-}
-
-/* 👤 Sección de Usuario Inferior del Sidebar */
-.usuario-sidebar {
-    padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.usuario-info-block {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    margin-bottom: 12px;
-}
-
-.avatar-sidebar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #15803d;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    flex-shrink: 0;
-}
-
-.avatar-sidebar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.datos-sidebar {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.2;
-}
-
-.datos-sidebar .sb-user-name {
-    font-size: 13px;
-    font-weight: 700;
-    color: #ffffff;
-}
-
-.datos-sidebar .sb-user-role {
-    font-size: 11px;
-    color: #00b894;
-    font-weight: 500;
-}
-
-/* Botón Cerrar Sesión con Recuadro Translúcido */
-.sidebar-logout {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: rgba(235, 77, 75, 0.05);
-    border: 1px solid rgba(235, 77, 75, 0.4);
-    color: #ff7675;
-    text-decoration: none;
-    padding: 11px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 700;
-    transition: all 0.2s ease;
-    box-sizing: border-box;
-    width: 100%;
-}
-
-.sidebar-logout:hover {
-    background: #eb4d4b;
-    color: #ffffff;
-    border-color: #eb4d4b;
-}
-
 
 /* ==========================================================================
-   📱 6. MEDIA QUERIES (ADAPTACIÓN RESPONSIVE)
+   CONTENEDOR PRINCIPAL
    ========================================================================== */
 
-@media (max-width: 992px) {
-    .perfil-container-main {
-        margin-left: 0;
-        padding: 24px 16px;
-    }
-    .sidebar {
-        position: fixed;
-        left: -100%;
-        transition: .3s ease;
-    }
-    .sidebar.active { 
-        left: 0; 
-    }
+.perfil-container-main{
+
+    margin-left:280px;
+
+    width:calc(100% - 280px);
+
+    min-height:100vh;
+
+    padding:40px;
+
+    position:relative;
+
+    transition:.3s;
 }
 
-@media (max-width: 576px) {
-    .perfil-banner {
-        flex-direction: column;
-        text-align: center;
-        padding: 30px 15px;
-    }
-    
-    .banner-left-content {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .empleado-identity {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .empleado-identity h1 {
-        font-size: 22px;
-    }
-
-    .perfil-info-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .perfil-action-buttons-container {
-        flex-direction: column;
-        width: 100%;
-    }
-    
-    .btn-perfil-action {
-        width: 100%;
-        justify-content: center;
-    }
-}
 /* ==========================================================================
-   Capas de control para el Sidebar en Dispositivos Móviles
+   BANNER
    ========================================================================== */
 
-/* Por defecto, el fondo interactivo está oculto */
-.sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro translúcido */
-    z-index: 999; /* Justo debajo del sidebar (1000) */
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
+.perfil-banner{
+
+    background:linear-gradient(
+        135deg,
+        #00b894 0%,
+        #0984e3 60%,
+        #0652dd 100%
+    );
+
+    border-radius:16px;
+
+    padding:35px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    position:relative;
+
+    overflow:hidden;
 }
 
-/* Estado activo: cuando el menú está abierto en celular */
-.sidebar-overlay.active {
-    opacity: 1;
-    pointer-events: auto;
+.banner-left-content{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:25px;
 }
 
-/* Ajuste de comportamiento en pantallas medianas y pequeñas */
-@media (max-width: 992px) {
-    .sidebar {
-        position: fixed;
-        left: -280px; /* Esconde el sidebar por completo a la izquierda */
-        transition: left 0.3s ease;
-    }
-    
-    /* Clase que ya usas para abrirlo, aseguramos que se desplace correctamente */
-    .sidebar.active { 
-        left: 0 !important; 
-    }
+/* ==========================================================================
+   FOTO PERFIL
+   ========================================================================== */
+
+.avatar-container-profile{
+
+    position:relative;
+
+    width:140px;
+    height:140px;
+
+    border-radius:50%;
+
+    border:4px solid rgba(255,255,255,.9);
+
+    background:#fff;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+
+    flex-shrink:0;
+
+    overflow:hidden;
 }
 
-.sidebar-overlay{
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.5);
-    z-index: 998;
-    display: none;
-}
+.avatar-container-profile img{
 
-.sidebar-overlay.active{
+    width:100% !important;
+    height:100% !important;
+
+    object-fit:cover !important;
+
+    border-radius:50%;
+
     display:block;
+}
+
+.btn-change-photo{
+
+    position:absolute;
+
+    bottom:4px;
+    right:4px;
+
+    width:34px;
+    height:34px;
+
+    border-radius:50%;
+
+    background:#00b894;
+
+    color:white;
+
+    border:2px solid white;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+
+    z-index:10;
+
+    transition:.2s;
+}
+
+.btn-change-photo:hover{
+
+    transform:scale(1.1);
+}
+
+/* ==========================================================================
+   DATOS EMPLEADO
+   ========================================================================== */
+
+.empleado-identity h1{
+
+    font-size:28px;
+
+    font-weight:700;
+
+    color:white;
+
+    margin:0 0 6px;
+}
+
+.empleado-identity p{
+
+    font-size:16px;
+
+    color:white;
+
+    opacity:.95;
+
+    margin:0 0 12px;
+}
+
+.status-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:7px;
+
+    background:rgba(255,255,255,.2);
+
+    color:white;
+
+    padding:5px 14px;
+
+    border-radius:20px;
+
+    font-size:12px;
+
+    font-weight:bold;
+}
+
+.status-badge .dot{
+
+    width:9px;
+    height:9px;
+
+    border-radius:50%;
+
+    background:#2ecc71;
+}
+
+/* ==========================================================================
+   GRID INFORMACIÓN
+   ========================================================================== */
+
+.perfil-info-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fill,minmax(260px,1fr));
+
+    gap:16px;
+
+    margin-top:25px;
+}
+
+.info-card-item{
+
+    background:white;
+
+    border-radius:12px;
+
+    padding:16px 20px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    border:1px solid #edf1f7;
+
+    box-shadow:
+        0 2px 5px rgba(0,0,0,.01);
+}
+
+/* ==========================================================================
+   ICONOS
+   ========================================================================== */
+
+.icon-box-wrapper{
+
+    width:44px;
+    height:44px;
+
+    border-radius:10px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:18px;
+
+    flex-shrink:0;
+}
+
+.icon-box-wrapper.green{
+    background:#e8f8f5;
+    color:#00b894;
+}
+
+.icon-box-wrapper.purple{
+    background:#f3eafb;
+    color:#9b59b6;
+}
+
+.icon-box-wrapper.blue{
+    background:#e8f4fd;
+    color:#2980b9;
+}
+
+.icon-box-wrapper.orange{
+    background:#fef5e7;
+    color:#e67e22;
+}
+
+.icon-box-wrapper i{
+
+    font-family:
+        "Font Awesome 6 Free",
+        "Font Awesome 5 Free",
+        sans-serif !important;
+
+    font-weight:900 !important;
+}
+
+/* ==========================================================================
+   TEXTO TARJETAS
+   ========================================================================== */
+
+.info-card-texts{
+
+    display:flex;
+
+    flex-direction:column;
+}
+
+.info-card-texts label{
+
+    font-size:11px;
+
+    color:#7f8c8d;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+
+    letter-spacing:.5px;
+
+    margin-bottom:2px;
+}
+
+.info-card-texts span{
+
+    font-size:14px;
+
+    color:#2c3e50;
+
+    font-weight:600;
+
+    word-break:break-word;
+}
+
+/* ==========================================================================
+   BOTONES
+   ========================================================================== */
+
+.perfil-action-buttons-container{
+
+    display:flex;
+
+    gap:15px;
+
+    margin-top:25px;
+
+    flex-wrap:wrap;
+}
+
+.btn-perfil-action{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:12px 22px;
+
+    border:none;
+
+    border-radius:10px;
+
+    text-decoration:none;
+
+    cursor:pointer;
+
+    color:white;
+
+    font-size:14px;
+
+    font-weight:700;
+
+    transition:.2s;
+}
+
+.btn-perfil-action.green{
+
+    background:#218c74;
+}
+
+.btn-perfil-action.green:hover{
+
+    background:#1b745f;
+}
+
+.btn-perfil-action.blue{
+
+    background:#0652dd;
+}
+
+.btn-perfil-action.blue:hover{
+
+    background:#0442b3;
+}
+
+.btn-perfil-action.orange{
+
+    background:#ff9f43;
+
+    color:#2c3e50;
+}
+
+.btn-perfil-action.orange:hover{
+
+    background:#f0932b;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media(max-width:992px){
+
+    .perfil-container-main{
+
+        margin-left:0;
+
+        width:100%;
+
+        padding:24px 16px;
+    }
+}
+
+@media(max-width:576px){
+
+    .perfil-banner{
+
+        flex-direction:column;
+
+        text-align:center;
+
+        padding:30px 15px;
+    }
+
+    .banner-left-content{
+
+        flex-direction:column;
+
+        gap:15px;
+    }
+
+    .empleado-identity{
+
+        display:flex;
+
+        flex-direction:column;
+
+        align-items:center;
+    }
+
+    .empleado-identity h1{
+
+        font-size:22px;
+    }
+
+    .perfil-info-grid{
+
+        grid-template-columns:1fr;
+    }
+
+    .perfil-action-buttons-container{
+
+        flex-direction:column;
+
+        width:100%;
+    }
+
+    .btn-perfil-action{
+
+        width:100%;
+
+        justify-content:center;
+    }
+}
+
+.perfil-content{
+    width:100%;
+}
+
+.perfil-content .card{
+    background:rgba(255,255,255,.92);
+
+    backdrop-filter:blur(10px);
+
+    border:1px solid rgba(255,255,255,.6);
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.08);
+}
+
+.bienvenida-card{
+    border:none;
+    border-radius:24px;
+    overflow:hidden;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.12);
 }

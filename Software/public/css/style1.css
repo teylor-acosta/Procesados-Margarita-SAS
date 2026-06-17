@@ -158,6 +158,7 @@ body::before {
     .navbar-custom {
         left: 0;
         width: 100%;
+        z-index:900;
     }
     .navbar-custom .logo-navbar {
         display: block;
@@ -185,4 +186,37 @@ p, span, a, button, input, select, textarea,
 .activity-info,
 .activity-title {
     font-family: 'Averia Libre', cursive !important;
+}
+/* ==========================================================================
+   TITULO NAVBAR
+   ========================================================================== */
+
+.navbar-custom .empresa-nombre{
+    display:block !important;
+    font-size:24px;
+    font-weight:700;
+    color:#0f172a;
+}
+
+.navbar-custom .logo-navbar{
+    display:none !important;
+}
+
+/* =========================================
+   FIX FONT AWESOME
+========================================= */
+
+i.fa,
+i.fas,
+i.far,
+i.fab,
+i.fa-solid,
+i.fa-regular,
+i.fa-brands{
+    font-family:"Font Awesome 6 Free" !important;
+    font-weight:900 !important;
+}
+
+.bi{
+    font-family:"bootstrap-icons" !important;
 }

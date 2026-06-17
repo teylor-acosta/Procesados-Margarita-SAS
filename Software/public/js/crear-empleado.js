@@ -305,7 +305,7 @@ form.addEventListener(
         // VALIDACIONES
         // ====================================
 
-        if(!datos.nombre){
+        if(!datos.nombres){
 
             Swal.fire({
 

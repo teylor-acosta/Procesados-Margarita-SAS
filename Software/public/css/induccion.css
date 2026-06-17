@@ -1,859 +1,456 @@
-/* ============================================
-   🌿 ERP GLOBAL PREMIUM RESPONSIVE
-============================================ */
+/* ==========================================================================
+   🌿 ERP GLOBAL PREMIUM RESPONSIVE - PROCESADOS MARGARITA
+   ========================================================================== */
 
-/* ============================================
-   🔤 FUENTE GLOBAL
-============================================ */
-
+/* ==========================================================================
+   🔤 FUENTE GLOBAL Y CONFIGURACIÓN BASE
+   ========================================================================== */
 *{
-
-    margin:0;
-    padding:0;
-
-    box-sizing:border-box;
-
-    font-family:'Averia Libre', cursive !important;
-
-    -webkit-tap-highlight-color:transparent;
-
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Averia Libre', cursive !important;
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* ============================================
+/* ==========================================================================
    🔥 FIX FONT AWESOME
-============================================ */
-
-.fas,
-.far,
-.fab,
-.fa{
-
-    font-family:"Font Awesome 6 Free" !important;
-
-    font-weight:900 !important;
-
+   ========================================================================== */
+.fas, .far, .fab, .fa {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
 }
 
-/* ============================================
-   🎨 VARIABLES
-============================================ */
-
-:root{
-
-    --azul-margarita:#004085;
-
-    --verde-margarita:#198754;
-
-    --degradado:
-        linear-gradient(
-            135deg,
-            #28a745,
-            #007bff
-        );
-
+/* ==========================================================================
+   🎨 VARIABLES INSTITUCIONALES
+   ========================================================================== */
+:root {
+    --azul-margarita: #004085;
+    --verde-margarita: #198754;
+    --verde-oscuro-sidebar: #032c1d;
+    --degradado: linear-gradient(135deg, #28a745, #007bff);
 }
 
-/* ============================================
-   🌎 BODY
-============================================ */
+/* ==========================================================================
+   🌎 BODY & FONDO
+   ========================================================================== */
+body {
+    margin: 0;
+    background: url('../img/Fondo.webp') center/cover no-repeat fixed !important;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    position: relative;
+    min-height: 100vh;
+}
 
-body{
+/* ==========================================================================
+   🌫️ OVERLAY DE CONTENIDO
+   ========================================================================== */
+.background-overlay {
+    background: rgba(255, 255, 255, 0.76);
+    min-height: 100vh;
+}
 
-    margin:0;
 
-    background:
-        url('../img/Fondo.webp')
-        center/cover no-repeat fixed !important;
+/* ==========================================================================
+   🔝 NAVBAR PREMIUM (OPTIMIZADA SIN SOLAPAMIENTO)
+   ========================================================================== */
+.navbar-custom {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 280px; /* Inicia exactamente donde termina el sidebar en pantallas grandes */
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 32px;
+    background: rgba(255, 255, 255, .96);
+    backdrop-filter: blur(10px);
+    z-index: 1000; /* Menor que el sidebar para evitar cortes visuales erróneos */
+    box-shadow: 0 4px 18px rgba(0, 0, 0, .08);
+    transition: all 0.3s ease;
+}
 
-    overflow-x:hidden;
+/* ==========================================================================
+   🔹 COMPONENTES INTERNOS DE LA NAVBAR
+   ========================================================================== */
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
 
-    -webkit-font-smoothing:antialiased;
+.logo-navbar {
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+}
 
-    text-rendering:optimizeLegibility;
+.empresa-texto {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
 
-    position:relative;
+.empresa-linea1 {
+    font-size: 15px;
+    color: #374151;
+    font-style: italic;
+}
 
+.empresa-linea2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #16a34a;
+    font-style: italic;
+    letter-spacing: .4px;
+}
+
+.acciones-navbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* 🔘 BOTÓN VOLVER */
+.btn-volver {
+    border: none;
+    background: #f8fafc;
+    color: #111827 !important;
+    text-decoration: none;
+    padding: 11px 22px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    transition: .25s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+}
+
+.btn-volver:hover {
+    background: #e2e8f0;
+    transform: translateY(-2px);
+}
+
+/* 🚪 BOTÓN LOGOUT (MANTENIDO SI SE USA COMO ENLACE ADICIONAL) */
+.btn-logout {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white !important;
+    padding: 11px 22px;
+    border-radius: 18px;
+    text-decoration: none;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: transform .2s ease, opacity .2s ease;
+    box-shadow: 0 10px 20px rgba(220, 53, 69, .22);
+}
+
+.btn-logout:hover {
+    transform: translateY(-2px);
+    opacity: .95;
+    color: white !important;
+}
+
+/* ==========================================================================
+   📦 ESTRUCTURACIÓN DEL CONTENEDOR PRINCIPAL
+   ========================================================================== */
+.dashboard-container{
+    margin-left:280px;
     min-height:100vh;
-
+    transition: all 0.3s ease;
 }
 
-/* ============================================
-   🌫️ OVERLAY
-============================================ */
-
-.background-overlay{
-
-    background:
-        rgba(255,255,255,0.76);
-
-    min-height:100vh;
-
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    /* El padding superior de 110px empuja las tarjetas abajo evitando que la barra las tape */
+    padding: 110px 20px 30px; 
 }
 
-/* ============================================
-   🔝 NAVBAR PREMIUM
-============================================ */
-
-.navbar-custom{
-
-    width:100%;
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    padding:14px 32px;
-
-    background:
-        rgba(255,255,255,.96);
-
-    backdrop-filter:blur(10px);
-
-    position:fixed;
-
-    top:0;
-    left:0;
-
-    z-index:9999;
-
-    box-shadow:
-        0 4px 18px rgba(0,0,0,.08);
-
+/* ==========================================================================
+   📄 TARJETAS Y MÓDULOS DE CAPACITACIÓN
+   ========================================================================== */
+.modulo-item {
+    background: white;
+    border-radius: 24px;
+    padding: 24px;
+    margin-bottom: 25px;
+    border: 6px solid transparent;
+    background-image: linear-gradient(white, white), linear-gradient(135deg, var(--verde-margarita), #007bff);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10);
+    transition: transform .2s ease, box-shadow .2s ease;
 }
 
-/* ============================================
-   🔹 IZQUIERDA NAVBAR
-============================================ */
-
-.navbar-left{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-
+.modulo-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
 }
 
-/* LOGO */
-
-.logo-navbar{
-
-    width:55px;
-    height:55px;
-
-    object-fit:contain;
-
+/* ==========================================================================
+   🏷️ TIPOGRAFÍA DE SECCIONES (GRADIENTES EFFECT)
+   ========================================================================== */
+.titulo-principal {
+    background: linear-gradient(135deg, #28a745, #007bff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    font-weight: 800 !important;
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2rem;
+    font-style: italic;
 }
 
-/* TEXTO EMPRESA */
-
-.empresa-texto{
-
-    display:flex;
-
-    flex-direction:column;
-
-    line-height:1.1;
-
+.modulo-item h3 {
+    background: linear-gradient(135deg, #28a745, #007bff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    font-weight: 700 !important;
+    margin-bottom: 15px;
+    font-size: 1.4rem;
+    font-style: italic;
 }
 
-.empresa-linea1{
-
-    font-size:15px;
-
-    color:#374151;
-
-    font-style:italic;
-
+.modulo-item h4, .modulo-item .subtitulo {
+    color: #004085;
+    font-weight: 600;
 }
 
-.empresa-linea2{
-
-    font-size:26px;
-
-    font-weight:800;
-
-    color:#16a34a;
-
-    font-style:italic;
-
-    letter-spacing:.4px;
-
+/* ==========================================================================
+   📈 COMPONENTES DE PROGRESO Y REPRODUCTORES
+   ========================================================================== */
+.progreso-texto {
+    color: #28a745;
+    font-weight: 600;
+    background: #e8f5e9;
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: .85rem;
 }
 
-/* ============================================
-   🔹 DERECHA NAVBAR
-============================================ */
-
-.acciones-navbar{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:12px;
-
+.progress-bar-custom {
+    height: 8px;
+    background: linear-gradient(90deg, #28a745, #007bff);
+    border-radius: 4px;
 }
 
-/* ============================================
-   🔘 BOTÓN VOLVER
-============================================ */
-
-.btn-volver{
-
-    border:none;
-
-    background:#f8fafc;
-
-    color:#111827 !important;
-
-    text-decoration:none;
-
-    padding:11px 22px;
-
-    border-radius:18px;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    font-weight:700;
-
-    transition:.25s;
-
-    box-shadow:
-        0 4px 10px rgba(0,0,0,.05);
-
+/* ==========================================================================
+   🎥 FILAS DE VIDEOS E INTERACCIONES
+   ========================================================================== */
+.video-fila {
+    background: #f8f9fa;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #eee;
+    transition: background .2s ease, border-color .2s ease;
 }
 
-.btn-volver:hover{
-
-    background:#e2e8f0;
-
-    transform:
-        translateY(-2px);
-
+.video-fila:hover {
+    background: #f0f7ff;
+    border-color: #007bff;
 }
 
-/* ============================================
-   🚪 BOTÓN LOGOUT
-============================================ */
-
-.btn-logout{
-
-    background:
-        linear-gradient(
-            135deg,
-            #dc3545,
-            #c82333
-        );
-
-    color:white !important;
-
-    padding:11px 22px;
-
-    border-radius:18px;
-
-    text-decoration:none;
-
-    font-weight:700;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    transition:
-        transform .2s ease,
-        opacity .2s ease;
-
-    box-shadow:
-        0 10px 20px rgba(220,53,69,.22);
-
+.video-fila.visto {
+    background: linear-gradient(135deg, #e8f5e9, #e3f2fd);
+    border-left: 6px solid #28a745;
 }
 
-/* HOVER */
-
-.btn-logout:hover{
-
-    transform:
-        translateY(-2px);
-
-    opacity:.95;
-
-    color:white !important;
-
+.video-titulo {
+    flex: 1;
+    font-weight: 500;
 }
 
-/* ============================================
-   📦 CONTENEDOR
-============================================ */
-
-.container{
-
-    max-width:1200px;
-
-    margin:0 auto;
-
-    padding:
-        120px
-        20px
-        30px;
-
+.stats-card {
+    background: white;
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 20px;
+    border-left: 5px solid #28a745;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* ============================================
-   📄 MODULOS
-============================================ */
-
-.modulo-item{
-
-    background:white;
-
-    border-radius:24px;
-
-    padding:24px;
-
-    margin-bottom:25px;
-
-    border:6px solid transparent;
-
-    background-image:
-        linear-gradient(white,white),
-        linear-gradient(
-            135deg,
-            var(--verde-margarita),
-            #007bff
-        );
-
-    background-origin:border-box;
-
-    background-clip:
-        padding-box,
-        border-box;
-
-    box-shadow:
-        0 6px 18px rgba(0,0,0,0.10);
-
-    transition:
-        transform .2s ease,
-        box-shadow .2s ease;
-
+/* ==========================================================================
+   🔘 BOTONES GENERALES UNIFICADOS
+   ========================================================================== */
+.btn-degradado {
+    background: linear-gradient(135deg, #28a745, #007bff) !important;
+    color: white !important;
+    border-radius: 30px;
+    padding: 10px 24px;
+    font-weight: bold;
+    border: none;
+    transition: transform .2s ease, opacity .2s ease;
 }
 
-/* HOVER */
-
-.modulo-item:hover{
-
-    transform:
-        translateY(-2px);
-
-    box-shadow:
-        0 10px 22px rgba(0,0,0,0.12);
-
+.btn-degradado:hover {
+    transform: translateY(-2px);
+    opacity: .95;
 }
 
-/* ============================================
-   🏷️ TITULOS
-============================================ */
-
-.titulo-principal{
-
-    background:
-        linear-gradient(
-            135deg,
-            #28a745,
-            #007bff
-        );
-
-    -webkit-background-clip:text;
-
-    background-clip:text;
-
-    color:transparent !important;
-
-    font-weight:800 !important;
-
-    text-align:center;
-
-    margin-bottom:25px;
-
-    font-size:2rem;
-
-    font-style:italic;
-
+.btn-ver-video {
+    background: linear-gradient(135deg, #28a745, #007bff);
+    color: white;
+    border: none;
+    border-radius: 18px;
+    padding: 7px 15px;
+    font-size: .8rem;
+    cursor: pointer;
+    transition: transform .2s ease, opacity .2s ease;
 }
 
-/* MODULOS */
-
-.modulo-item h3{
-
-    background:
-        linear-gradient(
-            135deg,
-            #28a745,
-            #007bff
-        );
-
-    -webkit-background-clip:text;
-
-    background-clip:text;
-
-    color:transparent !important;
-
-    font-weight:700 !important;
-
-    margin-bottom:15px;
-
-    font-size:1.4rem;
-
-    font-style:italic;
-
+.btn-ver-video:hover {
+    transform: translateY(-1px);
+    opacity: .92;
 }
 
-/* SUBTITULOS */
-
-.modulo-item h4,
-.modulo-item .subtitulo{
-
-    color:#004085;
-
-    font-weight:600;
-
+.btn-confirmar {
+    background: linear-gradient(135deg, #28a745, #007bff);
+    color: white;
+    border: none;
+    border-radius: 22px;
+    padding: 8px 18px;
+    font-weight: 600;
+    transition: transform .2s ease;
 }
 
-/* ============================================
-   📈 PROGRESO
-============================================ */
-
-.progreso-texto{
-
-    color:#28a745;
-
-    font-weight:600;
-
-    background:#e8f5e9;
-
-    display:inline-block;
-
-    padding:4px 12px;
-
-    border-radius:20px;
-
-    font-size:.85rem;
-
+.btn-confirmar:hover {
+    transform: translateY(-1px);
 }
 
-/* ============================================
-   🔘 BOTONES
-============================================ */
-
-.btn-degradado{
-
-    background:
-        linear-gradient(
-            135deg,
-            #28a745,
-            #007bff
-        ) !important;
-
-    color:white !important;
-
-    border-radius:30px;
-
-    padding:10px 24px;
-
-    font-weight:bold;
-
-    border:none;
-
-    transition:
-        transform .2s ease,
-        opacity .2s ease;
-
-}
-
-/* HOVER */
-
-.btn-degradado:hover{
-
-    transform:
-        translateY(-2px);
-
-    opacity:.95;
-
-}
-
-/* ============================================
-   🎥 VIDEOS
-============================================ */
-
-.video-fila{
-
-    background:#f8f9fa;
-
-    border-radius:14px;
-
-    padding:14px;
-
-    margin-bottom:8px;
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    border:1px solid #eee;
-
-    transition:
-        background .2s ease,
-        border-color .2s ease;
-
-}
-
-/* HOVER */
-
-.video-fila:hover{
-
-    background:#f0f7ff;
-
-    border-color:#007bff;
-
-}
-
-/* VISTO */
-
-.video-fila.visto{
-
-    background:
-        linear-gradient(
-            135deg,
-            #e8f5e9,
-            #e3f2fd
-        );
-
-    border-left:6px solid #28a745;
-
-}
-
-/* TITULO */
-
-.video-titulo{
-
-    flex:1;
-
-    font-weight:500;
-
-}
-
-/* ============================================
-   ▶️ BOTON VIDEO
-============================================ */
-
-.btn-ver-video{
-
-    background:
-        linear-gradient(
-            135deg,
-            #28a745,
-            #007bff
-        );
-
-    color:white;
-
-    border:none;
-
-    border-radius:18px;
-
-    padding:7px 15px;
-
-    font-size:.8rem;
-
-    cursor:pointer;
-
-    transition:
-        transform .2s ease,
-        opacity .2s ease;
-
-}
-
-/* HOVER */
-
-.btn-ver-video:hover{
-
-    transform:
-        translateY(-1px);
-
-    opacity:.92;
-
-}
-
-/* ============================================
-   ✅ CONFIRMAR
-============================================ */
-
-.btn-confirmar{
-
-    background:
-        linear-gradient(
-            135deg,
-            #28a745,
-            #007bff
-        );
-
-    color:white;
-
-    border:none;
-
-    border-radius:22px;
-
-    padding:8px 18px;
-
-    font-weight:600;
-
-    transition:
-        transform .2s ease;
-
-}
-
-/* HOVER */
-
-.btn-confirmar:hover{
-
-    transform:
-        translateY(-1px);
-
-}
-
-/* ============================================
-   📊 STATS
-============================================ */
-
-.stats-card{
-
-    background:white;
-
-    border-radius:16px;
-
-    padding:18px;
-
-    margin-bottom:20px;
-
-    border-left:5px solid #28a745;
-
-    box-shadow:
-        0 4px 12px rgba(0,0,0,0.08);
-
-}
-
-/* BARRA */
-
-.progress-bar-custom{
-
-    height:8px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #28a745,
-            #007bff
-        );
-
-    border-radius:4px;
-
-}
-
-/* ============================================
-   📱 RESPONSIVE TABLET
-============================================ */
-
-@media(max-width:768px){
-
-    body{
-
-        background-attachment:scroll !important;
-
+/* ==========================================================================
+   📱 RESPONSIVE - TABLETS (MÁXIMO 768PX)
+   ========================================================================== */
+@media(max-width: 768px) {
+    body {
+        background-attachment: scroll !important;
     }
 
-    .container{
-
-        padding:
-            170px
-            12px
-            20px;
-
+    .dashboard-container {
+        margin-left: 0; /* Libera el margen lateral en pantallas reducidas */
     }
 
-    .navbar-custom{
-
-        flex-direction:column;
-
-        align-items:flex-start;
-
-        gap:14px;
-
-        padding:14px 18px;
-
+    .sidebar.active {
+        left: 0; /* Despliega el menú lateral flotante sobre el contenido */
     }
 
-    .navbar-left{
-
-        width:100%;
-
+    .navbar-custom {
+        left: 0; /* La barra superior toma el ancho completo de forma horizontal */
+        flex-direction: row; /* Evita que los botones colapsen hacia abajo en bloque tosco */
+        align-items: center;
+        justify-content: space-between;
+        gap: 0;
+        padding: 14px 18px;
+        height: 65px;
     }
 
-    .acciones-navbar{
-
-        width:100%;
-
-        justify-content:flex-end;
-
-        flex-wrap:wrap;
-
+    .container {
+        padding: 95px 12px 20px; /* Balancea la distancia del título con la barra compacta */
     }
 
-    .empresa-linea1{
-
-        font-size:.72rem;
-
+    .navbar-left {
+        width: auto;
     }
 
-    .empresa-linea2{
-
-        font-size:18px;
-
+    .acciones-navbar {
+        width: auto;
+        justify-content: flex-end;
     }
 
-    .btn-logout{
-
-        padding:10px 14px;
-
-        font-size:.78rem;
-
-        border-radius:14px;
-
+    .empresa-linea1 {
+        font-size: .72rem;
     }
 
-    .btn-volver{
-
-        padding:10px 14px;
-
-        font-size:.78rem;
-
-        border-radius:14px;
-
+    .empresa-linea2 {
+        font-size: 18px;
     }
 
-    .modulo-item{
-
-        padding:16px;
-
-        border-width:4px;
-
-        border-radius:18px;
-
-        box-shadow:
-            0 4px 12px rgba(0,0,0,0.08);
-
+    .btn-logout, .btn-volver {
+        padding: 10px 14px;
+        font-size: .78rem;
+        border-radius: 14px;
     }
 
-    .titulo-principal{
-
-        font-size:1.5rem;
-
+    .modulo-item {
+        padding: 16px;
+        border-width: 4px;
+        border-radius: 18px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
-    .modulo-item h3{
-
-        font-size:1.15rem;
-
+    .titulo-principal {
+        font-size: 1.5rem;
     }
 
-    .video-fila{
-
-        flex-direction:column;
-
-        gap:10px;
-
-        text-align:center;
-
+    .modulo-item h3 {
+        font-size: 1.15rem;
     }
 
-    .btn-ver-video{
-
-        width:100%;
-
+    .video-fila {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
     }
 
+    .btn-ver-video {
+        width: 100%;
+    }
 }
 
-/* ============================================
-   📱 MOVILES PEQUEÑOS
-============================================ */
-
-@media(max-width:480px){
-
-    .navbar-custom{
-
-        padding:12px 14px;
-
+/* ==========================================================================
+   📱 RESPONSIVE - MÓVILES PEQUEÑOS (MÁXIMO 480PX)
+   ========================================================================== */
+@media(max-width: 480px) {
+    .navbar-custom {
+        padding: 12px 14px;
+        height: 60px;
     }
 
-    .logo-navbar{
-
-        width:42px;
-        height:42px;
-
+    .container {
+        padding: 85px 12px 20px;
     }
 
-    .empresa-linea2{
-
-        font-size:16px;
-
+    .logo-navbar {
+        width: 42px;
+        height: 42px;
     }
 
-    .acciones-navbar{
-
-        flex-direction:column;
-
-        width:100%;
-
+    .empresa-linea2 {
+        font-size: 16px;
     }
 
-    .btn-volver,
-    .btn-logout{
-
-        width:100%;
-
-        justify-content:center;
-
+    .acciones-navbar {
+        flex-direction: row;
+        width: auto;
     }
 
-    .titulo-principal{
-
-        font-size:1.3rem;
-
+    .btn-volver, .btn-logout {
+        width: auto;
+        justify-content: center;
     }
 
-    .modulo-item{
-
-        padding:14px;
-
+    .titulo-principal {
+        font-size: 1.3rem;
     }
 
-    .btn-degradado{
-
-        width:100%;
-
-        border-radius:14px;
-
+    .modulo-item {
+        padding: 14px;
     }
 
+    .btn-degradado {
+        width: 100%;
+        border-radius: 14px;
+    }
 }
