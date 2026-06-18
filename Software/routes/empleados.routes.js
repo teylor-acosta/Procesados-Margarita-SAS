@@ -766,6 +766,13 @@ router.post(
     upload.single('foto'),
     async (req, res) => {
 
+        console.log("=================================");
+        console.log("ENTRO A SUBIR FOTO");
+        console.log("SESSION:", req.session.usuarioID);
+        console.log("FILE:", req.file);
+        console.log("BODY:", req.body);
+        console.log("=================================");
+
         try {
 
             const db =

@@ -29,13 +29,72 @@ document.addEventListener("DOMContentLoaded", async () => {
         // ============================================
         if (rol.includes("super") || rol.includes("admin")) {
 
-            html += `
-                <div class="modulo-card rh" onclick="irRecursosHumanos()">
-                    <i class="fas fa-user-tie icono-modulo"></i>
-                    <span>Recursos Humanos</span>
-                </div>
-            `;
-        }
+    html += `
+
+        <div
+            class="modulo-card rh"
+            onclick="irRecursosHumanos()">
+
+            <i class="fas fa-user-tie icono-modulo"></i>
+
+            <span>Recursos Humanos</span>
+
+            <small>
+                Empleados, usuarios y capacitaciones
+            </small>
+
+        </div>
+
+        <div class="modulo-card proximamente">
+
+            <i class="fas fa-boxes-stacked icono-modulo"></i>
+
+            <span>Inventarios</span>
+
+            <small>
+                Próximamente
+            </small>
+
+        </div>
+
+        <div class="modulo-card proximamente">
+
+            <i class="fas fa-truck icono-modulo"></i>
+
+            <span>Logística</span>
+
+            <small>
+                Próximamente
+            </small>
+
+        </div>
+
+        <div class="modulo-card proximamente">
+
+            <i class="fas fa-coins icono-modulo"></i>
+
+            <span>Finanzas</span>
+
+            <small>
+                Próximamente
+            </small>
+
+        </div>
+
+        <div class="modulo-card proximamente">
+
+            <i class="fas fa-chart-line icono-modulo"></i>
+
+            <span>Reportes</span>
+
+            <small>
+                Próximamente
+            </small>
+
+        </div>
+
+    `;
+}
 
         // ============================================
         // 🔥 AUXILIAR → SOLO PERFIL
