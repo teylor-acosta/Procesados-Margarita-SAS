@@ -80,12 +80,25 @@ app.use(express.static(
 ));
 
 app.use(
+    '/uploads',
+    express.static(
+        path.join(__dirname, 'public/uploads')
+    )
+);
+
+app.use(
     '/videos',
     express.static(
         path.join(__dirname, 'public/videos')
     )
 );
 
+app.use(
+    '/uploads',
+    express.static(
+        path.join(__dirname, 'uploads')
+    )
+);
 
 // ============================================
 // PASAR DB A ROUTES

@@ -228,8 +228,44 @@ function construirMenu() {
                 <i class="fas fa-th-large"></i>
                 Panel
             </a>
-        `;
+        <a href="/perfil" class="menu-item">
+        <i class="fas fa-user-circle"></i>
+        Mi Perfil
+    </a>
+`;
     }
+
+
+
+    /*Recursos humanos*/
+    else if (pagina === "recursos-humanos") {
+
+    menu.innerHTML = `
+    <span class="menu-section-title">
+        Navegación
+    </span>
+
+    <a href="/dashboard" class="menu-item">
+        <i class="fas fa-home"></i>
+        Inicio
+    </a>
+
+    <a href="/panel" class="menu-item">
+        <i class="fas fa-th-large"></i>
+        Panel
+    </a>
+
+    <a href="/recursos-humanos" class="menu-item active">
+        <i class="fas fa-users-cog"></i>
+        Recursos Humanos
+    </a>
+
+    <a href="/perfil" class="menu-item">
+        <i class="fas fa-user-circle"></i>
+        Mi Perfil
+    </a>
+`;
+}
 
     /* ======================
        DEFAULT

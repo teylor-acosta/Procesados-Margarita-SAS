@@ -36,6 +36,11 @@
 
 <link
     rel="stylesheet"
+    href="/css/sidebar.css"
+>
+
+<link
+    rel="stylesheet"
     href="/css/recursos-humanos.css"
 >
 
@@ -46,57 +51,34 @@
 
 </head>
 
-<body>
+<body data-pagina="recursos-humanos">
 
-<!-- =========================================
-NAVBAR
-========================================= -->
+    <!-- SIDEBAR -->
+<div id="sidebarContainer"></div>
 
+<!-- OVERLAY -->
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay">
+</div>
 <nav class="navbar-custom">
 
     <div class="navbar-left">
 
-        <img
-            src="/img/Logo.png"
-            class="logo-navbar"
-        >
+        <i
+            class="fas fa-bars menu-toggle"
+            id="btnOpenSidebar">
+        </i>
 
         <span class="empresa-nombre">
 
-            Procesados Margarita SAS
+            Recursos Humanos
 
         </span>
 
     </div>
 
-    <div class="acciones-navbar">
-
-        <button
-            class="btn btn-light me-2"
-            onclick="window.location.href='/panel'"
-        >
-
-            <i class="fas fa-arrow-left"></i>
-
-            Volver
-
-        </button>
-
-        <a
-            href="/logout"
-            class="btn-logout"
-        >
-
-            <i class="fas fa-power-off"></i>
-
-            Cerrar sesión
-
-        </a>
-
-    </div>
-
 </nav>
-
 <!-- =========================================
 CONTENIDO
 ========================================= -->

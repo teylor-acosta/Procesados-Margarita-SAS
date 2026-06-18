@@ -312,6 +312,10 @@ document
 .getElementById("btnCambiarFoto")
 ?.addEventListener("click", () => {
 
+    console.log(
+        "CLICK CAMBIAR FOTO"
+    );
+
     document
     .getElementById(
         "inputFotoPerfil"
@@ -327,6 +331,10 @@ document
 ?.addEventListener(
     "change",
     async function () {
+
+        console.log(
+    "SE EJECUTO CHANGE"
+);
 
         const archivo =
             this.files[0];
@@ -345,16 +353,27 @@ document
         try {
 
             const response =
-                await fetch(
-                    "/api/perfil/foto",
-                    {
-                        method:"POST",
-                        body:formData
-                    }
-                );
+    await fetch(
+        "/api/perfil/foto",
+        {
+            method: "POST",
+            credentials: "include",
+            body: formData
+        }
+    );
 
-            const result =
-                await response.json();
+console.log(
+    "STATUS:",
+    response.status
+);
+
+const result =
+    await response.json();
+
+console.log(
+    "RESULTADO:",
+    result
+);
 
             if (
                 result.success
@@ -381,9 +400,14 @@ document
                 .style.display =
                 "none";
 
-                alert(
-                    "Foto actualizada correctamente."
-                );
+                Swal.fire({
+    icon: "success",
+    title: "Foto actualizada",
+    text: "La foto de perfil fue actualizada correctamente.",
+    confirmButtonColor: "#02412e",
+    timer: 2000,
+    showConfirmButton: false
+});
 
             }
 
@@ -391,9 +415,12 @@ document
 
             console.error(error);
 
-            alert(
-                "Error subiendo la foto."
-            );
+            Swal.fire({
+    icon: "error",
+    title: "Error",
+    text: "No fue posible actualizar la foto.",
+    confirmButtonColor: "#dc3545"
+});
 
         }
 
