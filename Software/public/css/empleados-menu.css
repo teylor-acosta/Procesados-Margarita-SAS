@@ -1027,3 +1027,126 @@ overflow-x:hidden;
     padding:25px !important;
 
 }
+/* =========================================
+   INTEGRACION ERP NUEVO
+========================================= */
+
+.dashboard-container{
+
+    margin-left:280px;
+
+    padding-top:120px;
+
+}
+
+@media(max-width:992px){
+
+    .dashboard-container{
+
+        margin-left:0;
+
+        padding-top:110px;
+
+    }
+
+}
+
+/* =========================================
+   NAVBAR ERP
+========================================= */
+
+.navbar-custom{
+
+    position:fixed;
+
+    top:0;
+
+    left:280px;
+
+    width:calc(100% - 280px);
+
+    height:85px;
+
+    background:#ffffff;
+
+    border-bottom:1px solid #e5e7eb;
+
+    display:flex;
+
+    align-items:center;
+
+    padding:0 30px;
+
+    z-index:999;
+}
+
+.navbar-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+}
+
+.menu-toggle{
+
+    font-size:30px;
+
+    color:#1f2937;
+
+    cursor:pointer;
+}
+
+.section-main-title{
+
+    font-size:22px;
+
+    font-weight:700;
+
+    color:#1f2937;
+}
+
+.dashboard-container{
+
+    margin-left:280px;
+
+    width:calc(100% - 280px);
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    padding:40px;
+}
+
+@media(max-width:992px){
+
+    .navbar-custom{
+
+        left:0;
+
+        width:100%;
+    }
+
+    .dashboard-container{
+
+        margin-left:0;
+
+        width:100%;
+    }
+}
+
+.dashboard-header,
+.modulos-grid,
+.panel-erp-grid,
+.stats-container,
+.footer-erp{
+
+    width:100%;
+
+    max-width:1300px;
+
+}

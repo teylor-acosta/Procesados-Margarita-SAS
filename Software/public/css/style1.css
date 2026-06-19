@@ -118,10 +118,32 @@ body::before {
     transform: translateY(-2px);
 }
 
-.menu-toggle {
-    font-size: 24px;
-    cursor: pointer;
-    color: #1e293b;
+.menu-toggle{
+
+    font-size:32px;
+
+    cursor:pointer;
+
+    color:#1e293b;
+
+}
+
+/* =========================================
+   TITULO SECCION NAVBAR
+========================================= */
+
+.section-main-title{
+
+    font-size:32px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+    line-height:1;
+
+    margin:0;
+
 }
 
 /* =========================================
