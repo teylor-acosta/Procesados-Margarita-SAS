@@ -56,12 +56,17 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 
 <link
 rel="stylesheet"
-href="/css/style1.css?v=2"
+href="/css/style1.css"
 />
 
 <link
 rel="stylesheet"
-href="/css/crear-empleado.css?v=2"
+href="/css/sidebar.css"
+/>
+
+<link
+rel="stylesheet"
+href="/css/crear-empleado.css"
 />
 
 <link
@@ -71,7 +76,16 @@ href="/img/Logo.png"
 
 </head>
 
-<body>
+<body data-pagina="crear-empleado">
+
+    <!-- SIDEBAR -->
+<div id="sidebarContainer"></div>
+
+<!-- OVERLAY -->
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay">
+</div>
 
 <!-- =========================================
 🔥 NAVBAR CORPORATIVO
@@ -81,42 +95,16 @@ href="/img/Logo.png"
 
     <div class="navbar-left">
 
-        <img
-        src="/img/Logo.png"
-        class="logo-navbar"
-        />
+        <i
+            class="fas fa-bars menu-toggle"
+            id="btnOpenSidebar">
+        </i>
 
-        <span class="empresa-nombre">
+        <span class="section-main-title">
 
-            Procesados Margarita SAS
+            Crear Empleado
 
         </span>
-
-    </div>
-
-    <div class="acciones-navbar">
-
-        <button
-        class="btn-volver"
-        onclick="history.back()"
-        >
-
-            <i class="fas fa-arrow-left"></i>
-
-            Volver
-
-        </button>
-
-        <a
-        href="/logout"
-        class="btn-logout"
-        >
-
-            <i class="fas fa-power-off"></i>
-
-            Cerrar sesión
-
-        </a>
 
     </div>
 

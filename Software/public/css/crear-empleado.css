@@ -9,7 +9,6 @@
 }
 
 body{
-    margin:0;
     font-family:'Averia Libre', cursive;
     min-height:100vh;
     overflow-x:hidden;
@@ -36,198 +35,72 @@ body::before{
         url('/img/Fondo.webp');
 
     background-size:cover;
-
     background-position:center;
-
     background-attachment:fixed;
 
     z-index:-1;
-
 }
 
 /* =========================================
-   NAVBAR
+   NAVBAR NUEVO
 ========================================= */
 
 .navbar-custom{
+    position:fixed;
+    top:0;
+    left:280px;
 
-    width:100%;
+    width:calc(100% - 280px);
+    height:80px;
 
-    background:
-        rgba(255,255,255,.96);
+    background:#fff;
 
-    backdrop-filter:blur(10px);
+    border-bottom:1px solid #e5e7eb;
 
     display:flex;
-
-    justify-content:space-between;
-
     align-items:center;
 
-    padding:14px 30px;
+    padding:0 30px;
 
-    box-shadow:
-        0 4px 18px rgba(0,0,0,.08);
-
-    position:fixed;
-
-    top:0;
-
-    left:0;
-
-    z-index:9999;
-
+    z-index:1000;
 }
 
 .navbar-left{
 
     display:flex;
-
     align-items:center;
-
-    gap:14px;
-
+    gap:18px;
 }
 
-.logo-navbar{
-
-    width:55px;
-
-    height:55px;
-
-    object-fit:contain;
-
-}
-
-.empresa-nombre{
+.menu-toggle{
 
     font-size:30px;
 
-    font-weight:700;
-
-    color:#16a34a;
-
-    font-style:italic;
-
-    letter-spacing:.5px;
-
-}
-
-/* =========================================
-   BOTONES NAVBAR
-========================================= */
-
-.acciones-navbar{
-
-    display:flex;
-
-    gap:12px;
-
-    align-items:center;
-
-}
-
-.btn-volver{
-
-    border:none;
-
-    background:#f8fafc;
-
-    color:#111827;
-
-    text-decoration:none;
-
-    padding:12px 24px;
-
-    border-radius:18px;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    font-weight:700;
+    color:#1e293b;
 
     cursor:pointer;
-
-    transition:.25s;
-
-    font-family:'Averia Libre', cursive;
-
-    box-shadow:
-        0 4px 10px rgba(0,0,0,.05);
-
 }
 
-.btn-volver:hover{
+.section-main-title{
 
-    background:#e2e8f0;
-
-    transform:
-        translateY(-2px);
-
-}
-
-.btn-logout{
-
-    border:none;
-
-    text-decoration:none;
-
-    background:
-        linear-gradient(
-            135deg,
-            #ef4444,
-            #dc2626
-        );
-
-    color:white;
-
-    padding:12px 24px;
-
-    border-radius:18px;
+    font-size:22px;
 
     font-weight:700;
 
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    transition:.3s;
-
-    font-family:'Averia Libre', cursive;
-
-    box-shadow:
-        0 10px 20px rgba(239,68,68,.25);
-
-}
-
-.btn-logout:hover{
-
-    transform:
-        translateY(-2px);
-
-    color:white;
-
+    color:#1e293b;
 }
 
 /* =========================================
-   CONTENEDOR
+   CONTENEDOR PRINCIPAL
 ========================================= */
 
 .crear-container{
-
-    width:100%;
+    margin-left:280px;
 
     display:flex;
-
     justify-content:center;
 
-    padding:130px 20px 40px;
-
+    padding:120px 40px 40px;
 }
 
 /* =========================================
@@ -238,7 +111,7 @@ body::before{
 
     width:100%;
 
-    max-width:1100px;
+    max-width:1200px;
 
     background:
         rgba(255,255,255,.95);
@@ -251,11 +124,10 @@ body::before{
 
     box-shadow:
         0 15px 35px rgba(0,0,0,.08);
-
 }
 
 /* =========================================
-   HEADER FORM
+   HEADER FORMULARIO
 ========================================= */
 
 .header-formulario{
@@ -267,7 +139,6 @@ body::before{
     gap:22px;
 
     margin-bottom:35px;
-
 }
 
 .avatar-empleado{
@@ -289,7 +160,6 @@ body::before{
     color:white;
 
     font-size:32px;
-
 }
 
 .titulo-form{
@@ -299,9 +169,6 @@ body::before{
     font-weight:700;
 
     color:#198754;
-
-    font-family:'Averia Libre', cursive;
-
 }
 
 .subtitulo-form{
@@ -309,7 +176,6 @@ body::before{
     color:#4b5563;
 
     font-size:16px;
-
 }
 
 /* =========================================
@@ -327,7 +193,6 @@ body::before{
     padding:25px;
 
     margin-bottom:25px;
-
 }
 
 .titulo-seccion{
@@ -345,7 +210,6 @@ body::before{
     font-weight:700;
 
     margin-bottom:20px;
-
 }
 
 .titulo-seccion i{
@@ -366,7 +230,6 @@ body::before{
     align-items:center;
 
     justify-content:center;
-
 }
 
 /* =========================================
@@ -382,7 +245,6 @@ label{
     font-weight:700;
 
     color:#374151;
-
 }
 
 /* =========================================
@@ -397,12 +259,11 @@ label{
 
     border:1px solid #d1d5db;
 
-    font-family:'Averia Libre', cursive;
-
     padding:12px 16px;
 
-    box-shadow:none !important;
+    font-family:'Averia Libre', cursive;
 
+    box-shadow:none !important;
 }
 
 .form-control:focus{
@@ -411,23 +272,19 @@ label{
 
     box-shadow:
         0 0 0 4px rgba(25,135,84,.12) !important;
-
 }
 
 /* =========================================
-   BOTON GUARDAR
+   BOTÓN GUARDAR
 ========================================= */
 
 .contenedor-boton{
-
-    width:100%;
 
     display:flex;
 
     justify-content:center;
 
-    margin-top:10px;
-
+    margin-top:15px;
 }
 
 .btn-guardar{
@@ -446,8 +303,6 @@ label{
 
     font-weight:700;
 
-    font-family:'Averia Libre', cursive;
-
     display:flex;
 
     align-items:center;
@@ -457,103 +312,19 @@ label{
     cursor:pointer;
 
     transition:.3s;
-
 }
 
 .btn-guardar:hover{
 
-    transform:
-        translateY(-2px);
-
     background:#157347;
 
+    transform:translateY(-2px);
 }
 
 /* =========================================
-   RESPONSIVE
+   FUENTES
 ========================================= */
 
-@media(max-width:768px){
-
-    .navbar-custom{
-
-        flex-direction:column;
-
-        gap:14px;
-
-        padding:18px;
-
-    }
-
-    .acciones-navbar{
-
-        width:100%;
-
-        justify-content:center;
-
-        flex-wrap:wrap;
-
-    }
-
-    .crear-container{
-
-        padding-top:190px;
-
-    }
-
-    .form-card{
-
-        padding:24px;
-
-    }
-
-    .header-formulario{
-
-        flex-direction:column;
-
-        text-align:center;
-
-    }
-
-    .titulo-form{
-
-        font-size:30px;
-
-    }
-
-    .btn-guardar{
-
-        width:100%;
-
-        justify-content:center;
-
-    }
-
-}
-
-@media(max-width:480px){
-
-    .empresa-nombre{
-
-        font-size:18px;
-
-    }
-
-    .logo-navbar{
-
-        width:42px;
-
-        height:42px;
-
-    }
-
-    .titulo-form{
-
-        font-size:24px;
-
-    }
-
-}
 html,
 body,
 input,
@@ -570,10 +341,14 @@ h3,
 h4,
 h5,
 h6{
+
     font-family:'Averia Libre', cursive !important;
 }
 
-/* Mantener Font Awesome */
+/* =========================================
+   FONT AWESOME
+========================================= */
+
 .fa,
 .fas,
 .far,
@@ -581,7 +356,72 @@ h6{
 .fa-solid,
 .fa-regular,
 .fa-brands{
+
     font-family:
         "Font Awesome 6 Free",
         "Font Awesome 6 Brands" !important;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:992px){
+
+    .navbar-custom{
+
+        margin-left:0;
+    }
+
+    .crear-container{
+
+        margin-left:0;
+
+        padding:20px;
+    }
+
+    .titulo-form{
+
+        font-size:38px;
+    }
+}
+
+@media(max-width:768px){
+
+    .header-formulario{
+
+        flex-direction:column;
+
+        text-align:center;
+    }
+
+    .titulo-form{
+
+        font-size:30px;
+    }
+
+    .form-card{
+
+        padding:24px;
+    }
+
+    .btn-guardar{
+
+        width:100%;
+
+        justify-content:center;
+    }
+}
+
+@media(max-width:480px){
+
+    .titulo-form{
+
+        font-size:24px;
+    }
+
+    .section-main-title{
+
+        font-size:18px;
+    }
 }

@@ -189,14 +189,14 @@
     color:white;
 }
 
-#rol,
-#cargo{
+#rolSidebar,
+#cargoSidebar{
     font-size:13px;
-    color:rgba(255,255,255,.6);
+    color:rgb(255, 255, 255);
 }
 
-#cargo{
-    color: rgba(255,255,255,.55);
+#cargoSidebar{
+    color: rgb(255, 255, 255);
     font-size: 12px;
 }
 

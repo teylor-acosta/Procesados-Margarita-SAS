@@ -266,6 +266,110 @@ function construirMenu() {
     </a>
 `;
 }
+/* =====================================
+   EMPLEADOS
+===================================== */
+
+else if (pagina === "empleados") {
+
+    menu.innerHTML = `
+
+        <span class="menu-section-title">
+            Recursos Humanos
+        </span>
+
+        <a href="/panel" class="menu-item">
+            <i class="fas fa-th-large"></i>
+            <span>Panel</span>
+        </a>
+
+        <a href="/recursos-humanos" class="menu-item">
+            <i class="fas fa-users-cog"></i>
+            <span>Recursos Humanos</span>
+        </a>
+
+        <a href="/empleados" class="menu-item active">
+            <i class="fas fa-users"></i>
+            <span>Empleados</span>
+        </a>
+
+        <a href="/crear-empleado" class="menu-item">
+            <i class="fas fa-user-plus"></i>
+            <span>Crear Empleado</span>
+        </a>
+
+    `;
+}
+
+/* =====================================
+   CREAR EMPLEADO
+===================================== */
+
+else if (pagina === "crear-empleado") {
+
+    menu.innerHTML = `
+
+        <span class="menu-section-title">
+            Recursos Humanos
+        </span>
+
+        <a href="/panel" class="menu-item">
+            <i class="fas fa-th-large"></i>
+            <span>Panel</span>
+        </a>
+
+        <a href="/recursos-humanos" class="menu-item">
+            <i class="fas fa-users-cog"></i>
+            <span>Recursos Humanos</span>
+        </a>
+
+        <a href="/empleados" class="menu-item">
+            <i class="fas fa-users"></i>
+            <span>Empleados</span>
+        </a>
+
+        <a href="/crear-empleado" class="menu-item active">
+            <i class="fas fa-user-plus"></i>
+            <span>Crear Empleado</span>
+        </a>
+
+    `;
+}
+
+/* =====================================
+   MENU EMPLEADOS
+===================================== */
+
+else if (pagina === "empleados-menu") {
+
+    menu.innerHTML = `
+
+        <span class="menu-section-title">
+            Recursos Humanos
+        </span>
+
+        <a href="/panel" class="menu-item">
+            <i class="fas fa-th-large"></i>
+            <span>Panel</span>
+        </a>
+
+        <a href="/recursos-humanos" class="menu-item">
+            <i class="fas fa-users-cog"></i>
+            <span>Recursos Humanos</span>
+        </a>
+
+        <a href="/empleados-menu" class="menu-item active">
+            <i class="fas fa-users"></i>
+            <span>Empleados</span>
+        </a>
+
+        <a href="/crear-empleado" class="menu-item">
+            <i class="fas fa-user-plus"></i>
+            <span>Crear Empleado</span>
+        </a>
+
+    `;
+}
 
     /* ======================
        DEFAULT
@@ -299,38 +403,38 @@ function cargarDatosUsuario() {
                 localStorage.getItem("usuario")
             ) || {};
 
-        const nombre =
+        const nombreSidebar =
             document.getElementById(
-                "nombre"
+                "nombreSidebar"
             );
 
-        const rol =
+        const rolSidebar =
             document.getElementById(
-                "rol"
+                "rolSidebar"
             );
 
-        const cargo =
+        const cargoSidebar =
             document.getElementById(
-                "cargo"
+                "cargoSidebar"
             );
 
-        if (nombre) {
+        if (nombreSidebar) {
 
-            nombre.textContent =
+            nombreSidebar.textContent =
                 usuario.nombre ||
                 "Usuario";
         }
 
-        if (rol) {
+        if (rolSidebar) {
 
-            rol.textContent =
+            rolSidebar.textContent =
                 usuario.rol ||
                 "Empleado";
         }
 
-        if (cargo) {
+        if (cargoSidebar) {
 
-            cargo.textContent =
+            cargoSidebar.textContent =
                 usuario.cargo ||
                 "";
         }
