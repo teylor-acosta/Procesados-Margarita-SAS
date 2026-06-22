@@ -1,264 +1,259 @@
-/* =========================================
-   🌎 BODY EMPLEADOS
-========================================= */
+/* ==========================================================
+   EMPLEADOS INACTIVOS
+   SOLO CONTENIDO DEL MÓDULO
+========================================================== */
 
-body{
+.main-content{
 
-    margin:0;
-
-    font-family:'Averia Libre', cursive;
-
-    background:
-        url('/img/Fondo.webp')
-        center/cover no-repeat fixed;
+    margin-left:280px;
 
     min-height:100vh;
 
-    overflow-x:hidden;
-
-    position:relative;
 }
 
-body::before{
+.empleados-container{
 
-    content:"";
+    padding:30px;
 
-    position:fixed;
-
-    inset:0;
-
-    background:
-        rgba(255,255,255,.40);
-
-    z-index:-1;
 }
 
-/* =========================================
-   🔥 NAVBAR GLOBAL ERP
-========================================= */
+/* ==========================================================
+   HEADER
+========================================================== */
 
-.navbar-custom{
+.header-dashboard{
 
-    width:100%;
-
-    background:
-        rgba(255,255,255,.96);
+    background:rgba(255,255,255,.95);
 
     backdrop-filter:blur(10px);
+
+    border-radius:28px;
+
+    padding:35px;
+
+    margin-bottom:25px;
 
     display:flex;
 
     justify-content:space-between;
+
     align-items:center;
 
-    padding:14px 30px;
+    gap:20px;
+
+    border:1px solid #e5e7eb;
 
     box-shadow:
-        0 4px 18px rgba(0,0,0,.08);
+        0 10px 30px rgba(0,0,0,.06);
 
-    position:fixed;
-
-    top:0;
-    left:0;
-
-    z-index:9999;
 }
 
-/* =========================================
-   🔥 IZQUIERDA NAVBAR
-========================================= */
-
-.navbar-left{
+.header-info{
 
     display:flex;
 
     align-items:center;
 
-    gap:14px;
+    gap:20px;
+
 }
 
-.logo-navbar{
+.header-icono{
 
-    width:55px;
-    height:55px;
+    width:80px;
+    height:80px;
 
-    object-fit:contain;
+    border-radius:22px;
+
+    background:#dc2626;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:white;
+
+    font-size:34px;
+
 }
 
-.empresa-nombre{
+.titulo-dashboard{
 
-    font-size:32px;
+    font-size:48px;
 
     font-weight:700;
 
-    color:#16a34a;
-
-    font-style:italic;
-
-    letter-spacing:.5px;
+    color:#0f172a;
 
     margin:0;
+
 }
 
-/* =========================================
-   🔥 DERECHA NAVBAR
-========================================= */
+.subtitulo-dashboard{
 
-.acciones-navbar{
+    margin-top:8px;
 
-    display:flex;
+    color:#64748b;
 
-    align-items:center;
+    font-size:16px;
 
-    gap:14px;
 }
 
-/* =========================================
-   🔥 BOTON VOLVER
-========================================= */
+/* ==========================================================
+   CARD ESTADÍSTICA HEADER
+========================================================== */
 
-.btn-volver{
+.card-stat{
 
-    border:none;
+    min-width:180px;
 
-    background:#f8fafc;
-
-    color:#111827;
-
-    text-decoration:none;
-
-    padding:12px 24px;
-
-    border-radius:18px;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    font-weight:700;
-
-    transition:.25s;
-
-    box-shadow:
-        0 4px 10px rgba(0,0,0,.05);
-}
-
-.btn-volver:hover{
-
-    background:#e2e8f0;
-
-    transform:
-        translateY(-2px);
-
-    color:#111827;
-}
-
-/* =========================================
-   🔥 BOTON LOGOUT
-========================================= */
-
-.btn-logout{
-
-    border:none;
-
-    text-decoration:none;
-
-    background:
-        linear-gradient(
-            135deg,
-            #ef4444,
-            #dc2626
-        );
+    background:#dc2626;
 
     color:white;
 
-    padding:12px 24px;
+    border-radius:22px;
 
-    border-radius:18px;
-
-    font-weight:700;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    transition:.3s;
-
-    box-shadow:
-        0 10px 20px rgba(239,68,68,.25);
-}
-
-.btn-logout:hover{
-
-    transform:
-        translateY(-2px);
-
-    box-shadow:
-        0 15px 28px rgba(239,68,68,.35);
-
-    color:white;
-}
-
-/* =========================================
-   📦 CONTENEDOR
-========================================= */
-
-.empleados-container{
-
-    padding:120px 22px 30px;
-
-    width:100%;
-
-    box-sizing:border-box;
-
-    overflow-x:hidden;
-}
-
-/* =========================================
-   🏷️ TITULO
-========================================= */
-
-.titulo-panel{
+    padding:18px 24px;
 
     text-align:center;
 
-    margin-bottom:20px;
+    box-shadow:
+        0 12px 25px rgba(220,38,38,.25);
+
 }
 
-.titulo-panel h2{
+.stat-numero{
 
-    display:inline-block;
+    display:block;
 
-    padding:14px 32px;
+    font-size:48px;
+
+    font-weight:700;
+
+}
+
+.stat-label{
+
+    font-size:14px;
+
+}
+
+/* ==========================================================
+   ESTADÍSTICAS
+========================================================== */
+
+.stats-container{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(220px,1fr)
+        );
+
+    gap:20px;
+
+    margin-bottom:25px;
+
+}
+
+.stat-card{
+
+    background:white;
 
     border-radius:24px;
 
-    background:
-        linear-gradient(
-            135deg,
-            #198754,
-            #0d6efd
-        );
+    padding:25px;
+
+    text-align:center;
+
+    border:1px solid #e5e7eb;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.05);
+
+    transition:.3s;
+
+}
+
+.stat-card:hover{
+
+    transform:translateY(-4px);
+
+}
+
+.stat-icon{
+
+    width:65px;
+
+    height:65px;
+
+    margin:0 auto 15px;
+
+    border-radius:18px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
 
     color:white;
 
-    font-weight:bold;
+    font-size:28px;
 
-    font-size:26px;
-
-    font-style:italic;
-
-    box-shadow:
-        0 6px 18px rgba(0,0,0,0.10);
 }
 
-/* =========================================
-   🔎 FILTROS
-========================================= */
+.stat-card h3{
+
+    font-size:36px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+    margin-bottom:5px;
+
+}
+
+.stat-card span{
+
+    color:#64748b;
+
+    font-size:14px;
+
+}
+
+.verde{
+
+    background:#16a34a;
+
+}
+
+.azul{
+
+    background:#2563eb;
+
+}
+
+.rojo{
+
+    background:#dc2626;
+
+}
+
+.naranja{
+
+    background:#ea580c;
+
+}
+
+/* ==========================================================
+   FILTROS
+========================================================== */
 
 .filtros-barra{
 
@@ -266,376 +261,275 @@ body::before{
 
     flex-wrap:wrap;
 
-    gap:10px;
+    gap:15px;
 
-    justify-content:center;
+    margin-bottom:25px;
 
-    margin-bottom:18px;
-}
-
-.input-busqueda{
-
-    width:220px;
-
-    border-radius:18px;
-
-    padding:10px 14px;
-
-    border:1px solid #d1d5db;
-
-    min-height:44px;
-
-    font-size:14px;
-
-    font-family:'Averia Libre', cursive;
-
-    box-shadow:none !important;
-}
-
-.filtro{
-
-    width:150px;
-
-    border-radius:18px;
-
-    min-height:44px;
-
-    font-size:14px;
-
-    font-family:'Averia Libre', cursive;
-}
-
-/* =========================================
-   🔘 BOTONES ICONOS
-========================================= */
-
-.btn-icon{
-
-    border-radius:50%;
-
-    width:40px;
-    height:40px;
-
-    display:flex;
     align-items:center;
-    justify-content:center;
 
-    min-width:40px;
-
-    transition:.2s;
 }
 
-.btn-icon:hover{
+.filtro-group{
 
-    transform:
-        translateY(-2px);
+    flex:1;
+
+    min-width:180px;
+
+    position:relative;
+
 }
 
-/* =========================================
-   📋 TABLA CONTENEDOR
-========================================= */
+.filtro-group i{
+
+    position:absolute;
+
+    left:16px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:#dc2626;
+
+    z-index:2;
+
+}
+
+.filtro-group .form-control{
+
+    height:52px;
+
+    padding-left:45px;
+
+    border-radius:16px;
+
+    border:1px solid #dbe2ea;
+
+}
+
+.btn-limpiar{
+
+    width:52px;
+
+    height:52px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:#64748b;
+
+    color:white;
+
+    cursor:pointer;
+
+}
+
+.btn-limpiar:hover{
+
+    background:#475569;
+
+}
+
+/* ==========================================================
+   TABLA
+========================================================== */
 
 .tabla-container{
 
-    background:
-        rgba(255,255,255,0.97);
+    background:white;
 
-    border-radius:18px;
+    border-radius:28px;
 
-    padding:14px;
+    padding:15px;
+
+    border:1px solid #e5e7eb;
 
     box-shadow:
-        0 6px 18px rgba(0,0,0,0.10);
+        0 10px 30px rgba(0,0,0,.06);
 
-    overflow:hidden;
 }
-
-/* =========================================
-   🔄 SCROLL TABLA
-========================================= */
-
-.table-responsive{
-
-    max-height:420px;
-
-    overflow-y:auto;
-
-    overflow-x:auto;
-
-    -webkit-overflow-scrolling:touch;
-}
-
-/* =========================================
-   📊 TABLA
-========================================= */
 
 .tabla-corporativa{
 
     width:100%;
 
-    border-collapse:separate;
+    border-collapse:collapse;
 
-    border-spacing:0;
+    min-width:1200px;
 
-    font-size:13px;
-
-    min-width:850px;
 }
 
-/* =========================================
-   🟢 HEADER
-========================================= */
+.tabla-corporativa thead{
+
+    background:#dc2626;
+
+}
 
 .tabla-corporativa thead th{
 
-    position:sticky;
-
-    top:0;
-
-    background:#198754;
-
     color:white;
 
-    padding:12px 10px;
+    padding:18px 12px;
 
-    border-right:
-        1px solid rgba(255,255,255,0.3);
+    font-size:14px;
 
-    text-transform:uppercase;
+    font-weight:700;
 
-    font-size:12px;
-
-    z-index:5;
+    border:none;
 
     white-space:nowrap;
 
-    font-style:italic;
 }
 
-.tabla-corporativa thead th:last-child{
+.tabla-corporativa tbody td{
 
-    border-right:none;
-}
+    padding:14px 12px;
 
-/* =========================================
-   📄 FILAS
-========================================= */
+    border-bottom:1px solid #edf2f7;
 
-.tabla-corporativa tbody tr:nth-child(even){
+    color:#334155;
 
-    background:#f4f9ff;
+    font-size:14px;
+
 }
 
 .tabla-corporativa tbody tr:hover{
 
-    background:#d6ecff;
+    background:#f8fafc;
+
 }
 
-/* =========================================
-   🔲 CELDAS
-========================================= */
+/* ==========================================================
+   MODAL DETALLE
+========================================================== */
 
-.tabla-corporativa td{
+.valor-detalle{
 
-    padding:10px 8px;
+    min-height:52px;
 
-    text-align:center;
+    display:flex;
 
-    border-bottom:
-        1px solid #e5e7eb;
+    align-items:center;
 
-    white-space:nowrap;
+    padding:12px 15px;
 
-    font-size:13px;
-}
-
-/* =========================================
-   🔘 BOTÓN REACTIVAR
-========================================= */
-
-.btn-reactivar{
-
-    background:#198754;
-
-    color:white;
+    background:#f8fafc;
 
     border-radius:14px;
 
-    padding:6px 12px;
+    border:1px solid #e2e8f0;
+
+    margin-top:6px;
+
+    color:#334155;
+
+    font-weight:600;
+
+}
+
+.modal-content{
 
     border:none;
 
-    transition:
-        transform .2s ease,
-        opacity .2s ease;
+    border-radius:24px;
 
-    min-height:36px;
+    overflow:hidden;
 
-    font-family:'Averia Libre', cursive;
 }
 
-.btn-reactivar:hover{
+.modal-header{
 
-    background:#157347;
+    background:#dc2626;
 
-    transform:
-        translateY(-1px);
+    color:white;
+
+    border:none;
+
 }
 
-/* =========================================
-   📱 TABLET
-========================================= */
+.modal-header .btn-close{
+
+    filter:invert(1);
+
+}
+
+/* ==========================================================
+   BADGES
+========================================================== */
+
+.badge{
+
+    padding:8px 12px;
+
+    border-radius:999px;
+
+    font-size:12px;
+
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
 
 @media(max-width:992px){
 
+    .main-content{
+
+        margin-left:0;
+
+    }
+
     .empleados-container{
 
-        padding-left:15px;
-        padding-right:15px;
+        padding:20px;
+
     }
 
-}
-
-/* =========================================
-   📱 MÓVIL
-========================================= */
-
-@media(max-width:768px){
-
-    body{
-
-        background-attachment:scroll;
-    }
-
-    .navbar-custom{
-
-        padding:14px 18px;
+    .header-dashboard{
 
         flex-direction:column;
 
         align-items:flex-start;
 
-        gap:14px;
     }
 
-    .empresa-nombre{
+}
 
-        font-size:22px;
+@media(max-width:768px){
+
+    .titulo-dashboard{
+
+        font-size:32px;
+
     }
 
-    .acciones-navbar{
+    .header-icono{
 
-        width:100%;
+        width:65px;
 
-        justify-content:flex-end;
+        height:65px;
 
-        flex-wrap:wrap;
+        font-size:28px;
+
     }
 
-    .empleados-container{
+    .stats-container{
 
-        padding:180px 10px 20px;
-    }
+        grid-template-columns:1fr;
 
-    .titulo-panel h2{
-
-        width:100%;
-
-        font-size:20px;
-
-        border-radius:16px;
-
-        padding:12px;
     }
 
     .filtros-barra{
 
         flex-direction:column;
 
-        align-items:stretch;
     }
 
-    .input-busqueda,
-    .filtro{
+    .filtro-group{
 
         width:100%;
 
-        font-size:13px;
-    }
-
-    .tabla-container{
-
-        padding:10px;
-
-        border-radius:14px;
-
-        box-shadow:
-            0 4px 12px rgba(0,0,0,0.08);
-    }
-
-    .tabla-corporativa th,
-    .tabla-corporativa td{
-
-        font-size:11px;
-
-        padding:8px 6px;
-    }
-
-}
-
-/* =========================================
-   📱 MÓVILES PEQUEÑOS
-========================================= */
-
-@media(max-width:480px){
-
-    .empresa-nombre{
-
-        font-size:18px;
-    }
-
-    .logo-navbar{
-
-        width:42px;
-        height:42px;
-    }
-
-    .acciones-navbar{
-
-        flex-direction:column;
-
-        width:100%;
-    }
-
-    .btn-volver,
-    .btn-logout{
-
-        width:100%;
-
-        justify-content:center;
-    }
-
-    .titulo-panel h2{
-
-        font-size:18px;
-    }
-
-    .tabla-corporativa{
-
-        min-width:700px;
-    }
-
-}
-
-/* =========================================
-   🔥 OPTIMIZACIÓN MÓVIL
-========================================= */
-
-@media(max-width:768px){
-
-    *{
-
-        -webkit-tap-highlight-color:transparent;
     }
 
 }

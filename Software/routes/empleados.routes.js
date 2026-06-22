@@ -230,114 +230,242 @@ router.put('/api/actualizar-empleado', async (req, res) => {
 });
 
 // ============================================
-// 🔥 DESACTIVAR
+// 🔥 DESACTIVAR EMPLEADO
 // ============================================
 
-router.put('/api/desactivar-empleado', (req, res) => {
+router.put('/api/desactivar-empleado', async (req, res) => {
 
-    const db = req.app.get('db');
+    try {
 
-    db.query(
-        "UPDATE empleados SET activo='NO' WHERE id=?",
-        [req.body.id],
-        err => {
-            if (err) return res.json({ success: false });
-            // ============================================
-// 🔥 REGISTRAR ACTIVIDAD
-// ============================================
+        const db = req.app.get('db');
 
-db.query(
+        const {
 
-    `INSERT INTO centro_actividad (
+            id,
+            motivo_desactivacion,
+            observacion_desactivacion
 
-        empleado_id,
-        usuario_id,
-        accion,
-        modulo,
-        descripcion,
-        color,
-        icono
+        } = req.body;
 
-    )
+        // ============================================
+        // DESACTIVAR EMPLEADO
+        // ============================================
 
-    VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    
-    [
+        await db.query(
 
-        req.body.id,
-        req.session.usuario?.id || null,
-        'DESACTIVAR',
-        'EMPLEADOS',
-        'Empleado desactivado',
-        'rojo',
-        'fa-user-slash'
+            `
+            UPDATE empleados
+            SET
 
-    ]
+                activo = 'NO',
+                fecha_desactivacion = NOW(),
+                motivo_desactivacion = ?,
+                observacion_desactivacion = ?
 
-);
-            res.json({ success: true });
-        }
-    );
+            WHERE id = ?
+            `,
+
+            [
+
+                motivo_desactivacion || null,
+                observacion_desactivacion || null,
+                id
+
+            ]
+
+        );
+
+        // ============================================
+        // BLOQUEAR USUARIO ASOCIADO
+        // ============================================
+
+        await db.query(
+
+            `
+            UPDATE usuarios
+            SET bloqueado = 1
+            WHERE empleado_id = ?
+            `,
+
+            [id]
+
+        );
+
+        // ============================================
+        // REGISTRAR ACTIVIDAD
+        // ============================================
+
+        await db.query(
+
+            `
+            INSERT INTO centro_actividad (
+
+                empleado_id,
+                usuario_id,
+                accion,
+                modulo,
+                descripcion,
+                color,
+                icono
+
+            )
+
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            `,
+
+            [
+
+                id,
+
+                req.session.usuario?.id || null,
+
+                'DESACTIVAR',
+
+                'EMPLEADOS',
+
+                `Empleado desactivado. Motivo: ${motivo_desactivacion || 'Sin motivo'}`,
+
+                'rojo',
+
+                'fa-user-slash'
+
+            ]
+
+        );
+
+        res.json({
+
+            success: true
+
+        });
+
+    } catch(error){
+
+        console.log(error);
+
+        res.status(500).json({
+
+            success: false,
+            error: error.message
+
+        });
+
+    }
+
 });
 
 
 // ============================================
-// 🔥 ACTIVAR
+// 🔥 ACTIVAR EMPLEADO
 // ============================================
 
-router.put('/api/activar-empleado', (req, res) => {
+router.put('/api/activar-empleado', async (req, res) => {
 
-    const db = req.app.get('db');
+    try {
 
-    db.query(
-        "UPDATE empleados SET activo='SI' WHERE id=?",
-        [req.body.id],
-        err => {
-            if (err) return res.json({ success: false });
-            // ============================================
-// 🔥 REGISTRAR ACTIVIDAD
-// ============================================
+        const db = req.app.get('db');
 
-db.query(
+        const { id } = req.body;
 
-    `INSERT INTO centro_actividad (
+        // ============================================
+        // ACTIVAR EMPLEADO
+        // ============================================
 
-        empleado_id,
-        usuario_id,
-        accion,
-        modulo,
-        descripcion,
-        color,
-        icono
+        await db.query(
 
-    )
+            `
+            UPDATE empleados
+            SET activo = 'SI'
+            WHERE id = ?
+            `,
 
-    VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [id]
 
-    [
+        );
 
-        req.body.id,
+        // ============================================
+        // DESBLOQUEAR USUARIO ASOCIADO
+        // ============================================
 
-        req.session.usuario?.id || null,
+        await db.query(
 
-        'ACTIVAR',
+            `
+            UPDATE usuarios
+            SET bloqueado = 0
+            WHERE empleado_id = ?
+            `,
 
-        'EMPLEADOS',
+            [id]
 
-        'Se reactivó un empleado',
+        );
 
-        'verde',
+        // ============================================
+        // REGISTRAR ACTIVIDAD
+        // ============================================
 
-        'fa-user-check'
+        await db.query(
 
-    ]
+            `
+            INSERT INTO centro_actividad (
 
-);
-            res.json({ success: true });
-        }
-    );
+                empleado_id,
+                usuario_id,
+                accion,
+                modulo,
+                descripcion,
+                color,
+                icono
+
+            )
+
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            `,
+
+            [
+
+                id,
+
+                req.session.usuario?.id || null,
+
+                'ACTIVAR',
+
+                'EMPLEADOS',
+
+                'Se reactivó un empleado',
+
+                'verde',
+
+                'fa-user-check'
+
+            ]
+
+        );
+
+        res.json({
+
+            success: true
+
+        });
+
+    } catch(error){
+
+        console.log(error);
+
+        res.status(500).json({
+
+            success: false,
+            error: error.message
+
+        });
+
+    }
+
 });
 
+
+// ============================================
+// 🔥 EMPLEADOS INACTIVOS
+// ============================================
 
 // ============================================
 // 🔥 EMPLEADOS INACTIVOS
@@ -355,24 +483,47 @@ router.get(
 
             const sql = `
 
-                SELECT 
-                    e.*,
+                SELECT
+
+                    e.id,
+                    e.codigo,
+                    e.nombre,
+                    e.numero_documento,
+                    e.tipo_documento,
+
+                    e.area_id,
+                    e.sede_id,
+                    e.cargo_id,
+
+                    e.motivo_desactivacion,
+                    e.observacion_desactivacion,
+                    e.fecha_desactivacion,
+
                     a.nombre AS area,
                     s.nombre AS sede,
-                    c.nombre AS cargo
+                    c.nombre AS cargo,
+
+                    u.Usuario AS usuario_sistema,
+                    u.bloqueado
 
                 FROM empleados e
 
                 LEFT JOIN areas a
-                ON e.area_id = a.id
+                    ON e.area_id = a.id
 
                 LEFT JOIN sedes s
-                ON e.sede_id = s.id
+                    ON e.sede_id = s.id
 
                 LEFT JOIN cargos c
-                ON e.cargo_id = c.id
+                    ON e.cargo_id = c.id
+
+                LEFT JOIN usuarios u
+                    ON e.id = u.empleado_id
 
                 WHERE e.activo = 'NO'
+
+                ORDER BY
+                    e.fecha_desactivacion DESC
 
             `;
 
@@ -392,7 +543,6 @@ router.get(
     }
 
 );
-
 // ============================================
 // 🔥 CREAR
 // ============================================

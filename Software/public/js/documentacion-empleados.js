@@ -87,13 +87,23 @@ function renderizarEmpleados(lista) {
 
     lista.forEach(emp => {
 
-        const foto = emp.foto
-            ? emp.foto
-            : '/img/defecto.jpg';
+        const foto =
 
-        const progreso = 0;
-        const estado = 'Incompleto';
-        const color = 'danger';
+    emp.foto &&
+    emp.foto.trim() !== ''
+
+        ? `/uploads/fotos/${emp.foto}`
+
+        : '/img/defecto.jpg';
+
+        const progreso =
+    emp.progreso || 0;
+
+const estado =
+    emp.estadoDocumental || 'Incompleto';
+
+const color =
+    emp.colorEstado || 'danger';
 
         const card = document.createElement("div");
 
@@ -111,9 +121,21 @@ function renderizarEmpleados(lista) {
 
                     <p>${emp.cargo || 'Sin cargo'}</p>
 
-                    <span class="codigo-empleado">
-                        ${emp.codigo}
-                    </span>
+                    <div class="mt-2">
+
+    <small
+        style="
+            color:#64748b;
+            font-weight:600;
+        "
+    >
+
+        📁 ${emp.totalDocumentos || 0}
+        documentos cargados
+
+    </small>
+
+</div>
 
                 </div>
 

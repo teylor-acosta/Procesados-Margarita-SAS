@@ -606,3 +606,324 @@
     }
 
 }
+/* ==========================================================
+   MODAL EDITAR EMPLEADO
+========================================================== */
+
+.modal-dialog{
+
+    max-width:1200px !important;
+
+    width:95%;
+
+    margin:30px auto;
+
+}
+
+.modal-content{
+
+    border:none;
+
+    border-radius:28px;
+
+    overflow:hidden;
+
+    height:90vh;
+
+    box-shadow:
+        0 25px 60px rgba(0,0,0,.18);
+
+}
+
+/* ==========================================================
+   HEADER MODAL
+========================================================== */
+
+.modal-header{
+
+    background:#ffffff;
+
+    padding:25px 30px;
+
+    border-bottom:1px solid #e5e7eb;
+
+    position:sticky;
+
+    top:0;
+
+    z-index:10;
+
+}
+
+.modal-title{
+
+    font-size:30px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+}
+
+.modal-header .btn-close{
+
+    font-size:20px;
+
+}
+
+/* ==========================================================
+   BODY MODAL
+========================================================== */
+
+.modal-body{
+
+    padding:30px;
+
+    overflow-y:auto;
+
+    flex:1;
+
+}
+
+.modal-body::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+.modal-body::-webkit-scrollbar-thumb{
+
+    background:#cbd5e1;
+
+    border-radius:999px;
+
+}
+
+/* ==========================================================
+   SECCIONES
+========================================================== */
+
+.seccion-modal{
+
+    margin-bottom:30px;
+
+}
+
+.seccion-modal h5{
+
+    font-size:18px;
+
+    font-weight:700;
+
+    color:#198754;
+
+    margin-bottom:15px;
+
+    padding-bottom:10px;
+
+    border-bottom:1px solid #e5e7eb;
+
+}
+
+/* ==========================================================
+   INPUTS
+========================================================== */
+
+.modal-body .form-control,
+.modal-body .form-select{
+
+    height:52px;
+
+    border-radius:14px;
+
+    border:1px solid #dbe2ea;
+
+}
+
+.modal-body .form-control:focus,
+.modal-body .form-select:focus{
+
+    border-color:#198754;
+
+    box-shadow:
+        0 0 0 4px rgba(25,135,84,.12);
+
+}
+
+/* ==========================================================
+   FOOTER MODAL
+========================================================== */
+
+.modal-footer{
+
+    background:#ffffff;
+
+    border-top:1px solid #e5e7eb;
+
+    padding:20px 30px;
+
+    position:sticky;
+
+    bottom:0;
+
+    z-index:10;
+
+}
+
+/* ==========================================================
+   BOTONES
+========================================================== */
+
+.btn-desactivar{
+
+    background:#ef4444;
+
+    color:white;
+
+    border:none;
+
+    border-radius:14px;
+
+    padding:12px 24px;
+
+    font-weight:700;
+
+}
+
+.btn-desactivar:hover{
+
+    background:#dc2626;
+
+}
+
+.btn-actualizar{
+
+    background:#198754;
+
+    color:white;
+
+    border:none;
+
+    border-radius:14px;
+
+    padding:12px 24px;
+
+    font-weight:700;
+
+}
+
+.btn-actualizar:hover{
+
+    background:#157347;
+
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media(max-width:768px){
+
+    .modal-dialog{
+
+        width:98%;
+
+        margin:10px auto;
+
+    }
+
+    .modal-content{
+
+        height:95vh;
+
+    }
+
+    .modal-title{
+
+        font-size:22px;
+
+    }
+
+}
+
+/* =========================================
+   MODAL SOBRE SIDEBAR
+========================================= */
+
+.modal{
+    z-index: 11000 !important;
+}
+
+.modal-backdrop{
+    z-index: 10999 !important;
+}
+
+/* ==========================================================
+   MODAL FOOTER
+========================================================== */
+
+.modal-footer-premium{
+
+    position: sticky;
+
+    bottom: 0;
+
+    background: #ffffff;
+
+    border-top: 1px solid #e5e7eb;
+
+    padding: 20px 30px;
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 12px;
+
+    z-index: 10;
+
+}
+
+.btn-modal-danger{
+
+    background:#dc3545;
+
+    border:none;
+
+    min-width:160px;
+
+    height:48px;
+
+    border-radius:14px;
+
+    font-weight:700;
+
+}
+
+.btn-modal-success{
+
+    background:#198754;
+
+    border:none;
+
+    min-width:160px;
+
+    height:48px;
+
+    border-radius:14px;
+
+    font-weight:700;
+
+}
+
+.btn-modal-danger:hover{
+
+    background:#bb2d3b;
+
+}
+
+.btn-modal-success:hover{
+
+    background:#157347;
+
+}

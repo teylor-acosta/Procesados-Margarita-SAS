@@ -81,39 +81,99 @@ router.get('/api/documentacion-empleados', async (req, res) => {
         `;
 
         const [resultados] = await db.query(sql);
+        const [obligatorios] = await db.query(`
 
-        const empleados = resultados.map(emp => {
+    SELECT COUNT(*) total
 
-            let progreso = Math.floor(Math.random() * 100);
+    FROM tipos_documentos
 
-            let estadoDocumental = 'Pendiente';
-            let colorEstado = 'warning';
+    WHERE es_obligatorio = 1
+    AND activo = 1
 
-            if (progreso >= 100) {
+`);
 
-                estadoDocumental = 'Completo';
-                colorEstado = 'success';
+const totalObligatorios =
+    obligatorios[0].total || 1;
 
-            }
+        const empleados = await Promise.all(
 
-            if (progreso <= 40) {
+    resultados.map(async emp => {
 
-                estadoDocumental = 'Incompleto';
-                colorEstado = 'danger';
+        const [docs] = await db.query(
 
-            }
+            `
 
-            return {
+            SELECT COUNT(*) total
+FROM documentos_empleado
+WHERE empleado_id = ?
+AND activo = 1
 
-                ...emp,
+            `,
 
-                progreso,
-                estadoDocumental,
-                colorEstado
+            [emp.id]
 
-            };
+        );
 
-        });
+        const documentosCargados =
+            docs[0].total || 0;
+
+        let progreso = Math.round(
+
+            (
+                documentosCargados
+                /
+                totalObligatorios
+            ) * 100
+
+        );
+
+        if (progreso > 100)
+            progreso = 100;
+
+        let estadoDocumental =
+            'Incompleto';
+
+        let colorEstado =
+            'danger';
+
+        if (progreso >= 100) {
+
+            estadoDocumental =
+                'Completo';
+
+            colorEstado =
+                'success';
+
+        }
+        else if (progreso >= 50) {
+
+            estadoDocumental =
+                'Pendiente';
+
+            colorEstado =
+                'warning';
+
+        }
+
+        return {
+
+            ...emp,
+
+            documentosCargados,
+
+            totalObligatorios,
+
+            progreso,
+
+            estadoDocumental,
+
+            colorEstado
+
+        };
+
+    })
+
+);
 
         res.json({
 

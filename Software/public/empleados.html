@@ -81,9 +81,9 @@
             <div class="navbar-left">
 
                 <i
-                    class="fas fa-bars menu-toggle"
-                    id="toggleSidebar">
-                </i>
+    class="fas fa-bars menu-toggle"
+    id="btnOpenSidebar">
+</i>
 
                 <span class="section-main-title">
                     Gestión de Empleados
@@ -390,233 +390,203 @@
 
                 <div class="modal-body">
 
-                    <input
-                        id="edit_id"
-                        hidden>
-
-                    <div class="row g-4">
-
-                        <!-- NOMBRE -->
-
-                        <div class="col-md-6">
-
-                            <label>Nombre</label>
-
-                            <input
-                                id="edit_nombre"
-                                class="form-control">
-
-                        </div>
-
-                        <!-- DOCUMENTO -->
-
-                        <div class="col-md-6">
-
-                            <label>Documento</label>
-
-                            <input
-                                id="edit_documento"
-                                class="form-control">
-
-                        </div>
-
-                        <!-- TIPO DOCUMENTO -->
-
-                        <div class="col-md-6">
-
-                            <label>Tipo documento</label>
-
-                            <select
-                                id="edit_tipo_documento"
-                                class="form-control">
-
-                                <option value="">
-                                    Seleccione
-                                </option>
-
-                                <option value="CC">CC</option>
-                                <option value="TI">TI</option>
-                                <option value="CE">CE</option>
-                                <option value="PAS">PAS</option>
-                                <option value="PPT">PPT</option>
-
-                            </select>
-
-                        </div>
-
-                        <!-- FECHA NACIMIENTO -->
-
-                        <div class="col-md-6">
-
-                            <label>Fecha nacimiento</label>
-
-                            <input
-                                id="edit_fecha_nacimiento"
-                                type="date"
-                                class="form-control">
-
-                        </div>
-
-                        <!-- LUGAR NACIMIENTO -->
-
-                        <div class="col-md-6">
-
-                            <label>Lugar nacimiento</label>
-
-                            <input
-                                id="edit_lugar_nacimiento"
-                                class="form-control">
-
-                        </div>
-
-                        <!-- RH -->
-
-                        <div class="col-md-6">
-
-                            <label>RH</label>
-
-                            <input
-                                id="edit_rh"
-                                class="form-control">
-
-                        </div>
-
-                        <!-- ESTADO CIVIL -->
-
-                        <div class="col-md-6">
-
-                            <label>Estado civil</label>
-
-                            <input
-                                id="edit_estado_civil"
-                                class="form-control">
-
-                        </div>
-
-                        <!-- BARRIO -->
-
-                        <div class="col-md-6">
-
-                            <label>Barrio</label>
-
-                            <input
-                                id="edit_barrio"
-                                class="form-control">
-
-                        </div>
-
-                        <!-- DIRECCIÓN -->
-
-                        <div class="col-md-6">
-
-                            <label>Dirección</label>
-
-                            <input
-                                id="edit_direccion"
-                                class="form-control">
-
-                        </div>
-
-                        <!-- TELÉFONO -->
-
-                        <div class="col-md-6">
-
-                            <label>Teléfono</label>
-
-                            <input
-                                id="edit_telefono"
-                                class="form-control">
-
-                        </div>
-
-                        <!-- EMAIL -->
-
-                        <div class="col-md-6">
-
-                            <label>Email</label>
-
-                            <input
-                                id="edit_email"
-                                class="form-control">
-
-                        </div>
-
-                        <!-- ÁREA -->
-
-                        <div class="col-md-4">
-
-                            <label>Área</label>
-
-                            <select
-                                id="edit_area"
-                                class="form-control">
-                            </select>
-
-                        </div>
-
-                        <!-- SEDE -->
-
-                        <div class="col-md-4">
-
-                            <label>Sede</label>
-
-                            <select
-                                id="edit_sede"
-                                class="form-control">
-                            </select>
-
-                        </div>
-
-                        <!-- CARGO -->
-
-                        <div class="col-md-4">
-
-                            <label>Cargo</label>
-
-                            <select
-                                id="edit_cargo"
-                                class="form-control">
-                            </select>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- =============================
-                     FOOTER MODAL
-                ============================== -->
-
-                <div class="modal-footer border-0">
-
-                    <button
-                        class="btn btn-danger"
-                        onclick="desactivarDesdeModal()">
-
-                        <i class="fas fa-user-slash"></i>
-
-                        Desactivar
-
-                    </button>
-
-                    <button
-                        class="btn btn-success"
-                        onclick="actualizarEmpleado()">
-
-                        <i class="fas fa-floppy-disk"></i>
-
-                        Actualizar
-
-                    </button>
-
-                </div>
-
+    <input
+        id="edit_id"
+        hidden>
+
+    <!-- =====================================
+         DATOS PERSONALES
+    ====================================== -->
+
+    <div class="seccion-modal">
+
+        <h5>
+            <i class="fas fa-user"></i>
+            Datos Personales
+        </h5>
+
+        <div class="row g-4">
+
+            <div class="col-md-6">
+                <label>Nombre</label>
+                <input
+                    id="edit_nombre"
+                    class="form-control">
+            </div>
+
+            <div class="col-md-6">
+                <label>Documento</label>
+                <input
+                    id="edit_documento"
+                    class="form-control">
+            </div>
+
+            <div class="col-md-6">
+                <label>Tipo documento</label>
+                <select
+                    id="edit_tipo_documento"
+                    class="form-control">
+
+                    <option value="">Seleccione</option>
+                    <option value="CC">CC</option>
+                    <option value="TI">TI</option>
+                    <option value="CE">CE</option>
+                    <option value="PAS">PAS</option>
+                    <option value="PPT">PPT</option>
+
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label>Fecha nacimiento</label>
+                <input
+                    id="edit_fecha_nacimiento"
+                    type="date"
+                    class="form-control">
+            </div>
+
+            <div class="col-md-6">
+                <label>Lugar nacimiento</label>
+                <input
+                    id="edit_lugar_nacimiento"
+                    class="form-control">
+            </div>
+
+            <div class="col-md-6">
+                <label>RH</label>
+                <input
+                    id="edit_rh"
+                    class="form-control">
+            </div>
+
+            <div class="col-md-12">
+                <label>Estado civil</label>
+                <input
+                    id="edit_estado_civil"
+                    class="form-control">
             </div>
 
         </div>
 
     </div>
+
+    <!-- =====================================
+         INFORMACIÓN DE CONTACTO
+    ====================================== -->
+
+    <div class="seccion-modal">
+
+        <h5>
+            <i class="fas fa-address-book"></i>
+            Información de Contacto
+        </h5>
+
+        <div class="row g-4">
+
+            <div class="col-md-6">
+                <label>Dirección</label>
+                <input
+                    id="edit_direccion"
+                    class="form-control">
+            </div>
+
+            <div class="col-md-6">
+                <label>Barrio</label>
+                <input
+                    id="edit_barrio"
+                    class="form-control">
+            </div>
+
+            <div class="col-md-6">
+                <label>Teléfono</label>
+                <input
+                    id="edit_telefono"
+                    class="form-control">
+            </div>
+
+            <div class="col-md-6">
+                <label>Email</label>
+                <input
+                    id="edit_email"
+                    class="form-control">
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================
+         INFORMACIÓN LABORAL
+    ====================================== -->
+
+    <div class="seccion-modal">
+
+        <h5>
+            <i class="fas fa-briefcase"></i>
+            Información Laboral
+        </h5>
+
+        <div class="row g-4">
+
+            <div class="col-md-4">
+                <label>Área</label>
+                <select
+                    id="edit_area"
+                    class="form-control">
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label>Sede</label>
+                <select
+                    id="edit_sede"
+                    class="form-control">
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label>Cargo</label>
+                <select
+                    id="edit_cargo"
+                    class="form-control">
+                </select>
+            </div>
+
+            <!-- =====================================
+     FOOTER MODAL
+====================================== -->
+
+<div class="modal-footer modal-footer-premium">
+
+    <button
+        type="button"
+        class="btn btn-danger btn-modal-danger"
+        onclick="desactivarDesdeModal()">
+
+        <i class="fas fa-user-slash"></i>
+
+        Desactivar
+
+    </button>
+
+    <button
+        type="button"
+        class="btn btn-success btn-modal-success"
+        onclick="actualizarEmpleado()">
+
+        <i class="fas fa-save"></i>
+
+        Actualizar
+
+    </button>
+
+</div>
+
+        </div>
+
+    </div>
+
+</div>
         <!-- =====================================
          LIBRERÍAS
     ====================================== -->
