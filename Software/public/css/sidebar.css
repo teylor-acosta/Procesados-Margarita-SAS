@@ -292,3 +292,61 @@
         font-size:16px;
     }
 }
+
+/* ==========================================================
+   SCROLL SIDEBAR ELEGANTE
+========================================================== */
+
+/* Firefox */
+.sidebar{
+
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        rgba(255,255,255,.25)
+        transparent;
+}
+
+/* Chrome / Edge / Opera */
+.sidebar::-webkit-scrollbar{
+
+    width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-track{
+
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb{
+
+    background:
+        rgba(255,255,255,.15);
+
+    border-radius: 20px;
+
+    transition: .3s;
+}
+
+/* Solo se nota al pasar el mouse */
+.sidebar:hover::-webkit-scrollbar-thumb{
+
+    background:
+        rgba(255,255,255,.40);
+}
+
+/* En móvil un poco más visible */
+@media(max-width:992px){
+
+    .sidebar::-webkit-scrollbar{
+
+        width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb{
+
+        background:
+            rgba(255,255,255,.35);
+    }
+
+}

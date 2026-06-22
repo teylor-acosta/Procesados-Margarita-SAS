@@ -745,7 +745,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // 🔥 DESACTIVAR EMPLEADO
     // =========================================
 
-    window.desactivarDesdeModal =
+    // ============================================
+// 🔥 DESACTIVAR EMPLEADO
+// ============================================
+
+window.desactivarDesdeModal =
 async () => {
 
     const id =
@@ -753,28 +757,111 @@ async () => {
 
     modal.hide();
 
-    const confirmacion =
+    const { value: formValues } =
         await Swal.fire({
 
-            title:
-                '¿Deseas desactivar el empleado?',
+            title:'Desactivar empleado',
 
-            text:
-                'Esta acción desactivará el empleado.',
+            html:`
 
-            icon:'warning',
+                <div class="text-start">
+
+                    <label class="fw-bold mb-2">
+                        Motivo de desactivación
+                    </label>
+
+                    <select
+                        id="swalMotivo"
+                        class="swal2-input">
+
+                        <option value="">
+                            Seleccione un motivo
+                        </option>
+
+                        <option value="Renuncia">
+                            Renuncia
+                        </option>
+
+                        <option value="Terminación de contrato">
+                            Terminación de contrato
+                        </option>
+
+                        <option value="Mutuo Acuerdo">
+                            Mutuo Acuerdo
+                        </option>
+
+                        <option value="Abandono de cargo">
+                            Abandono de cargo
+                        </option>
+
+                        <option value="Jubilación">
+                            Jubilación
+                        </option>
+
+                        <option value="Fallecimiento">
+                            Fallecimiento
+                        </option>
+
+                        <option value="Otro">
+                            Otro
+                        </option>
+
+                    </select>
+
+                    <textarea
+                        id="swalObservacion"
+                        class="swal2-textarea"
+                        placeholder="Observaciones">
+                    </textarea>
+
+                </div>
+
+            `,
+
+            focusConfirm:false,
 
             showCancelButton:true,
 
-            confirmButtonText:'Sí, desactivar',
+            confirmButtonText:
+                'Desactivar',
 
-            cancelButtonText:'Cancelar',
+            cancelButtonText:
+                'Cancelar',
 
-            allowOutsideClick:false
+            preConfirm:() => {
+
+                const motivo =
+                    document.getElementById(
+                        'swalMotivo'
+                    ).value;
+
+                const observacion =
+                    document.getElementById(
+                        'swalObservacion'
+                    ).value;
+
+                if(!motivo){
+
+                    Swal.showValidationMessage(
+                        'Debe seleccionar un motivo'
+                    );
+
+                    return false;
+
+                }
+
+                return {
+
+                    motivo,
+                    observacion
+
+                };
+
+            }
 
         });
 
-    if(!confirmacion.isConfirmed){
+    if(!formValues){
 
         modal.show();
 
@@ -784,35 +871,75 @@ async () => {
 
     try{
 
-        await fetch('/api/desactivar-empleado', {
+        Swal.fire({
 
-            method:'PUT',
+            title:'Desactivando...',
 
-            headers:{
+            allowOutsideClick:false,
 
-                'Content-Type':
-                'application/json'
+            didOpen:() => {
 
-            },
+                Swal.showLoading();
 
-            body:
-                JSON.stringify({id})
+            }
 
         });
 
-        await Swal.fire({
+        const response =
+            await fetch(
+                '/api/desactivar-empleado',
+                {
 
-            icon:'success',
+                    method:'PUT',
 
-            title:'Empleado desactivado',
+                    headers:{
+                        'Content-Type':
+                        'application/json'
+                    },
 
-            text:'El empleado fue desactivado correctamente',
+                    body:
+                        JSON.stringify({
 
-            confirmButtonText:'Aceptar'
+                            id,
 
-        });
+                            motivo_desactivacion:
+                                formValues.motivo,
 
-        cargar();
+                            observacion_desactivacion:
+                                formValues.observacion
+
+                        })
+
+                }
+            );
+
+        const result =
+            await response.json();
+
+        Swal.close();
+
+        if(result.success){
+
+            await Swal.fire({
+
+                icon:'success',
+
+                title:'Empleado desactivado',
+
+                text:
+                'El empleado fue movido a empleados inactivos'
+
+            });
+
+            await cargar();
+
+        }else{
+
+            throw new Error(
+                result.error
+            );
+
+        }
 
     }catch(error){
 
@@ -824,7 +951,8 @@ async () => {
 
             title:'Error',
 
-            text:'No fue posible desactivar el empleado'
+            text:
+            'No fue posible desactivar el empleado'
 
         });
 

@@ -288,18 +288,29 @@ else if (pagina === "empleados") {
             <span>Recursos Humanos</span>
         </a>
 
-        <a href="/empleados" class="menu-item active">
-            <i class="fas fa-users"></i>
-            <span>Empleados</span>
+        <a href="/empleados-menu" class="menu-item ">
+            <i class="fas fa-users-cog"></i>
+            <span>Módulo Empleados</span>
         </a>
 
-        <a href="/crear-empleado" class="menu-item">
+        <a href="/empleados" class="menu-item active">
+            <i class="fas fa-list"></i>
+            <span>Listado Empleados</span>
+        </a>
+
+        <a href="/crear-empleado" class="menu-item ">
             <i class="fas fa-user-plus"></i>
             <span>Crear Empleado</span>
         </a>
 
+        <a href="/empleados-inactivos" class="menu-item ">
+            <i class="fas fa-user-slash"></i>
+            <span>Empleados Inactivos</span>
+        </a>
+
     `;
 }
+
 
 /* =====================================
    CREAR EMPLEADO
@@ -323,14 +334,24 @@ else if (pagina === "crear-empleado") {
             <span>Recursos Humanos</span>
         </a>
 
+        <a href="/empleados-menu" class="menu-item ">
+            <i class="fas fa-users-cog"></i>
+            <span>Módulo Empleados</span>
+        </a>
+
         <a href="/empleados" class="menu-item">
-            <i class="fas fa-users"></i>
-            <span>Empleados</span>
+            <i class="fas fa-list"></i>
+            <span>Listado Empleados</span>
         </a>
 
         <a href="/crear-empleado" class="menu-item active">
             <i class="fas fa-user-plus"></i>
             <span>Crear Empleado</span>
+        </a>
+
+        <a href="/empleados-inactivos" class="menu-item ">
+            <i class="fas fa-user-slash"></i>
+            <span>Empleados Inactivos</span>
         </a>
 
     `;
@@ -359,13 +380,119 @@ else if (pagina === "empleados-menu") {
         </a>
 
         <a href="/empleados-menu" class="menu-item active">
-            <i class="fas fa-users"></i>
-            <span>Empleados</span>
+            <i class="fas fa-users-cog"></i>
+            <span>Módulo Empleados</span>
+        </a>
+
+        <a href="/empleados" class="menu-item">
+            <i class="fas fa-list"></i>
+            <span>Listado Empleados</span>
         </a>
 
         <a href="/crear-empleado" class="menu-item">
             <i class="fas fa-user-plus"></i>
             <span>Crear Empleado</span>
+        </a>
+
+        <a href="/empleados-inactivos" class="menu-item ">
+            <i class="fas fa-user-slash"></i>
+            <span>Empleados Inactivos</span>
+        </a>
+
+    `;
+}
+
+/* =====================================
+   EMPLEADOS INACTIVOS
+===================================== */
+
+else if (pagina === "empleados-inactivos") {
+
+    menu.innerHTML = `
+
+        <span class="menu-section-title">
+            Recursos Humanos
+        </span>
+
+        <a href="/panel" class="menu-item">
+            <i class="fas fa-th-large"></i>
+            <span>Panel</span>
+        </a>
+
+        <a href="/recursos-humanos" class="menu-item">
+            <i class="fas fa-users-cog"></i>
+            <span>Recursos Humanos</span>
+        </a>
+
+        <a href="/empleados-menu" class="menu-item ">
+            <i class="fas fa-users-cog"></i>
+            <span>Módulo Empleados</span>
+        </a>
+
+        <a href="/empleados" class="menu-item">
+            <i class="fas fa-list"></i>
+            <span>Listado Empleados</span>
+        </a>
+
+        <a href="/crear-empleado" class="menu-item">
+            <i class="fas fa-user-plus"></i>
+            <span>Crear Empleado</span>
+        </a>
+
+        <a href="/empleados-inactivos" class="menu-item active">
+            <i class="fas fa-user-slash"></i>
+            <span>Empleados Inactivos</span>
+        </a>
+
+    `;
+}
+
+
+/* =====================================
+   DOCUMENTACION
+===================================== */
+
+else if (pagina === "documentacion") {
+
+    menu.innerHTML = `
+
+        <span class="menu-section-title">
+            Recursos Humanos
+        </span>
+
+        <a href="/panel" class="menu-item">
+            <i class="fas fa-th-large"></i>
+            <span>Panel</span>
+        </a>
+
+        <a href="/recursos-humanos" class="menu-item">
+            <i class="fas fa-users-cog"></i>
+            <span>Recursos Humanos</span>
+        </a>
+
+        <a href="/empleados-menu" class="menu-item">
+            <i class="fas fa-users-cog"></i>
+            <span>Módulo Empleados</span>
+        </a>
+
+        <a href="/empleados" class="menu-item">
+            <i class="fas fa-list"></i>
+            <span>Listado Empleados</span>
+        </a>
+
+        <a href="/crear-empleado" class="menu-item">
+            <i class="fas fa-user-plus"></i>
+            <span>Crear Empleado</span>
+        </a>
+
+        <a href="/empleados-inactivos" class="menu-item">
+            <i class="fas fa-user-slash"></i>
+            <span>Empleados Inactivos</span>
+        </a>
+
+        <a href="/documentacion-empleados" class="menu-item active">
+            <i class="fas fa-folder-open"></i>
+            <span>Gestión Documental</span>
         </a>
 
     `;

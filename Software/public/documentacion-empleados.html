@@ -17,55 +17,47 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <!-- ESTILOS -->
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style1.css">
+<link rel="stylesheet" href="css/sidebar.css">
 <link rel="stylesheet" href="css/documentacion-empleados.css">
 
 <link rel="icon" href="img/Gemini_Generated_Image_bo9w5fbo9w5fbo9w-removebg-preview.png">
 
 </head>
 
-<body>
+<body data-pagina="documentacion">
 
-<!-- =========================================
-     🔝 NAVBAR
-========================================= -->
+    <!-- SIDEBAR -->
+    <div id="sidebarContainer"></div>
 
-<nav class="navbar-custom">
+    <!-- OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <div class="navbar-left">
+    <!-- NAVBAR -->
+    <nav class="navbar-custom">
 
-        <img 
-            src="/img/Logo.png" 
-            class="logo-navbar"
-        >
+        <div class="navbar-left">
 
-        <span class="empresa-nombre">
-            Procesados Margarita SAS
-        </span>
+            <i class="fas fa-bars menu-toggle"
+               id="btnOpenSidebar">
+            </i>
 
-    </div>
+            <span class="section-main-title">
+                Gestión Documental
+            </span>
 
-    <div class="acciones-navbar">
+        </div>
 
-        <a href="/empleados-menu" class="btn btn-light">
-            <i class="fas fa-arrow-left"></i> Volver
-        </a>
-
-        <a href="/logout" class="btn-logout">
-            <i class="fas fa-power-off"></i>
-            Cerrar sesión
-        </a>
-
-    </div>
-
-</nav>
+    </nav>
 
 
 <!-- =========================================
      🎯 CONTENIDO
 ========================================= -->
 
-<div class="documentacion-container">
+<main class="dashboard-container">
+
+    <div class="documentacion-container">
 
 
     <!-- TITULO -->
@@ -195,7 +187,9 @@
 
 </div>
 
+    </div>
 
+</main>
 <!-- =========================================
      🚀 SCRIPT
 ========================================= -->
