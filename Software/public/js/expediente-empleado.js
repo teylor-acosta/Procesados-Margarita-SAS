@@ -22,31 +22,46 @@ document.getElementById('contenedorDocumentos');
 
 function actualizarProgreso(documentosSubidos){
 
-    const total = documentosBase.length;
+    const total =
+        documentosBase.length;
 
-    const completados = documentosSubidos.length;
+    const completados =
+        documentosBase.filter(doc =>
+
+            documentosSubidos.some(
+
+                d =>
+                d.tipo_documento === doc
+
+            )
+
+        ).length;
 
     const porcentaje = Math.round(
         (completados / total) * 100
     );
 
     const barra =
-    document.getElementById('barraGeneral');
+        document.getElementById(
+            'barraGeneral'
+        );
 
     const texto =
-    document.getElementById('porcentajeGeneral');
+        document.getElementById(
+            'porcentajeGeneral'
+        );
 
     if(barra){
 
         barra.style.width =
-        `${porcentaje}%`;
+            `${porcentaje}%`;
 
     }
 
     if(texto){
 
         texto.textContent =
-        `${porcentaje}%`;
+            `${porcentaje}%`;
 
     }
 
@@ -90,8 +105,13 @@ async function cargarEmpleado(){
         sedeEmpleado.textContent =
         emp.sede || 'Sin sede';
 
-        fotoEmpleado.src =
-        emp.foto || '/img/defecto.jpg';
+        fotoEmpleado.src = emp.foto
+    ? `/uploads/fotos/${emp.foto}`
+    : '/img/defecto.jpg';
+
+fotoEmpleado.onerror = () => {
+    fotoEmpleado.src = '/img/defecto.jpg';
+};
 
         nombreCarnet.textContent =
         emp.nombre;

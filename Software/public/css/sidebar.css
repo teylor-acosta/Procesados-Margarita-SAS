@@ -350,3 +350,39 @@
     }
 
 }
+
+/* =====================================
+   SUBMENUS ERP
+===================================== */
+
+.menu-group{
+    width:100%;
+}
+
+.menu-parent{
+    cursor:pointer;
+    justify-content:space-between;
+}
+
+.submenu{
+    max-height:0;
+    overflow:hidden;
+    transition:.3s ease;
+}
+
+.menu-group.open .submenu{
+    max-height:500px;
+}
+
+.submenu-item{
+    padding-left:48px !important;
+    font-size:14px;
+}
+
+.menu-arrow{
+    transition:.3s;
+}
+
+.menu-group.open .menu-arrow{
+    transform:rotate(180deg);
+}

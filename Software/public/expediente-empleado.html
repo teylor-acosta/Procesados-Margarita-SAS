@@ -20,13 +20,20 @@
 
 <!-- ESTILOS -->
 <link rel="stylesheet" href="/css/style1.css">
+<link rel="stylesheet" href="/css/sidebar.css">
 <link rel="stylesheet" href="/css/expediente-empleado.css">
 
 <link rel="icon" href="/img/Gemini_Generated_Image_bo9w5fbo9w5fbo9w-removebg-preview.png">
 
 </head>
 
-<body>
+<body data-pagina="documentacion">
+
+    <!-- SIDEBAR -->
+<div id="sidebarContainer"></div>
+
+<!-- OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <!-- =========================================
      🔝 NAVBAR
@@ -36,32 +43,13 @@
 
     <div class="navbar-left">
 
-        <img 
-            src="/img/Logo.png" 
-            class="logo-navbar"
-        >
+        <i class="fas fa-bars menu-toggle"
+           id="btnOpenSidebar">
+        </i>
 
-        <span class="empresa-nombre">
-            Procesados Margarita SAS
+        <span class="section-main-title">
+            Expediente Empleado
         </span>
-
-    </div>
-
-    <div class="acciones-navbar">
-
-        <a href="/documentacion-empleados" class="btn btn-light">
-
-            <i class="fas fa-arrow-left"></i>
-            Volver
-
-        </a>
-
-        <a href="/logout" class="btn-logout">
-
-            <i class="fas fa-power-off"></i>
-            Cerrar sesión
-
-        </a>
 
     </div>
 
@@ -72,7 +60,9 @@
      🎯 CONTENIDO
 ========================================= -->
 
-<div class="expediente-container">
+<main class="dashboard-container">
+
+    <div class="expediente-container">
 
     <!-- =====================================
          👤 INFORMACIÓN EMPLEADO
@@ -193,20 +183,21 @@
 
         </div>
 
+             </div>
+
+        <!-- =====================================
+             📂 DOCUMENTOS
+        ====================================== -->
+
+        <div
+            class="documentos-grid"
+            id="contenedorDocumentos"
+        >
+        </div>
+
     </div>
 
-
-    <!-- =====================================
-         📂 DOCUMENTOS
-    ====================================== -->
-
-    <div 
-        class="documentos-grid"
-        id="contenedorDocumentos"
-    >
-    </div>
-
-</div>
+</main>
 
 
 <!-- =========================================

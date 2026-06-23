@@ -51,6 +51,172 @@ async function cargarSidebar() {
     }
 }
 
+
+/* =====================================
+   MENU RECURSOS HUMANOS
+===================================== */
+
+function menuRecursosHumanos(paginaActiva) {
+
+    return `
+
+        <span class="menu-section-title">
+            Recursos Humanos
+        </span>
+
+        <a href="/panel"
+           class="menu-item">
+
+            <i class="fas fa-th-large"></i>
+
+            <span>Panel</span>
+
+        </a>
+        <div class="menu-group ">
+
+    <div class="menu-item menu-parent">
+
+        <div style="
+            display:flex;
+            align-items:center;
+            gap:10px;
+        ">
+            <i class="fas fa-users-cog"></i>
+
+            <span>
+                Recursos Humanos
+            </span>
+
+        </div>
+
+        <i class="fas fa-chevron-down menu-arrow"></i>
+
+    </div>
+
+    <div class="submenu">
+
+        <a href="/empleados-menu"
+           class="menu-item submenu-item active">
+
+            <i class="fas fa-users"></i>
+
+            <span>
+                Empleados
+            </span>
+
+        </a>
+
+        <a href="#"
+           class="menu-item submenu-item">
+
+            <i class="fas fa-user-shield"></i>
+
+            <span>
+                Usuarios
+            </span>
+
+        </a>
+
+        <a href="#"
+           class="menu-item submenu-item">
+
+            <i class="fas fa-graduation-cap"></i>
+
+            <span>
+                Capacitaciones
+            </span>
+
+        </a>
+
+    </div>
+
+</div>
+        <div class="menu-group ">
+
+            <div class="menu-item menu-parent">
+
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:10px;
+                ">
+
+                    <i class="fas fa-users"></i>
+
+                    <span>
+                        Módulo Empleados
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-down menu-arrow"></i>
+
+            </div>
+
+            <div class="submenu">
+
+                <a href="/empleados-menu"
+                   class="menu-item submenu-item ${paginaActiva === 'empleados-menu' ? 'active' : ''}">
+
+                    <i class="fas fa-layer-group"></i>
+
+                    <span>
+                        Inicio Módulo
+                    </span>
+
+                </a>
+
+                <a href="/empleados"
+                   class="menu-item submenu-item ${paginaActiva === 'empleados' ? 'active' : ''}">
+
+                    <i class="fas fa-list"></i>
+
+                    <span>
+                        Listado Empleados
+                    </span>
+
+                </a>
+
+                <a href="/crear-empleado"
+                   class="menu-item submenu-item ${paginaActiva === 'crear-empleado' ? 'active' : ''}">
+
+                    <i class="fas fa-user-plus"></i>
+
+                    <span>
+                        Crear Empleado
+                    </span>
+
+                </a>
+
+                <a href="/empleados-inactivos"
+                   class="menu-item submenu-item ${paginaActiva === 'empleados-inactivos' ? 'active' : ''}">
+
+                    <i class="fas fa-user-slash"></i>
+
+                    <span>
+                        Empleados Inactivos
+                    </span>
+
+                </a>
+
+                <a href="/documentacion-empleados"
+                   class="menu-item submenu-item ${paginaActiva === 'documentacion' ? 'active' : ''}">
+
+                    <i class="fas fa-folder-open"></i>
+
+                    <span>
+                        Gestión Documental
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    `;
+}
+
 /* ==========================================================================
    MENÚ DINÁMICO
    ========================================================================== */
@@ -241,30 +407,91 @@ function construirMenu() {
     else if (pagina === "recursos-humanos") {
 
     menu.innerHTML = `
-    <span class="menu-section-title">
-        Navegación
-    </span>
 
-    <a href="/dashboard" class="menu-item">
-        <i class="fas fa-home"></i>
-        Inicio
-    </a>
+        <span class="menu-section-title">
+            Recursos Humanos
+        </span>
 
-    <a href="/panel" class="menu-item">
-        <i class="fas fa-th-large"></i>
-        Panel
-    </a>
+        <a href="/panel"
+           class="menu-item">
 
-    <a href="/recursos-humanos" class="menu-item active">
-        <i class="fas fa-users-cog"></i>
-        Recursos Humanos
-    </a>
+            <i class="fas fa-th-large"></i>
 
-    <a href="/perfil" class="menu-item">
-        <i class="fas fa-user-circle"></i>
-        Mi Perfil
-    </a>
-`;
+            <span>Panel</span>
+
+        </a>
+
+        <div class="menu-group ">
+
+            <div class="menu-item menu-parent">
+
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:10px;
+                ">
+
+                    <i class="fas fa-users-cog"></i>
+
+                    <span>
+                        Recursos Humanos
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-down menu-arrow"></i>
+
+            </div>
+
+            <div class="submenu">
+
+                <a href="/empleados-menu"
+                   class="menu-item submenu-item">
+
+                    <i class="fas fa-users"></i>
+
+                    <span>
+                        Empleados
+                    </span>
+
+                </a>
+
+                <a href="#"
+                   class="menu-item submenu-item">
+
+                    <i class="fas fa-user-shield"></i>
+
+                    <span>
+                        Usuarios
+                    </span>
+
+                </a>
+
+                <a href="#"
+                   class="menu-item submenu-item">
+
+                    <i class="fas fa-graduation-cap"></i>
+
+                    <span>
+                        Capacitaciones
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <a href="/perfil"
+           class="menu-item">
+
+            <i class="fas fa-user-circle"></i>
+
+            <span>Mi Perfil</span>
+
+        </a>
+
+    `;
 }
 /* =====================================
    EMPLEADOS
@@ -272,43 +499,11 @@ function construirMenu() {
 
 else if (pagina === "empleados") {
 
-    menu.innerHTML = `
+    menu.innerHTML =
+        menuRecursosHumanos(
+            "empleados"
+        );
 
-        <span class="menu-section-title">
-            Recursos Humanos
-        </span>
-
-        <a href="/panel" class="menu-item">
-            <i class="fas fa-th-large"></i>
-            <span>Panel</span>
-        </a>
-
-        <a href="/recursos-humanos" class="menu-item">
-            <i class="fas fa-users-cog"></i>
-            <span>Recursos Humanos</span>
-        </a>
-
-        <a href="/empleados-menu" class="menu-item ">
-            <i class="fas fa-users-cog"></i>
-            <span>Módulo Empleados</span>
-        </a>
-
-        <a href="/empleados" class="menu-item active">
-            <i class="fas fa-list"></i>
-            <span>Listado Empleados</span>
-        </a>
-
-        <a href="/crear-empleado" class="menu-item ">
-            <i class="fas fa-user-plus"></i>
-            <span>Crear Empleado</span>
-        </a>
-
-        <a href="/empleados-inactivos" class="menu-item ">
-            <i class="fas fa-user-slash"></i>
-            <span>Empleados Inactivos</span>
-        </a>
-
-    `;
 }
 
 
@@ -318,43 +513,11 @@ else if (pagina === "empleados") {
 
 else if (pagina === "crear-empleado") {
 
-    menu.innerHTML = `
+    menu.innerHTML =
+        menuRecursosHumanos(
+            "crear-empleado"
+        );
 
-        <span class="menu-section-title">
-            Recursos Humanos
-        </span>
-
-        <a href="/panel" class="menu-item">
-            <i class="fas fa-th-large"></i>
-            <span>Panel</span>
-        </a>
-
-        <a href="/recursos-humanos" class="menu-item">
-            <i class="fas fa-users-cog"></i>
-            <span>Recursos Humanos</span>
-        </a>
-
-        <a href="/empleados-menu" class="menu-item ">
-            <i class="fas fa-users-cog"></i>
-            <span>Módulo Empleados</span>
-        </a>
-
-        <a href="/empleados" class="menu-item">
-            <i class="fas fa-list"></i>
-            <span>Listado Empleados</span>
-        </a>
-
-        <a href="/crear-empleado" class="menu-item active">
-            <i class="fas fa-user-plus"></i>
-            <span>Crear Empleado</span>
-        </a>
-
-        <a href="/empleados-inactivos" class="menu-item ">
-            <i class="fas fa-user-slash"></i>
-            <span>Empleados Inactivos</span>
-        </a>
-
-    `;
 }
 
 /* =====================================
@@ -363,43 +526,11 @@ else if (pagina === "crear-empleado") {
 
 else if (pagina === "empleados-menu") {
 
-    menu.innerHTML = `
+    menu.innerHTML =
+        menuRecursosHumanos(
+            "empleados-menu"
+        );
 
-        <span class="menu-section-title">
-            Recursos Humanos
-        </span>
-
-        <a href="/panel" class="menu-item">
-            <i class="fas fa-th-large"></i>
-            <span>Panel</span>
-        </a>
-
-        <a href="/recursos-humanos" class="menu-item">
-            <i class="fas fa-users-cog"></i>
-            <span>Recursos Humanos</span>
-        </a>
-
-        <a href="/empleados-menu" class="menu-item active">
-            <i class="fas fa-users-cog"></i>
-            <span>Módulo Empleados</span>
-        </a>
-
-        <a href="/empleados" class="menu-item">
-            <i class="fas fa-list"></i>
-            <span>Listado Empleados</span>
-        </a>
-
-        <a href="/crear-empleado" class="menu-item">
-            <i class="fas fa-user-plus"></i>
-            <span>Crear Empleado</span>
-        </a>
-
-        <a href="/empleados-inactivos" class="menu-item ">
-            <i class="fas fa-user-slash"></i>
-            <span>Empleados Inactivos</span>
-        </a>
-
-    `;
 }
 
 /* =====================================
@@ -408,43 +539,11 @@ else if (pagina === "empleados-menu") {
 
 else if (pagina === "empleados-inactivos") {
 
-    menu.innerHTML = `
+    menu.innerHTML =
+        menuRecursosHumanos(
+            "empleados-inactivos"
+        );
 
-        <span class="menu-section-title">
-            Recursos Humanos
-        </span>
-
-        <a href="/panel" class="menu-item">
-            <i class="fas fa-th-large"></i>
-            <span>Panel</span>
-        </a>
-
-        <a href="/recursos-humanos" class="menu-item">
-            <i class="fas fa-users-cog"></i>
-            <span>Recursos Humanos</span>
-        </a>
-
-        <a href="/empleados-menu" class="menu-item ">
-            <i class="fas fa-users-cog"></i>
-            <span>Módulo Empleados</span>
-        </a>
-
-        <a href="/empleados" class="menu-item">
-            <i class="fas fa-list"></i>
-            <span>Listado Empleados</span>
-        </a>
-
-        <a href="/crear-empleado" class="menu-item">
-            <i class="fas fa-user-plus"></i>
-            <span>Crear Empleado</span>
-        </a>
-
-        <a href="/empleados-inactivos" class="menu-item active">
-            <i class="fas fa-user-slash"></i>
-            <span>Empleados Inactivos</span>
-        </a>
-
-    `;
 }
 
 
@@ -454,49 +553,14 @@ else if (pagina === "empleados-inactivos") {
 
 else if (pagina === "documentacion") {
 
-    menu.innerHTML = `
+    menu.innerHTML =
+        menuRecursosHumanos(
+            "documentacion"
+        );
 
-        <span class="menu-section-title">
-            Recursos Humanos
-        </span>
-
-        <a href="/panel" class="menu-item">
-            <i class="fas fa-th-large"></i>
-            <span>Panel</span>
-        </a>
-
-        <a href="/recursos-humanos" class="menu-item">
-            <i class="fas fa-users-cog"></i>
-            <span>Recursos Humanos</span>
-        </a>
-
-        <a href="/empleados-menu" class="menu-item">
-            <i class="fas fa-users-cog"></i>
-            <span>Módulo Empleados</span>
-        </a>
-
-        <a href="/empleados" class="menu-item">
-            <i class="fas fa-list"></i>
-            <span>Listado Empleados</span>
-        </a>
-
-        <a href="/crear-empleado" class="menu-item">
-            <i class="fas fa-user-plus"></i>
-            <span>Crear Empleado</span>
-        </a>
-
-        <a href="/empleados-inactivos" class="menu-item">
-            <i class="fas fa-user-slash"></i>
-            <span>Empleados Inactivos</span>
-        </a>
-
-        <a href="/documentacion-empleados" class="menu-item active">
-            <i class="fas fa-folder-open"></i>
-            <span>Gestión Documental</span>
-        </a>
-
-    `;
 }
+
+
 
     /* ======================
        DEFAULT
@@ -504,17 +568,46 @@ else if (pagina === "documentacion") {
 
     else {
 
-        menu.innerHTML = `
-            <span class="menu-section-title">
-                Navegación
-            </span>
+    menu.innerHTML = `
+        <span class="menu-section-title">
+            Navegación
+        </span>
 
-            <a href="/dashboard" class="menu-item active">
-                <i class="fas fa-home"></i>
-                Inicio
-            </a>
-        `;
-    }
+        <a href="/dashboard" class="menu-item active">
+            <i class="fas fa-home"></i>
+            Inicio
+        </a>
+    `;
+}
+
+/* =====================================
+   ACTIVAR SUBMENUS
+===================================== */
+
+document
+    .querySelectorAll(
+        '.menu-parent'
+    )
+    .forEach(item => {
+
+        item.addEventListener(
+            'click',
+            () => {
+
+                const grupo =
+                    item.closest(
+                        '.menu-group'
+                    );
+
+                grupo.classList.toggle(
+                    'open'
+                );
+
+            }
+        );
+
+    });
+
 }
 
 /* ==========================================================================

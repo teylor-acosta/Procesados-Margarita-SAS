@@ -1,449 +1,269 @@
 /* =========================================
-   🌎 BODY
+   EXPEDIENTE EMPLEADO
 ========================================= */
 
-body{
+.dashboard-container{
 
-    margin:0;
+    margin-left:280px;
 
-    font-family:'Averia Libre', cursive;
-
-    background:
-        url('/img/Fondo.webp')
-        center/cover no-repeat fixed;
+    padding:110px 25px 30px;
 
     min-height:100vh;
-
-    overflow-x:hidden;
-
-    position:relative;
 }
-
-body::before{
-
-    content:"";
-
-    position:fixed;
-
-    inset:0;
-
-    background:
-        rgba(255,255,255,.38);
-
-    z-index:-1;
-}
-
-/* =========================================
-   🔥 NAVBAR GLOBAL ERP
-========================================= */
-
-.navbar-custom{
-
-    width:100%;
-
-    background:
-        rgba(255,255,255,.96);
-
-    backdrop-filter:blur(10px);
-
-    display:flex;
-
-    justify-content:space-between;
-    align-items:center;
-
-    padding:14px 30px;
-
-    box-shadow:
-        0 4px 18px rgba(0,0,0,.08);
-
-    position:fixed;
-
-    top:0;
-    left:0;
-
-    z-index:9999;
-}
-
-/* =========================================
-   🔥 IZQUIERDA NAVBAR
-========================================= */
-
-.navbar-left{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-}
-
-.logo-navbar{
-
-    width:55px;
-    height:55px;
-
-    object-fit:contain;
-}
-
-.empresa-nombre{
-
-    font-size:30px;
-
-    font-weight:700;
-
-    color:#16a34a;
-
-    font-style:italic;
-
-    letter-spacing:.5px;
-
-    margin:0;
-}
-
-/* =========================================
-   🔥 DERECHA NAVBAR
-========================================= */
-
-.acciones-navbar{
-
-    display:flex;
-
-    gap:12px;
-
-    align-items:center;
-}
-
-/* =========================================
-   🔥 BOTON VOLVER
-========================================= */
-
-.btn-volver{
-
-    border:none;
-
-    background:#f8fafc;
-
-    color:#111827;
-
-    text-decoration:none;
-
-    padding:12px 24px;
-
-    border-radius:18px;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    font-weight:700;
-
-    transition:.25s;
-
-    box-shadow:
-        0 4px 10px rgba(0,0,0,.05);
-}
-
-.btn-volver:hover{
-
-    background:#e2e8f0;
-
-    transform:
-        translateY(-2px);
-
-    color:#111827;
-}
-
-/* =========================================
-   🔥 BOTON LOGOUT
-========================================= */
-
-.btn-logout{
-
-    border:none;
-
-    text-decoration:none;
-
-    background:
-        linear-gradient(
-            135deg,
-            #ef4444,
-            #dc2626
-        );
-
-    color:white;
-
-    padding:12px 24px;
-
-    border-radius:18px;
-
-    font-weight:700;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    transition:.3s;
-
-    box-shadow:
-        0 10px 20px rgba(239,68,68,.25);
-}
-
-.btn-logout:hover{
-
-    transform:
-        translateY(-2px);
-
-    box-shadow:
-        0 15px 28px rgba(239,68,68,.35);
-
-    color:white;
-}
-
-/* =========================================
-   📦 CONTENEDOR
-========================================= */
 
 .expediente-container{
 
-    padding-top:125px;
-
-    padding-left:18px;
-    padding-right:18px;
-
-    padding-bottom:30px;
-
     width:100%;
 
-    box-sizing:border-box;
+    max-width:1700px;
 
-    overflow-x:hidden;
+    margin:0 auto;
 }
 
 /* =========================================
-   👤 CARD EMPLEADO
+   CARD PRINCIPAL
 ========================================= */
 
 .card-empleado-info{
 
-    background:
-        rgba(255,255,255,0.97);
-
-    border-radius:24px;
-
-    padding:24px;
-
     display:flex;
 
-    gap:28px;
+    gap:30px;
 
     align-items:center;
 
-    box-shadow:
-        0 8px 22px rgba(0,0,0,0.10);
+    background:
+        rgba(255,255,255,.95);
+
+    backdrop-filter:blur(12px);
+
+    border-radius:24px;
+
+    padding:30px;
 
     margin-bottom:30px;
 
-    overflow:hidden;
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.08);
 }
-
 /* =========================================
-   🪪 CARNET
+   CARNET
 ========================================= */
 
 .carnet-empleado{
 
-    width:260px;
+    width:280px;
 
-    background:#fff;
+    min-width:280px;
 
-    border-radius:22px;
+    background:white;
 
-    padding:18px;
+    border-radius:24px;
+
+    padding:20px;
 
     text-align:center;
 
+    border:2px solid #22c55e;
+
     box-shadow:
-        0 6px 18px rgba(0,0,0,0.10);
-
-    border:3px solid #22c55e;
-
-    flex-shrink:0;
+        0 8px 20px rgba(0,0,0,.08);
 }
-
-/* HEADER */
 
 .carnet-header{
 
     display:flex;
 
     align-items:center;
+
     justify-content:center;
 
-    gap:8px;
+    gap:10px;
 
-    margin-bottom:14px;
+    margin-bottom:15px;
 }
-
-/* LOGO */
 
 .logo-carnet{
 
-    width:42px;
-
-    object-fit:contain;
+    width:45px;
 }
-
-/* TEXTO */
 
 .carnet-header span{
 
-    font-weight:bold;
-
-    color:#22c55e;
-
     font-size:14px;
 
-    font-style:italic;
-}
+    font-weight:700;
 
-/* FOTO */
+    color:#22c55e;
+}
 
 .foto-carnet{
 
-    width:110px;
-    height:110px;
+    width:130px;
 
-    border-radius:14px;
+    height:130px;
 
     object-fit:cover;
 
+    border-radius:20px;
+
     border:3px solid #2563eb;
 
-    margin-bottom:14px;
+    margin-bottom:15px;
 }
 
-/* NOMBRE */
+#nombreCarnet{
 
-.carnet-empleado h4{
+    font-size:22px;
 
-    color:#2563eb;
+    font-weight:700;
 
-    font-weight:bold;
-
-    margin-bottom:4px;
-
-    font-size:20px;
-
-    font-style:italic;
+    color:#0f172a;
 }
-
-/* DOCUMENTO */
 
 #documentoCarnet{
 
-    color:#555;
+    color:#64748b;
 
-    font-weight:600;
-
-    font-size:14px;
+    margin-bottom:15px;
 }
 
-/* INFO */
-
 .info-carnet{
-
-    margin-top:14px;
 
     display:flex;
 
     flex-direction:column;
 
-    gap:8px;
+    gap:10px;
 }
 
 .info-carnet span{
 
-    background:#f5f7fb;
+    background:#f8fafc;
 
-    padding:8px;
+    padding:10px;
 
     border-radius:12px;
 
-    font-weight:600;
-
     font-size:13px;
-}
 
+    font-weight:600;
+}
 /* =========================================
-   📄 DATOS EMPLEADO
+   DATOS EMPLEADO
 ========================================= */
 
 .datos-empleado{
 
     flex:1;
 
-    min-width:0;
+    display:flex;
+
+    flex-direction:column;
+
+    gap:25px;
 }
 
-/* TITULO */
+#nombreEmpleado{
 
-.datos-empleado h2{
+    font-size:36px;
 
-    color:#2563eb;
+    font-weight:700;
 
-    font-weight:bold;
+    color:#0f172a;
 
-    margin-bottom:22px;
-
-    font-size:28px;
-
-    font-style:italic;
-
-    word-break:break-word;
+    margin:0;
 }
-
-/* GRID */
 
 .info-grid{
 
     display:grid;
 
     grid-template-columns:
-        repeat(2,1fr);
+        repeat(auto-fit,minmax(220px,1fr));
 
-    gap:14px;
-
-    margin-bottom:25px;
+    gap:18px;
 }
-
-/* ITEMS */
 
 .info-grid div{
 
-    background:#f5f7fb;
+    background:
+        rgba(248,250,252,.9);
 
-    padding:12px 14px;
+    border:1px solid #e2e8f0;
 
-    border-radius:14px;
+    border-radius:16px;
+
+    padding:15px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+}
+
+.info-grid strong{
+
+    color:#2563eb;
 
     font-size:14px;
 
-    word-break:break-word;
+    font-weight:700;
 }
 
-/* PROGRESO */
+.info-grid span{
 
-.progreso-general{
+    color:#0f172a;
 
-    margin-top:18px;
+    font-size:16px;
+
+    font-weight:600;
 }
 
 /* =========================================
-   📂 DOCUMENTOS
+   PROGRESO GENERAL
+========================================= */
+
+.progreso-general{
+
+    background:#f8fafc;
+
+    border-radius:18px;
+
+    padding:20px;
+
+    border:1px solid #e2e8f0;
+}
+
+.progreso-general .d-flex{
+
+    font-size:16px;
+
+    font-weight:700;
+
+    color:#0f172a;
+}
+
+.progress{
+
+    height:18px;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    background:#e2e8f0;
+}
+
+.progress-bar{
+
+    font-weight:700;
+
+    font-size:12px;
+}
+/* =========================================
+   DOCUMENTOS
 ========================================= */
 
 .documentos-grid{
@@ -451,72 +271,113 @@ body::before{
     display:grid;
 
     grid-template-columns:
-        repeat(auto-fit,minmax(280px,1fr));
+        repeat(auto-fill,minmax(340px,1fr));
 
-    gap:20px;
+    gap:22px;
 }
-
-/* =========================================
-   📄 CARD DOCUMENTO
-========================================= */
 
 .card-documento{
 
     background:
-        rgba(255,255,255,0.97);
+        rgba(255,255,255,.96);
+
+    backdrop-filter:blur(12px);
 
     border-radius:22px;
 
     padding:22px;
 
     box-shadow:
-        0 6px 18px rgba(0,0,0,0.10);
+        0 8px 20px rgba(0,0,0,.08);
 
-    overflow:hidden;
+    transition:.3s ease;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
 }
 
-/* HEADER */
+.card-documento:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:
+        0 12px 28px rgba(0,0,0,.12);
+}
 
 .header-documento{
 
     display:flex;
 
+    gap:15px;
+
     align-items:center;
-
-    gap:14px;
-
-    margin-bottom:18px;
 }
-
-/* ICONO */
 
 .icono-documento{
 
     width:55px;
+
     height:55px;
 
     border-radius:16px;
 
-    background:
-        linear-gradient(
-            135deg,
-            #22c55e,
-            #2563eb
-        );
+    background:#eff6ff;
 
-    color:white;
+    color:#2563eb;
 
     display:flex;
+
     align-items:center;
+
     justify-content:center;
 
-    font-size:22px;
+    font-size:24px;
+}
 
-    flex-shrink:0;
+.header-documento h5{
+
+    margin:0;
+
+    font-size:18px;
+
+    font-weight:700;
+
+    color:#0f172a;
+}
+
+.header-documento small{
+
+    color:#64748b;
+
+    font-size:13px;
+}
+
+.estado-doc{
+
+    margin-top:auto;
+}
+/* =========================================
+   INPUT DOCUMENTOS
+========================================= */
+
+.card-documento input[type="file"]{
+
+    border-radius:14px;
+
+    border:1px solid #d1d5db;
+
+    padding:10px;
+
+    background:white;
+
+    min-height:48px;
 }
 
 /* =========================================
-   🔘 BOTÓN SUBIR
+   BOTÓN SUBIR
 ========================================= */
 
 .btn-subir{
@@ -525,129 +386,130 @@ body::before{
 
     border:none;
 
-    padding:12px;
-
     border-radius:16px;
 
-    background:
-        linear-gradient(
-            135deg,
-            #22c55e,
-            #2563eb
-        );
+    height:52px;
+
+    background:#2563eb;
 
     color:white;
 
-    font-weight:bold;
+    font-size:15px;
 
-    font-family:'Averia Libre', cursive;
+    font-weight:700;
 
-    transition:
-        transform .2s ease,
-        opacity .2s ease;
+    display:flex;
 
-    min-height:46px;
+    align-items:center;
+
+    justify-content:center;
+
+    gap:10px;
+
+    transition:.3s ease;
+
+    cursor:pointer;
 }
-
-/* HOVER */
 
 .btn-subir:hover{
 
-    transform:
-        translateY(-2px);
+    background:#1d4ed8;
 
-    opacity:.95;
-}
-
-/* ESTADO */
-
-.estado-doc{
-
-    margin-top:14px;
+    transform:translateY(-2px);
 }
 
 /* =========================================
-   📱 TABLET
+   ACCIONES DOCUMENTO
+========================================= */
+
+.acciones-documento{
+
+    display:flex;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+}
+
+.acciones-documento .btn{
+
+    flex:1;
+
+    min-width:120px;
+
+    border-radius:14px;
+
+    height:46px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    font-weight:700;
+}
+
+/* =========================================
+   BADGES
+========================================= */
+
+.estado-doc .badge{
+
+    padding:10px 14px;
+
+    border-radius:12px;
+
+    font-size:13px;
+
+    font-weight:700;
+}
+/* =========================================
+   TABLET
 ========================================= */
 
 @media(max-width:992px){
 
-    .expediente-container{
+    .dashboard-container{
 
-        padding-left:14px;
-        padding-right:14px;
+        margin-left:0;
+
+        padding:95px 15px 25px;
     }
 
     .card-empleado-info{
 
-        gap:20px;
+        flex-direction:column;
+
+        align-items:center;
     }
 
+    .carnet-empleado{
+
+        width:100%;
+
+        max-width:340px;
+    }
+
+    #nombreEmpleado{
+
+        text-align:center;
+
+        font-size:30px;
+    }
 }
 
 /* =========================================
-   📱 MÓVIL
+   MOBILE
 ========================================= */
 
 @media(max-width:768px){
 
-    body{
+    .documentos-grid{
 
-        background-attachment:scroll;
-    }
-
-    .navbar-custom{
-
-        flex-direction:column;
-
-        align-items:flex-start;
-
-        padding:14px 18px;
-
-        gap:14px;
-    }
-
-    .navbar-left{
-
-        width:100%;
-    }
-
-    .empresa-nombre{
-
-        font-size:18px !important;
-    }
-
-    .acciones-navbar{
-
-        width:100%;
-
-        justify-content:flex-end;
-
-        flex-wrap:wrap;
-    }
-
-    .expediente-container{
-
-        padding-top:180px;
-
-        padding-left:10px;
-        padding-right:10px;
-
-        padding-bottom:20px;
-    }
-
-    .card-empleado-info{
-
-        flex-direction:column;
-
-        text-align:center;
-
-        padding:18px;
-
-        border-radius:18px;
-
-        box-shadow:
-            0 4px 12px rgba(0,0,0,0.08);
+        grid-template-columns:1fr;
     }
 
     .info-grid{
@@ -655,108 +517,57 @@ body::before{
         grid-template-columns:1fr;
     }
 
-    .carnet-empleado{
+    .acciones-documento{
+
+        flex-direction:column;
+    }
+
+    .acciones-documento .btn{
 
         width:100%;
-
-        max-width:320px;
-
-        border-radius:18px;
     }
 
-    .datos-empleado h2{
+    #nombreEmpleado{
 
-        font-size:22px;
+        font-size:26px;
+    }
+}
+
+/* =========================================
+   MOBILE PEQUEÑO
+========================================= */
+
+@media(max-width:480px){
+
+    .dashboard-container{
+
+        padding:90px 10px 20px;
     }
 
-    .documentos-grid{
+    .card-empleado-info{
 
-        grid-template-columns:1fr;
-
-        gap:16px;
+        padding:18px;
     }
 
     .card-documento{
 
         padding:18px;
-
-        border-radius:18px;
-
-        box-shadow:
-            0 4px 12px rgba(0,0,0,0.08);
-    }
-
-}
-
-/* =========================================
-   📱 MÓVILES PEQUEÑOS
-========================================= */
-
-@media(max-width:480px){
-
-    .empresa-nombre{
-
-        font-size:16px !important;
-    }
-
-    .logo-navbar{
-
-        width:42px;
-        height:42px;
-    }
-
-    .acciones-navbar{
-
-        flex-direction:column;
-
-        width:100%;
-    }
-
-    .btn-volver,
-    .btn-logout{
-
-        width:100%;
-
-        justify-content:center;
-    }
-
-    .datos-empleado h2{
-
-        font-size:20px;
     }
 
     .foto-carnet{
 
-        width:95px;
-        height:95px;
+        width:110px;
+
+        height:110px;
     }
 
-    .carnet-empleado h4{
+    #nombreCarnet{
 
-        font-size:18px;
+        font-size:20px;
     }
 
-    .info-grid div{
+    #nombreEmpleado{
 
-        font-size:13px;
+        font-size:22px;
     }
-
-    .btn-subir{
-
-        font-size:13px;
-    }
-
-}
-
-/* =========================================
-   🔥 OPTIMIZACIÓN MÓVIL
-========================================= */
-
-@media(max-width:768px){
-
-    *{
-
-        -webkit-tap-highlight-color:transparent;
-    }
-
 }
