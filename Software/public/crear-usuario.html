@@ -18,331 +18,298 @@
 
 <!-- ESTILOS -->
 <link rel="stylesheet" href="/css/style1.css">
+<link rel="stylesheet" href="/css/sidebar.css">
 <link rel="stylesheet" href="/css/crear-usuario.css">
 
 <link rel="icon" href="/img/Gemini_Generated_Image_bo9w5fbo9w5fbo9w-removebg-preview.png">
 
 </head>
 
-<body>
+<body data-pagina="crear-usuario">
 
-<!-- =========================================
-     🔥 NAVBAR
-========================================= -->
+    <!-- SIDEBAR -->
+    <div id="sidebarContainer"></div>
 
-<nav class="navbar-custom">
-
-    <div class="navbar-left">
-
-        <img
-            src="/img/Logo.png"
-            class="logo-navbar"
-        >
-
-        <span class="empresa-nombre">
-            Procesados Margarita SAS
-        </span>
-
+    <!-- OVERLAY -->
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay">
     </div>
 
-    <div class="acciones-navbar">
+    <!-- NAVBAR -->
+    <nav class="navbar-custom">
 
-        <a
-            href="/usuarios"
-            class="btn btn-light"
-        >
+        <div class="navbar-left">
 
-            <i class="fas fa-arrow-left"></i>
+            <i
+                class="fas fa-bars menu-toggle"
+                id="btnOpenSidebar">
+            </i>
 
-            Volver
+            <span class="section-main-title">
 
-        </a>
+                Crear Usuario
 
-        <a
-            href="/logout"
-            class="btn-logout"
-        >
-
-            <i class="fas fa-power-off"></i>
-
-            Cerrar sesión
-
-        </a>
-
-    </div>
-
-</nav>
-
-<!-- =========================================
-     🔥 CONTENIDO
-========================================= -->
-
-<div class="crear-usuario-container">
-
-    <div class="card-crear-usuario">
-
-        <!-- ICONO -->
-
-        <div class="icono-superior">
-
-            <i class="fas fa-user-shield"></i>
+            </span>
 
         </div>
 
-        <!-- TITULO -->
+    </nav>
 
-        <h2>
-            Crear Usuario ERP
-        </h2>
+    <!-- CONTENIDO -->
 
-        <p class="subtitulo">
+    <main class="dashboard-container">
 
-            Configuración inicial de acceso al sistema
+        <div class="crear-usuario-container">
 
-        </p>
+            <div class="card-crear-usuario">
 
-        <!-- ALERTA -->
+                <!-- ICONO -->
 
-        <div id="mensaje"></div>
+                <div class="icono-superior">
 
-        <!-- =====================================
-             🔥 FORM
-        ====================================== -->
+                    <i class="fas fa-user-shield"></i>
 
-        <form id="formCrearUsuario">
+                </div>
 
-            <div class="row">
+                <!-- TITULO -->
 
-                <!-- =====================================
-                     🔥 EMPLEADO
-                ====================================== -->
+                <h2>
 
-                <div class="col-md-6 mb-4">
+                    Crear Usuario ERP
 
-                    <label class="form-label">
+                </h2>
 
-                        <i class="fas fa-users"></i>
+                <p class="subtitulo">
 
-                        Empleado
+                    Configuración inicial de acceso al sistema
 
-                    </label>
+                </p>
 
-                    <div class="buscador-container">
+                <!-- MENSAJE -->
 
-                        <input
-                            type="text"
-                            id="buscarEmpleado"
-                            class="form-control"
-                            placeholder="Buscar empleado..."
-                            autocomplete="off"
-                        >
+                <div id="mensaje"></div>
 
-                        <input
-                            type="hidden"
-                            id="empleado"
-                        >
+                <!-- FORMULARIO -->
 
-                        <!-- RESULTADOS -->
+                <form id="formCrearUsuario">
 
-                        <div
-                            id="listaEmpleados"
-                            class="lista-empleados"
-                        ></div>
+                    <div class="row">
+
+                        <!-- EMPLEADO -->
+
+                        <div class="col-md-6 mb-4">
+
+                            <label class="form-label">
+
+                                <i class="fas fa-users"></i>
+
+                                Empleado
+
+                            </label>
+
+                            <div class="buscador-container">
+
+                                <input
+                                    type="text"
+                                    id="buscarEmpleado"
+                                    class="form-control"
+                                    placeholder="Buscar empleado..."
+                                    autocomplete="off"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    id="empleado"
+                                >
+
+                                <div
+                                    id="listaEmpleados"
+                                    class="lista-empleados">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <!-- ROL -->
+
+                        <div class="col-md-6 mb-4">
+
+                            <label class="form-label">
+
+                                <i class="fas fa-user-lock"></i>
+
+                                Rol del sistema
+
+                            </label>
+
+                            <select
+                                id="rol"
+                                class="form-select"
+                                required>
+
+                                <option value="">
+
+                                    Seleccione rol
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- USUARIO -->
+
+                        <div class="col-md-6 mb-4">
+
+                            <label class="form-label">
+
+                                <i class="fas fa-id-card"></i>
+
+                                Usuario
+
+                            </label>
+
+                            <input
+                                type="text"
+                                id="usuario"
+                                class="form-control"
+                                readonly
+                            >
+
+                            <small class="text-muted">
+
+                                Se genera automáticamente con el documento
+
+                            </small>
+
+                        </div>
+
+                        <!-- PASSWORD -->
+
+                        <div class="col-md-6 mb-4">
+
+                            <label class="form-label">
+
+                                <i class="fas fa-key"></i>
+
+                                Contraseña temporal
+
+                            </label>
+
+                            <div class="input-password">
+
+                                <input
+                                    type="password"
+                                    id="password"
+                                    class="form-control"
+                                    placeholder="Ingrese contraseña temporal"
+                                    required
+                                >
+
+                                <i
+                                    class="fas fa-eye toggle-password"
+                                    id="togglePassword">
+                                </i>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
-                </div>
+                    <!-- CONFIGURACIÓN -->
 
-                <!-- =====================================
-                     🔥 ROL
-                ====================================== -->
+                    <div class="config-box">
 
-                <div class="col-md-6 mb-4">
+                        <h5>
 
-                    <label class="form-label">
+                            <i class="fas fa-sliders-h"></i>
 
-                        <i class="fas fa-user-lock"></i>
+                            Configuración inicial
 
-                        Rol del sistema
+                        </h5>
 
-                    </label>
+                        <div class="checks-config">
 
-                    <select
-                        id="rol"
-                        class="form-select"
-                        required
-                    >
+                            <label class="check-card">
 
-                        <option value="">
+                                <input
+                                    type="checkbox"
+                                    id="primeraVez"
+                                    checked
+                                >
 
-                            Seleccione rol
+                                <span>
 
-                        </option>
+                                    Primera vez
 
-                    </select>
+                                </span>
 
-                </div>
+                            </label>
 
-                <!-- =====================================
-                     🔥 USUARIO
-                ====================================== -->
+                            <label class="check-card">
 
-                <div class="col-md-6 mb-4">
+                                <input
+                                    type="checkbox"
+                                    id="cambioPassword"
+                                    checked
+                                >
 
-                    <label class="form-label">
+                                <span>
 
-                        <i class="fas fa-id-card"></i>
+                                    Requiere cambio contraseña
 
-                        Usuario
+                                </span>
 
-                    </label>
+                            </label>
 
-                    <input
-                        type="text"
-                        id="usuario"
-                        class="form-control"
-                        readonly
-                    >
+                            <label class="check-card">
 
-                    <small class="text-muted">
+                                <input
+                                    type="checkbox"
+                                    id="bloqueado"
+                                >
 
-                        Se genera automáticamente con el documento
+                                <span>
 
-                    </small>
+                                    Usuario bloqueado
 
-                </div>
+                                </span>
 
-                <!-- =====================================
-                     🔥 PASSWORD
-                ====================================== -->
+                            </label>
 
-                <div class="col-md-6 mb-4">
-
-                    <label class="form-label">
-
-                        <i class="fas fa-key"></i>
-
-                        Contraseña temporal
-
-                    </label>
-
-                    <div class="input-password">
-
-                        <input
-                            type="password"
-                            id="password"
-                            class="form-control"
-                            placeholder="Ingrese contraseña temporal"
-                            required
-                        >
-
-                        <i
-                            class="fas fa-eye toggle-password"
-                            id="togglePassword"
-                        ></i>
+                        </div>
 
                     </div>
 
-                </div>
+                    <!-- BOTÓN -->
+
+                    <div class="text-center mt-5">
+
+                        <button
+                            type="submit"
+                            class="btn-crear-usuario">
+
+                            <i class="fas fa-user-plus"></i>
+
+                            Crear Usuario
+
+                        </button>
+
+                    </div>
+
+                </form>
 
             </div>
 
-            <!-- =====================================
-                 🔥 CONFIG
-            ====================================== -->
+        </div>
 
-            <div class="config-box">
+    </main>
 
-                <h5>
-
-                    <i class="fas fa-sliders-h"></i>
-
-                    Configuración inicial
-
-                </h5>
-
-                <div class="checks-config">
-
-                    <!-- PRIMERA VEZ -->
-
-                    <label class="check-card">
-
-                        <input
-                            type="checkbox"
-                            id="primeraVez"
-                            checked
-                        >
-
-                        <span>
-                            Primera vez
-                        </span>
-
-                    </label>
-
-                    <!-- CAMBIO PASSWORD -->
-
-                    <label class="check-card">
-
-                        <input
-                            type="checkbox"
-                            id="cambioPassword"
-                            checked
-                        >
-
-                        <span>
-                            Requiere cambio contraseña
-                        </span>
-
-                    </label>
-
-                    <!-- BLOQUEADO -->
-
-                    <label class="check-card">
-
-                        <input
-                            type="checkbox"
-                            id="bloqueado"
-                        >
-
-                        <span>
-                            Usuario bloqueado
-                        </span>
-
-                    </label>
-
-                </div>
-
-            </div>
-
-            <!-- BOTON -->
-
-            <div class="text-center mt-5">
-
-                <button
-                    type="submit"
-                    class="btn-crear-usuario"
-                >
-
-                    <i class="fas fa-user-plus"></i>
-
-                    Crear Usuario
-
-                </button>
-
-            </div>
-
-        </form>
-
-    </div>
-
-</div>
-
-<!-- =========================================
-     🔥 SCRIPT
-========================================= -->
-
-<script src="/js/crear-usuario.js"></script>
-<script src="/js/sidebar.js"></script>
+    <script src="/js/sidebar.js"></script>
+    <script src="/js/crear-usuario.js"></script>
 
 </body>
 </html>

@@ -1,315 +1,67 @@
 /* =========================================
-   🌿 CREAR USUARIO PREMIUM ERP
+   CREAR USUARIO
+   (Solo estilos propios del módulo)
 ========================================= */
-
-body{
-
-    margin:0;
-
-    font-family:'Averia Libre', cursive;
-
-    min-height:100vh;
-
-    overflow-x:hidden;
-
-    position:relative;
-}
 
 /* =========================================
-   🌿 FONDO
+   CONTENEDOR PRINCIPAL
 ========================================= */
 
-body::before{
+.dashboard-container{
 
-    content:"";
+    margin-left:280px;
 
-    position:fixed;
+    width:calc(100% - 280px);
 
-    inset:0;
+    padding:30px;
 
-    background:
-        url('../img/Fondo.webp')
-        center/cover no-repeat;
-
-    filter:blur(8px);
-
-    transform:scale(1.08);
-
-    z-index:-2;
 }
-
-body::after{
-
-    content:"";
-
-    position:fixed;
-
-    inset:0;
-
-    background:
-        rgba(255,255,255,0.32);
-
-    z-index:-1;
-}
-
-/* =========================================
-   🔥 NAVBAR GLOBAL ERP
-========================================= */
-
-.navbar-custom{
-
-    width:100%;
-
-    background:
-        rgba(255,255,255,.96);
-
-    backdrop-filter:blur(10px);
-
-    display:flex;
-
-    justify-content:space-between;
-    align-items:center;
-
-    padding:14px 30px;
-
-    box-shadow:
-        0 4px 18px rgba(0,0,0,.08);
-
-    position:fixed;
-
-    top:0;
-    left:0;
-
-    z-index:9999;
-}
-
-/* =========================================
-   🔥 IZQUIERDA
-========================================= */
-
-.navbar-left{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-}
-
-.logo-navbar{
-
-    width:55px;
-    height:55px;
-
-    object-fit:contain;
-}
-
-.empresa-nombre{
-
-    font-size:32px;
-
-    font-weight:700;
-
-    color:#16a34a;
-
-    font-style:italic;
-
-    letter-spacing:.5px;
-
-    margin:0;
-}
-
-/* =========================================
-   🔥 DERECHA
-========================================= */
-
-.acciones-navbar{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-}
-
-/* =========================================
-   🔥 BOTON VOLVER
-========================================= */
-
-.btn-volver{
-
-    border:none;
-
-    background:#f8fafc;
-
-    color:#111827;
-
-    text-decoration:none;
-
-    padding:12px 24px;
-
-    border-radius:18px;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    font-weight:700;
-
-    transition:.25s;
-
-    box-shadow:
-        0 4px 10px rgba(0,0,0,.05);
-}
-
-.btn-volver:hover{
-
-    background:#e2e8f0;
-
-    transform:
-        translateY(-2px);
-
-    color:#111827;
-}
-
-/* =========================================
-   🔥 LOGOUT
-========================================= */
-
-.btn-logout{
-
-    border:none;
-
-    text-decoration:none;
-
-    background:
-        linear-gradient(
-            135deg,
-            #ef4444,
-            #dc2626
-        );
-
-    color:white;
-
-    padding:12px 24px;
-
-    border-radius:18px;
-
-    font-weight:700;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    transition:.3s;
-
-    box-shadow:
-        0 10px 20px rgba(239,68,68,.25);
-}
-
-.btn-logout:hover{
-
-    transform:
-        translateY(-2px);
-
-    box-shadow:
-        0 15px 28px rgba(239,68,68,.35);
-
-    color:white;
-}
-
-/* =========================================
-   🔝 CONTENEDOR
-========================================= */
 
 .crear-usuario-container{
 
     width:100%;
 
-    max-width:1400px;
-
-    margin:auto;
-
-    padding:
-        130px
-        20px
-        40px;
 }
 
 /* =========================================
-   🔥 CARD
+   TARJETA PRINCIPAL
 ========================================= */
 
 .card-crear-usuario{
 
-    background:
-        rgba(255,255,255,0.94);
+    max-width:1200px;
 
-    border-radius:34px;
+    margin:0 auto;
 
-    padding:40px;
+    background:rgba(255,255,255,.96);
 
-    position:relative;
+    border-radius:28px;
 
-    overflow:hidden;
+    padding:45px;
 
     box-shadow:
-        0 18px 45px rgba(0,0,0,0.15);
+        0 8px 24px rgba(0,0,0,.10);
 
-    backdrop-filter:blur(10px);
 }
 
 /* =========================================
-   🌈 BORDE SUPERIOR
+   ICONO SUPERIOR
 ========================================= */
 
-.card-crear-usuario::before{
-
-    content:"";
-
-    position:absolute;
-
-    top:0;
-    left:0;
-
-    width:100%;
-    height:6px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #22c55e,
-            #2563eb
-        );
-}
-
-/* =========================================
-   🔥 HEADER
-========================================= */
-
-.header-crear{
-
-    text-align:center;
-
-    margin-bottom:40px;
-}
-
-.icono-header{
+.icono-superior{
 
     width:95px;
+
     height:95px;
 
-    margin:auto;
+    margin:0 auto 22px;
 
-    border-radius:50%;
+    border-radius:24px;
 
     display:flex;
 
     justify-content:center;
+
     align-items:center;
 
     background:
@@ -319,77 +71,118 @@ body::after{
             #2563eb
         );
 
-    box-shadow:
-        0 12px 30px rgba(37,99,235,.25);
-
-    margin-bottom:20px;
-}
-
-.icono-header i{
+    color:#fff;
 
     font-size:42px;
 
-    color:white;
-}
+    box-shadow:
+        0 10px 22px
+        rgba(37,99,235,.18);
 
-.header-crear h2{
-
-    font-size:40px;
-
-    font-weight:800;
-
-    color:#2563eb;
-
-    margin-bottom:10px;
-
-    font-style:italic;
-}
-
-.header-crear p{
-
-    color:#64748b;
-
-    font-size:18px;
 }
 
 /* =========================================
-   🔥 LABELS
+   TITULO
+========================================= */
+
+.card-crear-usuario h2{
+
+    text-align:center;
+
+    font-size:40px;
+
+    font-weight:700;
+
+    color:#2563eb;
+
+    margin-bottom:8px;
+
+    font-style:italic;
+
+}
+
+.subtitulo{
+
+    text-align:center;
+
+    color:#64748b;
+
+    font-size:17px;
+
+    margin-bottom:40px;
+
+}
+
+/* =========================================
+   MENSAJE
+========================================= */
+
+#mensaje{
+
+    margin-bottom:20px;
+
+}
+
+/* =========================================
+   LABELS
 ========================================= */
 
 .form-label{
 
-    font-weight:bold;
+    display:flex;
 
-    color:#1e293b;
+    align-items:center;
+
+    gap:10px;
 
     margin-bottom:10px;
 
-    font-size:16px;
+    font-weight:700;
 
-    font-style:italic;
+    color:#1e293b;
+
+}
+
+.form-label i{
+
+    color:#22c55e;
+
+    width:20px;
+
+    text-align:center;
+
 }
 
 /* =========================================
-   🔥 INPUTS
+   INPUTS
 ========================================= */
 
 .form-control,
 .form-select{
 
+    min-height:56px;
+
     border-radius:18px;
 
-    border:
-        2px solid #e2e8f0;
+    border:1px solid #dbe3ea;
 
-    padding:14px 16px;
+    padding:12px 18px;
+
+    font-family:'Averia Libre', cursive;
 
     font-size:15px;
 
-    transition:.3s;
+    transition:.25s;
 
     box-shadow:none;
 
-    font-family:'Averia Libre', cursive;
+}
+
+.form-control:hover,
+.form-select:hover{
+
+    border-color:#93c5fd;
+
 }
 
 .form-control:focus,
@@ -399,20 +192,122 @@ body::after{
 
     box-shadow:
         0 0 0 4px rgba(37,99,235,.12);
+
 }
 
 /* =========================================
-   🔥 PASSWORD
+   SMALL
+========================================= */
+
+.text-muted{
+
+    display:block;
+
+    margin-top:8px;
+
+    font-size:13px;
+
+    color:#64748b !important;
+
+}
+
+/* =========================================
+   BUSCADOR
+========================================= */
+
+.buscador-container{
+
+    position:relative;
+
+}
+
+.lista-empleados{
+
+    position:absolute;
+
+    top:calc(100% + 8px);
+
+    left:0;
+
+    width:100%;
+
+    max-height:280px;
+
+    overflow-y:auto;
+
+    background:#fff;
+
+    border-radius:18px;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.12);
+
+    display:none;
+
+    z-index:100;
+
+    border:1px solid #e5e7eb;
+
+}
+
+/* =========================================
+   ITEM EMPLEADO
+========================================= */
+
+.item-empleado{
+
+    padding:14px 18px;
+
+    cursor:pointer;
+
+    transition:.20s;
+
+    border-bottom:1px solid #eef2f7;
+
+}
+
+.item-empleado:last-child{
+
+    border-bottom:none;
+
+}
+
+.item-empleado:hover{
+
+    background:#f8fafc;
+
+}
+
+.item-empleado strong{
+
+    display:block;
+
+    color:#0f172a;
+
+    font-size:15px;
+
+}
+
+.item-empleado small{
+
+    color:#64748b;
+
+}
+
+/* =========================================
+   PASSWORD
 ========================================= */
 
 .input-password{
 
     position:relative;
+
 }
 
 .input-password input{
 
-    padding-right:50px;
+    padding-right:55px;
+
 }
 
 .toggle-password{
@@ -425,93 +320,129 @@ body::after{
 
     transform:translateY(-50%);
 
-    cursor:pointer;
-
     color:#64748b;
 
-    transition:.2s;
+    cursor:pointer;
+
+    transition:.25s;
+
 }
 
 .toggle-password:hover{
 
     color:#2563eb;
+
 }
 
 /* =========================================
-   🔥 CONFIGURACIÓN
+   CONFIGURACIÓN
 ========================================= */
 
 .config-box{
 
-    margin-top:15px;
+    margin-top:35px;
 
-    background:
-        rgba(248,250,252,0.90);
+    background:#f8fafc;
 
-    border-radius:24px;
+    border:1px solid #e5e7eb;
+
+    border-radius:22px;
 
     padding:28px;
 
-    border:
-        2px solid #e2e8f0;
 }
 
 .config-box h5{
 
-    font-weight:bold;
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
 
     color:#2563eb;
 
-    font-style:italic;
+    font-size:22px;
+
+    font-weight:700;
+
+    margin-bottom:24px;
+
+}
+
+.config-box h5 i{
+
+    color:#22c55e;
+
 }
 
 /* =========================================
-   🔥 CHECKBOX
+   CHECKS
 ========================================= */
 
-.custom-check{
+.checks-config{
 
-    background:white;
+    display:grid;
 
-    border-radius:16px;
+    grid-template-columns:
+        repeat(auto-fit,minmax(250px,1fr));
 
-    padding:14px 16px;
+    gap:18px;
 
-    box-shadow:
-        0 4px 12px rgba(0,0,0,0.05);
-
-    border:
-        1px solid #e2e8f0;
 }
 
-.form-check-input{
+.check-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    padding:18px;
+
+    background:#fff;
+
+    border-radius:18px;
+
+    border:1px solid #e5e7eb;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.check-card:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 8px 18px rgba(0,0,0,.08);
+
+}
+
+.check-card input{
 
     width:20px;
+
     height:20px;
 
     cursor:pointer;
+
+    accent-color:#2563eb;
+
 }
 
-.form-check-input:checked{
-
-    background-color:#2563eb;
-
-    border-color:#2563eb;
-}
-
-.form-check-label{
-
-    margin-left:8px;
+.check-card span{
 
     font-weight:600;
 
     color:#334155;
 
-    font-style:italic;
 }
-
 /* =========================================
-   🔥 BOTÓN
+   BOTÓN CREAR
 ========================================= */
 
 .btn-crear-usuario{
@@ -525,23 +456,28 @@ body::after{
             #2563eb
         );
 
-    color:white;
+    color:#fff;
 
-    padding:
-        15px 42px;
+    padding:16px 42px;
 
     border-radius:40px;
 
-    font-size:18px;
+    font-size:17px;
 
-    font-weight:bold;
+    font-weight:700;
 
-    transition:.3s;
+    display:inline-flex;
 
-    font-family:'Averia Libre', cursive;
+    align-items:center;
+
+    gap:12px;
+
+    transition:.30s;
 
     box-shadow:
-        0 12px 25px rgba(37,99,235,.20);
+        0 12px 28px
+        rgba(37,99,235,.22);
+
 }
 
 .btn-crear-usuario:hover{
@@ -550,443 +486,241 @@ body::after{
         translateY(-3px);
 
     box-shadow:
-        0 18px 35px rgba(37,99,235,.25);
+        0 16px 34px
+        rgba(37,99,235,.30);
+
+}
+
+.btn-crear-usuario:active{
+
+    transform:scale(.98);
+
 }
 
 /* =========================================
-   🔥 MENSAJE
+   MENSAJES
 ========================================= */
 
-.mensaje-usuario{
+#mensaje{
 
-    margin-top:25px;
+    margin-bottom:25px;
 
-    padding:14px;
-
-    border-radius:16px;
-
-    text-align:center;
-
-    font-weight:bold;
 }
 
-/* =========================================
-   🔥 BUSCADOR EMPLEADOS
-========================================= */
-
-.buscador-container{
-
-    position: relative;
-}
-
-.lista-empleados{
-
-    position: absolute;
-
-    top: 100%;
-    left: 0;
-
-    width: 100%;
-
-    background: #fff;
-
-    border-radius: 18px;
-
-    box-shadow:
-        0 10px 30px rgba(0,0,0,.15);
-
-    max-height: 280px;
-
-    overflow-y: auto;
-
-    z-index: 999;
-
-    margin-top: 8px;
-
-    display: none;
-}
-
-/* ITEM */
-
-.item-empleado{
-
-    padding: 14px 18px;
-
-    cursor: pointer;
-
-    transition: .2s;
-
-    border-bottom:
-        1px solid #f1f1f1;
-}
-
-.item-empleado:hover{
-
-    background:
-        linear-gradient(
-            90deg,
-            #22c55e10,
-            #2563eb10
-        );
-}
-
-/* TEXTO */
-
-.item-empleado strong{
-
-    color: #1e293b;
-
-    font-size: 15px;
-}
-
-.item-empleado small{
-
-    color: #64748b;
-}
-
-/* =========================================
-   🔥 CHECKS
-========================================= */
-
-.checks-config{
-
-    display:flex;
-
-    gap:18px;
-
-    flex-wrap:wrap;
-
-    margin-top:20px;
-}
-
-.check-card{
-
-    background:white;
+#mensaje .alert{
 
     border-radius:18px;
 
-    padding:14px 18px;
+    border:none;
 
-    border:
-        1px solid #e2e8f0;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
+    padding:16px 22px;
 
     font-weight:600;
 
-    color:#334155;
-
-    cursor:pointer;
-
-    transition:.2s;
-}
-
-.check-card:hover{
-
-    transform:translateY(-2px);
-
     box-shadow:
-        0 6px 15px rgba(0,0,0,.08);
-}
+        0 8px 18px rgba(0,0,0,.08);
 
-.check-card input{
-
-    width:18px;
-    height:18px;
-
-    cursor:pointer;
 }
 
 /* =========================================
-   🔥 ALERTA EXITO
+   SCROLL RESULTADOS
 ========================================= */
 
-.alerta-exito{
+.lista-empleados::-webkit-scrollbar{
 
-    position:fixed;
+    width:7px;
 
-    top:100px;
-
-    right:30px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #22c55e,
-            #16a34a
-        );
-
-    color:white;
-
-    padding:16px 24px;
-
-    border-radius:16px;
-
-    font-weight:700;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:12px;
-
-    box-shadow:
-        0 15px 35px rgba(34,197,94,.35);
-
-    opacity:0;
-
-    transform:
-        translateY(-20px);
-
-    pointer-events:none;
-
-    transition:.35s;
-
-    z-index:99999;
 }
 
-.alerta-exito.mostrar{
+.lista-empleados::-webkit-scrollbar-thumb{
 
-    opacity:1;
+    background:#cbd5e1;
 
-    transform:
-        translateY(0);
+    border-radius:20px;
+
 }
 
-.alerta-exito i{
+.lista-empleados::-webkit-scrollbar-thumb:hover{
 
-    font-size:22px;
+    background:#94a3b8;
+
 }
 
 /* =========================================
-   🔥 ALERTA ERROR
+   EFECTOS
 ========================================= */
 
-.alerta-error{
+.card-crear-usuario{
 
-    position:fixed;
+    transition:.30s;
 
-    top:100px;
+}
 
-    right:30px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #ef4444,
-            #dc2626
-        );
-
-    color:white;
-
-    padding:16px 24px;
-
-    border-radius:16px;
-
-    font-weight:700;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:12px;
+.card-crear-usuario:hover{
 
     box-shadow:
-        0 15px 35px rgba(239,68,68,.35);
+        0 16px 35px rgba(0,0,0,.12);
 
-    opacity:0;
-
-    transform:
-        translateY(-20px);
-
-    pointer-events:none;
-
-    transition:.35s;
-
-    z-index:99999;
 }
 
-.alerta-error.mostrar{
+.form-control,
+.form-select,
+.btn-crear-usuario,
+.check-card{
 
-    opacity:1;
+    transition:
+        .25s ease;
 
-    transform:
-        translateY(0);
-}
-
-.alerta-error i{
-
-    font-size:22px;
 }
 
 /* =========================================
-   📱 TABLET
+   RESPONSIVE
 ========================================= */
 
 @media(max-width:992px){
 
-    .card-crear-usuario{
+    .dashboard-container{
 
-        padding:35px 28px;
-    }
-
-    .header-crear h2{
-
-        font-size:34px;
-    }
-}
-
-/* =========================================
-   📱 MÓVIL
-========================================= */
-
-@media(max-width:768px){
-
-    .navbar-custom{
-
-        padding:14px 18px;
-
-        flex-direction:column;
-
-        gap:16px;
-    }
-
-    .empresa-nombre{
-
-        font-size:22px;
-    }
-
-    .acciones-navbar{
+        margin-left:0;
 
         width:100%;
 
-        justify-content:center;
+        padding:100px 20px 25px;
 
-        flex-wrap:wrap;
-    }
-
-    .crear-usuario-container{
-
-        padding:
-            180px
-            14px
-            30px;
     }
 
     .card-crear-usuario{
 
-        padding:28px 20px;
+        padding:35px;
 
-        border-radius:26px;
     }
 
-    .icono-header{
+    .card-crear-usuario h2{
 
-        width:80px;
-        height:80px;
+        font-size:32px;
+
     }
 
-    .icono-header i{
+}
+
+@media(max-width:768px){
+
+    .card-crear-usuario{
+
+        padding:24px;
+
+        border-radius:22px;
+
+    }
+
+    .icono-superior{
+
+        width:78px;
+
+        height:78px;
 
         font-size:34px;
+
     }
 
-    .header-crear h2{
+    .card-crear-usuario h2{
 
         font-size:28px;
+
     }
 
-    .header-crear p{
+    .subtitulo{
 
         font-size:15px;
+
     }
 
-    .config-box{
+    .checks-config{
 
-        padding:22px 18px;
+        grid-template-columns:1fr;
+
     }
 
     .btn-crear-usuario{
 
         width:100%;
 
-        padding:14px 20px;
+        justify-content:center;
 
-        font-size:16px;
     }
+
 }
 
-/* =========================================
-   📱 MÓVILES PEQUEÑOS
-========================================= */
+@media(max-width:576px){
 
-@media(max-width:480px){
+    .dashboard-container{
 
-    .empresa-nombre{
+        padding:90px 12px 20px;
 
-        font-size:18px;
-    }
-
-    .logo-navbar{
-
-        width:42px;
-        height:42px;
-    }
-
-    .acciones-navbar{
-
-        flex-direction:column;
-
-        width:100%;
-    }
-
-    .btn-volver,
-    .btn-logout{
-
-        width:100%;
-
-        justify-content:center;
     }
 
     .card-crear-usuario{
 
-        padding:24px 16px;
+        padding:20px;
+
     }
 
-    .header-crear h2{
+    .card-crear-usuario h2{
 
         font-size:24px;
+
     }
 
     .form-control,
     .form-select{
 
-        font-size:14px;
+        min-height:52px;
+
     }
 
     .config-box{
 
-        border-radius:18px;
+        padding:20px;
+
     }
 
-    .custom-check{
+    .config-box h5{
 
-        border-radius:14px;
+        font-size:18px;
+
     }
+
 }
 
 /* =========================================
-   🔥 OPTIMIZACIÓN MÓVIL
+   ANIMACIONES
 ========================================= */
 
-@media(max-width:768px){
+@keyframes aparecer{
 
-    *{
+    from{
 
-        -webkit-tap-highlight-color:transparent;
+        opacity:0;
+
+        transform:
+            translateY(18px);
+
     }
+
+    to{
+
+        opacity:1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+.card-crear-usuario{
+
+    animation:
+        aparecer .45s ease;
+
 }

@@ -18,6 +18,7 @@
 
 <!-- ESTILOS -->
 <link rel="stylesheet" href="/css/style1.css">
+<link rel="stylesheet" href="/css/sidebar.css">
 <link rel="stylesheet" href="/css/usuarios-registrados.css">
 
 <!-- ICON -->
@@ -25,332 +26,161 @@
 
 </head>
 
-<body>
+<body data-pagina="usuarios-registrados">
 
-<!-- =========================================
-     🔥 NAVBAR
-========================================= -->
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
 
-<nav class="navbar-custom">
+    <div id="sidebarContainer"></div>
 
-    <div class="navbar-left">
+    <!-- OVERLAY -->
 
-        <img
-            src="/img/Logo.png"
-            class="logo-navbar"
-            alt="Logo"
-        >
-
-        <span class="empresa-nombre">
-
-            Procesados Margarita SAS
-
-        </span>
-
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay">
     </div>
 
-    <div class="acciones-navbar">
+    <!-- =========================================
+         NAVBAR
+    ========================================== -->
 
-        <a
-            href="/usuarios"
-            class="btn-volver"
-        >
+    <nav class="navbar-custom">
 
-            <i class="fas fa-arrow-left"></i>
+        <div class="navbar-left">
 
-            Volver
+            <i
+                class="fas fa-bars menu-toggle"
+                id="btnOpenSidebar">
+            </i>
 
-        </a>
+            <span class="section-main-title">
 
-        <a
-            href="/logout"
-            class="btn-logout"
-        >
+                Usuarios Registrados
 
-            <i class="fas fa-power-off"></i>
-
-            Cerrar sesión
-
-        </a>
-
-    </div>
-
-</nav>
-
-<!-- =========================================
-     🔥 CONTENIDO
-========================================= -->
-
-<div class="usuarios-container">
-
-    <!-- =====================================
-         🔥 HEADER
-    ====================================== -->
-
-    <div class="header-usuarios">
-
-        <div>
-
-            <h1>
-
-                <i class="fas fa-users-cog"></i>
-
-                Usuarios Registrados ERP
-
-            </h1>
-
-            <p>
-
-                Administración avanzada de usuarios del sistema
-
-            </p>
+            </span>
 
         </div>
 
-        <button
-            class="btn-crear-usuario"
-            onclick="window.location.href='/crear-usuario'"
-        >
+    </nav>
 
-            <i class="fas fa-user-plus"></i>
+    <!-- =========================================
+         CONTENIDO
+    ========================================== -->
 
-            Crear Usuario
+    <main class="dashboard-container">
 
-        </button>
+        <div class="usuarios-container">
 
-    </div>
+            <!-- =====================================
+                 HEADER
+            ====================================== -->
 
-    <!-- =====================================
-         🔥 ESTADÍSTICAS
-    ====================================== -->
+            <div class="header-usuarios">
 
-    <div class="stats-grid">
+                <div>
 
-        <div class="stat-card activos">
+                    <h1>
 
-            <div class="icono-stat">
+                        <i class="fas fa-users-cog"></i>
 
-                <i class="fas fa-user-check"></i>
+                        Usuarios Registrados ERP
 
-            </div>
+                    </h1>
 
-            <div>
+                    <p>
 
-                <h3 id="totalActivos">0</h3>
+                        Administración avanzada de usuarios del sistema
 
-                <span>Usuarios Activos</span>
+                    </p>
 
-            </div>
-
-        </div>
-
-        <div class="stat-card bloqueados">
-
-            <div class="icono-stat">
-
-                <i class="fas fa-user-lock"></i>
-
-            </div>
-
-            <div>
-
-                <h3 id="totalBloqueados">0</h3>
-
-                <span>Usuarios Bloqueados</span>
-
-            </div>
-
-        </div>
-
-        <div class="stat-card primera-vez">
-
-            <div class="icono-stat">
-
-                <i class="fas fa-user-clock"></i>
-
-            </div>
-
-            <div>
-
-                <h3 id="totalPrimeraVez">0</h3>
-
-                <span>Primera vez</span>
-
-            </div>
-
-        </div>
-
-        <div class="stat-card password">
-
-            <div class="icono-stat">
-
-                <i class="fas fa-key"></i>
-
-            </div>
-
-            <div>
-
-                <h3 id="totalCambioPassword">0</h3>
-
-                <span>Cambio pendiente</span>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <!-- =====================================
-         🔥 FILTROS
-    ====================================== -->
-
-    <div class="filtros-container">
-
-        <div class="buscador-box">
-
-            <i class="fas fa-search"></i>
-
-            <input
-                type="text"
-                id="buscarUsuario"
-                placeholder="Buscar usuario, empleado o documento..."
-            >
-
-        </div>
-
-    </div>
-
-    <!-- =====================================
-         🔥 TABLA
-    ====================================== -->
-
-    <div class="tabla-container">
-
-        <table class="tabla-usuarios">
-
-            <thead>
-
-                <tr>
-
-                    <th>Foto</th>
-                    <th>Empleado</th>
-                    <th>Usuario</th>
-                    <th>Rol</th>
-                    <th>Estado</th>
-                    <th>Último Login</th>
-                    <th>Acciones</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody id="tbodyUsuarios">
-
-                <!-- DINÁMICO -->
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-</div>
-
-<!-- =========================================
-     🔥 MODAL DETALLE
-========================================= -->
-
-<div
-    class="modal fade"
-    id="modalUsuario"
-    tabindex="-1"
->
-
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-
-        <div class="modal-content modal-usuario">
-
-            <div class="modal-header border-0">
-
-                <h4>
-
-                    <i class="fas fa-user-shield"></i>
-
-                    Información del Usuario
-
-                </h4>
+                </div>
 
                 <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                ></button>
+                    class="btn-crear-usuario"
+                    onclick="window.location.href='/crear-usuario'"
+                >
+
+                    <i class="fas fa-user-plus"></i>
+
+                    Crear Usuario
+
+                </button>
 
             </div>
 
-            <div class="modal-body">
+            <!-- =====================================
+                 ESTADÍSTICAS
+            ====================================== -->
+                        <div class="stats-grid">
 
-                <div class="detalle-grid">
+                <div class="stat-card activos">
 
-                    <!-- FOTO -->
+                    <div class="icono-stat">
 
-                    <div class="detalle-foto">
-
-                        <img
-                            id="detalleFoto"
-                            src="/img/defecto.jpg"
-                            onerror="this.src='/img/defecto.jpg'"
-                        >
-
-                        <h3 id="detalleNombre">
-
-                            Usuario ERP
-
-                        </h3>
-
-                        <span id="detalleRol">
-
-                            Rol
-
-                        </span>
+                        <i class="fas fa-user-check"></i>
 
                     </div>
 
-                    <!-- INFO -->
+                    <div>
 
-                    <div class="detalle-info">
+                        <h3 id="totalActivos">0</h3>
 
-                        <div class="info-card">
+                        <span>Usuarios Activos</span>
 
-                            <span>Usuario</span>
+                    </div>
 
-                            <h5 id="detalleUsuario">-</h5>
+                </div>
 
-                        </div>
+                <div class="stat-card bloqueados">
 
-                        <div class="info-card">
+                    <div class="icono-stat">
 
-                            <span>Último Login</span>
+                        <i class="fas fa-user-lock"></i>
 
-                            <h5 id="detalleLogin">-</h5>
+                    </div>
 
-                        </div>
+                    <div>
 
-                        <div class="info-card">
+                        <h3 id="totalBloqueados">0</h3>
 
-                            <span>Intentos Fallidos</span>
+                        <span>Usuarios Bloqueados</span>
 
-                            <h5 id="detalleIntentos">0</h5>
+                    </div>
 
-                        </div>
+                </div>
 
-                        <div class="info-card">
+                <div class="stat-card primera-vez">
 
-                            <span>Fecha Creación Password</span>
+                    <div class="icono-stat">
 
-                            <h5 id="detalleFechaPassword">-</h5>
+                        <i class="fas fa-user-clock"></i>
 
-                        </div>
+                    </div>
+
+                    <div>
+
+                        <h3 id="totalPrimeraVez">0</h3>
+
+                        <span>Primera vez</span>
+
+                    </div>
+
+                </div>
+
+                <div class="stat-card password">
+
+                    <div class="icono-stat">
+
+                        <i class="fas fa-key"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h3 id="totalCambioPassword">0</h3>
+
+                        <span>Cambio pendiente</span>
 
                     </div>
 
@@ -358,14 +188,238 @@
 
             </div>
 
-            <div class="modal-footer border-0">
+            <!-- =====================================
+                 FILTROS
+            ====================================== -->
+
+            <div class="filtros-container">
+
+                <div class="buscador-box">
+
+                    <i class="fas fa-search"></i>
+
+                    <input
+                        type="text"
+                        id="buscarUsuario"
+                        placeholder="Buscar usuario, empleado o documento..."
+                    >
+
+                </div>
+
+            </div>
+
+            <!-- =====================================
+                 TABLA
+            ====================================== -->
+
+            <div class="tabla-container">
+
+                <table class="tabla-usuarios">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Foto</th>
+                            <th>Empleado</th>
+                            <th>Usuario</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Último Login</th>
+                            <th>Acciones</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tbodyUsuarios">
+
+                        <!-- DINÁMICO -->
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- =========================================
+         MODAL DETALLE
+    ========================================== -->
+        <div
+        class="modal fade"
+        id="modalUsuario"
+        tabindex="-1"
+    >
+
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+
+            <div class="modal-content modal-usuario">
+
+                <div class="modal-header border-0">
+
+                    <h4>
+
+                        <i class="fas fa-user-shield"></i>
+
+                        Información del Usuario
+
+                    </h4>
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="detalle-grid">
+
+                        <!-- FOTO -->
+
+                        <div class="detalle-foto">
+
+                            <img
+                                id="detalleFoto"
+                                src="/img/defecto.jpg"
+                                onerror="this.src='/img/defecto.jpg'"
+                            >
+
+                            <h3 id="detalleNombre">
+
+                                Usuario ERP
+
+                            </h3>
+
+                            <span id="detalleRol">
+
+                                Rol
+
+                            </span>
+
+                        </div>
+
+                        <!-- INFORMACIÓN -->
+
+                        <div class="detalle-info">
+
+                            <div class="info-card">
+
+                                <span>Usuario</span>
+
+                                <h5 id="detalleUsuario">-</h5>
+
+                            </div>
+
+                            <div class="info-card">
+
+                                <span>Último Login</span>
+
+                                <h5 id="detalleLogin">-</h5>
+
+                            </div>
+
+                            <div class="info-card">
+
+                                <span>Intentos Fallidos</span>
+
+                                <h5 id="detalleIntentos">0</h5>
+
+                            </div>
+
+                            <div class="info-card">
+
+                                <span>Fecha Creación Password</span>
+
+                                <h5 id="detalleFechaPassword">-</h5>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer border-0">
+
+                    <button
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                        Cerrar
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =========================================
+         MODAL RESET PASSWORD
+    ========================================== -->
+        <div
+        class="modal-reset"
+        id="modalReset"
+    >
+
+        <div class="contenido-reset">
+
+            <div class="icono-reset">
+
+                <i class="fas fa-key"></i>
+
+            </div>
+
+            <h3>
+
+                Resetear contraseña
+
+            </h3>
+
+            <p>
+
+                ¿Deseas resetear la contraseña del usuario?
+
+            </p>
+
+            <small>
+
+                La nueva contraseña temporal será:
+
+                <b>Pm2026*</b>
+
+            </small>
+
+            <div class="acciones-reset">
 
                 <button
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal"
+                    class="btn-cancelar-reset"
+                    id="btnCancelarReset"
+                    type="button"
                 >
 
-                    Cerrar
+                    Cancelar
+
+                </button>
+
+                <button
+                    class="btn-confirmar-reset"
+                    id="btnConfirmarReset"
+                    type="button"
+                >
+
+                    Sí, resetear
 
                 </button>
 
@@ -375,88 +429,22 @@
 
     </div>
 
-</div>
+    <!-- =========================================
+         ALERTAS
+    ========================================== -->
 
-<!-- =========================================
-     🔥 MODAL RESET PASSWORD
-========================================= -->
+    <div id="mensaje"></div>
 
-<div
-    class="modal-reset"
-    id="modalReset"
->
+    <!-- =========================================
+         SCRIPTS
+    ========================================== -->
 
-    <div class="contenido-reset">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-        <div class="icono-reset">
+    <script src="/js/sidebar.js"></script>
 
-            <i class="fas fa-key"></i>
-
-        </div>
-
-        <h3>
-
-            Resetear contraseña
-
-        </h3>
-
-        <p>
-
-            ¿Deseas resetear la contraseña del usuario?
-
-        </p>
-
-        <small>
-
-            La nueva contraseña temporal será:
-
-            <b>Pm2026*</b>
-
-        </small>
-
-        <div class="acciones-reset">
-
-            <button
-                class="btn-cancelar-reset"
-                id="btnCancelarReset"
-                type="button"
-            >
-
-                Cancelar
-
-            </button>
-
-            <button
-                class="btn-confirmar-reset"
-                id="btnConfirmarReset"
-                type="button"
-            >
-
-                Sí, resetear
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-<!-- =========================================
-     🔥 ALERTAS
-========================================= -->
-
-<div id="mensaje"></div>
-
-<!-- =========================================
-     🔥 SCRIPTS
-========================================= -->
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- 🔥 SCRIPT AL FINAL -->
-<script src="/js/usuarios-registrados.js"></script>
-<script src="/js/sidebar.js"></script>
+    <script src="/js/usuarios-registrados.js"></script>
 
 </body>
+
 </html>
