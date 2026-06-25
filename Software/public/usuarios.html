@@ -18,155 +18,355 @@
 
 <!-- ESTILOS -->
 <link rel="stylesheet" href="css/style1.css">
+<link rel="stylesheet" href="css/sidebar.css">
 <link rel="stylesheet" href="css/usuarios.css">
 
 <link rel="icon" href="img/Gemini_Generated_Image_bo9w5fbo9w5fbo9w-removebg-preview.png">
 
 </head>
 
-<body>
+<body data-pagina="usuarios">
 
+    <!-- SIDEBAR -->
+    <div id="sidebarContainer"></div>
 
-<!-- =========================================
-     🔥 NAVBAR
-========================================= -->
+    <!-- OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<nav class="navbar-custom">
+    <!-- NAVBAR -->
+    <nav class="navbar-custom">
 
-    <div class="navbar-left">
+        <div class="navbar-left">
 
-        <img 
-            src="/img/Logo.png"
-            class="logo-navbar"
-        >
+            <i class="fas fa-bars menu-toggle"
+               id="btnOpenSidebar">
+            </i>
 
-        <span class="empresa-nombre">
-            Procesados Margarita SAS
-        </span>
-
-    </div>
-
-    <div class="acciones-navbar">
-
-        <a href="/recursos-humanos" class="btn btn-light">
-
-            <i class="fas fa-arrow-left"></i>
-
-            Volver
-
-        </a>
-
-        <a href="/logout" class="btn-logout">
-
-            <i class="fas fa-power-off"></i>
-
-            Cerrar sesión
-
-        </a>
-
-    </div>
-
-</nav>
-
-
-
-<!-- =========================================
-     🔥 CONTENIDO
-========================================= -->
-
-<div class="usuarios-container">
-
-
-    <!-- TITULO -->
-
-    <div class="titulo-usuarios">
-
-        <h2>
-            Gestión de Usuarios
-        </h2>
-
-    </div>
-
-
-
-    <!-- =====================================
-         🔥 MODULOS
-    ====================================== -->
-
-    <div class="modulos-usuarios">
-
-
-        <!-- 🔹 CREAR USUARIO -->
-
-        <div 
-            class="modulo-card"
-            onclick="window.location.href='/crear-usuario'"
-        >
-
-            <i class="fas fa-user-plus icono-modulo"></i>
-
-            <span>
-                Crear usuario
+            <span class="section-main-title">
+                Módulo Usuarios
             </span>
 
         </div>
 
+    </nav>
 
+    <!-- CONTENIDO -->
+    <main class="dashboard-container">
 
-        <!-- 🔹 VER USUARIOS -->
+        <div class="usuarios-container">
 
-        <div 
-            class="modulo-card"
-            onclick="window.location.href='/usuarios-registrados'"
-        >
+            <!-- TITULO -->
 
-            <i class="fas fa-users-cog icono-modulo"></i>
+            <div class="titulo-usuarios">
 
-            <span>
-                Usuarios registrados
-            </span>
+                <h2>
+                    Gestión de Usuarios
+                </h2>
+
+            </div>
+
+            <p class="subtitulo-usuarios">
+                Administra usuarios, roles, permisos y accesos al ERP.
+            </p>
+
+            <!-- MODULOS PRINCIPALES -->
+
+            <div class="modulos-usuarios">
+
+                <!-- CREAR USUARIO -->
+
+                <div
+                    class="modulo-card"
+                    onclick="window.location.href='/crear-usuario'"
+                >
+
+                    <div class="icono-box verde">
+
+                        <i class="fas fa-user-plus"></i>
+
+                    </div>
+
+                    <h3>
+                        Crear usuario
+                    </h3>
+
+                    <p>
+                        Registrar un nuevo usuario en el sistema
+                    </p>
+
+                </div>
+
+                <!-- VER USUARIOS -->
+
+                <div
+                    class="modulo-card"
+                    onclick="window.location.href='/usuarios-registrados'"
+                >
+
+                    <div class="icono-box azul">
+
+                        <i class="fas fa-users-cog"></i>
+
+                    </div>
+
+                    <h3>
+                        Ver usuarios
+                    </h3>
+
+                    <p>
+                        Consultar usuarios registrados
+                    </p>
+
+                </div>
+
+                <!-- ROLES -->
+
+                <div
+                    class="modulo-card"
+                    onclick="window.location.href='/roles-accesos'"
+                >
+
+                    <div class="icono-box morado">
+
+                        <i class="fas fa-user-shield"></i>
+
+                    </div>
+
+                    <h3>
+                        Roles y accesos
+                    </h3>
+
+                    <p>
+                        Gestionar roles y asignaciones
+                    </p>
+
+                </div>
+
+                <!-- CENTRO ACTIVIDAD -->
+
+                <div
+                    class="modulo-card"
+                    onclick="window.location.href='/historial-usuarios'"
+                >
+
+                    <div class="icono-box verde">
+
+                        <i class="fas fa-clock-rotate-left"></i>
+
+                    </div>
+
+                    <h3>
+                        Centro de actividad
+                    </h3>
+
+                    <p>
+                        Historial de acciones del sistema
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- RESUMEN -->
+
+            <div class="resumen-usuarios">
+
+                <div class="card-resumen">
+
+                    <div class="icono-resumen verde">
+
+                        <i class="fas fa-users"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h2 id="totalUsuarios">0</h2>
+
+                        <h5>
+                            Usuarios registrados
+                        </h5>
+
+                        <span id="usuariosMes">
+                            Cargando...
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="card-resumen">
+
+                    <div class="icono-resumen azul">
+
+                        <i class="fas fa-user-check"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h2 id="usuariosActivos">0</h2>
+
+                        <h5>
+                            Usuarios activos
+                        </h5>
+
+                        <span id="usuariosActivosMes">
+                            Cargando...
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="card-resumen">
+
+                    <div class="icono-resumen morado">
+
+                        <i class="fas fa-user-shield"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h2 id="totalRoles">0</h2>
+
+                        <h5>
+                            Roles configurados
+                        </h5>
+
+                        <span id="rolesMes">
+                            Cargando...
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="card-resumen">
+
+                    <div class="icono-resumen naranja">
+
+                        <i class="fas fa-right-to-bracket"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h2 id="accesosHoy">0</h2>
+
+                        <h5>
+                            Accesos hoy
+                        </h5>
+
+                        <span>
+                            Últimas 24 horas
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- INFORMACIÓN ADICIONAL -->
+
+            <!-- INFORMACIÓN ADICIONAL -->
+
+<div class="info-usuarios">
+
+    <div class="info-card azul">
+
+        <i class="fas fa-user-plus"></i>
+
+        <div>
+
+            <h5>
+                Último usuario creado
+            </h5>
+
+            <p id="ultimoUsuario">
+                Cargando...
+            </p>
 
         </div>
 
+    </div>
 
+    <div class="info-card morado">
 
-<!-- 🔹 ROLES Y ACCESOS -->
+        <i class="fas fa-key"></i>
 
-<div 
-    class="modulo-card"
-    onclick="window.location.href='/roles-accesos'"
->
+        <div>
 
-    <i class="fas fa-user-shield icono-modulo"></i>
+            <h5>
+                Permisos asignados
+            </h5>
 
-    <span>
-        Roles y accesos
-    </span>
+            <p id="totalPermisos">
+                Cargando...
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="info-card verde">
+
+        <i class="fas fa-clock-rotate-left"></i>
+
+        <div>
+
+            <h5>
+                Última actividad
+            </h5>
+
+            <p id="ultimaActividad">
+                Cargando...
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="info-card naranja">
+
+        <i class="fas fa-clock"></i>
+
+        <div>
+
+            <h5>
+                Último acceso
+            </h5>
+
+            <p id="ultimoAcceso">
+                Cargando...
+            </p>
+
+        </div>
+
+    </div>
 
 </div>
 
+            <!-- CONSEJO ERP -->
 
+            <div class="erp-tip">
 
-        <!-- 🔹 HISTORIAL -->
+                <i class="fas fa-shield-halved"></i>
 
-        <div 
-            class="modulo-card"
-            onclick="window.location.href='/historial-usuarios'"
-        >
+                <span>
+                    Mantén actualizados los roles y permisos para garantizar la seguridad del sistema.
+                </span>
 
-            <i class="fas fa-clock-rotate-left icono-modulo"></i>
-
-            <span>
-                Historial
-            </span>
+            </div>
 
         </div>
 
+    </main>
 
-    </div>
-
-</div>
-<script src="/js/sidebar.js"></script>
+    <script src="/js/sidebar.js"></script>
+    <script src="/js/dashboard-usuarios.js"></script>
 
 </body>
 </html>

@@ -145,17 +145,15 @@ function renderUsuarios(usuarios) {
 
         let foto = '/img/defecto.jpg';
 
-        if (
+if (
+    usuario.foto &&
+    usuario.foto !== 'null' &&
+    usuario.foto !== ''
+) {
 
-            usuario.foto &&
-            usuario.foto !== 'null' &&
-            usuario.foto !== ''
+    foto = `/uploads/fotos/${usuario.foto}`;
 
-        ) {
-
-            foto = usuario.foto;
-
-        }
+}
 
         // ========================================
         // ESTADOS
@@ -289,21 +287,17 @@ function renderUsuarios(usuarios) {
 
                 <!-- EMPLEADO -->
 
-                <td>
+                <!-- EMPLEADO -->
 
-                    <div class="nombre-usuario">
+<td>
 
-                        ${usuario.nombre || 'Sin empleado'}
+    <div class="nombre-usuario">
 
-                    </div>
+        ${usuario.nombre || 'Sin empleado'}
 
-                    <div class="usuario-secundario">
+    </div>
 
-                        ${usuario.numero_documento || ''}
-
-                    </div>
-
-                </td>
+</td>
 
                 <!-- USUARIO -->
 

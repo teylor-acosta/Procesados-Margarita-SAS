@@ -145,6 +145,11 @@ app.use(
     require('./routes/usuarios-registrados.routes')
 );
 
+app.use(
+    '/api/dashboard-usuarios',
+    require('./routes/dashboard-usuarios.routes')
+);
+
 app.use(require('./routes/roles-acceso.routes'));
 
 app.use(
