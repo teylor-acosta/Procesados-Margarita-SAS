@@ -1,12 +1,20 @@
 const express = require('express');
 const router = express.Router();
 
+const path = require("path");
+
 const db = require('../DB');
 const ExcelJS = require('exceljs');
 
 const {
     proteger
 } = require('../middlewares/auth');
+
+const uploadVideo = require("../middlewares/uploadVideo");
+
+const uploadMaterialApoyo = require("../middlewares/uploadMaterialApoyo");
+const uploadCapacitacion =
+require("../middlewares/uploadCapacitacion");
 
 /* =========================================
    DASHBOARD
@@ -795,6 +803,2710 @@ router.get(
         }
 
     }
+);
+
+// =========================================
+// CENTRO DE CAPACITACIONES
+// =========================================
+
+router.get(
+    "/centro-capacitaciones",
+    proteger,
+    (req, res) => {
+
+        res.sendFile(
+            path.join(
+                __dirname,
+                "../public/centro-capacitaciones.html"
+            )
+        );
+
+    }
+);
+
+router.get(
+    "/administrar-capacitaciones",
+    proteger,
+    (req, res) => {
+
+        res.sendFile(
+            path.join(
+                __dirname,
+                "../public/administrar-capacitaciones.html"
+            )
+        );
+
+    }
+);
+
+router.get(
+    "/mis-capacitaciones",
+    proteger,
+    (req, res) => {
+
+        res.sendFile(
+            path.join(
+                __dirname,
+                "../public/mis-capacitaciones.html"
+            )
+        );
+
+    }
+);
+
+router.get(
+    "/seguimiento-capacitaciones",
+    proteger,
+    (req, res) => {
+
+        res.sendFile(
+            path.join(
+                __dirname,
+                "../public/seguimiento-capacitaciones.html"
+            )
+        );
+
+    }
+);
+
+router.get(
+    "/administrar-induccion",
+    (req, res) => {
+
+        res.sendFile(
+            path.join(
+                __dirname,
+                "../public/administrar-induccion.html"
+            )
+        );
+
+    }
+);
+
+router.get(
+    "/administrar-curso/:id",
+    proteger,
+    (req, res) => {
+
+        res.sendFile(
+            path.join(
+                __dirname,
+                "../public/administrar-curso.html"
+            )
+        );
+
+    }
+);
+
+router.get(
+    "/administrar-material-apoyo",
+    proteger,
+    (req,res)=>{
+
+        res.sendFile(
+
+            path.join(
+
+                __dirname,
+
+                "../public/administrar-material-apoyo.html"
+
+            )
+
+        );
+
+    }
+);
+
+// ==========================================
+// LISTAR CURSOS
+// ==========================================
+
+router.get(
+    "/api/cursos",
+    proteger,
+    async (req, res) => {
+
+        try {
+
+            const [rows] = await db.query(
+
+                `
+                SELECT
+
+                    c.*,
+
+                    COUNT(DISTINCT cc.id) AS contenido,
+
+                    COUNT(DISTINCT ca.id) AS empleados
+
+                FROM cursos c
+
+                LEFT JOIN curso_contenido cc
+                    ON cc.curso_id = c.id
+
+                LEFT JOIN curso_asignados ca
+                    ON ca.curso_id = c.id
+
+                GROUP BY c.id
+
+                ORDER BY c.fecha_creacion DESC
+                `
+
+            );
+
+            res.json({
+
+                success: true,
+
+                cursos: rows
+
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false,
+
+                mensaje:"Error obteniendo cursos."
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// CREAR CURSO
+// ==========================================
+
+router.post(
+    "/api/cursos",
+    proteger,
+    uploadCapacitacion.single("imagen"),
+    async (req, res) => {
+
+        try {
+
+            const {
+
+                titulo,
+                descripcion,
+                estado,
+                obligatorio,
+                fecha_limite
+
+            } = req.body;
+
+            let imagen = "";
+
+            if (req.file) {
+
+                imagen =
+                "/uploads/capacitaciones/" +
+                req.file.filename;
+
+            }
+
+            await db.query(
+
+                `
+                INSERT INTO cursos
+                (
+
+                    titulo,
+                    descripcion,
+                    imagen,
+                    estado,
+                    obligatorio,
+                    fecha_limite,
+                    creado_por,
+                    tipo
+
+                )
+
+                VALUES
+                (
+
+                    ?,?,?,?,?,?,?,?
+
+                )
+                `,
+
+                [
+
+                    titulo,
+                    descripcion,
+                    imagen,
+                    estado,
+                    obligatorio,
+                    fecha_limite,
+                    req.session.usuarioID,
+                    "EMPRESA"
+
+                ]
+
+            );
+
+            res.json({
+
+                success: true,
+                mensaje: "Capacitación creada correctamente."
+
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success: false,
+                mensaje: error.message
+
+            });
+
+        }
+
+    }
+
+);
+
+router.get("/api/induccion-general", proteger, async (req, res) => {
+
+    try {
+
+        const [[resultado]] = await db.query(`
+
+            SELECT
+
+                COUNT(DISTINCT sc.id) AS modulos,
+
+                COUNT(DISTINCT u.ID) AS empleados
+
+            FROM sub_capitulos_induccion sc
+
+            LEFT JOIN usuarios u
+                ON 1 = 1
+
+            WHERE sc.activo = 1
+
+        `);
+
+        res.json({
+
+            success: true,
+
+            induccion: {
+
+                titulo: "Inducción General",
+
+                estado: "ACTIVA",
+
+                contenido: resultado.modulos,
+
+                empleados: resultado.empleados
+
+            }
+
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+
+            success: false
+
+        });
+
+    }
+
+});
+
+router.get(
+    "/api/capitulos-induccion",
+    proteger,
+    async (req,res)=>{
+
+        try{
+
+            const [capitulos] =
+            await db.query(`
+
+                SELECT *
+                FROM capitulos_induccion
+                WHERE activo = 1
+                ORDER BY orden ASC
+
+            `);
+
+            res.json({
+
+                success:true,
+
+                capitulos
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// OBTENER UN CAPÍTULO
+// ==========================================
+
+router.get(
+    "/api/capitulos-induccion/:id",
+    proteger,
+    async (req,res)=>{
+
+        try{
+
+            const {id}=req.params;
+
+            const [[capitulo]] =
+            await db.query(
+
+                `
+                SELECT *
+                FROM capitulos_induccion
+                WHERE id = ?
+                `,
+
+                [id]
+
+            );
+
+            res.json({
+
+                success:true,
+
+                capitulo
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// ACTUALIZAR CAPÍTULO
+// ==========================================
+
+router.put(
+    "/api/capitulos-induccion/:id",
+    proteger,
+    async (req,res)=>{
+
+        try{
+
+            const{id}=req.params;
+
+            const{
+
+                numeroCapitulo,
+                titulo,
+                descripcion,
+                porcentaje,
+                orden
+
+            }=req.body;
+
+            await db.query(
+
+                `
+                UPDATE capitulos_induccion
+
+                SET
+
+                    numero_capitulo=?,
+                    titulo=?,
+                    descripcion=?,
+                    porcentaje_aprobacion=?,
+                    orden=?
+
+                WHERE id=?
+                `,
+
+                [
+
+                    numeroCapitulo,
+                    titulo,
+                    descripcion,
+                    porcentaje,
+                    orden,
+                    id
+
+                ]
+
+            );
+
+            res.json({
+
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// ELIMINAR CAPÍTULO
+// ==========================================
+
+router.delete(
+    "/api/capitulos-induccion/:id",
+    proteger,
+    async(req,res)=>{
+
+        try{
+
+            const {id}=req.params;
+
+            await db.query(
+
+                `
+                UPDATE capitulos_induccion
+                SET activo = 0
+                WHERE id = ?
+                `,
+
+                [id]
+
+            );
+
+            res.json({
+
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+// ==========================================
+// CREAR CAPÍTULO
+// ==========================================
+
+router.post(
+    "/api/capitulos-induccion",
+    proteger,
+    async (req, res) => {
+
+        try{
+
+            const{
+
+                numeroCapitulo,
+
+                titulo,
+
+                descripcion,
+
+                porcentaje,
+
+                orden
+
+            } = req.body;
+
+            await db.query(
+
+                `
+
+                INSERT INTO capitulos_induccion(
+
+                    numero_capitulo,
+
+                    titulo,
+
+                    descripcion,
+
+                    porcentaje_aprobacion,
+
+                    orden,
+
+                    activo
+
+                )
+
+                VALUES(
+
+                    ?,?,?,?,?,
+
+                    1
+
+                )
+
+                `,
+
+                [
+
+                    numeroCapitulo,
+
+                    titulo,
+
+                    descripcion,
+
+                    porcentaje,
+
+                    orden
+
+                ]
+
+            );
+
+            res.json({
+
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// ADMINISTRAR CAPACITACIONES
+// ==========================================
+
+router.get(
+    "/api/administrar-capacitaciones",
+    proteger,
+    async (req, res) => {
+
+        try {
+
+            // ============================
+            // INDUCCIÓN GENERAL
+            // ============================
+
+            const [[induccion]] =
+            await db.query(`
+
+                SELECT
+
+    COUNT(DISTINCT sc.id) AS modulos,
+
+    COUNT(DISTINCT u.ID) AS empleados,
+
+    (
+        SELECT COUNT(*)
+        FROM certificados_usuario cu
+        INNER JOIN usuarios us
+            ON us.ID = cu.usuario_id
+        INNER JOIN empleados e
+            ON e.id = us.empleado_id
+        WHERE e.activo = 1
+    ) AS certificados
+
+FROM sub_capitulos_induccion sc
+
+CROSS JOIN usuarios u
+
+INNER JOIN empleados e
+    ON e.id = u.empleado_id
+
+WHERE
+
+    sc.activo = 1
+
+    AND e.activo = 1
+            `);
+
+            // ============================
+            // CURSOS
+            // ============================
+
+            const [cursos] =
+            await db.query(`
+
+                SELECT
+
+                    c.id,
+
+                    c.titulo,
+
+                    c.estado,
+
+                    COUNT(DISTINCT cc.id) contenido,
+
+                    COUNT(DISTINCT ca.id) empleados
+
+                FROM cursos c
+
+                LEFT JOIN curso_contenido cc
+
+                    ON cc.curso_id = c.id
+
+                LEFT JOIN curso_asignados ca
+
+                    ON ca.curso_id = c.id
+
+                GROUP BY c.id
+
+                ORDER BY c.fecha_creacion DESC
+
+            `);
+
+            // ============================
+            // LISTA FINAL
+            // ============================
+
+            const capacitaciones = [
+
+                {
+
+                    id:0,
+
+                    tipo:"SISTEMA",
+
+                    titulo:"Inducción General",
+
+                    estado:"ACTIVO",
+
+                    contenido:
+                    induccion.modulos,
+
+                    empleados:
+                    induccion.empleados,
+
+                    certificados:
+                    induccion.certificados
+
+                },
+
+                ...cursos.map(c=>({
+
+                    id:c.id,
+
+                    tipo:"CURSO",
+
+                    titulo:c.titulo,
+
+                    estado:c.estado,
+
+                    contenido:c.contenido,
+
+                    empleados:c.empleados
+
+                }))
+
+            ];
+
+            // ============================
+            // DASHBOARD
+            // ============================
+
+            res.json({
+
+                success:true,
+
+                dashboard:{
+
+                    totalCapacitaciones:
+                    capacitaciones.length,
+
+                    totalAsignados:
+                    capacitaciones.reduce(
+
+                        (t,c)=>t+c.empleados,
+
+                        0
+
+                    ),
+
+                    totalActivas:
+                    capacitaciones.filter(
+
+                        c=>c.estado==="ACTIVO"
+
+                    ).length,
+
+                    totalFinalizadas:
+                    induccion.certificados
+
+                },
+
+                capacitaciones
+
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+// ==========================================
+// LISTAR SUBCAPÍTULOS
+// ==========================================
+
+router.get(
+    "/api/subcapitulos-induccion",
+    proteger,
+    async(req,res)=>{
+
+        try{
+
+            const [subcapitulos] =
+            await db.query(`
+
+                SELECT
+
+                    s.*,
+
+                    c.titulo AS capitulo
+
+                FROM sub_capitulos_induccion s
+
+                INNER JOIN capitulos_induccion c
+
+                    ON c.id = s.capitulo_id
+
+                WHERE
+
+                    s.activo = 1
+
+                ORDER BY
+
+                    c.orden,
+
+                    s.orden
+
+            `);
+
+            res.json({
+
+                success:true,
+
+                subcapitulos
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// SUBCAPÍTULOS POR CAPÍTULO
+// ==========================================
+
+router.get(
+    "/api/subcapitulos-induccion/capitulo/:id",
+    proteger,
+    async(req,res)=>{
+
+        try{
+
+            const { id } = req.params;
+
+            const [subcapitulos] =
+            await db.query(
+
+                `
+                SELECT
+                    id,
+                    numero_sub_capitulo,
+                    titulo
+                FROM sub_capitulos_induccion
+                WHERE
+                    capitulo_id = ?
+                    AND activo = 1
+                ORDER BY orden ASC
+                `,
+
+                [id]
+
+            );
+
+            res.json({
+
+                success:true,
+
+                subcapitulos
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// OBTENER UN SUBCAPÍTULO
+// ==========================================
+
+router.get(
+    "/api/subcapitulos-induccion/:id",
+    proteger,
+    async(req,res)=>{
+
+        try{
+
+            const {id}=req.params;
+
+            const [[subcapitulo]] =
+            await db.query(
+
+                `
+                SELECT *
+                FROM sub_capitulos_induccion
+                WHERE id = ?
+                `,
+
+                [id]
+
+            );
+
+            res.json({
+
+                success:true,
+
+                subcapitulo
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// CREAR SUBCAPÍTULO
+// ==========================================
+
+router.post(
+    "/api/subcapitulos-induccion",
+    proteger,
+    uploadVideo.single("archivoVideo"),
+    async(req,res)=>{
+
+        try{
+
+            const{
+
+                capitulo_id,
+                numero_sub_capitulo,
+                titulo,
+                descripcion,
+                tipo_video,
+                duracion_minutos,
+                orden,
+                url_video
+
+            } = req.body;
+
+            let rutaVideo = "";
+
+            if(
+                tipo_video === "local"
+                &&
+                req.file
+            ){
+
+                rutaVideo =
+                `/uploads/videos/induccion/${req.file.filename}`;
+
+            }
+
+            if(
+                tipo_video === "youtube"
+            ){
+
+                rutaVideo =
+                url_video;
+
+            }
+
+            await db.query(
+
+                `
+                INSERT INTO sub_capitulos_induccion
+                (
+
+                    capitulo_id,
+                    numero_sub_capitulo,
+                    titulo,
+                    descripcion,
+                    url_video,
+                    tipo_video,
+                    duracion_minutos,
+                    orden,
+                    activo
+
+                )
+
+                VALUES
+                (
+
+                    ?,?,?,?,?,?,?,?,1
+
+                )
+                `,
+
+                [
+
+                    capitulo_id,
+                    numero_sub_capitulo,
+                    titulo,
+                    descripcion,
+                    rutaVideo,
+                    tipo_video,
+                    duracion_minutos,
+                    orden
+
+                ]
+
+            );
+
+            res.json({
+
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// ACTUALIZAR SUBCAPÍTULO
+// ==========================================
+
+router.put(
+    "/api/subcapitulos-induccion/:id",
+    proteger,
+    uploadVideo.single("archivoVideo"),
+    async(req,res)=>{
+
+        try{
+
+            const { id } = req.params;
+
+            const{
+
+                capitulo_id,
+                numero_sub_capitulo,
+                titulo,
+                descripcion,
+                tipo_video,
+                duracion_minutos,
+                orden,
+                url_video
+
+            } = req.body;
+
+            // ==========================================
+// OBTENER VIDEO ACTUAL
+// ==========================================
+
+const [[videoActual]] =
+await db.query(
+
+    `
+    SELECT url_video
+    FROM sub_capitulos_induccion
+    WHERE id = ?
+    `,
+    [id]
+
+);
+
+let rutaVideo =
+videoActual.url_video;
+
+// ==========================================
+// VIDEO LOCAL
+// ==========================================
+
+if(tipo_video === "local"){
+
+    if(req.file){
+
+        rutaVideo =
+        `/uploads/videos/induccion/${req.file.filename}`;
+
+    }
+
+}
+
+// ==========================================
+// YOUTUBE
+// ==========================================
+
+if(tipo_video === "youtube"){
+
+    rutaVideo =
+    url_video;
+
+}
+
+            await db.query(
+
+                `
+                UPDATE sub_capitulos_induccion
+
+                SET
+
+                    capitulo_id = ?,
+
+                    numero_sub_capitulo = ?,
+
+                    titulo = ?,
+
+                    descripcion = ?,
+
+                    url_video = ?,
+
+                    tipo_video = ?,
+
+                    duracion_minutos = ?,
+
+                    orden = ?
+
+                WHERE id = ?
+                `,
+
+                [
+
+                    capitulo_id,
+
+                    numero_sub_capitulo,
+
+                    titulo,
+
+                    descripcion,
+
+                    rutaVideo,
+
+                    tipo_video,
+
+                    duracion_minutos,
+
+                    orden,
+
+                    id
+
+                ]
+
+            );
+
+            res.json({
+
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// ELIMINAR SUBCAPÍTULO
+// ==========================================
+
+router.delete(
+    "/api/subcapitulos-induccion/:id",
+    proteger,
+    async(req,res)=>{
+
+        try{
+
+            const { id } = req.params;
+
+            await db.query(
+
+                `
+                UPDATE sub_capitulos_induccion
+                SET activo = 0
+                WHERE id = ?
+                `,
+
+                [id]
+
+            );
+
+            res.json({
+
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// OBTENER MATERIAL POR ID
+// ==========================================
+
+router.get(
+    "/api/material-apoyo/:id",
+    proteger,
+    async (req, res) => {
+
+        try {
+
+            const [rows] = await db.query(
+
+                `
+                SELECT *
+                FROM material_apoyo
+                WHERE id = ?
+                LIMIT 1
+                `,
+
+                [req.params.id]
+
+            );
+
+            if (rows.length === 0) {
+
+                return res.json({
+
+                    success: false
+
+                });
+
+            }
+
+            res.json({
+
+                success: true,
+                material: rows[0]
+
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success: false
+
+            });
+
+        }
+
+    }
+
+);
+
+
+// ==========================================
+// ACTUALIZAR MATERIAL DE APOYO
+// ==========================================
+
+router.put(
+    "/api/material-apoyo/:id",
+    proteger,
+    uploadMaterialApoyo.single("archivoMaterial"),
+    async (req, res) => {
+
+        try {
+
+            const {
+
+                titulo,
+                descripcion,
+                tipoAsignacion,
+                capitulo_id,
+                sub_capitulo_id,
+                orden,
+                obligatorio
+
+            } = req.body;
+
+            const id = req.params.id;
+
+            // Obtener el material actual
+            const [rows] = await db.query(
+
+                `
+                SELECT *
+                FROM material_apoyo
+                WHERE id = ?
+                `,
+
+                [id]
+
+            );
+
+            if (rows.length === 0) {
+
+                return res.json({
+
+                    success: false,
+                    mensaje: "El material no existe."
+
+                });
+
+            }
+
+            const material = rows[0];
+
+            let nombreArchivo = material.nombre_archivo;
+            let rutaArchivo = material.ruta_archivo;
+            let tipoArchivo = material.tipo_archivo;
+            let tamano = material.tamano;
+
+            // Si el usuario subió un archivo nuevo
+            if (req.file) {
+
+                nombreArchivo = req.file.originalname;
+
+                rutaArchivo =
+                    `/uploads/material-apoyo/${req.file.filename}`;
+
+                tipoArchivo =
+                    req.file.originalname
+                        .split(".")
+                        .pop()
+                        .toLowerCase();
+
+                tamano = req.file.size;
+
+            }
+
+            await db.query(
+
+                `
+                UPDATE material_apoyo
+                SET
+
+                    titulo=?,
+                    descripcion=?,
+                    tipo_asignacion=?,
+                    capitulo_id=?,
+                    sub_capitulo_id=?,
+                    nombre_archivo=?,
+                    ruta_archivo=?,
+                    tipo_archivo=?,
+                    tamano=?,
+                    orden=?,
+                    obligatorio=?
+
+                WHERE id=?
+                `,
+
+                [
+
+                    titulo,
+                    descripcion,
+                    tipoAsignacion,
+                    capitulo_id || null,
+                    sub_capitulo_id || null,
+                    nombreArchivo,
+                    rutaArchivo,
+                    tipoArchivo,
+                    tamano,
+                    orden,
+                    obligatorio,
+                    id
+
+                ]
+
+            );
+
+            res.json({
+
+                success: true,
+                mensaje: "Material actualizado correctamente."
+
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success: false,
+                mensaje: "Error al actualizar el material."
+
+            });
+
+        }
+
+    }
+
+);
+
+// ==========================================
+// CREAR MATERIAL DE APOYO
+// ==========================================
+
+router.post(
+    "/api/material-apoyo",
+    proteger,
+    uploadMaterialApoyo.single("archivoMaterial"),
+    async(req,res)=>{
+
+        try{
+
+            const{
+
+                titulo,
+                descripcion,
+                tipoAsignacion,
+                capitulo_id,
+                sub_capitulo_id,
+                orden,
+                obligatorio
+
+            } = req.body;
+
+            let rutaArchivo = "";
+            let nombreArchivo = "";
+            let tipoArchivo = "";
+            let tamano = 0;
+
+            if(req.file){
+
+                rutaArchivo =
+                `/uploads/material-apoyo/${req.file.filename}`;
+
+                nombreArchivo =
+                req.file.originalname;
+
+                tipoArchivo =
+path.extname(req.file.originalname)
+    .replace(".", "")
+    .toLowerCase();
+
+                tamano =
+                req.file.size;
+
+            }
+
+            await db.query(
+
+                `
+                INSERT INTO material_apoyo
+                (
+
+                    titulo,
+                    descripcion,
+                    tipo_asignacion,
+                    capitulo_id,
+                    sub_capitulo_id,
+                    nombre_archivo,
+                    ruta_archivo,
+                    tipo_archivo,
+                    tamano,
+                    orden,
+                    obligatorio,
+                    activo,
+                    usuario_creador
+
+                )
+
+                VALUES
+                (
+
+                    ?,?,?,?,?,?,?,?,?,?,?,1,?
+
+                )
+                `,
+
+                [
+
+                    titulo,
+                    descripcion,
+                    tipoAsignacion,
+                    capitulo_id || null,
+                    sub_capitulo_id || null,
+                    nombreArchivo,
+                    rutaArchivo,
+                    tipoArchivo,
+                    tamano,
+                    orden,
+                    obligatorio,
+                    req.session.usuarioID
+
+                ]
+
+            );
+
+            res.json({
+
+                success:true,
+
+                mensaje:"Material registrado correctamente."
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false,
+
+                mensaje:"Error al registrar el material."
+
+            });
+
+        }
+
+    }
+);
+
+
+// ==========================================
+// LISTAR MATERIAL DE APOYO
+// ==========================================
+
+router.get(
+    "/api/material-apoyo",
+    proteger,
+    async (req, res) => {
+
+        try {
+
+            const [materiales] = await db.query(`
+                SELECT
+                    m.*,
+                    c.titulo AS capitulo,
+                    s.titulo AS subcapitulo
+                FROM material_apoyo m
+                LEFT JOIN capitulos_induccion c
+                    ON c.id = m.capitulo_id
+                LEFT JOIN sub_capitulos_induccion s
+                    ON s.id = m.sub_capitulo_id
+                WHERE m.activo = 1
+                ORDER BY c.numero_capitulo, m.orden
+            `);
+
+            res.json({
+                success: true,
+                materiales
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+            res.status(500).json({
+                success: false,
+                mensaje: "Error al cargar materiales."
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// INFORMACIÓN DEL CURSO
+// ==========================================
+
+router.get(
+    "/api/curso/:id",
+    proteger,
+    async (req, res) => {
+
+        try {
+
+            const { id } = req.params;
+
+            const [[curso]] =
+            await db.query(
+
+                `
+                SELECT *
+                FROM cursos
+                WHERE id = ?
+                `,
+
+                [id]
+
+            );
+
+            if (!curso) {
+
+                return res.json({
+
+                    success: false
+
+                });
+
+            }
+
+            res.json({
+
+                success: true,
+
+                curso
+
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success: false
+
+            });
+
+        }
+
+    }
+
+);
+
+// ==========================================
+// OBTENER CURSO
+// ==========================================
+
+router.get(
+    "/api/curso/:id",
+    proteger,
+    async(req,res)=>{
+
+        try{
+
+            const [curso] =
+            await db.query(
+
+                `
+                SELECT *
+                FROM cursos
+                WHERE id=?
+                LIMIT 1
+                `,
+
+                [
+
+                    req.params.id
+
+                ]
+
+            );
+
+            if(curso.length===0){
+
+                return res.json({
+
+                    success:false
+
+                });
+
+            }
+
+            res.json({
+
+                success:true,
+
+                curso:curso[0]
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// LISTAR CAPÍTULOS DEL CURSO
+// ==========================================
+
+router.get(
+    "/api/cursos/:cursoId/capitulos",
+    proteger,
+    async (req, res) => {
+
+        try {
+
+            const [capitulos] = await db.query(
+
+                `
+                SELECT *
+                FROM capitulos_curso
+                WHERE curso_id = ?
+                ORDER BY orden, numero_capitulo
+                `,
+
+                [
+
+                    req.params.cursoId
+
+                ]
+
+            );
+
+            res.json({
+
+                success: true,
+
+                capitulos
+
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success: false
+
+            });
+
+        }
+
+    }
+
+);
+
+// ==========================================
+// CREAR CAPÍTULO DEL CURSO
+// ==========================================
+
+router.post(
+    "/api/cursos/:cursoId/capitulos",
+    proteger,
+    async(req,res)=>{
+
+        try{
+
+            const{
+
+                numero,
+                titulo,
+                descripcion,
+                orden,
+                porcentaje
+
+            } = req.body;
+
+            await db.query(
+
+                `
+                INSERT INTO capitulos_curso
+                (
+
+                    curso_id,
+                    numero_capitulo,
+                    titulo,
+                    descripcion,
+                    orden,
+                    porcentaje_aprobacion
+
+                )
+
+                VALUES
+                (?,?,?,?,?,?)
+
+                `,
+
+                [
+
+                    req.params.cursoId,
+                    numero,
+                    titulo,
+                    descripcion,
+                    orden,
+                    porcentaje
+
+                ]
+
+            );
+
+            res.json({
+
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// ACTUALIZAR CAPÍTULO
+// ==========================================
+
+router.put(
+
+    "/api/cursos/:cursoId/capitulos/:id",
+
+    proteger,
+
+    async(req,res)=>{
+
+        try{
+
+            const {
+
+                numero,
+                titulo,
+                descripcion,
+                orden,
+                porcentaje
+
+            } = req.body;
+
+            await db.query(
+
+                `
+
+                UPDATE capitulos_curso
+
+                SET
+
+                    numero_capitulo = ?,
+                    titulo = ?,
+                    descripcion = ?,
+                    orden = ?,
+                    porcentaje_aprobacion = ?
+
+                WHERE id = ?
+                AND curso_id = ?
+
+                `,
+
+                [
+
+                    numero,
+                    titulo,
+                    descripcion,
+                    orden,
+                    porcentaje,
+                    req.params.id,
+                    req.params.cursoId
+
+                ]
+
+            );
+
+            res.json({
+
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false,
+
+                mensaje:"Error al actualizar el capítulo."
+
+            });
+
+        }
+
+    }
+
+);
+
+// ==========================================
+// LISTAR SUBCAPÍTULOS
+// ==========================================
+
+router.get(
+    "/api/capitulos/:id/subcapitulos",
+    proteger,
+    async(req,res)=>{
+
+        try{
+
+            const [subcapitulos] =
+            await db.query(
+
+                `
+                SELECT *
+                FROM sub_capitulos_curso
+                WHERE capitulo_id = ?
+                ORDER BY orden,
+                numero_subcapitulo
+                `,
+
+                [
+
+                    req.params.id
+
+                ]
+
+            );
+
+            res.json({
+
+                success:true,
+
+                subcapitulos
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// LISTAR TODOS LOS SUBCAPÍTULOS DEL CURSO
+// ==========================================
+
+router.get(
+    "/api/cursos/:cursoId/subcapitulos",
+    proteger,
+    async(req,res)=>{
+
+        try{
+
+            const [subcapitulos] =
+            await db.query(
+
+                `
+                SELECT
+
+                    sc.*,
+
+                    c.numero_capitulo,
+
+                    c.titulo AS capitulo
+
+                FROM sub_capitulos_curso sc
+
+                INNER JOIN capitulos_curso c
+
+                    ON c.id = sc.capitulo_id
+
+                WHERE c.curso_id = ?
+
+                ORDER BY
+
+                    c.numero_capitulo,
+
+                    sc.numero_subcapitulo
+
+                `,
+
+                [
+
+                    req.params.cursoId
+
+                ]
+
+            );
+
+            res.json({
+
+                success:true,
+
+                subcapitulos
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+// ==========================================
+// OBTENER CAPÍTULO
+// ==========================================
+
+router.get(
+    "/api/capitulos/:id",
+    proteger,
+    async(req,res)=>{
+
+        try{
+
+            const [capitulo]=
+            await db.query(
+
+                `
+                SELECT *
+                FROM capitulos_curso
+                WHERE id=?
+                `,
+
+                [
+
+                    req.params.id
+
+                ]
+
+            );
+
+            if(capitulo.length===0){
+
+                return res.json({
+
+                    success:false
+
+                });
+
+            }
+
+            res.json({
+
+                success:true,
+
+                capitulo:capitulo[0]
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================
+// CREAR SUBCAPÍTULO DEL CURSO
+// ==========================================
+
+router.post(
+
+    "/api/cursos/:cursoId/subcapitulos",
+
+    proteger,
+
+    uploadVideo.single("archivoVideo"),
+
+    async(req,res)=>{
+
+        try{
+
+            const{
+
+    capitulo_id,
+    numero,
+    titulo,
+    descripcion,
+    duracion,
+    orden,
+    tipo_video,
+    url_youtube
+
+} = req.body;
+
+let rutaVideo = "";
+
+// ==========================================
+// VIDEO LOCAL
+// ==========================================
+
+if(
+    tipo_video === "local"
+    &&
+    req.file
+){
+
+    rutaVideo =
+    `/uploads/videos/induccion/${req.file.filename}`;
+
+}
+
+// ==========================================
+// VIDEO YOUTUBE
+// ==========================================
+
+if(
+    tipo_video === "youtube"
+){
+
+    rutaVideo =
+    url_youtube;
+
+}
+
+await db.query(
+
+    `
+
+    INSERT INTO sub_capitulos_curso
+    (
+
+        capitulo_id,
+        numero_subcapitulo,
+        titulo,
+        descripcion,
+        url_video,
+        tipo_video,
+        duracion_minutos,
+        orden,
+        activo
+
+    )
+
+    VALUES
+    (
+
+        ?,?,?,?,?,?,?,?,1
+
+    )
+
+    `,
+
+    [
+
+        capitulo_id,
+        numero,
+        titulo,
+        descripcion,
+        rutaVideo,
+        tipo_video,
+        duracion,
+        orden
+
+    ]
+
+);
+
+res.json({
+
+    success:true,
+
+    mensaje:"Subcapítulo creado correctamente."
+
+});
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+
+);
+
+// ==========================================
+// OBTENER SUBCAPÍTULO
+// ==========================================
+
+router.get(
+
+    "/api/subcapitulos/:id",
+
+    proteger,
+
+    async(req,res)=>{
+
+        try{
+
+            const [sub] = await db.query(
+
+                `
+
+                SELECT *
+
+                FROM sub_capitulos_curso
+
+                WHERE id = ?
+
+                LIMIT 1
+
+                `,
+
+                [
+
+                    req.params.id
+
+                ]
+
+            );
+
+            if(sub.length===0){
+
+                return res.json({
+
+                    success:false
+
+                });
+
+            }
+
+            res.json({
+
+                success:true,
+
+                subcapitulo:sub[0]
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+
+);
+
+// ==========================================
+// OBTENER VIDEO DEL SUBCAPÍTULO
+// ==========================================
+
+router.get(
+    "/api/subcapitulos/:id/video",
+    proteger,
+    async (req,res)=>{
+
+        try{
+
+            const [[video]] =
+            await db.query(
+
+                `
+                SELECT
+
+                    id,
+                    tipo_video,
+                    url_video
+
+                FROM sub_capitulos_curso
+
+                WHERE id = ?
+
+                `,
+
+                [
+                    req.params.id
+                ]
+
+            );
+
+            if(!video){
+
+                return res.json({
+
+                    success:false
+
+                });
+
+            }
+
+            res.json({
+
+                success:true,
+
+                video
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false
+
+            });
+
+        }
+
+    }
+
+);
+
+// ==========================================
+// ACTUALIZAR VIDEO DEL SUBCAPÍTULO
+// ==========================================
+
+router.put(
+
+    "/api/subcapitulos/:id/video",
+
+    proteger,
+
+    uploadVideo.single("video"),
+
+    async(req,res)=>{
+
+        try{
+
+            const{
+
+                tipo_video,
+                url_youtube
+
+            } = req.body;
+
+            const [[sub]] =
+            await db.query(
+
+                `
+
+                SELECT
+
+                    id,
+                    url_video,
+                    tipo_video
+
+                FROM sub_capitulos_curso
+
+                WHERE id=?
+
+                `,
+
+                [
+
+                    req.params.id
+
+                ]
+
+            );
+
+            if(!sub){
+
+                return res.json({
+
+                    success:false,
+
+                    mensaje:"Subcapítulo no encontrado."
+
+                });
+
+            }
+
+            let rutaVideo =
+            sub.url_video;
+
+            // ==========================
+            // VIDEO LOCAL
+            // ==========================
+
+            if(tipo_video==="local"){
+
+                if(req.file){
+
+                    rutaVideo =
+                    `/uploads/videos/induccion/${req.file.filename}`;
+
+                }
+
+            }
+
+            // ==========================
+            // YOUTUBE
+            // ==========================
+
+            if(tipo_video==="youtube"){
+
+                rutaVideo =
+                url_youtube;
+
+            }
+
+            await db.query(
+
+                `
+
+                UPDATE
+                sub_capitulos_curso
+
+                SET
+
+                    tipo_video=?,
+                    url_video=?
+
+                WHERE id=?
+
+                `,
+
+                [
+
+                    tipo_video,
+                    rutaVideo,
+                    req.params.id
+
+                ]
+
+            );
+
+            res.json({
+
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false,
+
+                mensaje:error.message
+
+            });
+
+        }
+
+    }
+
+);
+
+// ==========================================
+// ACTUALIZAR SUBCAPÍTULO
+// ==========================================
+
+router.put(
+
+    "/api/subcapitulos/:id",
+
+    proteger,
+
+    uploadVideo.single("video"),
+
+    async(req,res)=>{
+
+        try{
+
+            const{
+
+                capitulo_id,
+                numero,
+                titulo,
+                descripcion,
+                duracion,
+                orden,
+                tipo_video,
+                url_youtube
+
+            } = req.body;
+
+            // Obtener información actual
+            const [actual] =
+            await db.query(
+
+                `
+
+                SELECT *
+
+                FROM sub_capitulos_curso
+
+                WHERE id = ?
+
+                LIMIT 1
+
+                `,
+
+                [
+
+                    req.params.id
+
+                ]
+
+            );
+
+            if(actual.length===0){
+
+                return res.json({
+
+                    success:false,
+
+                    mensaje:"Subcapítulo no encontrado."
+
+                });
+
+            }
+
+            let rutaVideo =
+            actual[0].url_video;
+
+            // ==========================
+            // VIDEO LOCAL
+            // ==========================
+
+            if(
+                tipo_video==="local"
+            ){
+
+                if(req.file){
+
+                    rutaVideo =
+                    `/uploads/videos/induccion/${req.file.filename}`;
+
+                }
+
+            }
+
+            // ==========================
+            // YOUTUBE
+            // ==========================
+
+            if(
+                tipo_video==="youtube"
+            ){
+
+                rutaVideo =
+                url_youtube;
+
+            }
+
+            await db.query(
+
+                `
+
+                UPDATE
+                sub_capitulos_curso
+
+                SET
+
+                    capitulo_id=?,
+                    numero_subcapitulo=?,
+                    titulo=?,
+                    descripcion=?,
+                    duracion_minutos=?,
+                    tipo_video=?,
+                    url_video=?,
+                    orden=?
+
+                WHERE id=?
+
+                `,
+
+                [
+
+                    capitulo_id,
+                    numero,
+                    titulo,
+                    descripcion,
+                    duracion,
+                    tipo_video,
+                    rutaVideo,
+                    orden,
+                    req.params.id
+
+                ]
+
+            );
+
+            res.json({
+
+                success:true
+
+            });
+
+        }catch(error){
+
+            console.error(error);
+
+            res.status(500).json({
+
+                success:false,
+
+                mensaje:error.message
+
+            });
+
+        }
+
+    }
+
 );
 
 module.exports = router;

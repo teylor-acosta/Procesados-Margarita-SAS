@@ -13,114 +13,181 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("DATA PANEL:", data);
 
         if (!data.success) {
+
             window.location.href = "/login";
+
             return;
+
         }
 
-        // 🔥 NORMALIZAR ROL
-        const rol = (data.usuario.rol || "").toLowerCase().trim();
+        // ============================================
+        // NORMALIZAR ROL
+        // ============================================
+
+        const rol = (data.usuario.rol || "")
+            .toLowerCase()
+            .trim();
 
         console.log("ROL NORMALIZADO:", rol);
 
         let html = "";
 
         // ============================================
-        // 🔥 SUPER ADMIN / ADMIN → RECURSOS HUMANOS
+        // SUPERADMIN / ADMIN
         // ============================================
+
         if (rol.includes("super") || rol.includes("admin")) {
 
-    html += `
+            html += `
 
-        <div
-            class="modulo-card rh"
-            onclick="irRecursosHumanos()">
+                <div
+                    class="modulo-card rh"
+                    onclick="irRecursosHumanos()">
 
-            <i class="fas fa-user-tie icono-modulo"></i>
+                    <i class="fas fa-user-tie icono-modulo"></i>
 
-            <span>Recursos Humanos</span>
+                    <span>Recursos Humanos</span>
 
-            <small>
-                Empleados, usuarios y capacitaciones
-            </small>
+                    <small>
+                        Empleados y usuarios
+                    </small>
 
-        </div>
+                </div>
 
-        <div class="modulo-card proximamente">
+                <div
+                    class="modulo-card capacitaciones"
+                    onclick="irCapacitaciones()">
 
-            <i class="fas fa-boxes-stacked icono-modulo"></i>
+                    <i class="fas fa-graduation-cap icono-modulo"></i>
 
-            <span>Inventarios</span>
+                    <span>Capacitaciones</span>
 
-            <small>
-                Próximamente
-            </small>
+                    <small>
+                        Cursos, evaluaciones y certificados
+                    </small>
 
-        </div>
+                </div>
 
-        <div class="modulo-card proximamente">
+                <div class="modulo-card proximamente">
 
-            <i class="fas fa-truck icono-modulo"></i>
+                    <i class="fas fa-boxes-stacked icono-modulo"></i>
 
-            <span>Logística</span>
+                    <span>Inventarios</span>
 
-            <small>
-                Próximamente
-            </small>
+                    <small>
+                        Próximamente
+                    </small>
 
-        </div>
+                </div>
 
-        <div class="modulo-card proximamente">
+                <div class="modulo-card proximamente">
 
-            <i class="fas fa-coins icono-modulo"></i>
+                    <i class="fas fa-truck icono-modulo"></i>
 
-            <span>Finanzas</span>
+                    <span>Logística</span>
 
-            <small>
-                Próximamente
-            </small>
+                    <small>
+                        Próximamente
+                    </small>
 
-        </div>
+                </div>
 
-        <div class="modulo-card proximamente">
+                <div class="modulo-card proximamente">
 
-            <i class="fas fa-chart-line icono-modulo"></i>
+                    <i class="fas fa-coins icono-modulo"></i>
 
-            <span>Reportes</span>
+                    <span>Finanzas</span>
 
-            <small>
-                Próximamente
-            </small>
+                    <small>
+                        Próximamente
+                    </small>
 
-        </div>
+                </div>
 
-    `;
-}
+                <div class="modulo-card proximamente">
+
+                    <i class="fas fa-chart-line icono-modulo"></i>
+
+                    <span>Reportes</span>
+
+                    <small>
+                        Próximamente
+                    </small>
+
+                </div>
+
+            `;
+
+        }
 
         // ============================================
-        // 🔥 AUXILIAR → SOLO PERFIL
+        // AUXILIAR
         // ============================================
+
         else if (rol.includes("auxiliar")) {
 
             html += `
-                <div class="modulo-card" onclick="window.location.href='/perfil'">
+
+                <div
+                    class="modulo-card"
+                    onclick="window.location.href='/perfil'">
+
                     <i class="fas fa-user icono-modulo"></i>
-                    <span>Mi perfil</span>
+
+                    <span>Mi Perfil</span>
+
+                    <small>
+                        Información personal
+                    </small>
+
                 </div>
+
+                <div
+                    class="modulo-card capacitaciones"
+                    onclick="irCapacitaciones()">
+
+                    <i class="fas fa-graduation-cap icono-modulo"></i>
+
+                    <span>Capacitaciones</span>
+
+                    <small>
+                        Cursos, evaluaciones y certificados
+                    </small>
+
+                </div>
+
             `;
+
         }
 
         // ============================================
-        // 🔥 FALLBACK
+        // FALLBACK
         // ============================================
+
         if (html === "") {
-            html = `<p class="text-warning text-center">Rol no reconocido: ${rol}</p>`;
+
+            html = `
+                <p class="text-warning text-center">
+
+                    Rol no reconocido: ${rol}
+
+                </p>
+            `;
+
         }
 
-        // 🔥 RENDER LIMPIO
+        // ============================================
+        // RENDER
+        // ============================================
+
         contenedor.innerHTML = `
+
             <div class="modulos-container">
+
                 ${html}
+
             </div>
+
         `;
 
     } catch (error) {
@@ -128,23 +195,38 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.error("ERROR PANEL:", error);
 
         contenedor.innerHTML = `
+
             <p class="text-danger text-center">
+
                 Error cargando módulos
+
             </p>
+
         `;
+
     }
 
 });
 
 
 // ============================================
-// 🔥 FUNCIONES DE NAVEGACIÓN
+// NAVEGACIÓN
 // ============================================
 
-function irRecursosHumanos(){
+function irRecursosHumanos() {
+
     window.location.href = "/recursos-humanos";
+
 }
 
-function irEmpleados(){
+function irEmpleados() {
+
     window.location.href = "/empleados-menu";
+
+}
+
+function irCapacitaciones() {
+
+    window.location.href = "/centro-capacitaciones";
+
 }

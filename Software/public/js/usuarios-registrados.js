@@ -32,20 +32,9 @@ const mensaje =
 const botonesFiltro =
     document.querySelectorAll('.filtro-btn');
 
-const modalReset =
-    document.getElementById('modalReset');
-
-const btnCancelarReset =
-    document.getElementById('btnCancelarReset');
-
-const btnConfirmarReset =
-    document.getElementById('btnConfirmarReset');
-
 let usuariosGlobal = [];
 
 let filtroActual = 'Todos';
-
-let usuarioResetID = null;
 
 // ============================================
 // 🔥 CARGAR USUARIOS
@@ -685,149 +674,137 @@ async function toggleBloqueo(id, estado) {
 }
 
 // ============================================
-// 🔥 MODAL RESET
+// 🔥 RESET PASSWORD SWEETALERT
 // ============================================
 
-function abrirModalReset(id) {
+async function abrirModalReset(id) {
 
-    usuarioResetID = id;
+    const confirmar = await Swal.fire({
 
-    modalReset.classList.add('activo');
+        title: '¿Restablecer contraseña?',
 
-}
+        html: `
+            Se generará una contraseña temporal para este usuario.
+            <br><br>
+            <b>El usuario deberá cambiarla al iniciar sesión.</b>
+        `,
 
-function cerrarModalReset() {
+        icon: 'warning',
 
-    modalReset.classList.remove('activo');
+        showCancelButton: true,
 
-    usuarioResetID = null;
+        confirmButtonText: 'Sí, restablecer',
 
-}
+        cancelButtonText: 'Cancelar',
 
-btnCancelarReset.addEventListener(
+        confirmButtonColor: '#16a34a',
 
-    'click',
+        cancelButtonColor: '#dc2626'
 
-    cerrarModalReset
+    });
 
-);
+    if (!confirmar.isConfirmed) return;
 
-// ============================================
-// 🔥 RESET PASSWORD
-// ============================================
+    try {
 
-btnConfirmarReset.addEventListener(
+        const res = await fetch(
 
-    'click',
+            '/api/usuarios/reset-password',
 
-    async () => {
+            {
 
-        if (!usuarioResetID) return;
+                method: 'POST',
 
-        try {
+                headers: {
 
-            const res =
+                    'Content-Type': 'application/json'
 
-                await fetch(
+                },
 
-                    '/api/usuarios/reset-password',
+                body: JSON.stringify({
 
-                    {
+                    id
 
-                        method:'POST',
-
-                        headers:{
-                            'Content-Type':'application/json'
-                        },
-
-                        body:JSON.stringify({
-
-                            id:usuarioResetID
-
-                        })
-
-                    }
-
-                );
-
-            const data =
-                await res.json();
-
-            if (data.success) {
-
-                mostrarExito(
-                    'Contraseña reseteada correctamente'
-                );
-
-                cerrarModalReset();
-
-                cargarUsuarios();
-
-            } else {
-
-                mostrarError(
-                    data.message
-                );
+                })
 
             }
 
-        } catch (error) {
+        );
 
-            console.error(error);
+        const data = await res.json();
 
-            mostrarError(
-                'Error reset password'
-            );
+        if (!data.success) {
+
+            return Swal.fire({
+
+                icon: 'error',
+
+                title: 'Error',
+
+                text: data.message
+
+            });
 
         }
 
+        await Swal.fire({
+
+            icon: 'success',
+
+            title: 'Contraseña restablecida',
+
+            html: `
+
+                <p>
+
+                    La contraseña temporal es:
+
+                </p>
+
+                <h2 style="
+                    color:#16a34a;
+                    letter-spacing:2px;
+                    margin:15px 0;
+                ">
+
+                    ${data.password}
+
+                </h2>
+
+                <p>
+
+                    El usuario deberá cambiarla
+                    cuando vuelva a iniciar sesión.
+
+                </p>
+
+            `,
+
+            confirmButtonText: 'Aceptar',
+
+            confirmButtonColor: '#16a34a'
+
+        });
+
+        cargarUsuarios();
+
     }
 
-);
+    catch (error) {
 
-// ============================================
-// 🔥 ALERTAS
-// ============================================
+        console.error(error);
 
-function mostrarExito(texto) {
+        Swal.fire({
 
-    mensaje.innerHTML = `
+            icon: 'error',
 
-        <i class="fas fa-circle-check"></i>
+            title: 'Error',
 
-        ${texto}
+            text: 'No fue posible restablecer la contraseña.'
 
-    `;
+        });
 
-    mensaje.className =
-        'alerta-exito mostrar';
-
-    setTimeout(() => {
-
-        mensaje.classList.remove('mostrar');
-
-    }, 3500);
-
-}
-
-function mostrarError(texto) {
-
-    mensaje.innerHTML = `
-
-        <i class="fas fa-circle-xmark"></i>
-
-        ${texto}
-
-    `;
-
-    mensaje.className =
-        'alerta-error mostrar';
-
-    setTimeout(() => {
-
-        mensaje.classList.remove('mostrar');
-
-    }, 4000);
+    }
 
 }
 

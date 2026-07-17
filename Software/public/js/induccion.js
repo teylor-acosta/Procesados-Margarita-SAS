@@ -9,6 +9,13 @@ let videoModalInstance = null;
 let currentSubCapituloId = null;
 let currentCapituloId = null;
 
+// ==========================================
+// YOUTUBE
+// ==========================================
+
+let youtubePlayer = null;
+let videoEsYoutube = false;
+
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("✅ DOM cargado e inicializando módulos...");
     
@@ -23,6 +30,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (btnConfirmar) {
         btnConfirmar.onclick = marcarVideoComoVisto;
     }
+    // ==========================================
+// LIMPIAR VIDEO AL CERRAR EL MODAL
+// ==========================================
+
+const modalVideo =
+    document.getElementById(
+        "videoModal"
+    );
+
+if(modalVideo){
+
+    modalVideo.addEventListener(
+
+        "hidden.bs.modal",
+
+        cerrarVideo
+
+    );
+
+}
 });
 
 /**
@@ -412,7 +439,7 @@ async function cargarSubCapitulos(capituloId) {
                         </div>
                         <div class="video-acciones">
                             ${!visto ? `
-                                <button class="btn-ver-video" onclick="verVideo(${sub.id}, ${capituloId}, '${videoUrl}')">
+                                <button class="btn-ver-video" onclick="verVideo(${sub.id},${capituloId},'${videoUrl}','${sub.tipo_video}')">
                                     <i class="fas fa-play me-1"></i> Ver video
                                 </button>
                             ` : `
@@ -437,18 +464,66 @@ async function cargarSubCapitulos(capituloId) {
     }
 }
 
-function verVideo(subCapituloId, capituloId, videoUrl) {
+function verVideo(subCapituloId,capituloId,videoUrl,tipoVideo) {
     currentSubCapituloId = subCapituloId;
     currentCapituloId = capituloId;
+    console.log("Tipo recibido:", tipoVideo);
+console.log("URL:", videoUrl);
+    videoEsYoutube = (tipoVideo === "youtube");
     
-    const videoPlayer = document.getElementById('videoPlayer');
-    const videoSource = document.getElementById('videoSource');
-    const btnConfirmar = document.getElementById('btnConfirmarVisto');
+    const videoPlayer =document.getElementById("videoPlayer");
+const videoSource =document.getElementById("videoSource");
+const youtubeContainer =document.getElementById("contenedorYoutube");
+const videoContainer =document.getElementById("contenedorVideoLocal");
+const btnConfirmar =document.getElementById("btnConfirmarVisto");
     
     if(!videoPlayer || !btnConfirmar) return;
 
+    // ==========================================
+// VIDEO LOCAL
+// ==========================================
+
+if(!videoEsYoutube){
+
+    videoContainer.classList.remove("d-none");
+
+    youtubeContainer.classList.add("d-none");
+
+    if(youtubePlayer){
+
+        youtubePlayer.destroy();
+
+        youtubePlayer = null;
+
+    }
+
     videoSource.src = videoUrl;
+
     videoPlayer.load();
+
+}
+
+// ==========================================
+// YOUTUBE
+// ==========================================
+
+else{
+
+    videoContainer.classList.add("d-none");
+
+    youtubeContainer.classList.remove("d-none");
+
+    videoPlayer.pause();
+
+    videoPlayer.currentTime = 0;
+
+videoPlayer.removeAttribute("src");
+
+videoPlayer.load();
+
+    cargarYoutube(videoUrl);
+
+}
     
     btnConfirmar.disabled = true;
     btnConfirmar.innerHTML = 'Debe visualizar el video instructivo';
@@ -538,3 +613,214 @@ async function marcarVideoComoVisto() {
 function irAEvaluacion(capituloId) { window.location.href = `/evaluacion?id=${capituloId}`; }
 function irAFirma() { window.location.href = '/firma'; }
 function irACertificado() { window.location.href = '/certificado'; }
+
+// =======================================================
+// YOUTUBE
+// =======================================================
+
+function cargarYoutube(url){
+
+    const id =
+        obtenerIdYoutube(url);
+
+        console.log("ID obtenido:", id);
+
+    if(!id){
+
+        alert("La URL de YouTube no es válida.");
+
+        return;
+
+    }
+
+    if(youtubePlayer){
+
+        youtubePlayer.destroy();
+
+    }
+
+    youtubePlayer = new YT.Player(
+
+        "youtubePlayer",
+
+        {
+
+            width:"100%",
+
+            height:"100%",
+
+            videoId:id,
+
+            playerVars:{
+
+                autoplay:1,
+
+                rel:0,
+
+                modestbranding:1
+
+            },
+
+            events:{
+
+                onStateChange:eventoYoutube
+
+            }
+
+        }
+
+    );
+
+}
+
+function eventoYoutube(event){
+
+    if(
+
+        event.data ===
+
+        YT.PlayerState.ENDED
+
+    ){
+
+        const btn =
+
+            document.getElementById(
+
+                "btnConfirmarVisto"
+
+            );
+
+        btn.disabled = false;
+
+        btn.classList.remove(
+
+            "btn-secondary"
+
+        );
+
+        btn.classList.add(
+
+            "btn-success"
+
+        );
+
+        btn.innerHTML =
+
+            "✓ MARCAR COMO VISTO";
+
+    }
+
+}
+
+function obtenerIdYoutube(url){
+
+    if(!url){
+
+        return null;
+
+    }
+
+    try{
+
+        const urlObj = new URL(url);
+
+        // https://youtu.be/XXXXXXXXXXX
+        if(urlObj.hostname.includes("youtu.be")){
+
+            return urlObj.pathname.substring(1);
+
+        }
+
+        // https://www.youtube.com/watch?v=XXXXXXXXXXX
+        if(urlObj.searchParams.has("v")){
+
+            return urlObj.searchParams.get("v");
+
+        }
+
+        // https://www.youtube.com/embed/XXXXXXXXXXX
+        if(urlObj.pathname.includes("/embed/")){
+
+            return urlObj.pathname.split("/embed/")[1];
+
+        }
+
+    }catch(e){
+
+        console.error(e);
+
+    }
+
+    return null;
+
+}
+// =======================================================
+// CERRAR VIDEO
+// =======================================================
+
+function cerrarVideo(){
+
+    const video =
+        document.getElementById(
+            "videoPlayer"
+        );
+
+    const source =
+        document.getElementById(
+            "videoSource"
+        );
+
+    // ===============================
+    // MP4
+    // ===============================
+
+    if(video){
+
+        video.pause();
+
+        video.currentTime = 0;
+
+        source.src = "";
+
+        video.load();
+
+    }
+
+    // ===============================
+    // YOUTUBE
+    // ===============================
+
+    if(youtubePlayer){
+
+        try{
+
+            youtubePlayer.stopVideo();
+
+            youtubePlayer.destroy();
+
+        }
+
+        catch(e){}
+
+        youtubePlayer = null;
+
+    }
+
+    document
+        .getElementById(
+            "contenedorVideoLocal"
+        )
+        .classList.remove(
+            "d-none"
+        );
+
+    document
+        .getElementById(
+            "contenedorYoutube"
+        )
+        .classList.add(
+            "d-none"
+        );
+
+}

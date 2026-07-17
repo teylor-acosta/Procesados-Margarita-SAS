@@ -1,12 +1,53 @@
 /* ==========================================================================
    SIDEBAR GLOBAL ERP - PROCESADOS MARGARITA
    ========================================================================== */
+   /* ==========================================================================
+   VARIABLES GLOBALES
+   ========================================================================== */
+
+let menuSistema = [];
+
+let paginaActual = "";
+
+let tipoMenu = "ERP";
 
 document.addEventListener("DOMContentLoaded", async () => {
+
+    paginaActual =
+        document.body.dataset.pagina || "";
+
+    detectarTipoMenu();
 
     await cargarSidebar();
 
 });
+/* ==========================================================================
+   DETERMINAR TIPO DE MENÚ
+   ========================================================================== */
+
+function detectarTipoMenu() {
+
+    const onboarding = [
+
+        "induccion",
+
+        "evaluacion",
+
+        "firma",
+
+        "certificado"
+
+    ];
+
+    tipoMenu =
+
+        onboarding.includes(paginaActual)
+
+            ? "ONBOARDING"
+
+            : "ERP";
+
+}
 
 /* ==========================================================================
    CARGAR SIDEBAR
@@ -32,12 +73,13 @@ async function cargarSidebar() {
             await response.text();
 
         container.innerHTML =
-            html;
+    html;
 
-        construirMenu();
+await cargarMenuBD();
 
-        cargarDatosUsuario();
+construirMenu();
 
+cargarDatosUsuario();
         configurarLogout();
 
         configurarMenuMovil();
@@ -50,7 +92,359 @@ async function cargarSidebar() {
         );
     }
 }
+   
 
+/* ==========================================================================
+   OBTENER MENÚ DESDE BASE DE DATOS
+   ========================================================================== */
+
+async function cargarMenuBD() {
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/sidebar/menu?tipo=${tipoMenu}`
+            );
+
+        const result =
+            await response.json();
+
+        if (!result.success) {
+
+            console.error(
+                "No fue posible obtener el menú."
+            );
+
+            return;
+
+        }
+
+        menuSistema =
+            result.menu || [];
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Error cargando menú:",
+            error
+        );
+
+    }
+
+}
+
+/* ==========================================================================
+   FUNCIONES AUXILIARES DEL MENÚ
+   ========================================================================== */
+
+function obtenerModulo(nombre, modulos = menuSistema) {
+
+    for (const modulo of modulos) {
+
+        if (modulo.nombre === nombre) {
+
+            return modulo;
+
+        }
+
+        if (modulo.hijos && modulo.hijos.length) {
+
+            const encontrado = obtenerModulo(
+
+                nombre,
+
+                modulo.hijos
+
+            );
+
+            if (encontrado) {
+
+                return encontrado;
+
+            }
+
+        }
+
+    }
+
+    return null;
+
+}
+
+function obtenerHijos(idPadre) {
+
+    function buscar(modulos) {
+
+        for (const modulo of modulos) {
+
+            if (modulo.id === idPadre) {
+
+                return modulo.hijos || [];
+
+            }
+
+            if (modulo.hijos && modulo.hijos.length) {
+
+                const hijos = buscar(modulo.hijos);
+
+                if (hijos) {
+
+                    return hijos;
+
+                }
+
+            }
+
+        }
+
+        return null;
+
+    }
+
+    return buscar(menuSistema) || [];
+
+}
+function obtenerModuloPorId(id) {
+
+    return menuSistema.find(modulo =>
+        modulo.id === id
+    );
+
+}
+
+function obtenerPadre(idHijo) {
+
+    function buscar(modulos, padre = null) {
+
+        for (const modulo of modulos) {
+
+            if (modulo.id === idHijo) {
+
+                return padre;
+
+            }
+
+            if (modulo.hijos?.length) {
+
+                const encontrado =
+                    buscar(
+                        modulo.hijos,
+                        modulo
+                    );
+
+                if (encontrado) {
+
+                    return encontrado;
+
+                }
+
+            }
+
+        }
+
+        return null;
+
+    }
+
+    return buscar(menuSistema);
+
+}
+function obtenerModuloActual() {
+
+    const ruta = window.location.pathname;
+
+    function buscar(modulos) {
+
+        for (const modulo of modulos) {
+
+            if (modulo.ruta === ruta) {
+
+                return modulo;
+
+            }
+
+            if (modulo.hijos?.length) {
+
+                const encontrado = buscar(modulo.hijos);
+
+                if (encontrado) {
+
+                    return encontrado;
+
+                }
+
+            }
+
+        }
+
+        return null;
+
+    }
+
+    return buscar(menuSistema);
+
+}
+
+function obtenerRutaModulo(modulo) {
+
+    const ruta = [];
+
+    let actual = modulo;
+
+    while (actual) {
+
+        ruta.unshift(actual);
+
+        actual = obtenerPadre(actual.id);
+
+    }
+
+    return ruta;
+
+}
+
+
+/* ==========================================================================
+   RENDERIZAR MENÚ DINÁMICO
+   ========================================================================== */
+
+function renderizarMenuDinamico(modulos) {
+
+    const menu = document.getElementById(
+        "menuDinamico"
+    );
+
+    if (!menu) return;
+
+    let html = "";
+
+    modulos.forEach(modulo => {
+
+        html += crearNodoMenu(modulo);
+
+    });
+
+    menu.innerHTML = html;
+
+    activarEventosMenu();
+
+}
+
+/* ==========================================================================
+   ACTIVAR EVENTOS DEL MENÚ
+   ========================================================================== */
+
+function activarEventosMenu() {
+
+    document
+        .querySelectorAll(".menu-parent")
+        .forEach(parent => {
+
+            parent.addEventListener("click", () => {
+
+                const grupo =
+                    parent.closest(".menu-group");
+
+                grupo.classList.toggle("open");
+
+            });
+
+        });
+
+}
+
+/* ==========================================================================
+   CREAR NODO DEL MENÚ
+   ========================================================================== */
+
+function crearNodoMenu(modulo) {
+
+    // ==========================================
+    // MÓDULO SIN HIJOS
+    // ==========================================
+
+    if (!modulo.hijos || modulo.hijos.length === 0) {
+
+        return `
+
+            <a
+                href="${modulo.ruta}"
+                class="menu-item">
+
+                <i class="fas ${modulo.icono}"></i>
+
+                <span>
+
+                    ${modulo.nombre}
+
+                </span>
+
+            </a>
+
+        `;
+
+    }
+
+    // ==========================================
+    // MÓDULO CON HIJOS
+    // ==========================================
+
+    return `
+
+        <div class="menu-group">
+
+            <div class="menu-parent">
+
+                <div class="menu-parent-left">
+
+                    <i class="fas ${modulo.icono}"></i>
+
+                    <span>
+
+                        ${modulo.nombre}
+
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-down menu-arrow"></i>
+
+            </div>
+
+            <div class="submenu">
+
+                ${modulo.hijos
+                    .map(hijo => crearNodoMenu(hijo))
+                    .join("")}
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+function tieneModulo(nombre) {
+
+    return menuSistema.some(modulo =>
+        modulo.nombre === nombre
+    );
+
+}
+
+function moduloActivo(nombre) {
+
+    const modulo = obtenerModulo(nombre);
+
+    if (!modulo) return false;
+
+    return modulo.ruta === window.location.pathname;
+
+}
 
 /* =====================================
    MENU RECURSOS HUMANOS
@@ -66,9 +460,30 @@ function menuRecursosHumanos(paginaActiva) {
         'documentacion',
         'centro-actividad'
     ];
+    const empleados =
+    obtenerModuloPorId(4);
+
+const hijosEmpleados =
+    obtenerHijos(4);
 
     const mostrarModuloEmpleados =
         paginasEmpleados.includes(paginaActiva);
+        const recursosHumanos =
+    obtenerModulo(
+        "Recursos Humanos"
+    );
+
+const modulosRH =
+    recursosHumanos
+        ? obtenerHijos(
+            recursosHumanos.id
+        )
+        : [];
+        console.log(
+    "MODULOS RH:",
+    modulosRH
+);
+
 
     return `
 
@@ -107,48 +522,29 @@ function menuRecursosHumanos(paginaActiva) {
             <div class="submenu">
 
                 <a href="/recursos-humanos"
-                   class="menu-item submenu-item ${paginaActiva === 'recursos-humanos' ? 'active' : ''}">
+   class="menu-item submenu-item ${paginaActiva === 'recursos-humanos' ? 'active' : ''}">
 
-                    <i class="fas fa-house"></i>
+    <i class="fas fa-house"></i>
 
-                    <span>
-                        Inicio Recursos Humanos
-                    </span>
+    <span>
+        Inicio Recursos Humanos
+    </span>
 
-                </a>
+</a>
 
-                <a href="/empleados-menu"
-                   class="menu-item submenu-item">
+${modulosRH.map(modulo => `
 
-                    <i class="fas fa-users"></i>
+    <a
+        href="${modulo.ruta}"
+        class="menu-item submenu-item ${paginaActiva === modulo.ruta.substring(1) ? 'active' : ''}">
 
-                    <span>
-                        Empleados
-                    </span>
+        <i class="fas ${modulo.icono}"></i>
 
-                </a>
+        <span>${modulo.nombre}</span>
 
-                <a href="/usuarios"
-                   class="menu-item submenu-item">
+    </a>
 
-                    <i class="fas fa-user-shield"></i>
-
-                    <span>
-                        Usuarios
-                    </span>
-
-                </a>
-
-                <a href="#"
-                   class="menu-item submenu-item">
-
-                    <i class="fas fa-graduation-cap"></i>
-
-                    <span>
-                        Capacitaciones
-                    </span>
-
-                </a>
+`).join("")}
 
             </div>
 
@@ -407,6 +803,22 @@ function construirMenu() {
 
     const pagina =
         document.body.dataset.pagina;
+        const moduloActual =
+    obtenerModuloActual();
+    const rutaActual =
+    obtenerRutaModulo(
+        moduloActual
+    );
+
+console.log(
+    "RUTA:",
+    rutaActual
+);
+
+console.log(
+    "MODULO ACTUAL:",
+    moduloActual
+);
 
     const menu =
         document.getElementById(
@@ -414,6 +826,14 @@ function construirMenu() {
         );
 
     if (!menu) return;
+    const menuPanel =
+    obtenerModulo("Panel");
+
+const menuDashboard =
+    obtenerModulo("Inicio");
+
+const menuPerfil =
+    obtenerModulo("Mi Perfil");
 
     /* ======================
        DASHBOARD
