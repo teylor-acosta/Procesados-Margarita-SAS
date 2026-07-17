@@ -1,0 +1,413 @@
+/* =========================================
+CONTENEDOR
+========================================= */
+
+.contenedor-induccion{
+
+    margin-left:280px;
+
+    padding:45px;
+
+    min-height:100vh;
+
+}
+
+/* =========================================
+CABECERA
+========================================= */
+
+.cabecera{
+
+    text-align:center;
+
+    margin-bottom:40px;
+
+}
+
+.cabecera h1{
+
+    font-family:'Averia Libre',cursive;
+
+    font-size:3rem;
+
+    color:#1d2a44;
+
+}
+
+.cabecera h1 i{
+
+    color:#ff7a00;
+
+    margin-right:10px;
+
+}
+
+.cabecera p{
+
+    font-size:1.2rem;
+
+    color:#5b6b84;
+
+}
+
+/* =========================================
+GRID
+========================================= */
+
+.grid-opciones{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+
+    gap:30px;
+
+}
+/* =========================================
+CARD
+========================================= */
+
+.opcion{
+
+    background:white;
+
+    border-radius:22px;
+
+    padding:35px;
+
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
+
+    transition:.35s;
+
+    cursor:pointer;
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.opcion::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:180px;
+
+    height:180px;
+
+    background:rgba(38,185,92,.08);
+
+    border-radius:50%;
+
+    right:-70px;
+
+    top:-70px;
+
+}
+
+.opcion:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 25px 45px rgba(0,0,0,.18);
+
+}
+
+.opcion i{
+
+    font-size:3rem;
+
+    color:#26b95c;
+
+    margin-bottom:20px;
+
+}
+
+.opcion h3{
+
+    font-family:'Averia Libre',cursive;
+
+    color:#1d2a44;
+
+    margin-bottom:15px;
+
+}
+
+.opcion p{
+
+    color:#5b6b84;
+
+    line-height:1.6;
+
+}
+
+@media (max-width:1200px){
+
+    .grid-opciones{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+}
+
+@media (max-width:768px){
+
+    .grid-opciones{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+@media(max-width:992px){
+
+    .contenedor-induccion{
+
+        margin-left:0;
+
+        padding:25px;
+
+    }
+
+    .grid-opciones{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+/* ==========================================
+MODAL
+========================================== */
+
+.modal{
+
+    z-index:3000;
+
+}
+
+.modal-backdrop{
+
+    z-index:2999;
+
+}
+
+/* ==========================================
+MODAL CAPÍTULOS
+========================================== */
+
+#modalCapitulos .modal-dialog{
+
+    margin-left: calc(280px + 2rem);
+
+    margin-right: 2rem;
+
+    max-width: calc(100vw - 340px);
+
+}
+
+#modalCapitulos .modal-content{
+
+    border-radius: 22px;
+
+}
+
+@media (max-width: 992px){
+
+    #modalCapitulos .modal-dialog{
+
+        margin: 1rem;
+
+        max-width: calc(100vw - 2rem);
+
+    }
+
+}
+
+.swal2-container{
+    z-index: 20000 !important;
+}
+
+.swal2-popup{
+    z-index: 20001 !important;
+}
+
+#modalSubCapitulos .modal-content{
+
+    border-radius:25px;
+
+    overflow:hidden;
+
+}
+
+#modalSubCapitulos .modal-body{
+
+    max-height:70vh;
+
+    overflow-y:auto;
+
+    padding:25px;
+
+}
+
+#modalSubCapitulos .card{
+
+    border-radius:18px;
+
+    transition:.3s;
+
+}
+
+#modalSubCapitulos .card:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 12px 25px rgba(0,0,0,.12);
+
+}
+/* ==========================================
+MODAL SUBCAPÍTULOS
+========================================== */
+
+#modalSubCapitulos{
+
+    z-index:11000;
+
+}
+
+#modalSubCapitulos .modal-dialog{
+
+    margin-left: calc(280px + 5rem);
+
+    margin-right: 2rem;
+
+    max-width: calc(100vw - 420px);
+
+}
+
+#modalSubCapitulos .modal-content{
+
+    border-radius:25px;
+
+    overflow:hidden;
+
+}
+
+#modalSubCapitulos .modal-body{
+
+    max-height:70vh;
+
+    overflow-y:auto;
+
+    padding:25px;
+
+}
+
+@media (max-width:992px){
+
+    #modalSubCapitulos .modal-dialog{
+
+        margin:1rem;
+
+        max-width:calc(100vw - 2rem);
+
+    }
+
+}
+
+/* ==========================================
+MODAL VIDEO
+========================================== */
+#modalVideo .modal-dialog{
+
+    max-width:1100px;
+
+}
+#modalVideo .modal-body{
+
+    max-height: 75vh;
+
+    overflow-y: auto;
+
+}
+
+#videoActual{
+
+    width:100%;
+
+    max-height:320px;
+
+    border-radius:12px;
+
+    background:#000;
+
+}
+
+#youtubePreview{
+
+    width:100%;
+
+    height:320px;
+
+    border:none;
+
+    border-radius:12px;
+
+
+}
+
+#modalVideo .form-label{
+
+    font-weight:600;
+
+}
+
+#modalVideo video{
+
+    width:100%;
+
+    max-height:450px;
+
+    border-radius:18px;
+
+    background:#000;
+
+}
+
+#modalVideo iframe{
+
+    width:100%;
+
+    height:450px;
+
+    border:none;
+
+    border-radius:18px;
+
+}
+
+/* ==========================================
+MODAL VIDEO SOBRE SIDEBAR
+========================================== */
+
+#modalVideo{
+
+    z-index: 2000 !important;
+
+}
+
+#modalVideo .modal-dialog{
+
+    z-index: 2001 !important;
+
+}
+
+.modal-backdrop{
+
+    z-index: 1990 !important;
+
+}

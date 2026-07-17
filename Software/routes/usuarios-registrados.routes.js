@@ -244,7 +244,7 @@ router.post(
 
                     cambio_password = 1,
 
-                    primera_vez = 1,
+                    
 
                     bloqueado = 0,
 

@@ -158,6 +158,21 @@ app.use(
     )
 );
 
+app.use(
+    require(
+        './routes/centro-capacitaciones.routes'
+    )
+);
+
+// ============================================
+// 🔥 SIDEBAR DINÁMICO
+// ============================================
+
+app.use(
+    '/api/sidebar',
+    require('./routes/sidebar.routes')
+);
+
 // ============================================
 // TEST DB
 // ============================================

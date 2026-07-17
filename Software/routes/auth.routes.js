@@ -59,6 +59,8 @@ router.post('/api/login', async (req, res) => {
         }
 
         const user = results[0];
+        console.log("===== USER LOGIN =====");
+console.log(user);
 
         // =========================================
         // 🚫 EMPLEADO INACTIVO
@@ -160,8 +162,26 @@ router.post('/api/login', async (req, res) => {
         // =========================================
 
         req.session.usuarioID = user.ID;
-        req.session.empleadoID = user.empleado_id;
-        req.session.rol = user.rol;
+
+req.session.empleadoID = user.empleado_id;
+
+req.session.rolID = user.rol_id;
+
+req.session.rol = user.rol;
+
+console.log("===== SESSION =====");
+
+console.log({
+
+    usuarioID: req.session.usuarioID,
+
+    empleadoID: req.session.empleadoID,
+
+    rolID: req.session.rolID,
+
+    rol: req.session.rol
+
+});
 
         // =========================================
         // 🔥 CAMBIO PASSWORD OBLIGATORIO
@@ -210,13 +230,22 @@ router.post('/api/login', async (req, res) => {
         success: true,
         redirect: destino,
         usuario: {
-            id: user.ID,
-            empleado_id: user.empleado_id,
-            nombre: user.nombre,
-            rol: user.rol,
-            activo: user.activo,
-            fecha_ultimo_login: user.fecha_ultimo_login
-        }
+
+    id: user.ID,
+
+    empleado_id: user.empleado_id,
+
+    rol_id: user.rol_id,
+
+    nombre: user.nombre,
+
+    rol: user.rol,
+
+    activo: user.activo,
+
+    fecha_ultimo_login: user.fecha_ultimo_login
+
+}
     });
 });
 
@@ -428,10 +457,32 @@ router.post('/api/cambiar-password', proteger, async (req, res) => {
             [hash, req.session.usuarioID]
         );
 
-        res.json({
-            success: true,
-            redirect: '/induccion'
+        // Cerrar la sesión para obligar a iniciar nuevamente
+req.session.destroy(err => {
+
+    if (err) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: 'No se pudo cerrar la sesión.'
+
         });
+
+    }
+
+    res.clearCookie('connect.sid', { path: '/' });
+
+    res.json({
+
+        success: true,
+
+        redirect: '/login'
+
+    });
+
+});
 
     } catch (error) {
         console.error('🔥 ERROR CAMBIAR PASSWORD:', error);

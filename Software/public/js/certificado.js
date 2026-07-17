@@ -4,43 +4,51 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     cargarDatosUsuarioSidebar();
 
+const esperarBoton = setInterval(() => {
+
     const btn = document.getElementById('btnDescargarPDF');
 
-    if (btn) {
+    if (!btn) return;
 
-        btn.addEventListener('click', async () => {
+    clearInterval(esperarBoton);
 
-            const textoOriginal = btn.innerHTML;
+    btn.addEventListener('click', async () => {
 
-            btn.disabled = true;
+        const textoOriginal = btn.innerHTML;
 
-            btn.innerHTML = `
-                <div class="icono-pdf">
-                    <i class="fas fa-spinner fa-spin"></i>
-                </div>
-                <div class="texto-pdf">
-                    <span>Generando PDF...</span>
-                    <small>Por favor espera</small>
-                </div>
-            `;
+        btn.disabled = true;
 
-            try {
+        btn.innerHTML = `
+            <div class="icono-pdf">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
 
-                await generarPDF();
+            <div class="texto-pdf">
+                <span>Generando PDF...</span>
+                <small>Por favor espera</small>
+            </div>
+        `;
 
-            } catch (error) {
+        try {
 
-                console.error(error);
+            await generarPDF();
 
-                alert('Error al generar el PDF');
+        } catch (error) {
 
-            } finally {
+            console.error(error);
 
-                btn.disabled = false;
-                btn.innerHTML = textoOriginal;
-            }
-        });
-    }
+            alert('Error al generar el PDF');
+
+        } finally {
+
+            btn.disabled = false;
+            btn.innerHTML = textoOriginal;
+
+        }
+
+    });
+
+}, 100);
 
     await cargarDatosCertificado();
 });

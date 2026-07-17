@@ -6,7 +6,7 @@ let tipoActual = '';
 
 let datosActuales = [];
 
-let paginaActual = 1;
+let paginaTabla = 1;
 
 const registrosPorPagina = 6;
 
@@ -208,7 +208,7 @@ async function abrirGestion(tipo){
 
     tipoActual = tipo;
 
-    paginaActual = 1;
+    paginaTabla = 1;
 
     let endpoint = '';
 
@@ -315,7 +315,7 @@ function renderizarTablaGestion(){
     tabla.innerHTML = '';
 
     const inicio =
-        (paginaActual - 1)
+        (paginaTabla - 1)
         * registrosPorPagina;
 
     const fin =
@@ -491,7 +491,7 @@ function renderizarPaginas(){
                 class="
                     btn-pagina
                     ${
-                        i === paginaActual
+                        i === paginaTabla
                         ? 'pagina-activa'
                         : ''
                     }
@@ -511,13 +511,13 @@ function renderizarPaginas(){
     }
 
     const inicio =
-        (paginaActual - 1)
+        (paginaTabla - 1)
         * registrosPorPagina + 1;
 
     const fin =
         Math.min(
 
-            paginaActual *
+            paginaTabla *
             registrosPorPagina,
 
             datosActuales.length
@@ -540,7 +540,7 @@ function renderizarPaginas(){
 
 function irPagina(numero){
 
-    paginaActual = numero;
+    paginaTabla = numero;
 
     renderizarTablaGestion();
 
@@ -549,9 +549,9 @@ function irPagina(numero){
 
 function paginaAnterior(){
 
-    if(paginaActual > 1){
+    if(paginaTabla > 1){
 
-        paginaActual--;
+        paginaTabla--;
 
         renderizarTablaGestion();
 
@@ -568,9 +568,9 @@ function paginaSiguiente(){
             registrosPorPagina
         );
 
-    if(paginaActual < totalPaginas){
+    if(paginaTabla < totalPaginas){
 
-        paginaActual++;
+        paginaTabla++;
 
         renderizarTablaGestion();
 
