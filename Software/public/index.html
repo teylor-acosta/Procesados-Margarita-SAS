@@ -8,31 +8,929 @@
 <link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="icon" href="img/Gemini_Generated_Image_bo9w5fbo9w5fbo9w-removebg-preview.png">
+<link rel="icon" href="img/Logo-removebg-preview.png">
 
 <!-- 🔥 SOLO ESTE CSS -->
 <link rel="stylesheet" href="css/index.css">
 </head>
 
-<body class="index-body">
+<body>
 
-<div class="index-container">
+    <!-- ================= NAVBAR ================= -->
 
-    <div class="index-card fade-in">
+    <header class="navbar">
 
-        <img src="/img/Logo.png" class="logo">
+        <div class="logo-container">
 
-        <h1>Bienvenido</h1>
-        <p>Haga clic en continuar para ingresar al sistema</p>
+            <img src="/img/Logo-removebg-preview.png" alt="Procesados Margarita">
 
-        <a href="/login" class="btn-index">
-            <i class="fas fa-arrow-right"></i>
-            <span>Continuar</span>
+            <div class="logo-text">
+                <h2>Procesados Margarita</h2>
+                <span>Sistema ERP Corporativo</span>
+            </div>
+
+        </div>
+
+        <nav>
+
+            <ul>
+
+                <li><a href="#">Inicio</a></li>
+
+                <li><a href="#empresa">Empresa</a></li>
+
+                <li><a href="#erp">ERP</a></li>
+
+                <li><a href="#contacto">Contacto</a></li>
+
+            </ul>
+
+        </nav>
+
+        <a href="/login" class="btn-login">
+            Iniciar sesión
         </a>
+
+    </header>
+
+
+    <!-- ================= HERO ================= -->
+
+    <section class="hero">
+
+        <div class="overlay"></div>
+
+        <div class="hero-content">
+
+            <img src="/img/Logo-removebg-preview.png" class="hero-logo">
+
+            <h1>
+                Transformando residuos en oportunidades
+            </h1>
+
+            <p>
+
+                ERP Corporativo para la gestión de Recursos Humanos,
+                Seguridad y Salud en el Trabajo, Documentación,
+                Capacitaciones e Inducciones.
+
+            </p>
+
+            <div class="hero-buttons">
+
+                <a href="/login" class="btn-primary">
+                    Ingresar al ERP
+                </a>
+
+                <a href="#empresa" class="btn-secondary">
+                    Conocer más
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ===========================================
+     NUESTRA EMPRESA
+=========================================== -->
+
+<section id="empresa" class="empresa">
+
+    <div class="empresa-container">
+
+        <div class="empresa-img">
+
+            <img src="/img/Logo.png" alt="Procesados Margarita">
+
+        </div>
+
+        <div class="empresa-info">
+
+            <span class="subtitulo">
+                Nuestra Empresa
+            </span>
+
+            <h2>
+                Más de una empresa de reciclaje,
+                un aliado para la gestión ambiental.
+            </h2>
+
+            <p>
+
+                Procesados Margarita SAS trabaja en la recuperación,
+                clasificación y transformación de materiales reciclables,
+                contribuyendo al desarrollo sostenible y a la economía circular.
+
+            </p>
+
+            <div class="empresa-cards">
+
+                <div class="mini-card">
+
+                    <i class="fas fa-bullseye"></i>
+
+                    <h4>Misión</h4>
+
+                    <p>
+                        Brindar soluciones responsables en la gestión de residuos,
+                        promoviendo procesos eficientes e innovadores.
+                    </p>
+
+                </div>
+
+                <div class="mini-card">
+
+                    <i class="fas fa-eye"></i>
+
+                    <h4>Visión</h4>
+
+                    <p>
+                        Ser una empresa referente en el sector ambiental,
+                        apoyada en la innovación tecnológica y el talento humano.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!--=========================================
+        NUESTROS VALORES
+==========================================-->
+
+<section class="valores">
+
+    <div class="titulo-seccion">
+
+        <span>Nuestra Cultura</span>
+
+        <h2>Los valores que nos representan</h2>
+
+        <p>
+            En Procesados Margarita creemos que el crecimiento sostenible
+            se construye con responsabilidad, innovación y compromiso con
+            nuestros colaboradores, clientes y el medio ambiente.
+        </p>
+
+    </div>
+
+    <div class="valores-grid">
+
+        <div class="valor-card">
+
+            <div class="valor-icono">
+                <i class="fas fa-leaf"></i>
+            </div>
+
+            <h3>Sostenibilidad</h3>
+
+            <p>
+                Promovemos procesos responsables que generan un impacto
+                positivo en el medio ambiente.
+            </p>
+
+        </div>
+
+        <div class="valor-card">
+
+            <div class="valor-icono">
+                <i class="fas fa-handshake"></i>
+            </div>
+
+            <h3>Compromiso</h3>
+
+            <p>
+                Cumplimos cada proyecto con responsabilidad,
+                transparencia y calidad.
+            </p>
+
+        </div>
+
+        <div class="valor-card">
+
+            <div class="valor-icono">
+                <i class="fas fa-lightbulb"></i>
+            </div>
+
+            <h3>Innovación</h3>
+
+            <p>
+                Incorporamos tecnología para optimizar nuestros procesos
+                y mejorar continuamente.
+            </p>
+
+        </div>
+
+        <div class="valor-card">
+
+            <div class="valor-icono">
+                <i class="fas fa-shield-heart"></i>
+            </div>
+
+            <h3>Seguridad</h3>
+
+            <p>
+                Protegemos el bienestar de nuestros colaboradores mediante
+                una sólida cultura de SST.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!--=========================================
+        ¿POR QUÉ ELEGIRNOS?
+==========================================-->
+
+<section class="porque">
+
+    <div class="porque-container">
+
+        <div class="porque-imagen">
+
+            <img src="/img/empresa.jpg"
+                 alt="Procesados Margarita">
+
+        </div>
+
+        <div class="porque-info">
+
+            <span>
+                ¿Por qué elegirnos?
+            </span>
+
+            <h2>
+
+                Somos una empresa comprometida con la innovación,
+                la sostenibilidad y la mejora continua.
+
+            </h2>
+
+            <p>
+
+                En Procesados Margarita trabajamos cada día para ofrecer
+                soluciones responsables, apoyándonos en tecnología,
+                talento humano y procesos eficientes que generan valor
+                para nuestros clientes y para el medio ambiente.
+
+            </p>
+
+            <div class="beneficio">
+
+                <i class="fas fa-circle-check"></i>
+
+                <div>
+
+                    <h4>Compromiso Ambiental</h4>
+
+                    <p>
+                        Promovemos la economía circular y el aprovechamiento
+                        responsable de los recursos.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="beneficio">
+
+                <i class="fas fa-circle-check"></i>
+
+                <div>
+
+                    <h4>Innovación Tecnológica</h4>
+
+                    <p>
+                        Integramos herramientas digitales para mejorar la
+                        eficiencia operativa.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="beneficio">
+
+                <i class="fas fa-circle-check"></i>
+
+                <div>
+
+                    <h4>Seguridad y Salud</h4>
+
+                    <p>
+
+                        Protegemos el bienestar de nuestros colaboradores
+                        mediante una sólida cultura SST.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="beneficio">
+
+                <i class="fas fa-circle-check"></i>
+
+                <div>
+
+                    <h4>Calidad y Confianza</h4>
+
+                    <p>
+
+                        Trabajamos bajo altos estándares de calidad,
+                        responsabilidad y transparencia.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!--=========================================
+        GALERÍA
+==========================================-->
+
+<section class="galeria">
+
+    <div class="titulo-seccion">
+
+        <span>Nuestra Empresa</span>
+
+        <h2>Así trabajamos</h2>
+
+        <p>
+
+            Cada proceso refleja nuestro compromiso con la calidad,
+            la sostenibilidad y la innovación.
+
+        </p>
+
+    </div>
+
+    <div class="galeria-grid">
+
+        <div class="foto grande">
+
+    <img src="/img/empresa/planta.jpg" alt="Planta">
+
+    <div class="foto-info">
+
+        <i class="fas fa-recycle"></i>
+
+        <h4>Economía Circular</h4>
+
+        <span>Transformamos residuos en oportunidades.</span>
 
     </div>
 
 </div>
+
+        <div class="foto">
+
+    <img src="/img/empresa/operarios.jpg" alt="Equipo">
+
+    <div class="foto-info">
+
+        <i class="fas fa-users"></i>
+
+        <h4>Talento Humano</h4>
+
+        <span>Personas comprometidas con la calidad.</span>
+
+    </div>
+
+</div>
+
+        <div class="foto">
+
+    <img src="/img/empresa/reciclaje.jpg" alt="Reciclaje">
+
+    <div class="foto-info">
+
+        <i class="fas fa-leaf"></i>
+
+        <h4>Sostenibilidad</h4>
+
+        <span>Procesos responsables con el ambiente.</span>
+
+    </div>
+
+</div>
+        <div class="foto">
+
+    <img src="/img/empresa/camion.jpg" alt="Logística">
+
+    <div class="foto-info">
+
+        <i class="fas fa-truck"></i>
+
+        <h4>Logística</h4>
+
+        <span>Operación eficiente y segura.</span>
+
+    </div>
+
+</div>
+
+        <div class="foto grande">
+
+    <img src="/img/empresa/bodega.jpg" alt="Bodega">
+
+    <div class="foto-info">
+
+        <i class="fas fa-industry"></i>
+
+        <h4>Procesamiento</h4>
+
+        <span>Infraestructura para una operación eficiente.</span>
+
+    </div>
+
+</div>
+
+        <div class="foto">
+
+    <img src="/img/empresa/clasificacion.jpg" alt="Clasificación">
+
+    <div class="foto-info">
+
+        <i class="fas fa-boxes-stacked"></i>
+
+        <h4>Clasificación</h4>
+
+        <span>Separación y aprovechamiento de materiales.</span>
+
+    </div>
+
+</div>
+
+    </div>
+
+</section>
+
+<!-- ===========================================
+     ¿QUÉ HACEMOS?
+=========================================== -->
+
+<section class="servicios">
+
+    <div class="titulo-seccion">
+
+        <span>Nuestros Servicios</span>
+
+        <h2>¿Qué hacemos?</h2>
+
+        <p>
+            Procesados Margarita integra procesos ambientales,
+            operativos y administrativos mediante un ERP diseñado
+            para optimizar la productividad y la gestión empresarial.
+        </p>
+
+    </div>
+
+    <div class="servicios-grid">
+
+        <div class="servicio-card">
+
+            <i class="fas fa-recycle"></i>
+
+            <h3>Reciclaje</h3>
+
+            <p>
+                Recuperación, clasificación y transformación de materiales
+                reciclables con enfoque sostenible.
+            </p>
+
+        </div>
+
+        <div class="servicio-card">
+
+            <i class="fas fa-hard-hat"></i>
+
+            <h3>Seguridad y Salud</h3>
+
+            <p>
+                Gestión de SST, inspecciones, pausas activas,
+                capacitaciones y seguimiento al personal.
+            </p>
+
+        </div>
+
+        <div class="servicio-card">
+
+            <i class="fas fa-folder-open"></i>
+
+            <h3>Gestión Documental</h3>
+
+            <p>
+                Administración digital de documentos con control
+                de vigencias y trazabilidad.
+            </p>
+
+        </div>
+
+        <div class="servicio-card">
+
+            <i class="fas fa-graduation-cap"></i>
+
+            <h3>Capacitaciones</h3>
+
+            <p>
+                Inducciones, evaluaciones,
+                certificados y seguimiento del aprendizaje.
+            </p>
+
+        </div>
+
+        <div class="servicio-card">
+
+            <i class="fas fa-laptop-code"></i>
+
+            <h3>ERP Corporativo</h3>
+
+            <p>
+                Plataforma centralizada para administrar procesos,
+                usuarios, roles y recursos humanos.
+            </p>
+
+        </div>
+
+        <div class="servicio-card">
+
+            <i class="fas fa-chart-line"></i>
+
+            <h3>Indicadores</h3>
+
+            <p>
+                Reportes e indicadores en tiempo real
+                para apoyar la toma de decisiones.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ===========================================
+     NUESTRO ERP
+=========================================== -->
+
+<section id="erp" class="erp">
+
+    <div class="titulo-seccion">
+
+        <span>Sistema ERP</span>
+
+        <h2>Nuestros Módulos</h2>
+
+        <p>
+            Un sistema diseñado para centralizar la administración de
+            Procesados Margarita SAS, optimizando los procesos operativos,
+            administrativos y de Seguridad y Salud en el Trabajo.
+        </p>
+
+    </div>
+
+    <div class="erp-grid">
+
+        <div class="erp-card">
+            <i class="fas fa-users"></i>
+            <h3>Recursos Humanos</h3>
+            <p>Administración integral de empleados, cargos, áreas, sedes y hojas de vida.</p>
+        </div>
+
+        <div class="erp-card">
+            <i class="fas fa-user-shield"></i>
+            <h3>Usuarios y Roles</h3>
+            <p>Control de accesos, permisos y perfiles para cada colaborador.</p>
+        </div>
+
+        <div class="erp-card">
+            <i class="fas fa-folder-tree"></i>
+            <h3>Gestión Documental</h3>
+            <p>Control documental con vigencias, estados y almacenamiento digital.</p>
+        </div>
+
+        <div class="erp-card">
+            <i class="fas fa-graduation-cap"></i>
+            <h3>Centro de Capacitaciones</h3>
+            <p>Creación de cursos, videos, evaluaciones y seguimiento del aprendizaje.</p>
+        </div>
+
+        <div class="erp-card">
+            <i class="fas fa-file-signature"></i>
+            <h3>Firmas Digitales</h3>
+            <p>Registro de firmas electrónicas para documentos y certificaciones.</p>
+        </div>
+
+        <div class="erp-card">
+            <i class="fas fa-award"></i>
+            <h3>Certificados</h3>
+            <p>Generación automática de certificados personalizados en formato PDF.</p>
+        </div>
+
+        <div class="erp-card">
+            <i class="fas fa-chart-column"></i>
+            <h3>Indicadores</h3>
+            <p>Reportes estadísticos y paneles para apoyar la toma de decisiones.</p>
+        </div>
+
+        <div class="erp-card">
+            <i class="fas fa-clipboard-check"></i>
+            <h3>Evaluaciones</h3>
+            <p>Evaluaciones automáticas con calificación y seguimiento del desempeño.</p>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ===========================================
+     INDICADORES
+=========================================== -->
+
+<section class="estadisticas">
+
+    <div class="estadisticas-overlay"></div>
+
+    <div class="estadisticas-container">
+
+        <div class="titulo-estadisticas">
+
+            <span>Procesados Margarita</span>
+
+            <h2>Un ERP pensado para crecer con la empresa</h2>
+
+            <p>
+                Nuestro sistema integra procesos administrativos,
+                operativos y de Seguridad y Salud en el Trabajo,
+                permitiendo una gestión más eficiente y centralizada.
+            </p>
+
+        </div>
+
+        <div class="estadisticas-grid">
+
+            <div class="estadistica">
+
+                <h3 class="contador" data-target="15">0</h3>
+
+                <span>Módulos</span>
+
+            </div>
+
+            <div class="estadistica">
+
+                <h3 class="contador" data-target="40">0</h3>
+
+                <span>Empleados</span>
+
+            </div>
+
+            <div class="estadistica">
+
+                <h3>100%</h3>
+
+                <span>Digital</span>
+
+            </div>
+
+            <div class="estadistica">
+
+                <h3>24/7</h3>
+
+                <span>Disponibilidad</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ===========================================
+     PROCESO ERP
+=========================================== -->
+
+<section class="proceso">
+
+    <div class="titulo-seccion">
+
+        <span>Nuestro Proceso</span>
+
+        <h2>¿Cómo funciona el ERP?</h2>
+
+        <p>
+            Desde el ingreso de un colaborador hasta la certificación de sus
+            procesos, el ERP integra todas las actividades en una sola plataforma.
+        </p>
+
+    </div>
+
+    <div class="timeline">
+
+        <div class="timeline-item">
+
+            <div class="timeline-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+
+            <h3>Registro</h3>
+
+            <p>
+                Se registra el colaborador junto con su información personal,
+                cargo, sede y documentación.
+            </p>
+
+        </div>
+
+        <div class="timeline-item">
+
+            <div class="timeline-icon">
+                <i class="fas fa-folder-open"></i>
+            </div>
+
+            <h3>Documentación</h3>
+
+            <p>
+                El sistema administra documentos,
+                vigencias y seguimiento documental.
+            </p>
+
+        </div>
+
+        <div class="timeline-item">
+
+            <div class="timeline-icon">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+
+            <h3>Capacitación</h3>
+
+            <p>
+                El colaborador realiza cursos,
+                inducciones y evaluaciones dentro del ERP.
+            </p>
+
+        </div>
+
+        <div class="timeline-item">
+
+            <div class="timeline-icon">
+                <i class="fas fa-award"></i>
+            </div>
+
+            <h3>Certificación</h3>
+
+            <p>
+                Se generan certificados, reportes
+                y seguimiento continuo del proceso.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!--=========================================
+        CALL TO ACTION
+==========================================-->
+
+<section class="cta">
+
+    <div class="cta-container">
+
+        <span>Procesados Margarita SAS</span>
+
+        <h2>
+            ¿Listo para ingresar al ERP?
+        </h2>
+
+        <p>
+
+            Administre colaboradores, documentos, capacitaciones,
+            evaluaciones y procesos administrativos desde una única
+            plataforma moderna y segura.
+
+        </p>
+
+        <a href="/login" class="cta-button">
+
+            <i class="fas fa-right-to-bracket"></i>
+
+            Ingresar al Sistema
+
+        </a>
+
+    </div>
+
+</section>
+
+<!--=========================================
+        FOOTER
+==========================================-->
+
+<footer id="contacto" class="footer">
+
+    <div class="footer-container">
+
+        <div class="footer-column">
+
+            <img src="/img/Logo-removebg-preview.png" class="footer-logo">
+
+            <h3>Procesados Margarita SAS</h3>
+
+            <p>
+
+                Sistema ERP desarrollado para optimizar la gestión
+                administrativa, documental y operativa de la empresa.
+
+            </p>
+
+        </div>
+
+        <div class="footer-column">
+
+            <h4>Empresa</h4>
+
+            <ul>
+
+                <li><a href="#empresa">Nuestra Empresa</a></li>
+
+                <li><a href="#erp">ERP</a></li>
+
+                <li><a href="#">Inicio</a></li>
+
+            </ul>
+
+        </div>
+
+        <div class="footer-column">
+
+            <h4>Módulos</h4>
+
+            <ul>
+
+                <li>Recursos Humanos</li>
+
+                <li>Capacitaciones</li>
+
+                <li>Documentación</li>
+
+                <li>Firmas Digitales</li>
+
+                <li>Certificados</li>
+
+            </ul>
+
+        </div>
+
+        <div class="footer-column">
+
+            <h4>Contacto</h4>
+
+            <ul>
+
+                <li><i class="fas fa-location-dot"></i> Sopó - Colombia</li>
+
+                <li><i class="fas fa-envelope"></i> contacto@procesadosmargarita.com</li>
+
+                <li><i class="fas fa-globe"></i> Sistema ERP Corporativo</li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+        © 2026 Procesados Margarita SAS | Todos los derechos reservados.
+
+    </div>
+
+</footer>
+
+<script src="js/index.js"></script>
 
 </body>
 </html>
