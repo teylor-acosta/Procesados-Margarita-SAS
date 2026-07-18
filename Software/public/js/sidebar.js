@@ -795,6 +795,129 @@ function menuUsuarios(paginaActiva) {
 `;
 }
 
+function menuCapacitaciones(paginaActiva) {
+
+    const usuario =
+        JSON.parse(
+            localStorage.getItem("usuario")
+        ) || {};
+
+    const rol =
+        (usuario.rol || "").toLowerCase();
+
+    const esAdministrador =
+
+    rol === "admin" ||
+
+    rol === "administrador" ||
+
+    rol === "superadmin" ||
+
+    rol === "superadministrador";
+    return `
+
+        <span class="menu-section-title">
+            Navegación
+        </span>
+
+        <a href="/dashboard"
+           class="menu-item">
+
+            <i class="fas fa-home"></i>
+
+            <span>Inicio</span>
+
+        </a>
+
+        <a href="/panel"
+           class="menu-item">
+
+            <i class="fas fa-th-large"></i>
+
+            <span>Panel</span>
+
+        </a>
+
+        <div class="menu-group open">
+
+            <div class="menu-item menu-parent">
+
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:10px;
+                ">
+
+                    <i class="fas fa-graduation-cap"></i>
+
+                    <span>
+                        Capacitaciones
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-down menu-arrow"></i>
+
+            </div>
+
+            <div class="submenu">
+
+                <a href="/centro-capacitaciones"
+                   class="menu-item submenu-item ${paginaActiva === "centro-capacitaciones" ? "active" : ""}">
+
+                    <i class="fas fa-house"></i>
+
+                    <span>
+                        Inicio
+                    </span>
+
+                </a>
+
+                <a href="/mis-capacitaciones"
+                   class="menu-item submenu-item ${paginaActiva === "mis-capacitaciones" ? "active" : ""}">
+
+                    <i class="fas fa-book-open"></i>
+
+                    <span>
+                        Mis Capacitaciones
+                    </span>
+
+                </a>
+
+                ${esAdministrador ? `
+
+                <a href="/administrar-capacitaciones"
+                   class="menu-item submenu-item ${paginaActiva === "administrar-capacitaciones" ? "active" : ""}">
+
+                    <i class="fas fa-chalkboard-teacher"></i>
+
+                    <span>
+                        Administrar Capacitaciones
+                    </span>
+
+                </a>
+
+                <a href="/seguimiento-general"
+                   class="menu-item submenu-item ${paginaActiva === "seguimiento-general" ? "active" : ""}">
+
+                    <i class="fas fa-chart-line"></i>
+
+                    <span>
+                        Seguimiento General
+                    </span>
+
+                </a>
+
+                ` : ""}
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
 /* ==========================================================================
    MENÚ DINÁMICO
    ========================================================================== */
@@ -1137,6 +1260,46 @@ else if (pagina === "historial-usuarios") {
     menu.innerHTML =
         menuUsuarios(
             "historial-usuarios"
+        );
+
+}
+
+/* =====================================
+   CENTRO DE CAPACITACIONES
+===================================== */
+
+else if (pagina === "centro-capacitaciones") {
+
+    menu.innerHTML =
+        menuCapacitaciones(
+            "centro-capacitaciones"
+        );
+
+}
+
+else if (pagina === "mis-capacitaciones") {
+
+    menu.innerHTML =
+        menuCapacitaciones(
+            "mis-capacitaciones"
+        );
+
+}
+
+else if (pagina === "administrar-capacitaciones") {
+
+    menu.innerHTML =
+        menuCapacitaciones(
+            "administrar-capacitaciones"
+        );
+
+}
+
+else if (pagina === "seguimiento-general") {
+
+    menu.innerHTML =
+        menuCapacitaciones(
+            "seguimiento-general"
         );
 
 }
