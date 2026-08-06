@@ -1,0 +1,694 @@
+/* ==========================================
+   ADMINISTRAR CERTIFICADO
+========================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Great+Vibes&family=Allura&family=Alex+Brush&family=Parisienne&family=Dancing+Script:wght@400;500;600;700&display=swap');
+
+:root{
+
+    --verde:#1EB980;
+    --verde-hover:#159A69;
+
+    --azul:#16324F;
+
+    --blanco:#FFFFFF;
+
+    --gris:#F4F7FA;
+
+    --sombra:0 15px 35px rgba(0,0,0,.12);
+
+    --radio:18px;
+
+}
+
+/* ==========================================
+BODY
+========================================== */
+
+body{
+
+    font-family:'Averia Libre',cursive;
+
+    background:url("/img/Fondo.webp") center center/cover no-repeat fixed;
+
+    min-height:100vh;
+
+    margin:0;
+
+    position:relative;
+
+}
+
+body::before{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(255,255,255,.78);
+
+    backdrop-filter:blur(7px);
+
+    z-index:-1;
+
+}
+
+/* ==========================================
+CONTENIDO
+========================================== */
+
+.contenido{
+
+    padding:35px;
+
+}
+
+.container-fluid{
+
+    max-width:1700px;
+
+}
+
+/* ==========================================
+CABECERA
+========================================== */
+
+h2{
+
+    color:var(--azul);
+
+    font-size:42px;
+
+    font-weight:700;
+
+}
+
+.text-muted{
+
+    font-size:18px;
+
+}
+
+/* ==========================================
+BOTONES
+========================================== */
+
+.btn{
+
+    border-radius:12px;
+
+    font-weight:bold;
+
+}
+
+.btn-success{
+
+    background:var(--verde);
+
+    border:none;
+
+}
+
+.btn-success:hover{
+
+    background:var(--verde-hover);
+
+}
+
+.btn-secondary{
+
+    border:none;
+
+}
+
+/* ==========================================
+CARDS
+========================================== */
+
+.card{
+
+    border:none;
+
+    border-radius:var(--radio);
+
+    overflow:hidden;
+
+    box-shadow:var(--sombra);
+
+    background:white;
+
+}
+
+.card-header{
+
+    background:#ffffff;
+
+    border-bottom:1px solid #ececec;
+
+    padding:18px 25px;
+
+}
+
+.card-header h5{
+
+    font-weight:700;
+
+    color:var(--azul);
+
+}
+
+.card-body{
+
+    padding:25px;
+
+}
+
+/* ==========================================
+FORMULARIO
+========================================== */
+
+.form-label{
+
+    font-weight:700;
+
+    color:var(--azul);
+
+}
+
+.form-control{
+
+    border-radius:12px;
+
+}
+
+textarea{
+
+    resize:none;
+
+}
+
+/* ==========================================
+VARIABLES
+========================================== */
+
+.badge{
+
+    font-size:13px;
+
+    margin-right:6px;
+
+    margin-bottom:6px;
+
+}
+
+/* ==========================================
+SWITCH
+========================================== */
+
+.form-check{
+
+    margin-top:10px;
+
+}
+
+/* ==========================================
+BOTÓN GUARDAR
+========================================== */
+
+#btnGuardar{
+
+    padding:15px;
+
+    font-size:18px;
+
+}
+
+/* ==========================================
+VISTA PREVIA
+========================================== */
+
+.certificado-preview{
+
+    position:relative;
+
+    width:900px;
+
+    max-width:100%;
+
+    background:white;
+
+    border-radius:12px;
+
+    overflow:hidden;
+
+    box-shadow:
+
+        0 25px 45px rgba(0,0,0,.18);
+
+}
+
+/* ==========================================
+PLANTILLA
+========================================== */
+
+.plantilla-certificado{
+
+    width:100%;
+
+    display:block;
+
+}
+
+/* ==========================================
+TEXTOS
+========================================== */
+
+#previewNombre{
+
+    position:absolute;
+
+    font-size:28px;
+
+    font-weight:700;
+
+    color:#16324F;
+
+}
+
+#previewTextoPrincipal{
+
+    position:absolute;
+
+    width:100%;
+
+    text-align:center;
+
+    font-size:20px;
+
+}
+
+#previewCurso{
+
+    position:absolute;
+
+    width:100%;
+
+    text-align:center;
+
+    font-size:30px;
+
+    color:#16324F;
+
+}
+
+#previewNota{
+
+    position:absolute;
+
+    width:100%;
+
+    text-align:center;
+
+    font-size:30px;
+
+    color:#1EB980;
+
+}
+
+#previewFecha{
+
+    position:absolute;
+
+    font-size:18px;
+
+}
+
+/* ==========================================
+SELLO
+========================================== */
+
+.preview-sello{
+
+    position:absolute;
+
+    bottom:110px;
+
+    right:100px;
+
+    width:120px;
+
+    height:120px;
+
+}
+
+.preview-sello img{
+
+    width:100%;
+
+}
+
+/* ==========================================
+FIRMAS
+========================================== */
+
+.firmas-certificado{
+
+    position:absolute;
+
+    left:0;
+
+    bottom:55px;
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:space-around;
+
+}
+
+.firma{
+
+    width:170px;
+
+    height:70px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.firma img{
+
+    max-width:100%;
+
+    max-height:100%;
+
+}
+
+/* ==========================================
+RESPONSIVE
+========================================== */
+
+@media(max-width:1200px){
+
+    .row{
+
+        flex-direction:column;
+
+    }
+
+    .col-lg-4,
+
+    .col-lg-8{
+
+        width:100%;
+
+    }
+
+    .certificado-preview{
+
+        width:100%;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .contenido{
+
+        padding:15px;
+
+    }
+
+    h2{
+
+        font-size:30px;
+
+    }
+
+    .card-body{
+
+        padding:18px;
+
+    }
+
+}
+
+
+/* ==========================================
+QR
+========================================== */
+
+.preview-qr{
+
+    position:absolute;
+
+    bottom:120px;
+
+    left:90px;
+
+    width:110px;
+
+    height:110px;
+
+}
+
+.preview-qr img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:contain;
+
+}
+
+/* ==========================================
+ELEMENTOS ARRASTRABLES
+========================================== */
+
+.area-certificado{
+
+    position:absolute;
+
+    inset:0;
+
+}
+
+.elemento-certificado{
+
+    position:absolute;
+
+    cursor:move;
+
+    user-select:none;
+
+    transition:.2s;
+
+}
+
+.elemento-certificado:hover{
+
+    outline:2px dashed #1EB980;
+
+    background:rgba(30,185,128,.08);
+
+}
+
+.nombre-certificado{
+
+    font-size:34px;
+    font-weight:bold;
+
+    white-space: nowrap;
+    width: auto;
+    display: inline-block;
+
+}
+
+.texto-certificado{
+
+    width:80%;
+    text-align:center;
+
+}
+
+.curso-certificado{
+
+    font-size:32px;
+    font-weight:bold;
+
+}
+
+
+.nota-certificado{
+
+    font-size:30px;
+    color:#1EB980;
+
+}
+
+
+.firma-izquierda{
+
+    left:120px;
+    bottom:40px;
+
+}
+
+.firma-derecha{
+
+    right:120px;
+    bottom:40px;
+
+}
+
+/* ==========================================
+   TOOLBAR FLOTANTE
+========================================== */
+
+.toolbar-flotante{
+
+    position: fixed;
+
+    display: none;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 10px 15px;
+
+    background: #ffffff;
+
+    border-radius: 12px;
+
+    box-shadow: 0 8px 20px rgba(0,0,0,.25);
+
+    border: 1px solid #ddd;
+
+    z-index: 99999;
+
+}
+
+.toolbar-flotante select,
+.toolbar-flotante input[type="number"]{
+
+    width: auto;
+
+    min-width: 70px;
+
+}
+
+.toolbar-flotante button{
+
+    border: none;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    padding: 6px 10px;
+
+    border-radius: 6px;
+
+}
+
+.toolbar-flotante button:hover{
+
+    background: #e9ecef;
+
+}
+.elemento-seleccionado{
+
+    outline: 2px dashed #0d6efd;
+
+    outline-offset: 4px;
+
+}
+
+.resize-handle{
+
+    position:absolute;
+
+    width:12px;
+
+    height:12px;
+
+    background:#0d6efd;
+
+    border-radius:50%;
+
+    right:-6px;
+
+    bottom:-6px;
+
+    cursor:nwse-resize;
+
+    display:none;
+
+}
+
+.elemento-seleccionado .resize-handle{
+
+    display:block;
+
+}
+
+.marco-seleccion{
+
+    position:absolute;
+
+    border:2px dashed #0d6efd;
+
+    display:none;
+
+    pointer-events:none;
+
+    z-index:999;
+
+}
+
+.handle{
+
+    position:absolute;
+
+    width:12px;
+
+    height:12px;
+
+    background:#0d6efd;
+
+    border-radius:50%;
+
+    pointer-events:auto;
+
+}
+
+.handle-nw{
+    top:-6px;
+    left:-6px;
+}
+
+.handle-ne{
+    top:-6px;
+    right:-6px;
+}
+
+.handle-sw{
+    bottom:-6px;
+    left:-6px;
+}
+
+.handle-se{
+    bottom:-6px;
+    right:-6px;
+    cursor:nwse-resize;
+}

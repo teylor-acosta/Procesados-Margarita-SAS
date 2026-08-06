@@ -217,6 +217,21 @@ router.get('/usuarios-registrados', proteger, soloSuperAdmin, (req, res) => {
 
 });
 
+router.get(
+    '/seguimiento-general',
+    proteger,
+    (req, res) => {
+
+        res.sendFile(
+            path.join(
+                __dirname,
+                '../public/seguimiento-general.html'
+            )
+        );
+
+    }
+);
+
 /* =========================================
    🔥 ROLES Y ACCESOS
 ========================================= */
@@ -233,5 +248,47 @@ router.get('/roles-accesos', proteger, soloSuperAdmin, (req, res) => {
     );
 
 });
+
+/* =========================================
+   🔥 ADMINISTRAR CURSO
+========================================= */
+
+router.get(
+    "/administrar-curso/:id",
+    proteger,
+    (req, res) => {
+
+        res.sendFile(
+
+            path.join(
+                __dirname,
+                "../public/administrar-curso.html"
+            )
+
+        );
+
+    }
+);
+
+/* =========================================
+   🔥 ADMINISTRAR CERTIFICADO
+========================================= */
+
+router.get(
+    "/administrar-certificado/:id",
+    proteger,
+    (req, res) => {
+
+        res.sendFile(
+
+            path.join(
+                __dirname,
+                "../public/administrar-certificado.html"
+            )
+
+        );
+
+    }
+);
 
 module.exports = router;

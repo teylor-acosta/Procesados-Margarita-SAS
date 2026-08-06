@@ -20,6 +20,19 @@ let modalNuevoMaterial;
 
 let materialEditando = null;
 
+let modalEvaluaciones;
+
+let evaluacionEditando = null;
+
+let capituloEvaluacionSeleccionado = null;
+
+let modalEditorEvaluacion;
+
+let preguntasEditor = [];
+
+let contadorPreguntas = 0;
+
+
 // ==========================================
 // CARGAR CAPÍTULOS
 // ==========================================
@@ -1018,6 +1031,21 @@ document.addEventListener("DOMContentLoaded",()=>{
         )
     );
 
+    modalEvaluaciones =
+new bootstrap.Modal(
+    document.getElementById(
+        "modalEvaluaciones"
+    )
+);
+
+
+modalEditorEvaluacion =
+new bootstrap.Modal(
+    document.getElementById(
+        "modalEditorEvaluacion"
+    )
+);
+
     document
     .getElementById(
         "tipoVideo"
@@ -1039,6 +1067,15 @@ document
         cargarSubCapitulosMaterial
     );
 
+    document
+    .getElementById(
+        "btnAgregarPregunta"
+    )
+    .addEventListener(
+        "click",
+        agregarPreguntaEditor
+    );
+
     // ==========================================
     // ABRIR ADMINISTRAR CAPÍTULOS
     // ==========================================
@@ -1057,6 +1094,14 @@ document
 
             }
         );
+
+
+        document
+    .getElementById("btnGuardarEvaluacionCompleta")
+    .addEventListener(
+        "click",
+        guardarEvaluacionCompleta
+    );
 
         // ==========================================
 // ABRIR ADMINISTRAR SUBCAPÍTULOS
@@ -1078,6 +1123,38 @@ document
     );
 
     // ==========================================
+// NUEVA EVALUACIÓN
+// ==========================================
+
+document
+    .getElementById("btnNuevaEvaluacion")
+    .addEventListener("click", async () => {
+
+        evaluacionEditando = null;
+
+        preguntasEditor = [];
+
+        contadorPreguntas = 0;
+
+        document.getElementById("editorNombre").value = "";
+
+        document.getElementById("editorDescripcion").value = "";
+
+        document.getElementById("editorPorcentaje").value = 70;
+
+        document.getElementById("contenedorPreguntas").innerHTML = "";
+
+        await cargarSelectEvaluacionesEditor();
+
+        agregarPreguntaEditor();
+
+        modalEvaluaciones.hide();
+
+        modalEditorEvaluacion.show();
+
+    });
+
+    // ==========================================
 // ABRIR MATERIAL DE APOYO
 // ==========================================
 
@@ -1096,6 +1173,24 @@ document
         }
     );
 
+    // ==========================================
+// ABRIR EVALUACIONES
+// ==========================================
+
+document
+    .getElementById(
+        "cardEvaluaciones"
+    )
+    .addEventListener(
+        "click",
+        async()=>{
+
+            await cargarEvaluaciones();
+
+            modalEvaluaciones.show();
+
+        }
+    );
 
 
     // ==========================================
@@ -2098,6 +2193,750 @@ async function editarMaterial(id){
     }catch(error){
 
         console.error(error);
+
+    }
+
+}
+
+// ==========================================
+// CARGAR EVALUACIONES
+// ==========================================
+
+async function cargarEvaluaciones(){
+
+    try{
+
+        const respuesta =
+            await fetch(
+                "/api/evaluaciones-induccion"
+            );
+
+        const data =
+            await respuesta.json();
+
+        if(!data.success){
+
+            return;
+
+        }
+
+        renderEvaluaciones(
+            data.evaluaciones
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+// ==========================================
+// MOSTRAR EVALUACIONES
+// ==========================================
+
+function renderEvaluaciones(evaluaciones){
+
+    const lista =
+        document.getElementById(
+            "listaEvaluaciones"
+        );
+
+    let html = "";
+
+    evaluaciones.forEach(e=>{
+
+        html += `
+
+<tr>
+
+    <td>
+
+        ${e.capitulo}
+
+    </td>
+
+    <td>
+
+        ${
+            e.nombre
+            ??
+            '<span class="text-muted">Sin evaluación</span>'
+        }
+
+    </td>
+
+    <td>
+
+        ${
+            e.porcentaje_aprobacion
+            ??
+            "-"
+        }%
+
+    </td>
+
+    <td>
+
+        ${e.preguntas}
+
+    </td>
+
+    <td>
+
+        ${
+            e.estado
+            ??
+            '<span class="badge bg-secondary">Sin crear</span>'
+        }
+
+    </td>
+
+    <td class="text-center">
+
+        ${
+            e.id
+
+            ?
+
+            `<button
+                class="btn btn-primary btn-sm"
+                onclick="editarEvaluacion(${e.id})">
+
+                <i class="fas fa-pen"></i>
+
+            </button>
+            
+            <button
+            class="btn btn-danger btn-sm ms-1"
+            onclick="eliminarEvaluacion(${e.id})">
+
+            <i class="fas fa-trash"></i>
+
+        </button>`
+
+            :
+
+            `<button
+                class="btn btn-success btn-sm"
+                onclick="crearEvaluacion(${e.capitulo_id})">
+
+                <i class="fas fa-plus"></i>
+
+            </button>`
+
+        }
+
+    </td>
+
+</tr>
+
+`;
+
+    });
+
+    lista.innerHTML = html;
+
+}
+
+
+function crearEvaluacion(capituloId){
+
+    document
+        .getElementById("btnNuevaEvaluacion")
+        .click();
+
+    setTimeout(()=>{
+
+        document.getElementById("editorCapitulo").value = capituloId;
+
+    },100);
+
+}
+
+async function editarEvaluacion(id){
+
+    try{
+
+        evaluacionEditando = id;
+
+        const respuesta =
+            await fetch(
+                `/api/evaluaciones-induccion/${id}`
+            );
+
+        const data =
+            await respuesta.json();
+
+        if(!data.success){
+
+            return Swal.fire({
+
+                icon:"error",
+
+                title:"Error",
+
+                text:"No fue posible cargar la evaluación."
+
+            });
+
+        }
+
+        const evaluacion =
+            data.evaluacion;
+
+        document.getElementById(
+            "editorNombre"
+        ).value =
+        evaluacion.nombre;
+
+        document.getElementById(
+            "editorDescripcion"
+        ).value =
+        evaluacion.descripcion || "";
+
+        document.getElementById(
+            "editorPorcentaje"
+        ).value =
+        evaluacion.porcentaje_aprobacion;
+
+        await cargarSelectEvaluacionesEditor();
+
+        document.getElementById(
+            "editorCapitulo"
+        ).value =
+        evaluacion.capitulo_id;
+
+        contadorPreguntas = 0;
+
+        preguntasEditor = [];
+
+        document.getElementById(
+            "contenedorPreguntas"
+        ).innerHTML = "";
+
+        data.preguntas.forEach(pregunta=>{
+
+            agregarPreguntaEditor(pregunta);
+
+        });
+
+        modalEvaluaciones.hide();
+
+        bootstrap.Modal
+            .getOrCreateInstance(
+                document.getElementById(
+                    "modalEditorEvaluacion"
+                )
+            )
+            .show();
+
+    }catch(error){
+
+        console.error(error);
+
+        Swal.fire({
+
+            icon:"error",
+
+            title:"Error",
+
+            text:error.message
+
+        });
+
+    }
+
+}
+
+async function eliminarEvaluacion(id){
+
+    const resultado = await Swal.fire({
+
+        title:"¿Eliminar evaluación?",
+
+        text:"Se eliminará la evaluación junto con todas sus preguntas.",
+
+        icon:"warning",
+
+        showCancelButton:true,
+
+        confirmButtonText:"Sí, eliminar",
+
+        cancelButtonText:"Cancelar",
+
+        confirmButtonColor:"#16a34a",
+
+        cancelButtonColor:"#dc2626"
+
+    });
+
+    if(!resultado.isConfirmed){
+
+        return;
+
+    }
+
+    try{
+
+        const respuesta = await fetch(
+
+            `/api/evaluaciones-induccion/${id}`,
+
+            {
+
+                method:"DELETE"
+
+            }
+
+        );
+
+        const data = await respuesta.json();
+
+        if(data.success){
+
+            await Swal.fire({
+
+                icon:"success",
+
+                title:"Evaluación eliminada",
+
+                timer:1500,
+
+                showConfirmButton:false
+
+            });
+
+            await cargarEvaluaciones();
+
+        }else{
+
+            Swal.fire({
+
+                icon:"error",
+
+                title:"Error",
+
+                text:data.mensaje
+
+            });
+
+        }
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+function agregarPreguntaEditor(datos = null){
+
+    contadorPreguntas++;
+
+    const pregunta = datos || {};
+
+    const contenedor =
+        document.getElementById(
+            "contenedorPreguntas"
+        );
+
+    contenedor.innerHTML += `
+
+<div class="card shadow mb-4 pregunta-card">
+
+    <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <h5>
+
+                Pregunta ${contadorPreguntas}
+
+            </h5>
+
+            <button
+                class="btn btn-danger btn-sm"
+                onclick="this.closest('.pregunta-card').remove()">
+
+                <i class="fas fa-trash"></i>
+
+            </button>
+
+        </div>
+
+        <div class="mt-3">
+
+            <textarea
+                class="form-control pregunta-texto"
+                rows="2"
+                placeholder="Escriba la pregunta..."
+            >${pregunta.pregunta || ""}</textarea>
+
+        </div>
+
+        <div class="mt-3">
+
+            <label class="w-100">
+
+                <input
+                    type="radio"
+                    name="correcta${contadorPreguntas}"
+                    value="A"
+                    ${pregunta.respuesta_correcta === "A" ? "checked" : ""}
+                >
+
+                <input
+                    class="form-control d-inline w-75 ms-2 opcion-a"
+                    placeholder="Opción A"
+                    value="${pregunta.opcion_a || ""}"
+                >
+
+            </label>
+
+        </div>
+
+        <div class="mt-2">
+
+            <label class="w-100">
+
+                <input
+                    type="radio"
+                    name="correcta${contadorPreguntas}"
+                    value="B"
+                    ${pregunta.respuesta_correcta === "B" ? "checked" : ""}
+                >
+
+                <input
+                    class="form-control d-inline w-75 ms-2 opcion-b"
+                    placeholder="Opción B"
+                    value="${pregunta.opcion_b || ""}"
+                >
+
+            </label>
+
+        </div>
+
+        <div class="mt-2">
+
+            <label class="w-100">
+
+                <input
+                    type="radio"
+                    name="correcta${contadorPreguntas}"
+                    value="C"
+                    ${pregunta.respuesta_correcta === "C" ? "checked" : ""}
+                >
+
+                <input
+                    class="form-control d-inline w-75 ms-2 opcion-c"
+                    placeholder="Opción C"
+                    value="${pregunta.opcion_c || ""}"
+                >
+
+            </label>
+
+        </div>
+
+        <div class="mt-2">
+
+            <label class="w-100">
+
+                <input
+                    type="radio"
+                    name="correcta${contadorPreguntas}"
+                    value="D"
+                    ${pregunta.respuesta_correcta === "D" ? "checked" : ""}
+                >
+
+                <input
+                    class="form-control d-inline w-75 ms-2 opcion-d"
+                    placeholder="Opción D"
+                    value="${pregunta.opcion_d || ""}"
+                >
+
+            </label>
+
+        </div>
+
+    </div>
+
+</div>
+
+`;
+
+}
+async function cargarSelectEvaluacionesEditor(){
+
+    const respuesta =
+        await fetch(
+            "/api/capitulos-induccion"
+        );
+
+    const data =
+        await respuesta.json();
+
+    if(!data.success){
+
+        return;
+
+    }
+
+    const select =
+        document.getElementById(
+            "editorCapitulo"
+        );
+
+    let html = "";
+
+    data.capitulos.forEach(cap=>{
+
+        html += `
+            <option value="${cap.id}">
+                Capítulo ${cap.numero_capitulo} - ${cap.titulo}
+            </option>
+        `;
+
+    });
+
+    select.innerHTML = html;
+
+}
+
+async function guardarEvaluacionCompleta(){
+
+    try{
+
+        const capitulo_id =
+            document.getElementById(
+                "editorCapitulo"
+            ).value;
+
+        const nombre =
+            document.getElementById(
+                "editorNombre"
+            ).value.trim();
+
+        const descripcion =
+            document.getElementById(
+                "editorDescripcion"
+            ).value.trim();
+
+        const porcentaje_aprobacion =
+            document.getElementById(
+                "editorPorcentaje"
+            ).value;
+
+        if(!capitulo_id){
+
+            return Swal.fire({
+
+                icon:"warning",
+
+                title:"Capítulo requerido",
+
+                text:"Seleccione un capítulo."
+
+            });
+
+        }
+
+        if(!nombre){
+
+            return Swal.fire({
+
+                icon:"warning",
+
+                title:"Nombre requerido",
+
+                text:"Ingrese el nombre de la evaluación."
+
+            });
+
+        }
+
+        // ==========================================
+        // CREAR EVALUACIÓN
+        // ==========================================
+
+        let url = "/api/evaluaciones-induccion";
+
+let metodo = "POST";
+
+if(evaluacionEditando){
+
+    url = `/api/evaluaciones-induccion/${evaluacionEditando}`;
+
+    metodo = "PUT";
+
+}
+
+const tarjetas =
+    document.querySelectorAll(
+        ".pregunta-card"
+    );
+
+const preguntas = [];
+
+tarjetas.forEach((tarjeta,index)=>{
+
+    preguntas.push({
+
+        pregunta:
+            tarjeta.querySelector(".pregunta-texto").value.trim(),
+
+        opcion_a:
+            tarjeta.querySelector(".opcion-a").value.trim(),
+
+        opcion_b:
+            tarjeta.querySelector(".opcion-b").value.trim(),
+
+        opcion_c:
+            tarjeta.querySelector(".opcion-c").value.trim(),
+
+        opcion_d:
+            tarjeta.querySelector(".opcion-d").value.trim(),
+
+        respuesta_correcta:
+            tarjeta.querySelector(
+                "input[type='radio']:checked"
+            )?.value || "",
+
+        puntos:1,
+
+        orden:index+1
+
+    });
+
+});
+
+const respuesta = await fetch(
+
+    url,
+
+    {
+
+        method:metodo,
+
+        headers:{
+
+            "Content-Type":"application/json"
+
+        },
+
+        body:JSON.stringify({
+
+            capitulo_id,
+            nombre,
+            descripcion,
+            porcentaje_aprobacion,
+            preguntas
+
+        })
+
+    }
+
+);
+
+const data = await respuesta.json();
+
+if(!data.success){
+
+    return Swal.fire({
+
+        icon:"error",
+
+        title:"Error",
+
+        text:data.mensaje
+
+    });
+
+}
+
+const evaluacion_id =
+    evaluacionEditando || data.id;
+
+        // ==========================================
+        // MENSAJE
+        // ==========================================
+
+        await Swal.fire({
+
+            icon:"success",
+
+            title:"Evaluación creada",
+
+            text:"La evaluación y sus preguntas fueron registradas correctamente.",
+
+            confirmButtonColor:"#16a34a"
+
+        });
+
+        evaluacionEditando = null;
+
+
+        // ==========================================
+        // LIMPIAR FORMULARIO
+        // ==========================================
+
+        document.getElementById(
+            "editorNombre"
+        ).value = "";
+
+        document.getElementById(
+            "editorDescripcion"
+        ).value = "";
+
+        document.getElementById(
+            "editorPorcentaje"
+        ).value = 70;
+
+        document.getElementById(
+            "contenedorPreguntas"
+        ).innerHTML = "";
+
+        preguntasEditor = [];
+
+        contadorPreguntas = 0;
+
+        // ==========================================
+        // CERRAR MODAL
+        // ==========================================
+
+        bootstrap.Modal
+            .getOrCreateInstance(
+                document.getElementById(
+                    "modalEditorEvaluacion"
+                )
+            )
+            .hide();
+
+        await cargarEvaluaciones();
+
+        bootstrap.Modal
+            .getOrCreateInstance(
+                document.getElementById(
+                    "modalEvaluaciones"
+                )
+            )
+            .show();
+
+    }catch(error){
+
+        console.error(error);
+
+        Swal.fire({
+
+            icon:"error",
+
+            title:"Error",
+
+            text:error.message
+
+        });
 
     }
 

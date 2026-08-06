@@ -201,10 +201,26 @@ console.log({
         // =========================================
 
         const sqlCheck = `
-            SELECT 
-                (SELECT COUNT(DISTINCT capitulo_id) FROM preguntas_induccion) as total,
-                (SELECT COUNT(DISTINCT capitulo_id) FROM resultados_evaluaciones WHERE usuario_id = ? AND aprobado = 1) as aprobados,
-                (SELECT COUNT(*) FROM certificados_usuario WHERE usuario_id = ?) as tiene_certificado
+            SELECT
+
+    (
+        SELECT COUNT(*)
+        FROM evaluaciones_induccion
+        WHERE estado = 'ACTIVA'
+    ) AS total,
+
+    (
+        SELECT COUNT(DISTINCT evaluacion_id)
+        FROM resultados_evaluaciones
+        WHERE usuario_id = ?
+        AND aprobado = 1
+    ) AS aprobados,
+
+    (
+        SELECT COUNT(*)
+        FROM certificados_usuario
+        WHERE usuario_id = ?
+    ) AS tiene_certificado
         `;
 
         const [results2] = await db.query(sqlCheck, [req.session.usuarioID, req.session.usuarioID]);
@@ -298,7 +314,9 @@ router.get('/api/me', proteger, async (req, res) => {
                 /* 📊 Conteos analíticos globales para las tarjetas del Dashboard */
                 (SELECT COUNT(*) FROM empleados WHERE activo = 'SI') as total_empleados_activos,
                 (SELECT COUNT(*) FROM usuarios) as total_usuarios_sistema,
-                (SELECT COUNT(*) FROM capacitaciones WHERE estado_asistencia = 'ASISTIO') as total_capacitaciones_completadas,
+                (SELECT COUNT(*)
+FROM capacitaciones
+WHERE estado = 'ACTIVO') AS total_capacitaciones,
                 (SELECT COUNT(*) FROM certificados_usuario) as total_certificados_emitidos
 
             FROM usuarios u
@@ -347,11 +365,11 @@ router.get('/api/me', proteger, async (req, res) => {
             tiene_certificado: tieneCertificado,
             redirect,
             conteos: {
-                empleados: u.total_empleados_activos || 0,
-                usuarios: u.total_usuarios_sistema || 0,
-                capacitaciones: u.total_capacitaciones_completadas || 0,
-                certificates: u.total_certificados_emitidos || 0
-            }
+    empleados: u.total_empleados_activos || 0,
+    usuarios: u.total_usuarios_sistema || 0,
+    capacitaciones: u.total_capacitaciones || 0,
+    certificates: u.total_certificados_emitidos || 0
+}
         });
 
     } catch (error) {

@@ -14,19 +14,17 @@ router.get('/api/preguntas-evaluacion/:capituloId', proteger, async (req, res) =
         const db = req.app.get('db');
 
         const sql = `
-            SELECT 
-                id,
-                pregunta,
-                opcion_a,
-                opcion_b,
-                opcion_c,
-                opcion_d,
-                respuesta_correcta,
-                puntos 
-
-            FROM preguntas_induccion 
-
-            WHERE capitulo_id = ?
+            SELECT
+    id,
+    pregunta,
+    opcion_a,
+    opcion_b,
+    opcion_c,
+    opcion_d,
+    respuesta_correcta,
+    puntos
+FROM preguntas_induccion
+WHERE evaluacion_id = ?
         `;
 
         const [results] = await db.query(
@@ -70,36 +68,32 @@ router.post('/api/guardar-evaluacion', proteger, async (req, res) => {
 
         const db = req.app.get('db');
 
-        const { capitulo_id, respuestas } = req.body;
+        const { evaluacion_id, respuestas } = req.body;
 
         const usuario_id =
             req.session.usuarioID;
 
-        if (!capitulo_id || !respuestas) {
+        if (!evaluacion_id || !respuestas) {
 
-            return res.json({
+    return res.json({
+        success: false,
+        message: "Datos incompletos"
+    });
 
-                success: false,
-                message: "Datos incompletos"
-
-            });
-
-        }
+}
 
         const sqlGetPreguntas = `
-            SELECT 
-                id,
-                respuesta_correcta 
-
-            FROM preguntas_induccion 
-
-            WHERE capitulo_id = ?
+            SELECT
+id,
+respuesta_correcta
+FROM preguntas_induccion
+WHERE evaluacion_id = ?
         `;
         
         const [preguntas] = await db.query(
-            sqlGetPreguntas,
-            [capitulo_id]
-        );
+    sqlGetPreguntas,
+    [evaluacion_id]
+);
 
         if (preguntas.length === 0) {
 
@@ -138,20 +132,18 @@ router.post('/api/guardar-evaluacion', proteger, async (req, res) => {
             nota >= 70 ? 1 : 0;
 
         const sqlCheck = `
-            SELECT id 
-
-            FROM resultados_evaluaciones 
-
-            WHERE usuario_id = ? 
-            AND capitulo_id = ?
+            SELECT id
+FROM resultados_evaluaciones
+WHERE usuario_id = ?
+AND evaluacion_id = ?
         `;
         
         const [existing] = await db.query(
             sqlCheck,
             [
-                usuario_id,
-                capitulo_id
-            ]
+    usuario_id,
+    evaluacion_id
+]
         );
 
         let sqlInsert;
@@ -167,39 +159,38 @@ router.post('/api/guardar-evaluacion', proteger, async (req, res) => {
                     aprobado = ?,
                     fecha_evaluacion = NOW() 
 
-                WHERE usuario_id = ? 
-                AND capitulo_id = ?
+                WHERE usuario_id = ?
+AND evaluacion_id = ?
             `;
 
             params = [
-                nota,
-                aprobado,
-                usuario_id,
-                capitulo_id
-            ];
-
+    nota,
+    aprobado,
+    usuario_id,
+    evaluacion_id
+];
         } else {
 
             sqlInsert = `
                 INSERT INTO resultados_evaluaciones 
 
                 (
-                    usuario_id,
-                    capitulo_id,
-                    nota,
-                    aprobado,
-                    fecha_evaluacion
-                ) 
+usuario_id,
+evaluacion_id,
+nota,
+aprobado,
+fecha_evaluacion
+)
 
                 VALUES (?, ?, ?, ?, NOW())
             `;
 
             params = [
-                usuario_id,
-                capitulo_id,
-                nota,
-                aprobado
-            ];
+    usuario_id,
+    evaluacion_id,
+    nota,
+    aprobado
+];
 
         }
 
