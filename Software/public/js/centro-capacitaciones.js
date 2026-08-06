@@ -40,6 +40,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         const cardSeguimiento =
             document.getElementById("cardSeguimiento");
 
+            const cardAdministracionh1 =
+            document.getElementById("cardaAdministracionh1")
+
         // Ocultamos las tarjetas de administración
 
         if (rol.includes("auxiliar")) {
@@ -97,6 +100,6 @@ function abrirAdministracion(){
 function abrirSeguimiento(){
 
     window.location.href =
-        "/seguimiento-capacitaciones";
+        "/seguimiento-general";
 
 }

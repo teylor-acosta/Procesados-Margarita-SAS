@@ -14,6 +14,8 @@ let mostrarTodosLosSubCapitulos = false;
 let capituloEditando = null;
 let subCapituloVideo = null;
 let subCapituloEditando = null;
+let materialEditando = null;
+let cursoMaterialSeleccionado = cursoId;
 
 
 // ==========================================
@@ -439,6 +441,26 @@ function inicializarEventos(){
             )
         );
 
+        document
+    .getElementById("cardMaterialApoyo")
+    .addEventListener(
+        "click",
+        async () => {
+
+            const modal =
+            bootstrap.Modal.getOrCreateInstance(
+                document.getElementById(
+                    "modalMaterialApoyo"
+                )
+            );
+
+            await cargarMateriales();
+
+            modal.show();
+
+        }
+    );
+
     // ===========================
     // CARD CAPÍTULOS
     // ===========================
@@ -450,6 +472,22 @@ function inicializarEventos(){
             modalCapitulos.show();
 
         });
+
+
+        // ===========================
+// CARD CERTIFICADOS
+// ===========================
+
+document
+    .getElementById("cardCertificados")
+    .addEventListener("click", () => {
+
+        console.log("Click en Certificados");
+
+        window.location.href =
+            `/administrar-certificado/${cursoId}`;
+
+    });
 
     // ===========================
     // CARD SUBCAPÍTULOS
@@ -550,6 +588,133 @@ function inicializarEventos(){
 
         }
     );
+
+    document
+.getElementById(
+    "tipoAsignacion"
+)
+.addEventListener(
+    "change",
+    ()=>{
+
+        const tipo =
+        document.getElementById(
+            "tipoAsignacion"
+        ).value;
+
+        document
+        .getElementById(
+            "contenedorSubCapituloMaterial"
+        )
+        .style.display =
+
+        tipo==="SUBCAPITULO"
+
+        ? "block"
+
+        : "none";
+
+    }
+);
+
+document
+.getElementById(
+    "capituloMaterial"
+)
+.addEventListener(
+    "change",
+    cargarSubCapitulosMaterial
+);
+
+    // ===========================
+// NUEVO MATERIAL
+// ===========================
+
+document
+.getElementById("btnNuevoMaterial")
+.addEventListener(
+    "click",
+    async ()=>{
+
+        materialEditando = null;
+
+        document
+        .getElementById(
+            "formMaterialApoyo"
+        )
+        .reset();
+
+        document.querySelector(
+            "#modalNuevoMaterial .modal-title"
+        ).innerHTML = `
+            <i class="fas fa-folder-open"></i>
+            Nuevo Material de Apoyo
+        `;
+
+        const modalMaterial =
+        bootstrap.Modal.getInstance(
+            document.getElementById(
+                "modalMaterialApoyo"
+            )
+        );
+
+        const modalNuevo =
+        bootstrap.Modal.getOrCreateInstance(
+            document.getElementById(
+                "modalNuevoMaterial"
+            )
+        );
+
+        // Cargar primero los capítulos
+        await cargarCapitulosMaterial();
+
+        document
+        .getElementById(
+            "modalMaterialApoyo"
+        )
+        .addEventListener(
+            "hidden.bs.modal",
+            function abrir(){
+
+                document
+                .getElementById(
+                    "modalMaterialApoyo"
+                )
+                .removeEventListener(
+                    "hidden.bs.modal",
+                    abrir
+                );
+
+                modalNuevo.show();
+
+            }
+        );
+
+        modalMaterial.hide();
+
+    }
+);
+
+document
+.getElementById(
+    "btnGuardarMaterial"
+)
+.addEventListener(
+    "click",
+    ()=>{
+
+        if(materialEditando){
+
+            actualizarMaterial();
+
+        }else{
+
+            guardarMaterial();
+
+        }
+
+    }
+);
 
     // ===========================
 // NUEVO SUBCAPÍTULO
@@ -1959,6 +2124,829 @@ async function guardarVideo(){
         .show();
 
         await cargarSubCapitulos();
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+async function cargarMateriales(){
+
+    try{
+
+        const respuesta =
+        await fetch(
+            `/api/cursos/${cursoId}/materiales`
+        );
+
+        const data =
+        await respuesta.json();
+
+        if(!data.success){
+
+            return;
+
+        }
+
+        renderMateriales(
+            data.materiales
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+// ==========================================
+// RENDER MATERIAL DE APOYO
+// ==========================================
+
+function renderMateriales(materiales){
+
+    const lista =
+    document.getElementById(
+        "listaMateriales"
+    );
+
+    if(materiales.length===0){
+
+        lista.innerHTML=`
+
+        <div class="text-center py-5">
+
+            <i class="fas fa-folder-open fa-3x text-secondary mb-3"></i>
+
+            <h5>
+
+                No existen materiales de apoyo.
+
+            </h5>
+
+            <p class="text-muted">
+
+                Presiona "Nuevo Material" para comenzar.
+
+            </p>
+
+        </div>
+
+        `;
+
+        return;
+
+    }
+
+    let html="";
+
+    materiales.forEach(material=>{
+
+        let icono = "fa-file";
+
+        switch(material.tipo_archivo){
+
+            case "pdf":
+                icono="fa-file-pdf";
+            break;
+
+            case "doc":
+            case "docx":
+                icono="fa-file-word";
+            break;
+
+            case "xls":
+            case "xlsx":
+                icono="fa-file-excel";
+            break;
+
+            case "ppt":
+            case "pptx":
+                icono="fa-file-powerpoint";
+            break;
+
+            case "jpg":
+            case "jpeg":
+            case "png":
+                icono="fa-file-image";
+            break;
+
+            case "zip":
+            case "rar":
+                icono="fa-file-archive";
+            break;
+
+        }
+
+        html+=`
+
+        <div class="card shadow-sm border-0 mb-3">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <div>
+
+                        <h5>
+
+                            <i class="fas ${icono} text-danger me-2"></i>
+
+                            ${material.titulo}
+
+                        </h5>
+
+                        <p class="text-muted mb-1">
+
+                            ${material.descripcion ?? ""}
+
+                        </p>
+
+                        <small class="text-primary">
+
+                            ${material.tipo_asignacion}
+
+                        </small>
+
+                    </div>
+
+                    <div class="d-flex gap-2">
+
+                        <button
+                            class="btn btn-warning btn-sm"
+                            onclick="editarMaterial(${material.id})">
+
+                            <i class="fas fa-pen"></i>
+
+                        </button>
+
+                        <button
+                            class="btn btn-danger btn-sm"
+                            onclick="eliminarMaterial(${material.id})">
+
+                            <i class="fas fa-trash"></i>
+
+                        </button>
+
+                        <a
+                            href="${material.ruta_archivo}"
+                            target="_blank"
+                            class="btn btn-success btn-sm">
+
+                            <i class="fas fa-download"></i>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+    lista.innerHTML = html;
+
+}
+
+async function editarMaterial(id){
+
+    try{
+
+        const respuesta =
+        await fetch(
+            `/api/cursos/materiales/${id}`
+        );
+
+        const data =
+        await respuesta.json();
+
+        if(!data.success){
+
+            return Swal.fire({
+
+                icon:"error",
+
+                title:"Material no encontrado"
+
+            });
+
+        }
+
+        materialEditando = id;
+
+        const material = data.material;
+
+        await cargarCapitulosMaterial();
+
+        document.getElementById(
+            "tituloMaterial"
+        ).value =
+        material.titulo;
+
+        document.getElementById(
+            "descripcionMaterial"
+        ).value =
+        material.descripcion ?? "";
+
+        document.getElementById(
+            "tipoAsignacion"
+        ).value =
+        material.tipo_asignacion;
+
+        document.getElementById(
+            "capituloMaterial"
+        ).value =
+        material.capitulo_id;
+
+        await cargarSubCapitulosMaterial();
+
+        document.getElementById(
+            "subCapituloMaterial"
+        ).value =
+        material.sub_capitulo_id ?? "";
+
+        document.getElementById(
+            "ordenMaterial"
+        ).value =
+        material.orden;
+
+        document.getElementById(
+            "materialObligatorio"
+        ).checked =
+        material.obligatorio == 1;
+
+                document.getElementById(
+            "contenedorSubCapituloMaterial"
+        ).style.display =
+
+        material.tipo_asignacion==="SUBCAPITULO"
+
+        ? "block"
+
+        : "none";
+
+        document.querySelector(
+            "#modalNuevoMaterial .modal-title"
+        ).innerHTML = `
+
+        <i class="fas fa-pen"></i>
+
+        Editar Material
+
+        `;
+                const modalMaterial =
+        bootstrap.Modal.getInstance(
+            document.getElementById(
+                "modalMaterialApoyo"
+            )
+        );
+
+        const modalNuevo =
+        bootstrap.Modal.getOrCreateInstance(
+            document.getElementById(
+                "modalNuevoMaterial"
+            )
+        );
+
+        document
+        .getElementById(
+            "modalMaterialApoyo"
+        )
+        .addEventListener(
+            "hidden.bs.modal",
+            function abrir(){
+
+                document
+                .getElementById(
+                    "modalMaterialApoyo"
+                )
+                .removeEventListener(
+                    "hidden.bs.modal",
+                    abrir
+                );
+
+                modalNuevo.show();
+
+            }
+        );
+
+        modalMaterial.hide();
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
+async function eliminarMaterial(id){
+
+    const confirmar =
+    await Swal.fire({
+
+        icon:"warning",
+
+        title:"¿Eliminar material?",
+
+        text:"Esta acción eliminará también el archivo.",
+
+        showCancelButton:true,
+
+        confirmButtonText:"Sí",
+
+        cancelButtonText:"Cancelar"
+
+    });
+
+    if(!confirmar.isConfirmed){
+
+        return;
+
+    }
+
+    try{
+
+        const respuesta =
+        await fetch(
+
+            `/api/cursos/materiales/${id}`,
+
+            {
+
+                method:"DELETE"
+
+            }
+
+        );
+
+        const data =
+        await respuesta.json();
+
+        if(!data.success){
+
+            return Swal.fire({
+
+                icon:"error",
+
+                title:"Error",
+
+                text:data.mensaje
+
+            });
+
+        }
+
+        await Swal.fire({
+
+            icon:"success",
+
+            title:"Material eliminado",
+
+            timer:1200,
+
+            showConfirmButton:false
+
+        });
+
+        cargarMateriales();
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+// ==========================================
+// CARGAR CAPÍTULOS MATERIAL
+// ==========================================
+
+async function cargarCapitulosMaterial(){
+
+    try{
+
+        const respuesta =
+        await fetch(
+
+            `/api/cursos/${cursoId}/capitulos`
+
+        );
+
+        const data =
+        await respuesta.json();
+
+        if(!data.success){
+
+            return;
+
+        }
+
+        const select =
+        document.getElementById(
+            "capituloMaterial"
+        );
+
+        select.innerHTML = "";
+
+        data.capitulos.forEach(cap=>{
+
+            select.innerHTML += `
+
+                <option value="${cap.id}">
+
+                    Capítulo ${cap.numero_capitulo} - ${cap.titulo}
+
+                </option>
+
+            `;
+
+        });
+
+        if(data.capitulos.length){
+
+            await cargarSubCapitulosMaterial();
+
+        }
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+
+// ==========================================
+// CARGAR SUBCAPÍTULOS MATERIAL
+// ==========================================
+
+async function cargarSubCapitulosMaterial(){
+
+    try{
+
+        const capitulo =
+
+        document.getElementById(
+            "capituloMaterial"
+        ).value;
+
+        if(!capitulo){
+
+            return;
+
+        }
+
+        const respuesta =
+        await fetch(
+
+            `/api/capitulos/${capitulo}/subcapitulos`
+
+        );
+
+        const data =
+        await respuesta.json();
+
+        const select =
+        document.getElementById(
+            "subCapituloMaterial"
+        );
+
+        select.innerHTML = "";
+
+        if(!data.success){
+
+            return;
+
+        }
+
+        data.subcapitulos.forEach(sub=>{
+
+            select.innerHTML += `
+
+                <option value="${sub.id}">
+
+                    ${sub.numero_subcapitulo}
+
+                    -
+
+                    ${sub.titulo}
+
+                </option>
+
+            `;
+
+        });
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
+ 
+// ==========================================
+// GUARDAR MATERIAL
+// ==========================================
+
+async function guardarMaterial(){
+
+    try{
+
+        const formData = new FormData();
+
+        formData.append(
+            "titulo",
+            document.getElementById(
+                "tituloMaterial"
+            ).value
+        );
+
+        formData.append(
+            "descripcion",
+            document.getElementById(
+                "descripcionMaterial"
+            ).value
+        );
+
+        formData.append(
+            "tipoAsignacion",
+            document.getElementById(
+                "tipoAsignacion"
+            ).value
+        );
+
+        formData.append(
+            "capitulo_id",
+            document.getElementById(
+                "capituloMaterial"
+            ).value
+        );
+
+        formData.append(
+            "sub_capitulo_id",
+            document.getElementById(
+                "subCapituloMaterial"
+            ).value
+        );
+
+        formData.append(
+            "orden",
+            document.getElementById(
+                "ordenMaterial"
+            ).value
+        );
+
+        formData.append(
+            "obligatorio",
+            document.getElementById(
+                "materialObligatorio"
+            ).checked ? 1 : 0
+        );
+
+        const archivo =
+        document.getElementById(
+            "archivoMaterial"
+        ).files[0];
+
+        if(archivo){
+
+            formData.append(
+                "archivoMaterial",
+                archivo
+            );
+
+        }
+
+        const respuesta =
+        await fetch(
+
+            `/api/cursos/${cursoId}/materiales`,
+
+            {
+
+                method:"POST",
+
+                body:formData
+
+            }
+
+        );
+
+        const data =
+        await respuesta.json();
+
+        if(!data.success){
+
+            return Swal.fire({
+
+                icon:"error",
+
+                title:"Error",
+
+                text:data.mensaje ||
+
+                "No fue posible guardar el material."
+
+            });
+
+        }
+
+        await Swal.fire({
+
+            icon:"success",
+
+            title:"Material registrado",
+
+            timer:1500,
+
+            showConfirmButton:false
+
+        });
+
+        document.getElementById(
+            "formMaterialApoyo"
+        ).reset();
+
+        bootstrap.Modal
+        .getInstance(
+            document.getElementById(
+                "modalNuevoMaterial"
+            )
+        )
+        .hide();
+
+        await cargarMateriales();
+
+        bootstrap.Modal
+        .getOrCreateInstance(
+            document.getElementById(
+                "modalMaterialApoyo"
+            )
+        )
+        .show();
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+// ==========================================
+// ACTUALIZAR MATERIAL
+// ==========================================
+
+async function actualizarMaterial(){
+
+    try{
+
+        const formData = new FormData();
+
+        formData.append(
+            "titulo",
+            document.getElementById(
+                "tituloMaterial"
+            ).value
+        );
+
+        formData.append(
+            "descripcion",
+            document.getElementById(
+                "descripcionMaterial"
+            ).value
+        );
+
+        formData.append(
+            "tipoAsignacion",
+            document.getElementById(
+                "tipoAsignacion"
+            ).value
+        );
+
+        formData.append(
+            "capitulo_id",
+            document.getElementById(
+                "capituloMaterial"
+            ).value
+        );
+
+        formData.append(
+            "sub_capitulo_id",
+            document.getElementById(
+                "subCapituloMaterial"
+            ).value
+        );
+
+        formData.append(
+            "orden",
+            document.getElementById(
+                "ordenMaterial"
+            ).value
+        );
+
+        formData.append(
+            "obligatorio",
+            document.getElementById(
+                "materialObligatorio"
+            ).checked ? 1 : 0
+        );
+
+        const archivo =
+        document.getElementById(
+            "archivoMaterial"
+        ).files[0];
+
+        if(archivo){
+
+            formData.append(
+                "archivoMaterial",
+                archivo
+            );
+
+        }
+
+        const respuesta =
+        await fetch(
+
+            `/api/cursos/materiales/${materialEditando}`,
+
+            {
+
+                method:"PUT",
+
+                body:formData
+
+            }
+
+        );
+
+        const data =
+        await respuesta.json();
+
+        if(!data.success){
+
+            return Swal.fire({
+
+                icon:"error",
+
+                title:"Error",
+
+                text:data.mensaje
+
+            });
+
+        }
+
+        await Swal.fire({
+
+            icon:"success",
+
+            title:"Material actualizado",
+
+            timer:1500,
+
+            showConfirmButton:false
+
+        });
+
+        materialEditando = null;
+
+        document
+        .getElementById(
+            "formMaterialApoyo"
+        )
+        .reset();
+
+        bootstrap.Modal
+        .getInstance(
+            document.getElementById(
+                "modalNuevoMaterial"
+            )
+        )
+        .hide();
+
+        await cargarMateriales();
+
+        bootstrap.Modal
+        .getOrCreateInstance(
+            document.getElementById(
+                "modalMaterialApoyo"
+            )
+        )
+        .show();
 
     }catch(error){
 

@@ -123,9 +123,21 @@ app.use(require('./routes/induccion.routes'));
 
 app.use(require('./routes/evaluacion.routes'));
 
+app.use(require('./routes/evaluaciones-admin.routes'));
+
+app.use(require("./routes/preguntas-induccion.routes"));
+
+app.use(require("./routes/curso-preguntas.routes"));
+
+app.use(require("./routes/curso-material.routes"));
+
+app.use(require("./routes/curso-evaluaciones.routes"));
+
 app.use(require('./routes/firma.routes'));
 
 app.use(require('./routes/certificado.routes'));
+
+app.use(require('./routes/certificado-capacitacion.routes'));
 
 app.use(require('./routes/perfil.routes'));
 
@@ -162,6 +174,16 @@ app.use(
     require(
         './routes/centro-capacitaciones.routes'
     )
+);
+
+app.use(
+    require(
+        './routes/mis-capacitaciones.routes'
+    )
+);
+
+app.use(
+    require('./routes/seguimiento-general.routes')
 );
 
 // ============================================

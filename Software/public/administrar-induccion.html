@@ -158,41 +158,25 @@
 
 </div>
 
-        <div class="opcion">
+        <div
+    class="opcion"
+    id="cardEvaluaciones">
 
-            <i class="fas fa-circle-question"></i>
+    <i class="fas fa-circle-question"></i>
 
-            <h3>
+    <h3>
 
-                Evaluaciones
+        Evaluaciones
 
-            </h3>
+    </h3>
 
-            <p>
+    <p>
 
-                Crear preguntas y evaluaciones.
+        Crear preguntas y evaluaciones.
 
-            </p>
+    </p>
 
-        </div>
-
-        <div class="opcion">
-
-            <i class="fas fa-award"></i>
-
-            <h3>
-
-                Certificados
-
-            </h3>
-
-            <p>
-
-                Configuración de certificados.
-
-            </p>
-
-        </div>
+</div>
 
     </div>
 
@@ -551,6 +535,266 @@ MODAL MATERIAL DE APOYO
     id="listaMateriales"
     class="row g-4">
 </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ===========================================
+MODAL EVALUACIONES
+=========================================== -->
+
+<div
+    class="modal fade"
+    id="modalEvaluaciones"
+    tabindex="-1">
+
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h4 class="modal-title">
+
+                    <i class="fas fa-circle-question"></i>
+
+                    Administrar Evaluaciones
+
+                </h4>
+
+                <button
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div
+                    class="d-flex justify-content-between align-items-center mb-4">
+
+                    <button
+                        class="btn btn-success"
+                        id="btnNuevaEvaluacion">
+
+                        <i class="fas fa-plus"></i>
+
+                        Nueva Evaluación
+
+                    </button>
+
+                </div>
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Capítulo</th>
+
+                                <th>Evaluación</th>
+
+                                <th>% Aprobación</th>
+
+                                <th>Preguntas</th>
+
+                                <th>Estado</th>
+
+                                <th class="text-center">
+
+                                    Acciones
+
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="listaEvaluaciones">
+
+                            <!-- Se cargará dinámicamente -->
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==========================================
+EDITOR DE EVALUACIÓN
+========================================== -->
+
+<div
+    class="modal fade"
+    id="modalEditorEvaluacion"
+    tabindex="-1"
+>
+
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h4 class="modal-title">
+
+                    <i class="fas fa-file-alt me-2"></i>
+
+                    Editor de Evaluación
+
+                </h4>
+
+                <button
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                ></button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <!-- DATOS DE LA EVALUACIÓN -->
+
+                <div
+                    class="card shadow-sm mb-4"
+                >
+
+                    <div class="card-body">
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+
+                                <label>
+
+                                    Capítulo
+
+                                </label>
+
+                                <select
+                                    class="form-select"
+                                    id="editorCapitulo"
+                                ></select>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <label>
+
+                                    Nombre
+
+                                </label>
+
+                                <input
+                                    class="form-control"
+                                    id="editorNombre"
+                                >
+
+                            </div>
+
+                            <div class="col-md-12 mt-3">
+
+                                <label>
+
+                                    Descripción
+
+                                </label>
+
+                                <textarea
+                                    class="form-control"
+                                    rows="3"
+                                    id="editorDescripcion"
+                                ></textarea>
+
+                            </div>
+
+                            <div class="col-md-3 mt-3">
+
+                                <label>
+
+                                    Aprobación %
+
+                                </label>
+
+                                <input
+                                    class="form-control"
+                                    type="number"
+                                    id="editorPorcentaje"
+                                    value="70"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- PREGUNTAS -->
+
+                <div
+                    id="contenedorPreguntas"
+                >
+
+                </div>
+
+                <div class="text-center mt-4">
+
+                    <button
+                        class="btn btn-success btn-lg"
+                        id="btnAgregarPregunta"
+                    >
+
+                        <i class="fas fa-plus"></i>
+
+                        Agregar pregunta
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+
+                    Cancelar
+
+                </button>
+
+                <button
+                    class="btn btn-primary"
+                    id="btnGuardarEvaluacionCompleta"
+                >
+
+                    Guardar evaluación
+
+                </button>
 
             </div>
 

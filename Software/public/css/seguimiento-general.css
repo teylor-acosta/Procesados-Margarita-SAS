@@ -1,0 +1,1549 @@
+/* ==========================================================
+   SEGUIMIENTO GENERAL
+========================================================== */
+
+
+/* ==========================================================
+   CONTENEDOR PRINCIPAL
+========================================================== */
+
+.seguimiento-general-container{
+
+    margin-left:280px;
+
+    padding:35px;
+
+    min-height:100vh;
+
+    transition:.3s;
+
+}
+
+.content{
+
+    width:100%;
+
+}
+
+
+/* ==========================================================
+   HERO
+========================================================== */
+
+.hero-seguimiento{
+
+    background:linear-gradient(
+        135deg,
+        #0f5132,
+        #198754
+    );
+
+    border-radius:30px;
+
+    padding:45px;
+
+    color:white;
+
+    margin-bottom:35px;
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.12);
+
+}
+
+.hero-texto h1{
+
+    font-size:42px;
+
+    font-weight:700;
+
+    margin-bottom:15px;
+
+}
+
+.hero-texto p{
+
+    font-size:18px;
+
+    line-height:1.8;
+
+    opacity:.95;
+
+    max-width:900px;
+
+}
+
+
+/* ==========================================================
+   TARJETAS RESUMEN
+========================================================== */
+
+.resumen-dashboard{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:25px;
+
+    margin-bottom:35px;
+
+}
+
+.card-resumen{
+
+    background:white;
+
+    border-radius:24px;
+
+    padding:28px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.08);
+
+    transition:.30s;
+
+    border:1px solid rgba(0,0,0,.05);
+
+}
+
+.card-resumen:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:
+        0 18px 40px rgba(0,0,0,.12);
+
+}
+
+.card-resumen span{
+
+    display:block;
+
+    color:#64748b;
+
+    font-size:15px;
+
+    margin-bottom:10px;
+
+    font-weight:700;
+
+}
+
+.card-resumen h2{
+
+    font-size:42px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+    margin:0;
+
+}
+
+.card-resumen i{
+
+    width:70px;
+
+    height:70px;
+
+    border-radius:20px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:#22c55e15;
+
+    color:#16a34a;
+
+    font-size:30px;
+
+}
+
+
+/* ==========================================================
+   TABS
+========================================================== */
+
+.tabs-seguimiento{
+
+    display:flex;
+
+    gap:20px;
+
+    margin-bottom:30px;
+
+}
+
+.tab-btn{
+
+    border:none;
+
+    background:white;
+
+    padding:16px 30px;
+
+    border-radius:18px;
+
+    font-size:17px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.30s;
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,.08);
+
+}
+
+.tab-btn i{
+
+    margin-right:10px;
+
+}
+
+.tab-btn:hover{
+
+    background:#198754;
+
+    color:white;
+
+}
+
+.tab-btn.active{
+
+    background:#198754;
+
+    color:white;
+
+}
+
+/* ==========================================================
+   DASHBOARD PRINCIPAL
+========================================================== */
+
+.dashboard-seguimiento{
+
+    display:grid;
+
+    grid-template-columns:340px 1fr;
+
+    gap:30px;
+
+    align-items:start;
+
+}
+
+
+/* ==========================================================
+   PANEL IZQUIERDO
+========================================================== */
+
+.panel-empleados{
+
+    background:white;
+
+    border-radius:25px;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.08);
+
+    border:1px solid rgba(0,0,0,.05);
+
+    overflow:hidden;
+
+    height:calc(100vh - 260px);
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.panel-header{
+
+    padding:25px;
+
+    border-bottom:1px solid #edf2f7;
+
+}
+
+.panel-header h3{
+
+    margin:0;
+
+    font-size:24px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+}
+
+.panel-header span{
+
+    color:#64748b;
+
+    font-size:14px;
+
+}
+
+.buscador-empleados{
+
+    margin:20px;
+
+    position:relative;
+
+}
+
+.buscador-empleados i{
+
+    position:absolute;
+
+    left:18px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:#94a3b8;
+
+}
+
+.buscador-empleados input{
+
+    width:100%;
+
+    height:55px;
+
+    border:none;
+
+    background:#f8fafc;
+
+    border-radius:16px;
+
+    padding-left:50px;
+
+    font-size:15px;
+
+}
+
+.buscador-empleados input:focus{
+
+    outline:none;
+
+    background:white;
+
+    border:2px solid #198754;
+
+}
+
+.filtros-empleados{
+
+    padding:0 20px 20px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+}
+
+.filtros-empleados select{
+
+    height:48px;
+
+    border-radius:14px;
+
+}
+
+
+/* ==========================================================
+   LISTA EMPLEADOS
+========================================================== */
+
+.lista-empleados{
+
+    flex:1;
+
+    overflow-y:auto;
+
+    padding:0 15px 20px;
+
+}
+
+.lista-empleados::-webkit-scrollbar{
+
+    width:6px;
+
+}
+
+.lista-empleados::-webkit-scrollbar-thumb{
+
+    background:#cbd5e1;
+
+    border-radius:20px;
+
+}
+
+/* ==========================================================
+   TARJETAS EMPLEADOS
+========================================================== */
+
+.empleado-card{
+
+    background:#ffffff;
+
+    border:2px solid transparent;
+
+    border-radius:18px;
+
+    padding:18px;
+
+    margin-bottom:15px;
+
+    cursor:pointer;
+
+    transition:.30s;
+
+    display:flex;
+
+    gap:15px;
+
+    align-items:center;
+
+}
+
+.empleado-card:hover{
+
+    transform:translateY(-3px);
+
+    border-color:#198754;
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.10);
+
+}
+
+.empleado-card.active{
+
+    background:#198754;
+
+    color:white;
+
+    border-color:#198754;
+
+}
+
+.avatar-empleado{
+
+    width:58px;
+
+    height:58px;
+
+    min-width:58px;
+
+    border-radius:50%;
+
+    overflow:hidden;
+
+    background:#f1f5f9;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.avatar-empleado img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
+
+.info-empleado{
+
+    flex:1;
+
+}
+
+.info-empleado h4{
+
+    margin:0;
+
+    font-size:17px;
+
+    font-weight:700;
+
+}
+
+.info-empleado span{
+
+    display:block;
+
+    color:#64748b;
+
+    font-size:13px;
+
+    margin-top:3px;
+
+}
+
+.empleado-card.active span{
+
+    color:rgba(255,255,255,.90);
+
+}
+
+
+/* ==========================================================
+   PROGRESO EMPLEADO
+========================================================== */
+
+.progreso-mini{
+
+    margin-top:10px;
+
+}
+
+.progreso-mini-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    font-size:12px;
+
+    margin-bottom:6px;
+
+}
+
+.barra-mini{
+
+    width:100%;
+
+    height:8px;
+
+    background:#e2e8f0;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+.barra-mini div{
+
+    height:100%;
+
+    width:0;
+
+    background:#22c55e;
+
+    border-radius:20px;
+
+}
+
+.empleado-card.active .barra-mini{
+
+    background:rgba(255,255,255,.20);
+
+}
+
+.empleado-card.active .barra-mini div{
+
+    background:white;
+
+}
+
+
+/* ==========================================================
+   ESTADO EMPLEADO
+========================================================== */
+
+.estado-indicador{
+
+    width:14px;
+
+    height:14px;
+
+    border-radius:50%;
+
+}
+
+.estado-verde{
+
+    background:#22c55e;
+
+}
+
+.estado-amarillo{
+
+    background:#facc15;
+
+}
+
+.estado-rojo{
+
+    background:#ef4444;
+
+}
+
+/* ==========================================================
+   PANEL DERECHO
+========================================================== */
+
+.panel-detalle{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:25px;
+
+}
+
+
+/* ==========================================================
+   FICHA DEL EMPLEADO
+========================================================== */
+
+.card-empleado{
+
+    background:white;
+
+    border-radius:25px;
+
+    padding:30px;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.08);
+
+    border:1px solid rgba(0,0,0,.05);
+
+}
+
+.empleado-superior{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:30px;
+
+}
+
+.datos-empleado{
+
+    flex:1;
+
+}
+
+.datos-empleado h2{
+
+    margin:0;
+
+    font-size:34px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+}
+
+#cargoEmpleado{
+
+    display:block;
+
+    margin-top:8px;
+
+    font-size:18px;
+
+    font-weight:700;
+
+    color:#16a34a;
+
+}
+
+.datos-secundarios{
+
+    display:flex;
+
+    gap:20px;
+
+    margin-top:18px;
+
+    flex-wrap:wrap;
+
+}
+
+.datos-secundarios span{
+
+    background:#f8fafc;
+
+    padding:10px 18px;
+
+    border-radius:30px;
+
+    font-size:14px;
+
+    font-weight:700;
+
+    color:#475569;
+
+}
+
+.badge-estado{
+
+    background:#198754;
+
+    color:white;
+
+    padding:12px 20px;
+
+    border-radius:30px;
+
+    font-size:14px;
+
+    font-weight:700;
+
+}
+
+/* ==========================================================
+   PROGRESO GENERAL
+========================================================== */
+
+.card-progreso{
+
+    background:white;
+
+    border-radius:25px;
+
+    padding:28px;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.08);
+
+    border:1px solid rgba(0,0,0,.05);
+
+}
+
+.titulo-card{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.titulo-card h3{
+
+    margin:0;
+
+    font-size:24px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+}
+
+#porcentajeGeneral{
+
+    font-size:26px;
+
+    font-weight:700;
+
+    color:#198754;
+
+}
+
+.barra-general{
+
+    width:100%;
+
+    height:18px;
+
+    background:#e2e8f0;
+
+    border-radius:30px;
+
+    overflow:hidden;
+
+    margin-bottom:30px;
+
+}
+
+.barra-general-fill{
+
+    width:0%;
+
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        #16a34a,
+        #22c55e
+    );
+
+    border-radius:30px;
+
+    transition:.4s;
+
+}
+
+.estadisticas-progreso{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:20px;
+
+}
+
+.estadisticas-progreso div{
+
+    background:#f8fafc;
+
+    border-radius:18px;
+
+    padding:20px;
+
+    text-align:center;
+
+}
+
+.estadisticas-progreso strong{
+
+    display:block;
+
+    font-size:34px;
+
+    font-weight:700;
+
+    color:#198754;
+
+    margin-bottom:8px;
+
+}
+
+.estadisticas-progreso span{
+
+    font-size:14px;
+
+    color:#64748b;
+
+    font-weight:700;
+
+}
+
+/* ==========================================================
+   ACCIONES DEL EMPLEADO
+========================================================== */
+
+.acciones-empleado{
+
+    display:flex;
+
+    gap:15px;
+
+    flex-wrap:wrap;
+
+}
+
+.acciones-empleado .btn{
+
+    height:52px;
+
+    border-radius:16px;
+
+    font-weight:700;
+
+    padding:0 25px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    transition:.30s;
+
+}
+
+.acciones-empleado .btn:hover{
+
+    transform:translateY(-3px);
+
+}
+
+
+/* ==========================================================
+   TARJETA LISTADO
+========================================================== */
+
+.card-listado{
+
+    background:white;
+
+    border-radius:25px;
+
+    padding:28px;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.08);
+
+    border:1px solid rgba(0,0,0,.05);
+
+}
+
+
+/* ==========================================================
+   LISTA CAPACITACIONES
+========================================================== */
+
+.lista-capacitaciones{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+
+/* ==========================================================
+   ITEM CAPACITACIÓN
+========================================================== */
+
+.capacitacion-item{
+
+    border:1px solid #e2e8f0;
+
+    border-radius:18px;
+
+    padding:20px;
+
+    transition:.30s;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+.capacitacion-item:hover{
+
+    border-color:#198754;
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,.08);
+
+}
+
+.capacitacion-info h4{
+
+    margin:0;
+
+    font-size:18px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+}
+
+.capacitacion-info p{
+
+    margin:8px 0 0;
+
+    color:#64748b;
+
+    font-size:14px;
+
+}
+
+.capacitacion-estado{
+
+    text-align:right;
+
+    min-width:180px;
+
+}
+
+.capacitacion-estado span{
+
+    display:inline-block;
+
+    padding:8px 18px;
+
+    border-radius:30px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    margin-bottom:10px;
+
+}
+
+.estado-pendiente{
+
+    background:#fef3c7;
+
+    color:#92400e;
+
+}
+
+.estado-progreso{
+
+    background:#dbeafe;
+
+    color:#1d4ed8;
+
+}
+
+.estado-finalizada{
+
+    background:#dcfce7;
+
+    color:#166534;
+
+}
+
+.capacitacion-estado strong{
+
+    display:block;
+
+    font-size:18px;
+
+    color:#198754;
+
+}
+
+/* ==========================================================
+   HISTORIAL
+========================================================== */
+
+.historial-empleado{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.historial-item{
+
+    display:flex;
+
+    gap:18px;
+
+    align-items:flex-start;
+
+    padding-bottom:20px;
+
+    border-bottom:1px solid #edf2f7;
+
+}
+
+.historial-item:last-child{
+
+    border-bottom:none;
+
+    padding-bottom:0;
+
+}
+
+.historial-icono{
+
+    width:50px;
+
+    height:50px;
+
+    min-width:50px;
+
+    border-radius:50%;
+
+    background:#19875415;
+
+    color:#198754;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:20px;
+
+}
+
+.historial-info{
+
+    flex:1;
+
+}
+
+.historial-info h5{
+
+    margin:0;
+
+    font-size:17px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+}
+
+.historial-info p{
+
+    margin:6px 0;
+
+    color:#64748b;
+
+    line-height:1.6;
+
+}
+
+.historial-fecha{
+
+    font-size:13px;
+
+    color:#94a3b8;
+
+}
+
+/*====================================
+LISTA EMPLEADOS
+====================================*/
+
+.lista-empleados{
+
+    margin-top:20px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+    max-height:650px;
+
+    overflow-y:auto;
+
+}
+
+.empleado-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    background:#fff;
+
+    padding:14px;
+
+    border-radius:18px;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    border:1px solid #edf2f7;
+
+}
+
+.empleado-card:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 12px 25px rgba(0,0,0,.08);
+
+}
+
+.empleado-avatar{
+
+    width:55px;
+
+    height:55px;
+
+    border-radius:50%;
+
+    background:#16a34a15;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    overflow:hidden;
+
+    font-size:22px;
+
+    color:#16a34a;
+
+}
+
+.empleado-avatar img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
+
+.empleado-info{
+
+    flex:1;
+
+}
+
+.empleado-info h4{
+
+    margin:0;
+
+    font-size:16px;
+
+    font-weight:700;
+
+}
+
+.empleado-info small{
+
+    display:block;
+
+    color:#64748b;
+
+}
+
+.empleado-info span{
+
+    color:#16a34a;
+
+    font-size:13px;
+
+}
+
+.empleado-card.active{
+
+    border:2px solid #16a34a;
+
+    background:#f0fdf4;
+
+}
+
+.capacitacion-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:15px;
+
+    margin-top:12px;
+
+    border:1px solid #e8e8e8;
+
+    border-radius:12px;
+
+    background:#fff;
+
+}
+
+.capacitacion-item h5{
+
+    margin:0;
+
+    font-size:17px;
+
+    font-weight:700;
+
+}
+
+.capacitacion-item small{
+
+    color:#6b7280;
+
+}
+
+.panel-detalle-card{
+
+    background:#ffffff;
+
+    border-radius:20px;
+
+    padding:30px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+    border:1px solid #e8ecef;
+
+    min-height:700px;
+
+}
+
+/* ==========================================
+   MODAL ASIGNACIÓN
+========================================== */
+
+#modalAsignarCapacitacion .modal-content{
+
+    border:none;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    box-shadow:0 20px 40px rgba(0,0,0,.15);
+
+}
+
+/* HEADER */
+
+#modalAsignarCapacitacion .modal-header{
+
+    background:linear-gradient(135deg,#198754,#157347);
+
+    color:#fff;
+
+    padding:18px 25px;
+
+}
+
+#modalAsignarCapacitacion .modal-header h4{
+
+    margin:0;
+
+    font-size:22px;
+
+    font-weight:700;
+
+}
+
+#modalAsignarCapacitacion .btn-close{
+
+    filter:invert(1);
+
+}
+
+/* BODY */
+
+#modalAsignarCapacitacion .modal-body{
+
+    padding:25px;
+
+    background:#f8fafc;
+
+    min-height:500px;
+
+}
+
+/* FOOTER */
+
+#modalAsignarCapacitacion .modal-footer{
+
+    padding:18px 25px;
+
+    background:#fff;
+
+}
+
+/* ==========================
+   MODOS
+========================== */
+
+.modo-asignacion{
+
+    display:flex;
+
+    gap:15px;
+
+    margin-bottom:25px;
+
+}
+
+.modo-btn{
+
+    flex:1;
+
+    border:none;
+
+    padding:14px;
+
+    border-radius:12px;
+
+    background:#e9ecef;
+
+    font-weight:700;
+
+    transition:.3s;
+
+}
+
+.modo-btn.active{
+
+    background:#198754;
+
+    color:white;
+
+}
+
+/* ==========================
+   EMPLEADO
+========================== */
+
+.empleado-seleccionado{
+
+    margin-bottom:20px;
+
+}
+
+.empleado-seleccionado label{
+
+    font-weight:700;
+
+    margin-bottom:8px;
+
+}
+
+/* ==========================
+   CONTENEDOR
+========================== */
+
+.contenedor-capacitaciones-modal{
+
+    max-height:350px;
+
+    overflow:auto;
+
+    padding-right:8px;
+
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media(max-width:1400px){
+
+    .dashboard-seguimiento{
+
+        grid-template-columns:300px 1fr;
+
+    }
+
+}
+
+@media(max-width:1200px){
+
+    .dashboard-seguimiento{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .panel-empleados{
+
+        height:auto;
+
+    }
+
+}
+
+@media(max-width:992px){
+
+    .seguimiento-general-container{
+
+        margin-left:0;
+
+        padding:20px;
+
+    }
+
+    .resumen-dashboard{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+    .empleado-superior{
+
+        flex-direction:column;
+
+        gap:20px;
+
+    }
+
+    .estadisticas-progreso{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .resumen-dashboard{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .tabs-seguimiento{
+
+        flex-direction:column;
+
+    }
+
+    .acciones-empleado{
+
+        flex-direction:column;
+
+    }
+
+}
+

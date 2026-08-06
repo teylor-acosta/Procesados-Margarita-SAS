@@ -5,6 +5,11 @@
 // 🔐 PROTEGER (LOGIN)
 const proteger = (req, res, next) => {
 
+    console.log("===== SESIÓN =====");
+    console.log(req.session);
+    console.log("UsuarioID:", req.session.usuarioID);
+    console.log("URL:", req.originalUrl);
+
     if (!req.session.usuarioID) {
 
         if (req.originalUrl.startsWith('/api')) {

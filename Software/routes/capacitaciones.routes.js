@@ -855,14 +855,14 @@ router.get(
 );
 
 router.get(
-    "/seguimiento-capacitaciones",
+    "/seguimiento-general",
     proteger,
     (req, res) => {
 
         res.sendFile(
             path.join(
                 __dirname,
-                "../public/seguimiento-capacitaciones.html"
+                "../public/seguimiento-general.html"
             )
         );
 
@@ -1361,51 +1361,77 @@ router.post(
 
             } = req.body;
 
-            await db.query(
+            const [resultado] = await db.query(
 
-                `
+    `
+    INSERT INTO capitulos_induccion
+    (
 
-                INSERT INTO capitulos_induccion(
+        numero_capitulo,
+        titulo,
+        descripcion,
+        porcentaje_aprobacion,
+        orden,
+        activo
 
-                    numero_capitulo,
+    )
 
-                    titulo,
+    VALUES
+    (
 
-                    descripcion,
+        ?, ?, ?, ?, ?, 1
 
-                    porcentaje_aprobacion,
+    )
+    `,
 
-                    orden,
+    [
 
-                    activo
+        numeroCapitulo,
+        titulo,
+        descripcion,
+        porcentaje,
+        orden
 
-                )
+    ]
 
-                VALUES(
+);
 
-                    ?,?,?,?,?,
+// ==========================================
+// CREAR EVALUACIÓN AUTOMÁTICAMENTE
+// ==========================================
 
-                    1
+await db.query(
 
-                )
+    `
+    INSERT INTO evaluaciones_induccion
+    (
 
-                `,
+        capitulo_id,
+        nombre,
+        descripcion,
+        porcentaje_aprobacion,
+        estado
 
-                [
+    )
 
-                    numeroCapitulo,
+    VALUES
+    (
 
-                    titulo,
+        ?, ?, ?, ?, 'ACTIVA'
 
-                    descripcion,
+    )
+    `,
 
-                    porcentaje,
+    [
 
-                    orden
+        resultado.insertId,
+        `Evaluación - ${titulo}`,
+        `Evaluación correspondiente al capítulo ${titulo}`,
+        porcentaje
 
-                ]
+    ]
 
-            );
+);
 
             res.json({
 

@@ -190,3 +190,29 @@ MODAL VIDEO
     }
 
 }
+
+.opcion-card{
+
+    transition: all .25s ease;
+
+}
+
+.opcion-card:hover{
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.12);
+
+}
+
+.fa-grip-vertical{
+
+    cursor: move;
+
+}
+
+.card-header{
+
+    font-weight:600;
+
+}
