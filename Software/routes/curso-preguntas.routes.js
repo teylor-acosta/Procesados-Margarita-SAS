@@ -59,8 +59,6 @@ if(
 
         texto: respuesta.respuesta,
 
-        correcta: respuesta.correcta == 1
-
     }));
 
 }

@@ -3535,4 +3535,768 @@ router.put(
 
 );
 
+
+// ==========================================================
+// MARCAR VIDEO / SUBCAPÍTULO COMO VISTO
+// ==========================================================
+
+router.post(
+    "/api/cursos/:cursoId/progreso-video",
+    proteger,
+    async (req, res) => {
+
+        try {
+
+            const cursoId =
+                Number(req.params.cursoId);
+
+            const usuarioId =
+                req.session.usuarioID;
+
+            const {
+                sub_capitulo_id
+            } = req.body;
+
+
+            // ======================================================
+            // VALIDAR SUBCAPÍTULO
+            // ======================================================
+
+            if (!sub_capitulo_id) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    mensaje:
+                        "No se recibió el subcapítulo."
+
+                });
+
+            }
+
+
+            // ======================================================
+            // VERIFICAR QUE EL SUBCAPÍTULO PERTENEZCA
+            // A LA CAPACITACIÓN
+            // ======================================================
+
+            const [subcapitulos] =
+                await db.query(
+
+                    `
+                    SELECT sc.id
+
+                    FROM sub_capitulos_curso sc
+
+                    INNER JOIN capitulos_curso c
+                        ON c.id = sc.capitulo_id
+
+                    WHERE sc.id = ?
+                    AND c.curso_id = ?
+
+                    LIMIT 1
+                    `,
+
+                    [
+                        sub_capitulo_id,
+                        cursoId
+                    ]
+
+                );
+
+
+            if (
+                subcapitulos.length === 0
+            ) {
+
+                return res.status(404).json({
+
+                    success: false,
+
+                    mensaje:
+                        "El subcapítulo no pertenece a esta capacitación."
+
+                });
+
+            }
+
+
+            // ======================================================
+            // VERIFICAR SI YA EXISTE EL REGISTRO
+            // ======================================================
+
+            const [existente] =
+                await db.query(
+
+                    `
+                    SELECT id
+                    FROM progreso_videos
+
+                    WHERE usuario_id = ?
+                    AND sub_capitulo_id = ?
+
+                    LIMIT 1
+                    `,
+
+                    [
+                        usuarioId,
+                        sub_capitulo_id
+                    ]
+
+                );
+
+
+            // ======================================================
+            // SI YA EXISTE → ACTUALIZAR
+            // ======================================================
+
+            if (
+                existente.length > 0
+            ) {
+
+                await db.query(
+
+                    `
+                    UPDATE progreso_videos
+
+                    SET
+                        visto = 1,
+                        fecha_visto = NOW()
+
+                    WHERE id = ?
+                    `,
+
+                    [
+                        existente[0].id
+                    ]
+
+                );
+
+            }
+
+            // ======================================================
+            // SI NO EXISTE → INSERTAR
+            // ======================================================
+
+            else {
+
+                await db.query(
+
+                    `
+                    INSERT INTO progreso_videos
+                    (
+                        usuario_id,
+                        sub_capitulo_id,
+                        visto,
+                        fecha_visto
+                    )
+
+                    VALUES
+                    (
+                        ?, ?, 1, NOW()
+                    )
+                    `,
+
+                    [
+                        usuarioId,
+                        sub_capitulo_id
+                    ]
+
+                );
+
+            }
+
+
+            res.json({
+
+                success: true,
+
+                mensaje:
+                    "Video marcado como visto."
+
+            });
+
+
+        }
+        catch (error) {
+
+            console.error(
+                "ERROR GUARDANDO PROGRESO DEL VIDEO:",
+                error
+            );
+
+
+            res.status(500).json({
+
+                success: false,
+
+                mensaje:
+                    "Error guardando el progreso del video."
+
+            });
+
+        }
+
+    }
+);
+
+
+// ==========================================================
+// OBTENER VIDEOS VISTOS
+// ==========================================================
+
+router.get(
+    "/api/cursos/:cursoId/progreso-videos",
+    proteger,
+    async (req, res) => {
+
+        try {
+
+            const cursoId =
+                Number(req.params.cursoId);
+
+            const usuarioId =
+                req.session.usuarioID;
+
+
+            const [videos] =
+                await db.query(
+
+                    `
+                    SELECT
+                        pv.id,
+                        pv.sub_capitulo_id,
+                        pv.visto,
+                        pv.fecha_visto
+
+                    FROM progreso_videos pv
+
+                    INNER JOIN sub_capitulos_curso sc
+                        ON sc.id = pv.sub_capitulo_id
+
+                    INNER JOIN capitulos_curso c
+                        ON c.id = sc.capitulo_id
+
+                    WHERE pv.usuario_id = ?
+                    AND c.curso_id = ?
+                    AND pv.visto = 1
+
+                    ORDER BY
+                        pv.sub_capitulo_id ASC
+                    `,
+
+                    [
+                        usuarioId,
+                        cursoId
+                    ]
+
+                );
+
+
+            res.json({
+
+                success: true,
+
+                videos
+
+            });
+
+
+        }
+        catch (error) {
+
+            console.error(
+                "ERROR OBTENIENDO VIDEOS VISTOS:",
+                error
+            );
+
+
+            res.status(500).json({
+
+                success: false,
+
+                mensaje:
+                    "Error obteniendo el progreso de los videos."
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================================
+// OBTENER PROGRESO DE CAPACITACIÓN
+// ==========================================================
+
+router.get(
+    "/api/cursos/:cursoId/progreso",
+    proteger,
+    async (req, res) => {
+
+        try {
+
+            const cursoId =
+                Number(req.params.cursoId);
+
+            const usuarioId =
+                req.session.usuarioID;
+
+
+            // ======================================================
+            // BUSCAR EMPLEADO DEL USUARIO
+            // ======================================================
+
+            const [usuarios] =
+                await db.query(
+                    `
+                    SELECT empleado_id
+                    FROM usuarios
+                    WHERE id = ?
+                    LIMIT 1
+                    `,
+                    [usuarioId]
+                );
+
+
+            if (usuarios.length === 0) {
+
+                return res.status(404).json({
+                    success: false,
+                    mensaje: "No se encontró el usuario."
+                });
+
+            }
+
+
+            const empleadoId =
+                usuarios[0].empleado_id;
+
+
+            // ======================================================
+            // BUSCAR ASIGNACIÓN
+            // ======================================================
+
+            const [asignaciones] =
+                await db.query(
+                    `
+                    SELECT id
+                    FROM asignaciones_capacitaciones
+                    WHERE capacitacion_id = ?
+                    AND empleado_id = ?
+                    LIMIT 1
+                    `,
+                    [
+                        cursoId,
+                        empleadoId
+                    ]
+                );
+
+
+            if (asignaciones.length === 0) {
+
+                return res.json({
+                    success: true,
+                    progreso: null
+                });
+
+            }
+
+
+            const asignacionId =
+                asignaciones[0].id;
+
+
+            // ======================================================
+            // OBTENER PROGRESO
+            // ======================================================
+
+            const [progreso] =
+                await db.query(
+                    `
+                    SELECT
+                        porcentaje,
+                        capitulos_completados,
+                        total_capitulos,
+                        ultimo_capitulo,
+                        fecha_inicio,
+                        ultima_actividad
+                    FROM progreso_capacitaciones
+                    WHERE asignacion_id = ?
+                    LIMIT 1
+                    `,
+                    [asignacionId]
+                );
+
+
+            // ======================================================
+            // RESPUESTA
+            // ======================================================
+
+            if (progreso.length === 0) {
+
+                return res.json({
+                    success: true,
+                    progreso: null
+                });
+
+            }
+
+
+            res.json({
+
+                success: true,
+
+                progreso: progreso[0]
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                "ERROR OBTENIENDO PROGRESO:",
+                error
+            );
+
+            res.status(500).json({
+
+                success: false,
+
+                mensaje: error.message
+
+            });
+
+        }
+
+    }
+);
+
+
+
+// ==========================================================
+// GUARDAR PROGRESO DE CAPACITACIÓN
+// ==========================================================
+
+router.post(
+    "/api/cursos/:cursoId/progreso",
+    proteger,
+    async (req, res) => {
+
+        try {
+
+            const cursoId =
+                Number(req.params.cursoId);
+
+            const usuarioId =
+                req.session.usuarioID;
+
+            const {
+                capitulos_completados,
+                ultimo_capitulo
+            } = req.body;
+
+
+            // ======================================================
+            // BUSCAR EMPLEADO DEL USUARIO
+            // ======================================================
+
+            const [usuarios] =
+                await db.query(
+
+                    `
+                    SELECT empleado_id
+                    FROM usuarios
+                    WHERE id = ?
+                    LIMIT 1
+                    `,
+
+                    [usuarioId]
+
+                );
+
+
+            if (
+                usuarios.length === 0
+            ) {
+
+                return res.status(404).json({
+
+                    success: false,
+
+                    mensaje:
+                        "No se encontró el usuario."
+
+                });
+
+            }
+
+
+            const empleadoId =
+                usuarios[0].empleado_id;
+
+
+            // ======================================================
+            // BUSCAR ASIGNACIÓN
+            // ======================================================
+
+            const [asignaciones] =
+                await db.query(
+
+                    `
+                    SELECT id
+                    FROM asignaciones_capacitaciones
+
+                    WHERE capacitacion_id = ?
+                    AND empleado_id = ?
+
+                    LIMIT 1
+                    `,
+
+                    [
+                        cursoId,
+                        empleadoId
+                    ]
+
+                );
+
+
+            if (
+                asignaciones.length === 0
+            ) {
+
+                return res.status(404).json({
+
+                    success: false,
+
+                    mensaje:
+                        "No se encontró la asignación."
+
+                });
+
+            }
+
+
+            const asignacionId =
+                asignaciones[0].id;
+
+
+            // ======================================================
+            // TOTAL DE CAPÍTULOS
+            // ======================================================
+
+            const [[total]] =
+                await db.query(
+
+                    `
+                    SELECT COUNT(*) AS total
+                    FROM capitulos_curso
+                    WHERE curso_id = ?
+                    `,
+
+                    [cursoId]
+
+                );
+
+
+            const totalCapitulos =
+                Number(total.total || 0);
+
+
+            const capitulosCompletados =
+                Number(
+                    capitulos_completados || 0
+                );
+
+
+            // ======================================================
+            // CALCULAR PORCENTAJE
+            // ======================================================
+
+            const porcentaje =
+                totalCapitulos > 0
+                    ? Math.round(
+                        (
+                            capitulosCompletados /
+                            totalCapitulos
+                        ) * 100
+                    )
+                    : 0;
+
+
+            // ======================================================
+            // VERIFICAR SI YA EXISTE PROGRESO
+            // ======================================================
+
+            const [progresoExistente] =
+                await db.query(
+
+                    `
+                    SELECT id
+                    FROM progreso_capacitaciones
+
+                    WHERE asignacion_id = ?
+
+                    LIMIT 1
+                    `,
+
+                    [asignacionId]
+
+                );
+
+
+            // ======================================================
+            // INSERTAR
+            // ======================================================
+
+            if (
+                progresoExistente.length === 0
+            ) {
+
+                await db.query(
+
+                    `
+                    INSERT INTO progreso_capacitaciones
+                    (
+                        asignacion_id,
+                        porcentaje,
+                        capitulos_completados,
+                        total_capitulos,
+                        ultimo_capitulo,
+                        fecha_inicio,
+                        ultima_actividad
+                    )
+
+                    VALUES
+                    (
+                        ?, ?, ?, ?, ?, NOW(), NOW()
+                    )
+                    `,
+
+                    [
+                        asignacionId,
+                        porcentaje,
+                        capitulosCompletados,
+                        totalCapitulos,
+                        ultimo_capitulo || null
+                    ]
+
+                );
+
+            }
+
+            // ======================================================
+            // ACTUALIZAR
+            // ======================================================
+
+            else {
+
+                await db.query(
+
+                    `
+                    UPDATE progreso_capacitaciones
+
+                    SET
+                        porcentaje = ?,
+                        capitulos_completados = ?,
+                        total_capitulos = ?,
+                        ultimo_capitulo = ?,
+                        ultima_actividad = NOW()
+
+                    WHERE asignacion_id = ?
+                    `,
+
+                    [
+                        porcentaje,
+                        capitulosCompletados,
+                        totalCapitulos,
+                        ultimo_capitulo || null,
+                        asignacionId
+                    ]
+
+                );
+
+            }
+
+
+            // ======================================================
+            // ACTUALIZAR ESTADO DE LA ASIGNACIÓN
+            // ======================================================
+
+            if (
+                capitulosCompletados >=
+                totalCapitulos
+            ) {
+
+                await db.query(
+
+                    `
+                    UPDATE asignaciones_capacitaciones
+
+                    SET estado = 'FINALIZADA'
+
+                    WHERE id = ?
+                    `,
+
+                    [asignacionId]
+
+                );
+
+            }
+
+            else {
+
+                await db.query(
+
+                    `
+                    UPDATE asignaciones_capacitaciones
+
+                    SET estado = 'EN_PROCESO'
+
+                    WHERE id = ?
+                    `,
+
+                    [asignacionId]
+
+                );
+
+            }
+
+
+            res.json({
+
+                success: true,
+
+                porcentaje,
+
+                capitulos_completados:
+                    capitulosCompletados,
+
+                total_capitulos:
+                    totalCapitulos
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                "ERROR GUARDANDO PROGRESO:",
+                error
+            );
+
+            res.status(500).json({
+
+                success: false,
+
+                mensaje: error.message
+
+            });
+
+        }
+
+    }
+);
+
 module.exports = router;

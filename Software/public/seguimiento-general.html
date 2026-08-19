@@ -213,7 +213,7 @@
 </section>
 
 <!-- ========================================= -->
-<!-- PESTAÑAS -->
+<!-- PESTAÑAS Y ACCIONES -->
 <!-- ========================================= -->
 
 <section class="tabs-seguimiento">
@@ -235,6 +235,23 @@
         <i class="fas fa-book-open"></i>
 
         Capacitaciones
+
+    </button>
+
+    <button
+        type="button"
+        class="btn-asignar-masivo"
+        id="btnAsignacionMasiva">
+
+        <span class="icono-asignacion-masiva">
+            <i class="fas fa-users"></i>
+        </span>
+
+        <span class="texto-asignacion-masiva">
+            Asignación masiva
+        </span>
+
+        <i class="fas fa-arrow-right flecha-asignacion-masiva"></i>
 
     </button>
 
@@ -285,27 +302,28 @@
 
         <div class="filtros-empleados">
 
-            <select id="filtroSede">
+    <!-- FILTRO SEDE -->
+    <select id="filtroSede">
+        <option value="">
+            Todas las sedes
+        </option>
+    </select>
 
-                <option value="">
+    <!-- FILTRO ÁREA -->
+    <select id="filtroArea">
+        <option value="">
+            Todas las áreas
+        </option>
+    </select>
 
-                    Todas las sedes
+    <!-- FILTRO CARGO -->
+    <select id="filtroCargo">
+        <option value="">
+            Todos los cargos
+        </option>
+    </select>
 
-                </option>
-
-            </select>
-
-            <select id="filtroArea">
-
-                <option value="">
-
-                    Todas las áreas
-
-                </option>
-
-            </select>
-
-        </div>
+</div>
 
         <!-- Lista -->
 
@@ -451,55 +469,319 @@
                 <!-- INDIVIDUAL -->
                 <!-- ===================================== -->
 
-                <div
-                    id="contenidoIndividual">
+                <!-- ===================================== -->
+<!-- INDIVIDUAL -->
+<!-- ===================================== -->
 
-                    <div class="empleado-seleccionado">
+<div id="contenidoIndividual">
 
-                        <label>
+    <!-- EMPLEADO -->
+    <div class="mb-4">
 
-                            Empleado
+        <label
+            for="empleadoSeleccionado"
+            class="form-label fw-bold">
 
-                        </label>
+            <i class="fas fa-user"></i>
+            Empleado
 
-                        <input
-                            type="text"
-                            id="empleadoSeleccionado"
-                            class="form-control"
-                            readonly>
+        </label>
 
-                    </div>
+        <select
+            id="empleadoSeleccionado"
+            class="form-select">
 
-                    <hr>
+            <option value="">
+                Seleccionar empleado...
+            </option>
 
-                    <div class="contenedor-capacitaciones-modal">
+        </select>
 
-                        <!--
-                            Aquí cargaremos
-                            las capacitaciones
-                        -->
+        <small class="text-muted">
+            Selecciona el colaborador al que deseas asignar la capacitación.
+        </small>
 
-                    </div>
+    </div>
 
-                </div>
+    <hr>
+
+    <!-- CAPACITACIÓN -->
+    <div class="contenedor-capacitaciones-modal">
+    </div>
+
+</div>
 
                 <!-- ===================================== -->
                 <!-- MASIVA -->
                 <!-- ===================================== -->
 
-                <div
-                    id="contenidoMasivo"
-                    class="d-none">
+                <!-- ===================================== -->
+<!-- MASIVA -->
+<!-- ===================================== -->
 
-                    <div class="alert alert-success">
+<div
+    id="contenidoMasivo"
+    class="d-none">
 
-                        Aquí construiremos la asignación
-                        masiva.
+    <!-- CAPACITACIÓN -->
 
-                    </div>
+    <div class="mb-4">
 
-                </div>
+        <label class="form-label fw-bold">
 
+            <i class="fas fa-book-open"></i>
+
+            Capacitación
+
+        </label>
+
+        <select
+            id="capacitacionMasiva"
+            class="form-select">
+
+            <option value="">
+
+                Seleccione una capacitación
+
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- TIPO DE SELECCIÓN -->
+
+    <div class="mb-4">
+
+        <label class="form-label fw-bold">
+
+            <i class="fas fa-users"></i>
+
+            ¿A quién deseas asignarla?
+
+        </label>
+
+        <select
+            id="tipoSeleccionMasiva"
+            class="form-select">
+
+            <option value="todos">
+
+                Todos los colaboradores
+
+            </option>
+
+            <option value="sede">
+
+                Por sede
+
+            </option>
+
+            <option value="area">
+
+                Por área
+
+            </option>
+
+            <option value="manual">
+
+                Selección manual
+
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- FILTROS -->
+
+    <div
+        id="filtrosMasivos"
+        class="row g-3 mb-4">
+
+        <div class="col-md-6">
+
+            <label class="form-label">
+
+                Sede
+
+            </label>
+
+            <select
+                id="sedeMasiva"
+                class="form-select">
+
+                <option value="">
+
+                    Todas las sedes
+
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="col-md-6">
+
+            <label class="form-label">
+
+                Área
+
+            </label>
+
+            <select
+                id="areaMasiva"
+                class="form-select">
+
+                <option value="">
+
+                    Todas las áreas
+
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <!-- EMPLEADOS -->
+
+    <div class="seleccion-empleados-masiva">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <div>
+
+                <h5 class="mb-1">
+
+                    Colaboradores
+
+                </h5>
+
+                <small
+                    class="text-muted"
+                    id="contadorSeleccionados">
+
+                    0 seleccionados
+
+                </small>
+
+            </div>
+
+            <div>
+
+                <button
+                    type="button"
+                    class="btn btn-sm btn-outline-success"
+                    id="seleccionarTodosMasivo">
+
+                    <i class="fas fa-check-double"></i>
+
+                    Seleccionar todos
+
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-sm btn-outline-secondary"
+                    id="deseleccionarTodosMasivo">
+
+                    Limpiar
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="listaEmpleadosMasiva"
+            class="lista-empleados-masiva">
+
+            <div class="text-muted text-center py-4">
+
+                Selecciona una capacitación para comenzar.
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CONFIGURACIÓN -->
+
+    <div class="row g-3 mt-4">
+
+        <div class="col-md-6">
+
+            <label class="form-label fw-bold">
+
+                ¿Es obligatoria?
+
+            </label>
+
+            <select
+                id="obligatoriaMasiva"
+                class="form-select">
+
+                <option value="1">
+
+                    Sí
+
+                </option>
+
+                <option value="0">
+
+                    No
+
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="col-md-6">
+
+            <label class="form-label fw-bold">
+
+                Fecha límite
+
+            </label>
+
+            <input
+                type="date"
+                id="fechaLimiteMasiva"
+                class="form-control">
+
+        </div>
+
+    </div>
+
+
+    <!-- RESUMEN -->
+
+    <div
+        class="alert alert-light border mt-4 mb-0">
+
+        <i class="fas fa-circle-info"></i>
+
+        Se asignará la capacitación a
+
+        <strong id="resumenCantidadMasiva">
+            0 colaboradores
+        </strong>.
+
+    </div>
+
+</div>
             </div>
 
             <!-- FOOTER -->
@@ -541,6 +823,8 @@
 <script src="/js/sidebar.js"></script>
 
 <!-- JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="/js/seguimiento-general.js"></script>
 

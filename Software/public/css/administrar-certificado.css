@@ -556,7 +556,7 @@ ELEMENTOS ARRASTRABLES
 
 .toolbar-flotante{
 
-    position: fixed;
+    position: absolute;
 
     display: none;
 
@@ -564,19 +564,38 @@ ELEMENTOS ARRASTRABLES
 
     gap: 10px;
 
-    padding: 10px 15px;
+    padding: 8px 12px;
 
     background: #ffffff;
 
-    border-radius: 12px;
+    border-radius: 10px;
 
-    box-shadow: 0 8px 20px rgba(0,0,0,.25);
+    box-shadow: 0 8px 20px rgba(0,0,0,.20);
 
     border: 1px solid #ddd;
 
     z-index: 99999;
 
+    white-space: nowrap;
+
+    /* MUY IMPORTANTE:
+       la barra nunca debe interferir
+       con el arrastre del certificado */
+    pointer-events: auto;
+
 }
+
+/* Mientras se está arrastrando */
+.toolbar-flotante.arrastrando{
+
+    display: none !important;
+
+}
+
+
+/* ==========================================
+   CONTROLES
+========================================== */
 
 .toolbar-flotante select,
 .toolbar-flotante input[type="number"]{
@@ -691,4 +710,13 @@ ELEMENTOS ARRASTRABLES
     bottom:-6px;
     right:-6px;
     cursor:nwse-resize;
+}
+
+.nombre-certificado{
+    font-size:34px;
+    font-weight:bold;
+    white-space:nowrap;
+    width:auto;
+    display:inline-block;
+    text-align:center;
 }

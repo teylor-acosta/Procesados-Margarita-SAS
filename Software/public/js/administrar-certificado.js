@@ -414,222 +414,484 @@ function inicializarDrag(elemento){
     let offsetX = 0;
     let offsetY = 0;
 
+
+    // ============================================
+    // INICIAR ARRASTRE
+    // ============================================
+
     elemento.addEventListener("mousedown", function(e){
 
-        if (e.target.classList.contains("resize-handle")) {
-        return;
-    }
+        if (
+            e.target.classList.contains("resize-handle") ||
+            e.target.closest(".resize-handle")
+        ){
+            return;
+        }
+
+
+        e.preventDefault();
+
+
+        // ========================================
+        // DESELECCIONAR LOS DEMÁS ELEMENTOS
+        // ========================================
 
         document
-    .querySelectorAll(".elemento-certificado")
-    .forEach(el => {
+            .querySelectorAll(".elemento-certificado")
+            .forEach(el => {
 
-        el.classList.remove("elemento-seleccionado");
+                el.classList.remove(
+                    "elemento-seleccionado"
+                );
 
-    });
+            });
 
-        // Elemento seleccionado
-elementoSeleccionado = elemento;
 
-const esImagen =
-    elemento.querySelector("img") !== null;
+        // ========================================
+        // ELEMENTO ACTUAL
+        // ========================================
 
-if(esImagen){
+        elementoSeleccionado = elemento;
 
-    document.getElementById("toolbarTexto").style.display = "none";
-    document.getElementById("toolbarImagen").style.display = "flex";
 
-    const img = elemento.querySelector("img");
+        // ========================================
+        // DETERMINAR SI ES IMAGEN O TEXTO
+        // ========================================
 
-anchoImagen.value = parseInt(img.offsetWidth);
-altoImagen.value = parseInt(img.offsetHeight);
+        const esImagen =
+            elemento.querySelector("img") !== null;
 
-}else{
 
-    document.getElementById("toolbarTexto").style.display = "flex";
-    document.getElementById("toolbarImagen").style.display = "none";
+        if(esImagen){
 
-}
+            document
+                .getElementById("toolbarTexto")
+                .style.display = "none";
 
-const rect = elemento.getBoundingClientRect();
+            document
+                .getElementById("toolbarImagen")
+                .style.display = "flex";
 
-const area = document
-    .querySelector(".area-certificado")
-    .getBoundingClientRect();
 
-marcoSeleccion.style.display = "block";
+            const img =
+                elemento.querySelector("img");
 
-marcoSeleccion.style.left =
-    (rect.left - area.left) + "px";
 
-marcoSeleccion.style.top =
-    (rect.top - area.top) + "px";
+            anchoImagen.value =
+                parseInt(img.offsetWidth);
 
-marcoSeleccion.style.width =
-    rect.width + "px";
 
-marcoSeleccion.style.height =
-    rect.height + "px";
+            altoImagen.value =
+                parseInt(img.offsetHeight);
 
-elemento.classList.add("elemento-seleccionado");
+        }
+        else{
 
-// Mostrar toolbar
+            document
+                .getElementById("toolbarTexto")
+                .style.display = "flex";
 
-        // Mostrar toolbar
+            document
+                .getElementById("toolbarImagen")
+                .style.display = "none";
 
-toolbarFlotante.style.display = "flex";
+        }
 
-toolbarFlotante.style.left =
-    rect.left + window.scrollX + "px";
 
-toolbarFlotante.style.top =
-    rect.top + window.scrollY - toolbarFlotante.offsetHeight - 10 + "px";
+        // ========================================
+        // OBTENER POSICIÓN ACTUAL
+        // ========================================
 
-        // Actualizar tamaño en el input
-        const estilo = window.getComputedStyle(elemento);
+        const rect =
+            elemento.getBoundingClientRect();
 
-        const fuenteActual =
-    estilo.fontFamily.replace(/"/g,"");
 
-for (const opcion of fuenteToolbar.options) {
+        const area =
+            document
+                .querySelector(".area-certificado")
+                .getBoundingClientRect();
 
-    if (
-        opcion.value
-            .replace(/"/g,"")
-            .includes(fuenteActual.split(",")[0].trim())
-    ) {
 
-        fuenteToolbar.value = opcion.value;
-        break;
+        // ========================================
+        // CONVERTIR TRANSFORM A LEFT / TOP
+        // ========================================
 
-    }
+        const estilo =
+            window.getComputedStyle(elemento);
 
-}
 
-colorToolbar.value =
-rgbAHex(estilo.color);
+        if(
+            estilo.transform !== "none" &&
+            !elemento.dataset.posicionConvertida
+        ){
 
-        tamanoToolbar.value =
-parseInt(estilo.fontSize);
+            elemento.style.left =
+                (rect.left - area.left) + "px";
 
-        tamanoFuente.value =
-            parseInt(estilo.fontSize);
 
+            elemento.style.top =
+                (rect.top - area.top) + "px";
+
+
+            elemento.style.transform =
+                "none";
+
+
+            elemento.dataset.posicionConvertida =
+                "true";
+
+        }
+
+
+        // ========================================
+        // RECALCULAR RECT DESPUÉS DE CONVERTIR
+        // ========================================
+
+        const rectElemento =
+            elemento.getBoundingClientRect();
+
+
+        offsetX =
+            e.clientX -
+            rectElemento.left;
+
+
+        offsetY =
+            e.clientY -
+            rectElemento.top;
+
+
+        // ========================================
+        // ACTIVAR MOVIMIENTO
+        // ========================================
 
         moviendo = true;
 
-if(estilo.transform !== "none" &&
-   !elemento.dataset.posicionConvertida){
 
-    const rect = elemento.getBoundingClientRect();
+        elemento.classList.add(
+            "elemento-seleccionado"
+        );
 
-    const area = document
-        .querySelector(".area-certificado")
-        .getBoundingClientRect();
 
-    elemento.style.left =
-        (rect.left - area.left) + "px";
+        // ========================================
+        // OCULTAR TOOLBAR MIENTRAS SE MUEVE
+        // ========================================
 
-    elemento.style.top =
-        (rect.top - area.top) + "px";
+        toolbarFlotante.style.display =
+            "none";
 
-    elemento.style.transform = "none";
 
-    elemento.dataset.posicionConvertida = "true";
+        // ========================================
+        // MOSTRAR MARCO DE SELECCIÓN
+        // ========================================
 
-}
+        marcoSeleccion.style.display =
+            "block";
 
-        const rectElemento = elemento.getBoundingClientRect();
 
-offsetX = e.clientX - rectElemento.left;
-offsetY = e.clientY - rectElemento.top;
+        marcoSeleccion.style.left =
+            (rectElemento.left - area.left) +
+            "px";
+
+
+        marcoSeleccion.style.top =
+            (rectElemento.top - area.top) +
+            "px";
+
+
+        marcoSeleccion.style.width =
+            rectElemento.width + "px";
+
+
+        marcoSeleccion.style.height =
+            rectElemento.height + "px";
+
+
+        // ========================================
+        // ACTUALIZAR HERRAMIENTAS DE TEXTO
+        // ========================================
+
+        if(!esImagen){
+
+            const fuenteActual =
+                estilo.fontFamily
+                    .replace(/"/g,"");
+
+
+            for(
+                const opcion of fuenteToolbar.options
+            ){
+
+                if(
+                    opcion.value
+                        .replace(/"/g,"")
+                        .includes(
+                            fuenteActual
+                                .split(",")[0]
+                                .trim()
+                        )
+                ){
+
+                    fuenteToolbar.value =
+                        opcion.value;
+
+                    break;
+
+                }
+
+            }
+
+
+            colorToolbar.value =
+                rgbAHex(estilo.color);
+
+
+            tamanoToolbar.value =
+                parseInt(estilo.fontSize);
+
+
+            tamanoFuente.value =
+                parseInt(estilo.fontSize);
+
+        }
 
     });
 
 
-document.addEventListener("mousemove", function(e){
+    // ============================================
+    // MOVIMIENTO
+    // ============================================
 
-    if(!moviendo) return;
+    document.addEventListener(
+        "mousemove",
+        function(e){
 
-    const area = document
-        .querySelector(".area-certificado")
-        .getBoundingClientRect();
+            if(!moviendo) return;
 
-    const x =
-        e.clientX - area.left - offsetX;
 
-    const y =
-        e.clientY - area.top - offsetY;
+            const area =
+                document
+                    .querySelector(".area-certificado")
+                    .getBoundingClientRect();
 
-    elemento.style.left = x + "px";
-elemento.style.top = y + "px";
 
-// Al mover un elemento ya no debe usar el centrado del CSS
-elemento.style.transform = "none";
+            const x =
+                e.clientX -
+                area.left -
+                offsetX;
 
-const nuevoRect = elemento.getBoundingClientRect();
 
-toolbarFlotante.style.display = "flex";
+            const y =
+                e.clientY -
+                area.top -
+                offsetY;
 
-const margen = 10;
 
-const anchoBarra = toolbarFlotante.offsetWidth;
-const altoBarra = toolbarFlotante.offsetHeight;
+            // ====================================
+            // MOVER ELEMENTO
+            // ====================================
 
-// CENTRAR la barra respecto al elemento
-let left =
-    rect.left +
-    window.scrollX +
-    (rect.width / 2) -
-    (anchoBarra / 2);
+            elemento.style.left =
+                x + "px";
 
-let top =
-    rect.top +
-    window.scrollY -
-    altoBarra -
-    10;
 
-// No dejar salir por la derecha
-if (left + anchoBarra > window.innerWidth + window.scrollX - margen) {
+            elemento.style.top =
+                y + "px";
 
-    left =
-        window.innerWidth +
-        window.scrollX -
-        anchoBarra -
-        margen;
+
+            // Eliminar centrado
+            elemento.style.transform =
+                "none";
+
+
+            // ====================================
+            // ACTUALIZAR MARCO
+            // ====================================
+
+            const nuevoRect =
+                elemento.getBoundingClientRect();
+
+
+            marcoSeleccion.style.left =
+                (nuevoRect.left - area.left) +
+                "px";
+
+
+            marcoSeleccion.style.top =
+                (nuevoRect.top - area.top) +
+                "px";
+
+
+            marcoSeleccion.style.width =
+                nuevoRect.width + "px";
+
+
+            marcoSeleccion.style.height =
+                nuevoRect.height + "px";
+
+
+            // ====================================
+            // IMPORTANTE
+            // NO MOSTRAR TOOLBAR AQUÍ
+            // ====================================
+
+        }
+    );
+
+
+    // ============================================
+    // TERMINAR ARRASTRE
+    // ============================================
+
+    document.addEventListener(
+        "mouseup",
+        function(){
+
+            if(!moviendo) return;
+
+
+            moviendo = false;
+
+
+            // ====================================
+            // OBTENER POSICIÓN FINAL
+            // ====================================
+
+            const rect =
+                elemento.getBoundingClientRect();
+
+
+            // ====================================
+            // MOSTRAR TOOLBAR SOLO AL SOLTAR
+            // ====================================
+
+            toolbarFlotante.style.display =
+                "flex";
+
+
+            // ====================================
+            // POSICIONAR TOOLBAR
+            // ====================================
+
+            const margen = 10;
+
+
+            const anchoBarra =
+                toolbarFlotante.offsetWidth;
+
+
+            const altoBarra =
+                toolbarFlotante.offsetHeight;
+
+
+            let left =
+                rect.left +
+                window.scrollX +
+                (rect.width / 2) -
+                (anchoBarra / 2);
+
+
+            let top =
+                rect.top +
+                window.scrollY -
+                altoBarra -
+                10;
+
+
+            // ====================================
+            // LIMITAR DERECHA
+            // ====================================
+
+            if(
+                left + anchoBarra >
+                window.innerWidth +
+                window.scrollX -
+                margen
+            ){
+
+                left =
+                    window.innerWidth +
+                    window.scrollX -
+                    anchoBarra -
+                    margen;
+
+            }
+
+
+            // ====================================
+            // LIMITAR IZQUIERDA
+            // ====================================
+
+            if(
+                left <
+                margen +
+                window.scrollX
+            ){
+
+                left =
+                    margen +
+                    window.scrollX;
+
+            }
+
+
+            // ====================================
+            // SI NO CABE ARRIBA
+            // ====================================
+
+            if(
+                top <
+                window.scrollY +
+                margen
+            ){
+
+                top =
+                    rect.bottom +
+                    window.scrollY +
+                    10;
+
+            }
+
+
+            toolbarFlotante.style.left =
+                left + "px";
+
+
+            toolbarFlotante.style.top =
+                top + "px";
+
+
+            // ====================================
+            // ACTUALIZAR MARCO FINAL
+            // ====================================
+
+            const area =
+                document
+                    .querySelector(".area-certificado")
+                    .getBoundingClientRect();
+
+
+            marcoSeleccion.style.left =
+                (rect.left - area.left) +
+                "px";
+
+
+            marcoSeleccion.style.top =
+                (rect.top - area.top) +
+                "px";
+
+
+            marcoSeleccion.style.width =
+                rect.width + "px";
+
+
+            marcoSeleccion.style.height =
+                rect.height + "px";
+
+        }
+    );
 
 }
-
-// No dejar salir por la izquierda
-if (left < margen + window.scrollX) {
-
-    left = margen + window.scrollX;
-
-}
-
-// Si no cabe arriba, poner debajo
-if (top < window.scrollY + margen) {
-
-    top =
-        rect.bottom +
-        window.scrollY +
-        10;
-
-}
-
-toolbarFlotante.style.left = left + "px";
-toolbarFlotante.style.top = top + "px";
-
-});
-
-document.addEventListener("mouseup", function(){
-
-    moviendo = false;
-
-});
-
-}
-
 // ============================================
 // TAMAÑO DE FUENTE
 // ============================================
@@ -857,54 +1119,120 @@ function obtenerConfiguracionCertificado() {
 
     const elementos = [];
 
-    const area = document.querySelector(".area-certificado");
-    const areaRect = area.getBoundingClientRect();
+    const area =
+        document.querySelector(".area-certificado");
 
-    document.querySelectorAll(".elemento-certificado").forEach(elemento => {
+    if (!area) {
 
-        const estilo = window.getComputedStyle(elemento);
+        console.warn(
+            "No se encontró .area-certificado"
+        );
 
-        const imagen = elemento.querySelector("img");
+        return {
+            elementos: []
+        };
 
-        const rect = elemento.getBoundingClientRect();
+    }
 
-        elementos.push({
 
-            id: elemento.id,
+    document
+        .querySelectorAll(".elemento-certificado")
+        .forEach(elemento => {
 
-            tipo: elemento.dataset.tipo || "texto",
+            const imagen =
+                elemento.querySelector("img");
 
-            html: imagen ? null : elemento.innerHTML,
+            const estilo =
+                window.getComputedStyle(elemento);
 
-            left: (rect.left - areaRect.left) + "px",
 
-            top: (rect.top - areaRect.top) + "px",
+            // ========================================
+            // POSICIÓN REAL
+            // ========================================
+            // offsetLeft y offsetTop NO se afectan
+            // por el transform: scale() de la vista previa.
 
-            width: imagen
-                ? (imagen.style.width || window.getComputedStyle(imagen).width)
-                : (elemento.style.width || estilo.width),
+            const left =
+                elemento.offsetLeft;
 
-            height: imagen
-                ? (imagen.style.height || window.getComputedStyle(imagen).height)
-                : (elemento.style.height || estilo.height),
+            const top =
+                elemento.offsetTop;
 
-            fontSize: estilo.fontSize,
 
-            fontFamily: estilo.fontFamily,
+            // ========================================
+            // TAMAÑO
+            // ========================================
 
-            color: estilo.color,
+            const width =
+                elemento.offsetWidth;
 
-            fontWeight: estilo.fontWeight,
+            const height =
+                elemento.offsetHeight;
 
-            fontStyle: estilo.fontStyle,
 
-            textAlign: estilo.textAlign,
+            // ========================================
+            // CONFIGURACIÓN
+            // ========================================
 
-            src: imagen ? imagen.src : null
+            elementos.push({
+
+                id:
+                    elemento.id,
+
+                tipo:
+                    elemento.dataset.tipo ||
+                    "texto",
+
+                html:
+                    imagen
+                        ? null
+                        : elemento.innerHTML,
+
+                left:
+                    left + "px",
+
+                top:
+                    top + "px",
+
+                width:
+                    width + "px",
+
+                height:
+                    height + "px",
+
+                fontSize:
+                    estilo.fontSize,
+
+                fontFamily:
+                    estilo.fontFamily,
+
+                fontWeight:
+                    estilo.fontWeight,
+
+                fontStyle:
+                    estilo.fontStyle,
+
+                textAlign:
+                    estilo.textAlign,
+
+                color:
+                    estilo.color,
+
+                src:
+                    imagen
+                        ? imagen.src
+                        : null
+
+            });
 
         });
 
-    });
+
+    console.log(
+        "CONFIGURACIÓN GUARDADA:",
+        elementos
+    );
+
 
     return {
         elementos
@@ -995,66 +1323,270 @@ function restaurarConfiguracion(configuracion){
 
     configuracion.elementos.forEach(item => {
 
-        const elemento = document.getElementById(item.id);
+        const elemento =
+            document.getElementById(item.id);
 
         if(!elemento){
             return;
         }
 
-        // ==========================
+        // ==========================================
         // POSICIÓN
-        // ==========================
+        // ==========================================
 
-        elemento.style.left = item.left || "";
-        elemento.style.top = item.top || "";
-        elemento.style.transform = "none";
+        elemento.style.left =
+            item.left || "";
 
-        const img = elemento.querySelector("img");
-        const esImagen = img !== null;
+        elemento.style.top =
+            item.top || "";
 
-        // ==========================
+        elemento.style.transform =
+            "none";
+
+
+        // ==========================================
+        // IMAGEN
+        // ==========================================
+
+        const img =
+            elemento.querySelector("img");
+
+        const esImagen =
+            img !== null;
+
+
+        // ==========================================
         // CONTENIDO
-        // ==========================
+        // ==========================================
 
         if(!esImagen && item.html){
-            elemento.innerHTML = item.html;
+
+            elemento.innerHTML =
+                item.html;
+
         }
 
-        // ==========================
+
+        // ==========================================
         // TAMAÑO
-        // ==========================
+        // ==========================================
 
         if(esImagen){
 
             if(item.src){
-                img.src = item.src;
+
+                img.src =
+                    item.src;
+
             }
 
-            img.style.width = item.width || "";
-            img.style.height = item.height || "";
+            if(item.width){
+
+                img.style.width =
+                    item.width;
+
+            }
+
+            if(item.height){
+
+                img.style.height =
+                    item.height;
+
+            }
 
         }else{
 
-            elemento.style.width = item.width || "";
-            elemento.style.height = item.height || "";
+            /*
+             * IMPORTANTE:
+             *
+             * Los textos NO deben recuperar
+             * un ancho fijo guardado anteriormente.
+             *
+             * De lo contrario el nombre puede
+             * quedar cortado o desplazado.
+             */
 
-            elemento.style.whiteSpace = "nowrap";
-            elemento.style.overflow = "visible";
+            elemento.style.width =
+                "auto";
+
+            elemento.style.height =
+                "auto";
+
+            elemento.style.whiteSpace =
+                "nowrap";
+
+            elemento.style.overflow =
+                "visible";
 
         }
 
-        // ==========================
-        // ESTILOS
-        // ==========================
 
-        elemento.style.fontSize = item.fontSize || "";
-        elemento.style.fontFamily = item.fontFamily || "";
-        elemento.style.color = item.color || "";
-        elemento.style.fontWeight = item.fontWeight || "";
-        elemento.style.fontStyle = item.fontStyle || "";
-        elemento.style.textAlign = item.textAlign || "";
+        // ==========================================
+        // ESTILOS
+        // ==========================================
+
+        if(item.fontSize){
+
+            elemento.style.fontSize =
+                item.fontSize;
+
+        }
+
+        if(item.fontFamily){
+
+            elemento.style.fontFamily =
+                item.fontFamily;
+
+        }
+
+        if(item.color){
+
+            elemento.style.color =
+                item.color;
+
+        }
+
+        if(item.fontWeight){
+
+            elemento.style.fontWeight =
+                item.fontWeight;
+
+        }
+
+        if(item.fontStyle){
+
+            elemento.style.fontStyle =
+                item.fontStyle;
+
+        }
+
+        if(item.textAlign){
+
+            elemento.style.textAlign =
+                item.textAlign;
+
+        }
 
     });
 
 }
+
+// ============================================================
+// CORRECCIÓN DE ESCALA DEL CERTIFICADO
+// ============================================================
+//
+// La configuración se guarda usando las dimensiones reales:
+// 1123 x 794 px.
+//
+// La vista previa de Administrar Certificado es más pequeña,
+// por lo que debemos escalar los elementos visualmente.
+//
+// IMPORTANTE:
+// Esto NO modifica la configuración guardada en la BD.
+// Solo corrige cómo se muestra en Administrar Certificado.
+// ============================================================
+
+(function corregirEscalaVistaPrevia() {
+
+    const ANCHO_CERTIFICADO = 1123;
+    const ALTO_CERTIFICADO = 794;
+
+    function aplicarEscala() {
+
+        const preview =
+            document.querySelector(".certificado-preview");
+
+        const area =
+            document.querySelector(".area-certificado");
+
+        if (!preview || !area) {
+            return;
+        }
+
+        const anchoActual =
+            preview.clientWidth;
+
+        const altoActual =
+            preview.clientHeight;
+
+        if (!anchoActual || !altoActual) {
+            return;
+        }
+
+        const escalaX =
+            anchoActual / ANCHO_CERTIFICADO;
+
+        const escalaY =
+            altoActual / ALTO_CERTIFICADO;
+
+        /*
+         * Usamos la escala horizontal como referencia.
+         * El certificado mantiene proporción 1123 / 794.
+         */
+
+        const escala =
+            Math.min(
+                escalaX,
+                escalaY
+            );
+
+        /*
+         * La vista previa se mantiene en su tamaño actual,
+         * pero internamente trabajamos con las coordenadas
+         * reales del certificado.
+         */
+
+        area.style.width =
+            ANCHO_CERTIFICADO + "px";
+
+        area.style.height =
+            ALTO_CERTIFICADO + "px";
+
+        area.style.transformOrigin =
+            "top left";
+
+        area.style.transform =
+            `scale(${escala})`;
+
+    }
+
+
+    // Ejecutar cuando cargue la página
+
+    window.addEventListener(
+        "load",
+        () => {
+
+            setTimeout(
+                aplicarEscala,
+                300
+            );
+
+        }
+    );
+
+
+    // Ejecutar nuevamente después de que
+    // la configuración haya terminado de cargar.
+
+    setTimeout(
+        aplicarEscala,
+        500
+    );
+
+    setTimeout(
+        aplicarEscala,
+        1000
+    );
+
+
+    // Corregir también al cambiar el tamaño
+    // de la ventana.
+
+    window.addEventListener(
+        "resize",
+        aplicarEscala
+    );
+
+})();
 

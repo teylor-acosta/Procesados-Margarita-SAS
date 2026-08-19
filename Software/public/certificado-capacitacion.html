@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Certificado de Capacitación</title>
+
+    <!-- Google Fonts -->
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- CSS -->
+    <link
+        rel="stylesheet"
+        href="/css/certificado-capacitacion.css"
+    >
+
+</head>
+
+<body>
+
+    <!-- ========================================= -->
+    <!-- CONTENEDOR PRINCIPAL -->
+    <!-- ========================================= -->
+
+    <div class="certificado-page">
+
+        <!-- ========================================= -->
+        <!-- BARRA DE ACCIONES -->
+        <!-- ========================================= -->
+
+        <div class="barra-acciones">
+
+            <button
+                id="btnVolver"
+                class="btn-accion btn-volver"
+            >
+
+                <span>←</span>
+
+                Volver
+
+            </button>
+
+
+            <button
+                id="btnImprimir"
+                class="btn-accion btn-imprimir"
+            >
+
+                🖨️
+
+                Imprimir / Guardar PDF
+
+            </button>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- ESTADO DE CARGA -->
+        <!-- ========================================= -->
+
+        <div
+            id="estadoCarga"
+            class="estado-carga"
+        >
+
+            <div class="spinner"></div>
+
+            <p>
+                Cargando certificado...
+            </p>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- ERROR -->
+        <!-- ========================================= -->
+
+        <div
+            id="estadoError"
+            class="estado-error"
+            style="display:none;"
+        >
+
+            <div class="error-icono">
+                ✕
+            </div>
+
+            <h2>
+                No fue posible cargar el certificado
+            </h2>
+
+            <p id="mensajeError">
+                Ocurrió un error.
+            </p>
+
+            <button
+                id="btnVolverError"
+                class="btn-error"
+            >
+
+                Volver
+
+            </button>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- CERTIFICADO -->
+        <!-- ========================================= -->
+
+        <div
+            id="contenedorCertificado"
+            class="contenedor-certificado"
+            style="display:none;"
+        >
+
+            <div
+                id="certificado"
+                class="certificado"
+            >
+
+                <!-- ================================= -->
+                <!-- PLANTILLA -->
+                <!-- ================================= -->
+
+                <img
+                    id="plantillaCertificado"
+                    class="elemento-certificado plantilla"
+                    alt=""
+                >
+
+
+                <!-- ================================= -->
+                <!-- SELLO -->
+                <!-- ================================= -->
+
+                <img
+                    id="selloCertificado"
+                    class="elemento-certificado"
+                    alt=""
+                >
+
+                <!-- ================================= -->
+                <!-- FIRMA IZQUIERDA -->
+                <!-- ================================= -->
+
+                <img
+                    id="firmaIzquierda"
+                    class="elemento-certificado"
+                    alt=""
+                >
+
+
+                <!-- ================================= -->
+                <!-- FIRMA DERECHA -->
+                <!-- ================================= -->
+
+                <img
+                    id="firmaDerecha"
+                    class="elemento-certificado"
+                    alt=""
+                >
+
+
+                <!-- ================================= -->
+<!-- CÓDIGO QR -->
+<!-- ================================= -->
+
+<img
+    id="qrCertificado"
+    class="elemento-certificado"
+    alt="Código QR del certificado"
+>
+
+
+                <!-- ================================= -->
+                <!-- ELEMENTOS DE TEXTO -->
+                <!-- ================================= -->
+
+                <div
+                    id="elementosTexto"
+                    class="elementos-texto"
+                >
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- JAVASCRIPT -->
+    <!-- ========================================= -->
+
+    <script src="/js/certificado-capacitacion.js"></script>
+
+</body>
+
+</html>

@@ -950,3 +950,309 @@
     }
 
 }
+
+/* ==========================================================
+   TARJETAS DE MIS CAPACITACIONES
+   ========================================================== */
+
+.contenedor-capacitaciones{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:30px;
+    margin-top:20px;
+    width:100%;
+}
+
+
+/* ==========================================================
+   TARJETA
+   ========================================================== */
+
+.card-capacitacion{
+
+    background:white;
+
+    border-radius:26px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.10);
+
+    border:1px solid rgba(0,0,0,.05);
+
+    transition:.30s;
+
+    width:100%;
+
+    min-width:0;
+}
+
+.card-capacitacion:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:
+        0 20px 45px rgba(0,0,0,.15);
+}
+
+
+/* ==========================================================
+   IMAGEN
+   ========================================================== */
+
+.imagen-capacitacion{
+    position:relative;
+    width:100%;
+    height:320px;
+    overflow:hidden;
+    background:#f1f5f9;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.imagen-capacitacion img{
+
+    display:block;
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+    object-position:center center;
+
+    transition:.35s;
+}
+
+.card-capacitacion:hover
+.imagen-capacitacion img{
+
+    transform:scale(1.04);
+}
+
+
+/* ==========================================================
+   CONTENIDO
+   ========================================================== */
+
+.contenido-capacitacion{
+
+    padding:24px;
+}
+
+.contenido-capacitacion h3{
+
+    margin:0 0 10px;
+
+    font-size:25px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+    line-height:1.3;
+}
+
+.contenido-capacitacion p{
+
+    margin:0 0 20px;
+
+    color:#64748b;
+
+    font-size:16px;
+
+    line-height:1.6;
+
+    min-height:50px;
+}
+
+
+/* ==========================================================
+   BOTÓN
+   ========================================================== */
+
+.contenido-capacitacion .btn-continuar{
+
+    width:100%;
+
+    height:52px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:#16a34a;
+
+    color:white;
+
+    font-size:16px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.contenido-capacitacion .btn-continuar:hover{
+
+    background:#15803d;
+
+    transform:translateY(-2px);
+}
+
+
+/* ==========================================================
+   BADGE OBLIGATORIA
+   ========================================================== */
+
+.imagen-capacitacion .badge-obligatoria{
+
+    position:absolute;
+
+    top:16px;
+
+    left:16px;
+
+    background:#dc2626;
+
+    color:white;
+
+    padding:8px 15px;
+
+    border-radius:30px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,.25);
+
+    z-index:2;
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+@media(max-width:900px){
+
+    .contenedor-capacitaciones{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+@media(max-width:600px){
+
+    .imagen-capacitacion{
+
+        height:240px;
+
+    }
+
+    .contenido-capacitacion{
+
+        padding:20px;
+
+    }
+
+    .contenido-capacitacion h3{
+
+        font-size:22px;
+
+    }
+
+}
+
+/* ==========================================
+   ESTADO CERTIFICADO
+========================================== */
+
+.estado-certificado {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-bottom: 12px;
+
+    color: #087f45;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.estado-certificado i {
+    font-size: 17px;
+}
+
+
+/* ==========================================
+   BOTÓN VER CERTIFICADO
+========================================== */
+
+.btn-certificado {
+
+    width: 100%;
+
+    border: none;
+    border-radius: 10px;
+
+    padding: 12px 18px;
+
+    background: linear-gradient(
+        135deg,
+        #087f45,
+        #0e9f58
+    );
+
+    color: white;
+
+    font-family: "Averia Libre", sans-serif;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.btn-certificado i {
+    font-size: 17px;
+}
+
+.btn-certificado:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 6px 15px rgba(0, 128, 70, 0.25);
+
+    background: linear-gradient(
+        135deg,
+        #066b3a,
+        #087f45
+    );
+}
+
+.btn-certificado:active {
+
+    transform: translateY(0);
+
+}

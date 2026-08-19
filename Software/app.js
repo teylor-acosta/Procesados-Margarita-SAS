@@ -139,6 +139,8 @@ app.use(require('./routes/certificado.routes'));
 
 app.use(require('./routes/certificado-capacitacion.routes'));
 
+app.use(require('./routes/evaluacion-capacitacion.routes'));
+
 app.use(require('./routes/perfil.routes'));
 
 app.use(require('./routes/catalogos.routes'));
@@ -180,6 +182,10 @@ app.use(
     require(
         './routes/mis-capacitaciones.routes'
     )
+);
+
+app.use(
+    require('./routes/finalizar-capacitacion.routes')
 );
 
 app.use(
