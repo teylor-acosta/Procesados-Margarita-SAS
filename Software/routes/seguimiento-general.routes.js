@@ -72,6 +72,52 @@ router.get(
     }
 );
 
+// =====================================================
+// CAPACITACIONES DISPONIBLES PARA ASIGNACIÓN
+// =====================================================
+
+router.get(
+    "/api/seguimiento-general/capacitaciones",
+    proteger,
+    async (req, res) => {
+
+        try {
+
+            const [capacitaciones] = await db.query(`
+                SELECT
+                    id,
+                    nombre,
+                    descripcion,
+                    obligatorio,
+                    fecha_limite
+                FROM capacitaciones
+                WHERE estado = 'ACTIVO'
+                ORDER BY nombre ASC
+            `);
+
+            res.json({
+                success: true,
+                capacitaciones
+            });
+
+        } catch (error) {
+
+            console.error(
+                "ERROR OBTENIENDO CAPACITACIONES:",
+                error
+            );
+
+            res.status(500).json({
+                success: false,
+                capacitaciones: [],
+                message: error.message
+            });
+
+        }
+
+    }
+);
+
 /* =====================================================
    RESUMEN GENERAL
 ===================================================== */
@@ -214,32 +260,40 @@ router.get(
             `,[id]);
 
             /* ==========================
-               CAPACITACIONES
-            ========================== */
+   CAPACITACIONES / CURSOS
+========================== */
 
-            const [capacitaciones] = await db.query(`
+const [capacitaciones] = await db.query(`
     SELECT
-
         ac.id,
-
         c.id AS capacitacion_id,
-
-        c.nombre,
-
+        c.titulo AS nombre,
         c.descripcion,
-
         c.obligatorio,
 
         ac.estado,
-
         ac.fecha_asignacion,
+        ac.fecha_limite,
 
-        ac.fecha_limite
+        /* Total de capítulos */
+        (
+            SELECT COUNT(*)
+            FROM capitulos_curso cc
+            WHERE cc.curso_id = c.id
+        ) AS capitulos_totales,
+
+        /* Total de videos */
+        (
+            SELECT COUNT(*)
+            FROM sub_capitulos_curso sc
+            INNER JOIN capitulos_curso cc
+                ON cc.id = sc.capitulo_id
+            WHERE cc.curso_id = c.id
+        ) AS videos_totales
 
     FROM asignaciones_capacitaciones ac
 
-    INNER JOIN capacitaciones c
-
+    INNER JOIN cursos c
         ON c.id = ac.capacitacion_id
 
     WHERE ac.empleado_id = ?
@@ -313,51 +367,60 @@ router.get(
 
             `, [id]);
 
+
             // =========================================
             // LISTADO
             // =========================================
 
-            const [capacitaciones] = await db.query(`
+           const [capacitaciones] = await db.query(`
 
-                SELECT
+    SELECT
 
-                    ac.id,
+    ac.id,
 
-                    c.id AS capacitacion_id,
+    c.id AS capacitacion_id,
 
-                    c.nombre,
+    c.titulo AS nombre,
 
-                    c.descripcion,
+    c.descripcion,
 
-                    ac.estado,
+    c.obligatorio,
 
-                    ac.fecha_asignacion,
+    ac.estado,
 
-                    ac.fecha_limite,
+    ac.fecha_asignacion,
 
-                    ac.obligatorio,
+    ac.fecha_limite,
 
-                    IFNULL(cp.progreso,0) AS progreso,
+    cp.fecha_finalizacion,
 
-                    IFNULL(cp.capitulos_completados,0) AS capitulos_completados,
+    IFNULL(cp.porcentaje, 0) AS progreso,
 
-                    IFNULL(cp.capitulos_totales,0) AS capitulos_totales
+    IFNULL(cp.capitulos_completados, 0) AS capitulos_completados,
 
-                FROM asignaciones_capacitaciones ac
+    (
+        SELECT COUNT(*)
+        FROM capitulos_curso cc
+        WHERE cc.curso_id = c.id
+    ) AS capitulos_totales
 
-                INNER JOIN capacitaciones c
+FROM asignaciones_capacitaciones ac
 
-                    ON c.id = ac.capacitacion_id
+INNER JOIN cursos c
+    ON c.id = ac.capacitacion_id
 
-                LEFT JOIN progreso_capacitaciones cp
+LEFT JOIN progreso_capacitaciones cp
+    ON cp.asignacion_id = ac.id
 
-                    ON cp.asignacion_id = ac.id
+WHERE ac.empleado_id = ?
 
-                WHERE ac.empleado_id = ?
+ORDER BY ac.fecha_asignacion DESC
 
-                ORDER BY ac.fecha_asignacion DESC
+`, [id]);
 
-            `, [id]);
+            // =========================================
+            // RESPUESTA
+            // =========================================
 
             res.json({
 
@@ -379,6 +442,7 @@ router.get(
 
             });
 
+
         } catch (error) {
 
             console.log(error);
@@ -390,6 +454,241 @@ router.get(
                 message: error.message
 
             });
+
+        }
+
+    }
+);
+
+/* =====================================================
+   ASIGNAR CAPACITACIÓN
+===================================================== */
+
+router.post(
+    "/api/seguimiento-general/asignar-capacitacion",
+    proteger,
+    async (req, res) => {
+
+        const connection = await db.getConnection();
+
+        try {
+
+            const {
+    capacitacion_id,
+    capacitacion_ids,
+    empleados
+} = req.body;
+            // =========================================
+// CAPACITACIONES SELECCIONADAS
+// =========================================
+
+const capacitacionesIds =
+    Array.isArray(capacitacion_ids)
+        ? capacitacion_ids
+        : capacitacion_id
+            ? [capacitacion_id]
+            : [];
+
+if (capacitacionesIds.length === 0) {
+    return res.status(400).json({
+        success: false,
+        message: "Debe seleccionar al menos una capacitación."
+    });
+}
+
+            if (
+                !Array.isArray(empleados) ||
+                empleados.length === 0
+            ) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message: "Debe seleccionar al menos un empleado."
+
+                });
+
+            }
+
+
+            // =========================================
+// VERIFICAR CAPACITACIONES
+// =========================================
+
+const [capacitaciones] =
+    await connection.query(`
+        SELECT
+            id,
+            titulo AS nombre,
+            obligatorio,
+            fecha_limite
+        FROM cursos
+        WHERE id IN (?)
+          AND estado = 'ACTIVO'
+    `, [capacitacionesIds]);
+
+if (
+    capacitaciones.length !==
+    capacitacionesIds.length
+) {
+    return res.status(404).json({
+        success: false,
+        message:
+            "Una o más capacitaciones no existen o están inactivas."
+    });
+}
+
+
+            // =========================================
+            // USUARIO QUE REALIZA LA ASIGNACIÓN
+            // =========================================
+
+            const asignadoPor =
+                req.session.usuarioID;
+
+
+            // =========================================
+            // INICIAR TRANSACCIÓN
+            // =========================================
+
+            await connection.beginTransaction();
+
+
+            let asignados = 0;
+            let existentes = 0;
+
+
+            // =========================================
+// PROCESAR CAPACITACIONES
+// =========================================
+
+for (const capacitacion of capacitaciones) {
+
+    // =========================================
+    // PROCESAR EMPLEADOS
+    // =========================================
+
+    for (const empleadoId of empleados) {
+
+        // -------------------------------------
+        // VERIFICAR EMPLEADO
+        // -------------------------------------
+
+        const [[empleado]] =
+            await connection.query(`
+                SELECT id
+                FROM empleados
+                WHERE id = ?
+                  AND activo = 'SI'
+            `, [empleadoId]);
+
+        if (!empleado) {
+            continue;
+        }
+
+        // -------------------------------------
+        // VERIFICAR SI YA ESTÁ ASIGNADA
+        // -------------------------------------
+
+        const [[existente]] =
+            await connection.query(`
+                SELECT id
+                FROM asignaciones_capacitaciones
+                WHERE capacitacion_id = ?
+                  AND empleado_id = ?
+                LIMIT 1
+            `, [
+                capacitacion.id,
+                empleadoId
+            ]);
+
+        if (existente) {
+            existentes++;
+            continue;
+        }
+
+        // -------------------------------------
+        // CREAR ASIGNACIÓN
+        // -------------------------------------
+
+        await connection.query(`
+            INSERT INTO asignaciones_capacitaciones (
+                capacitacion_id,
+                empleado_id,
+                asignado_por,
+                fecha_asignacion,
+                estado,
+                obligatorio,
+                fecha_limite
+            )
+            VALUES (
+                ?,
+                ?,
+                ?,
+                NOW(),
+                'PENDIENTE',
+                ?,
+                ?
+            )
+        `, [
+            capacitacion.id,
+            empleadoId,
+            asignadoPor,
+            capacitacion.obligatorio ? 1 : 0,
+            capacitacion.fecha_limite || null
+        ]);
+
+        asignados++;
+    }
+}
+
+            // =========================================
+            // CONFIRMAR
+            // =========================================
+
+            await connection.commit();
+
+
+            res.json({
+
+                success: true,
+
+                message:
+                    "Proceso de asignación completado.",
+
+                resultados: {
+
+                    asignados,
+
+                    existentes
+
+                }
+
+            });
+
+
+        } catch (error) {
+
+            await connection.rollback();
+
+            console.error(
+                "ERROR ASIGNANDO CAPACITACIÓN:",
+                error
+            );
+
+            res.status(500).json({
+
+                success: false,
+
+                message: error.message
+
+            });
+
+
+        } finally {
+
+            connection.release();
 
         }
 

@@ -1,0 +1,639 @@
+/* ==========================================================
+   EVALUACIÓN DE CAPACITACIÓN
+   INTERFAZ INDEPENDIENTE
+   NO MODIFICAR style1.css
+========================================================== */
+
+
+/* ==========================================================
+   RESET
+========================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* ==========================================================
+   BODY
+========================================================== */
+
+body {
+
+    font-family: 'Averia Libre', cursive !important;
+
+    min-height: 100vh;
+
+    color: #0f172a;
+
+    overflow-x: hidden;
+
+    background: #f4f7f6;
+
+}
+
+
+/* ==========================================================
+   FONDO INSTITUCIONAL
+========================================================== */
+
+body::before {
+
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        url('../img/Fondo.webp')
+        center center /
+        cover
+        no-repeat;
+
+    filter: blur(4px);
+
+    transform: scale(1.03);
+
+    z-index: -2;
+
+}
+
+
+/* Capa suave para que el contenido sea legible */
+
+body::after {
+
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(244, 247, 246, .55);
+
+    z-index: -1;
+
+}
+
+
+/* ==========================================================
+   PÁGINA
+========================================================== */
+
+.evaluacion-page {
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    padding: 45px 25px 60px;
+
+}
+
+
+/* ==========================================================
+   CONTENEDOR CENTRAL
+========================================================== */
+
+.evaluacion-contenedor {
+
+    width: 100%;
+
+    max-width: 1050px;
+
+    margin: 0 auto;
+
+}
+
+
+/* ==========================================================
+   ENCABEZADO
+========================================================== */
+
+.encabezado-evaluacion {
+
+    background: rgba(255,255,255,.96);
+
+    border-radius: 24px;
+
+    padding: 35px 40px;
+
+    box-shadow:
+        0 12px 35px
+        rgba(15,23,42,.10);
+
+}
+
+
+.etiqueta-evaluacion {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    color: #16a34a;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    margin-bottom: 12px;
+
+}
+
+
+.encabezado-evaluacion h1 {
+
+    font-size: 34px;
+
+    font-weight: 700;
+
+    color: #0f172a;
+
+    margin-bottom: 10px;
+
+}
+
+
+.encabezado-evaluacion p {
+
+    color: #64748b;
+
+    font-size: 16px;
+
+    line-height: 1.6;
+
+    margin-bottom: 25px;
+
+}
+
+
+/* ==========================================================
+   INFORMACIÓN
+========================================================== */
+
+.info-evaluacion {
+
+    display: flex;
+
+    gap: 15px;
+
+}
+
+
+.dato-evaluacion {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    min-width: 170px;
+
+    padding: 14px 18px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 15px;
+
+}
+
+
+.dato-evaluacion > i {
+
+    color: #16a34a;
+
+    font-size: 21px;
+
+}
+
+
+.dato-evaluacion div {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+.dato-evaluacion span {
+
+    font-size: 13px;
+
+    color: #64748b;
+
+}
+
+
+.dato-evaluacion strong {
+
+    font-size: 19px;
+
+    color: #0f172a;
+
+}
+
+
+/* ==========================================================
+   PROGRESO
+========================================================== */
+
+.progreso-evaluacion {
+
+    background: rgba(255,255,255,.96);
+
+    border-radius: 18px;
+
+    padding: 18px 24px;
+
+    margin-top: 20px;
+
+    box-shadow:
+        0 8px 25px
+        rgba(15,23,42,.07);
+
+}
+
+
+.progreso-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-bottom: 9px;
+
+    color: #475569;
+
+    font-size: 15px;
+
+}
+
+
+.progreso-header strong {
+
+    color: #16a34a;
+
+}
+
+
+.progress {
+
+    height: 9px;
+
+    background: #e2e8f0;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+}
+
+
+.progress-bar {
+
+    background: #16a34a;
+
+    border-radius: 20px;
+
+    transition: width .3s ease;
+
+}
+
+
+/* ==========================================================
+   PREGUNTAS
+========================================================== */
+
+.contenedor-preguntas {
+
+    margin-top: 20px;
+
+}
+
+
+.pregunta-card {
+
+    background: rgba(255,255,255,.97);
+
+    border-radius: 20px;
+
+    padding: 28px 32px;
+
+    margin-bottom: 18px;
+
+    box-shadow:
+        0 8px 25px
+        rgba(15,23,42,.08);
+
+}
+
+
+.pregunta-titulo {
+
+    color: #0f172a;
+
+    font-size: 19px;
+
+    font-weight: 700;
+
+    line-height: 1.5;
+
+    margin-bottom: 18px;
+
+}
+
+
+.pregunta-numero {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 35px;
+
+    height: 35px;
+
+    margin-right: 9px;
+
+    border-radius: 50%;
+
+    background: #dcfce7;
+
+    color: #15803d;
+
+    font-weight: 700;
+
+}
+
+
+.pregunta-obligatoria {
+
+    color: #ef4444;
+
+}
+
+
+/* ==========================================================
+   OPCIONES
+========================================================== */
+
+.opciones-pregunta {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+}
+
+
+.opcion-evaluacion {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 14px 16px;
+
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 13px;
+
+    color: #334155;
+
+    cursor: pointer;
+
+    transition: all .2s ease;
+
+}
+
+
+.opcion-evaluacion:hover {
+
+    border-color: #86efac;
+
+    background: #f0fdf4;
+
+}
+
+
+.opcion-evaluacion.seleccionada {
+
+    border-color: #22c55e;
+
+    background: #f0fdf4;
+
+}
+
+
+.opcion-evaluacion input {
+
+    accent-color: #16a34a;
+
+}
+
+
+/* ==========================================================
+   CARGANDO
+========================================================== */
+
+.estado-cargando {
+
+    background: rgba(255,255,255,.96);
+
+    border-radius: 20px;
+
+    padding: 60px 30px;
+
+    text-align: center;
+
+    box-shadow:
+        0 8px 25px
+        rgba(15,23,42,.07);
+
+}
+
+
+.estado-cargando i {
+
+    color: #16a34a;
+
+    font-size: 35px;
+
+    margin-bottom: 15px;
+
+}
+
+
+.estado-cargando h3 {
+
+    color: #0f172a;
+
+    margin-bottom: 8px;
+
+}
+
+
+.estado-cargando p {
+
+    color: #64748b;
+
+}
+
+
+/* ==========================================================
+   BOTÓN
+========================================================== */
+
+.finalizar-evaluacion {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    margin-top: 20px;
+
+}
+
+
+.btn-enviar-evaluacion {
+
+    border: none;
+
+    background: #16a34a;
+
+    color: white;
+
+    padding: 15px 30px;
+
+    border-radius: 15px;
+
+    font-family: 'Averia Libre', cursive !important;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 7px 18px
+        rgba(22,163,74,.25);
+
+    transition: .25s;
+
+}
+
+
+.btn-enviar-evaluacion:hover:not(:disabled) {
+
+    background: #15803d;
+
+    transform: translateY(-2px);
+
+}
+
+
+.btn-enviar-evaluacion:disabled {
+
+    opacity: .5;
+
+    cursor: not-allowed;
+
+    box-shadow: none;
+
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media(max-width: 700px) {
+
+    .evaluacion-page {
+
+        padding: 20px 12px 40px;
+
+    }
+
+
+    .encabezado-evaluacion {
+
+        padding: 25px 22px;
+
+    }
+
+
+    .encabezado-evaluacion h1 {
+
+        font-size: 26px;
+
+    }
+
+
+    .info-evaluacion {
+
+        flex-direction: column;
+
+    }
+
+
+    .dato-evaluacion {
+
+        width: 100%;
+
+    }
+
+
+    .pregunta-card {
+
+        padding: 22px 18px;
+
+    }
+
+
+    .finalizar-evaluacion {
+
+        justify-content: stretch;
+
+    }
+
+
+    .btn-enviar-evaluacion {
+
+        width: 100%;
+
+    }
+
+}
+
+.swal-capacitacion-boton-cancelar {
+
+    border-radius: 12px !important;
+
+    padding: 11px 25px !important;
+
+    font-family: 'Averia Libre', cursive !important;
+
+    font-weight: 700 !important;
+
+}

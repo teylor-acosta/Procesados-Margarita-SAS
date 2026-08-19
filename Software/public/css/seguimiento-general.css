@@ -1547,3 +1547,2057 @@ LISTA EMPLEADOS
 
 }
 
+
+/* =====================================================
+   ASIGNACIÓN MASIVA
+===================================================== */
+
+.lista-empleados-masivo {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+
+    max-height: 430px;
+
+    overflow-y: auto;
+
+    padding: 5px;
+
+}
+
+
+/* TARJETA EMPLEADO */
+
+.empleado-masivo-card {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 14px;
+
+    background: #ffffff;
+
+    border: 1px solid #e4e8ec;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+
+}
+
+
+.empleado-masivo-card:hover {
+
+    transform: translateY(-2px);
+
+    border-color: #1ca463;
+
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.08);
+
+}
+
+
+/* CHECKBOX */
+
+.empleado-masivo-check {
+
+    flex-shrink: 0;
+
+}
+
+
+.empleado-masivo-check
+.form-check-input {
+
+    width: 18px;
+
+    height: 18px;
+
+    cursor: pointer;
+
+}
+
+
+/* AVATAR */
+
+.empleado-masivo-avatar {
+
+    width: 45px;
+
+    height: 45px;
+
+    min-width: 45px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #e9f8f0;
+
+    color: #159957;
+
+    font-size: 18px;
+
+}
+
+
+/* INFORMACIÓN */
+
+.empleado-masivo-info {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+    min-width: 0;
+
+}
+
+
+.empleado-masivo-info strong {
+
+    font-size: 14px;
+
+    color: #172033;
+
+}
+
+
+.empleado-masivo-info small,
+.empleado-masivo-info span {
+
+    font-size: 12px;
+
+    color: #68758a;
+
+}
+
+
+/* CHECK SELECCIONADO */
+
+.empleado-masivo-card:has(
+    .empleado-masivo:checked
+) {
+
+    border-color: #1ca463;
+
+    background: #f0fbf5;
+
+    box-shadow:
+        0 0 0 2px rgba(28, 164, 99, 0.12);
+
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 800px) {
+
+    .lista-empleados-masivo {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+/* =========================================================
+   PANEL DERECHO - TARJETA DEL EMPLEADO
+   ========================================================= */
+
+.panel-detalle-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+.empleado-detalle-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    width: 100%;
+}
+
+/* Avatar */
+
+.empleado-icono {
+    width: 72px;
+    height: 72px;
+    min-width: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 18px;
+
+    background: linear-gradient(
+        135deg,
+        #198754,
+        #157347
+    );
+
+    color: #ffffff;
+    font-size: 30px;
+
+    box-shadow: 0 6px 15px rgba(25, 135, 84, 0.22);
+}
+
+/* Datos del empleado */
+
+.empleado-datos {
+    flex: 1;
+    min-width: 0;
+}
+
+.empleado-titulo {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.empleado-titulo h2 {
+    margin: 0 0 6px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1f2937;
+    line-height: 1.2;
+}
+
+.codigo-empleado {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.codigo-empleado i {
+    color: #198754;
+}
+
+/* Estado */
+
+.estado-empleado {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 7px 12px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.estado-empleado.activo {
+    color: #146c43;
+    background: #d1e7dd;
+}
+
+.estado-punto {
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+    background: #198754;
+}
+
+/* Cargo / área / sede */
+
+.empleado-extra {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin-top: 13px;
+}
+
+.empleado-extra span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.empleado-extra i {
+    width: 15px;
+
+    color: #198754;
+    text-align: center;
+}
+
+.empleado-extra strong {
+    color: #374151;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .panel-detalle-card {
+        padding: 18px;
+        border-radius: 15px;
+    }
+
+    .empleado-detalle-card {
+        align-items: flex-start;
+    }
+
+    .empleado-icono {
+        width: 58px;
+        height: 58px;
+        min-width: 58px;
+        font-size: 24px;
+        border-radius: 15px;
+    }
+
+    .empleado-titulo {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .empleado-titulo h2 {
+        font-size: 20px;
+    }
+
+    .estado-empleado {
+        align-self: flex-start;
+    }
+
+    .empleado-extra {
+        flex-direction: column;
+        gap: 7px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .empleado-detalle-card {
+        gap: 12px;
+    }
+
+    .empleado-icono {
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+        font-size: 20px;
+    }
+
+    .empleado-titulo h2 {
+        font-size: 18px;
+    }
+
+    .codigo-empleado {
+        font-size: 12px;
+    }
+
+    .empleado-extra span {
+        font-size: 12px;
+    }
+}
+
+/* =========================================================
+   RESUMEN DEL COLABORADOR
+   ========================================================= */
+
+.resumen-empleado {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 24px;
+    margin-bottom: 20px;
+}
+
+.resumen-empleado .mini-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    min-height: 105px;
+
+    padding: 18px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.05);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.resumen-empleado .mini-card:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.09);
+}
+
+
+/* ICONO */
+
+.mini-card-icon {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    font-size: 22px;
+}
+
+
+/* CONTENIDO */
+
+.mini-card-contenido {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.mini-card-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+
+    margin-bottom: 3px;
+}
+
+.mini-card-contenido strong {
+    font-size: 20px;
+    font-weight: 700;
+
+    color: #1f2937;
+
+    line-height: 1.2;
+}
+
+.mini-card-contenido small {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    margin-top: 5px;
+
+    font-size: 12px;
+    color: #6b7280;
+}
+
+
+/* =========================================================
+   COLORES DE CADA TARJETA
+   ========================================================= */
+
+.mini-card-induccion .mini-card-icon {
+    background: #e8f7ef;
+    color: #198754;
+}
+
+.mini-card-capacitaciones .mini-card-icon {
+    background: #e8f1ff;
+    color: #2878d4;
+}
+
+.mini-card-certificados .mini-card-icon {
+    background: #fff4dc;
+    color: #d99500;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .resumen-empleado {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .resumen-empleado {
+        gap: 12px;
+    }
+
+    .resumen-empleado .mini-card {
+        padding: 14px;
+        min-height: 90px;
+    }
+
+    .mini-card-icon {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        font-size: 19px;
+    }
+
+    .mini-card-contenido strong {
+        font-size: 18px;
+    }
+
+}
+
+/* =========================================================
+   RESUMEN DEL COLABORADOR
+   ========================================================= */
+
+.resumen-empleado {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 24px;
+    margin-bottom: 20px;
+}
+
+.resumen-empleado .mini-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    min-height: 105px;
+
+    padding: 18px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.05);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.resumen-empleado .mini-card:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 10px 24px rgba(0, 0, 0, 0.09);
+}
+
+
+/* ICONO */
+
+.mini-card-icon {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    font-size: 22px;
+}
+
+
+/* CONTENIDO */
+
+.mini-card-contenido {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.mini-card-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+
+    margin-bottom: 3px;
+}
+
+.mini-card-contenido strong {
+    font-size: 20px;
+    font-weight: 700;
+
+    color: #1f2937;
+
+    line-height: 1.2;
+}
+
+.mini-card-contenido small {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    margin-top: 5px;
+
+    font-size: 12px;
+    color: #6b7280;
+}
+
+
+/* =========================================================
+   COLORES DE CADA TARJETA
+   ========================================================= */
+
+.mini-card-induccion .mini-card-icon {
+    background: #e8f7ef;
+    color: #198754;
+}
+
+.mini-card-capacitaciones .mini-card-icon {
+    background: #e8f1ff;
+    color: #2878d4;
+}
+
+.mini-card-certificados .mini-card-icon {
+    background: #fff4dc;
+    color: #d99500;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .resumen-empleado {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .resumen-empleado {
+        gap: 12px;
+    }
+
+    .resumen-empleado .mini-card {
+        padding: 14px;
+        min-height: 90px;
+    }
+
+    .mini-card-icon {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        font-size: 19px;
+    }
+
+    .mini-card-contenido strong {
+        font-size: 18px;
+    }
+
+}
+
+/* =========================================================
+   TARJETAS DE CAPACITACIONES
+   ========================================================= */
+
+#listaCapacitacionesEmpleado {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 15px;
+}
+
+
+/* ---------------------------------------------------------
+   TARJETA PRINCIPAL
+   --------------------------------------------------------- */
+
+.capacitacion-card {
+    background: #ffffff;
+    border: 1px solid #e3e8e5;
+    border-radius: 16px;
+    padding: 18px 20px;
+    transition: all 0.25s ease;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+}
+
+.capacitacion-card:hover {
+    transform: translateY(-2px);
+    border-color: #20a464;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+
+/* ---------------------------------------------------------
+   CABECERA
+   --------------------------------------------------------- */
+
+.capacitacion-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+
+/* Icono */
+
+.capacitacion-icono {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e9f8ef;
+    color: #15945a;
+
+    border-radius: 12px;
+    font-size: 20px;
+}
+
+
+/* Título */
+
+.capacitacion-titulo {
+    flex: 1;
+    min-width: 0;
+}
+
+.capacitacion-titulo h4 {
+    margin: 0 0 5px 0;
+
+    font-size: 17px;
+    font-weight: 700;
+
+    color: #1f2937;
+}
+
+
+/* ---------------------------------------------------------
+   ETIQUETAS
+   --------------------------------------------------------- */
+
+.badge-obligatoria,
+.badge-opcional {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 4px 9px;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+.badge-obligatoria {
+    background: #fff4d6;
+    color: #a66a00;
+}
+
+
+.badge-opcional {
+    background: #eef1f3;
+    color: #66727d;
+}
+
+
+/* ---------------------------------------------------------
+   ESTADO
+   --------------------------------------------------------- */
+
+.estado-capacitacion {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 6px 10px;
+
+    border-radius: 20px;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+.estado-pendiente {
+    background: #fff4d6;
+    color: #9a6700;
+}
+
+
+.estado-proceso {
+    background: #e8f1ff;
+    color: #2670c9;
+}
+
+
+.estado-finalizada {
+    background: #e5f7ed;
+    color: #17804b;
+}
+
+
+/* ---------------------------------------------------------
+   DESCRIPCIÓN
+   --------------------------------------------------------- */
+
+.capacitacion-descripcion {
+    margin: 14px 0;
+
+    color: #6b7280;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* ---------------------------------------------------------
+   INFORMACIÓN
+   --------------------------------------------------------- */
+
+.capacitacion-datos {
+    display: flex;
+    gap: 35px;
+
+    padding: 13px 0;
+
+    border-top: 1px solid #eef1ef;
+    border-bottom: 1px solid #eef1ef;
+}
+
+
+.capacitacion-datos > div {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+
+.capacitacion-datos > div > i {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #f1f8f4;
+    color: #15945a;
+
+    border-radius: 9px;
+
+    font-size: 13px;
+}
+
+
+.capacitacion-datos span {
+    display: flex;
+    flex-direction: column;
+
+    color: #374151;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+.capacitacion-datos small {
+    margin-bottom: 2px;
+
+    color: #8a949c;
+
+    font-size: 10px;
+    font-weight: 600;
+}
+
+
+/* ---------------------------------------------------------
+   PIE DE TARJETA
+   --------------------------------------------------------- */
+
+.capacitacion-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-top: 14px;
+}
+
+
+.capacitacion-card-footer > span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    color: #8a949c;
+
+    font-size: 11px;
+}
+
+
+.capacitacion-card-footer > span i {
+    color: #15945a;
+}
+
+
+/* ---------------------------------------------------------
+   BOTÓN REASIGNAR
+   --------------------------------------------------------- */
+
+.btn-reasignar-capacitacion {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    border: 1px solid #15945a;
+    background: transparent;
+
+    color: #15945a;
+
+    padding: 7px 12px;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+
+.btn-reasignar-capacitacion:hover {
+    background: #15945a;
+    color: #ffffff;
+}
+
+
+/* ---------------------------------------------------------
+   SIN CAPACITACIONES
+   --------------------------------------------------------- */
+
+.capacitaciones-vacias {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 18px;
+
+    background: #f8faf9;
+
+    border: 1px dashed #cfd8d3;
+    border-radius: 14px;
+
+    color: #5f6b65;
+}
+
+
+.capacitaciones-vacias-icono {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e9f8ef;
+    color: #15945a;
+
+    border-radius: 10px;
+
+    font-size: 17px;
+}
+
+
+.capacitaciones-vacias strong {
+    display: block;
+
+    color: #374151;
+
+    font-size: 14px;
+}
+
+
+.capacitaciones-vacias p {
+    margin: 3px 0 0;
+
+    font-size: 12px;
+    color: #7b8580;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .capacitacion-card-header {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .estado-capacitacion {
+        margin-left: auto;
+    }
+
+    .capacitacion-datos {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .capacitacion-card-footer {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .btn-reasignar-capacitacion {
+        width: 100%;
+        justify-content: center;
+    }
+
+}
+
+/* =========================================================
+   HISTORIAL DEL COLABORADOR
+   ========================================================= */
+
+.historial-panel {
+    margin-top: 18px;
+}
+
+.seccion-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.historial-subtitulo {
+    display: block;
+    margin-top: 3px;
+
+    color: #8a9490;
+    font-size: 12px;
+}
+
+.historial-lista {
+    position: relative;
+}
+
+/* Estado vacío */
+
+.historial-vacio {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 18px;
+
+    background: #f8faf9;
+
+    border: 1px dashed #cfd8d3;
+    border-radius: 14px;
+}
+
+.historial-vacio-icono {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e9f8ef;
+    color: #15945a;
+
+    border-radius: 12px;
+
+    font-size: 17px;
+}
+
+.historial-vacio strong {
+    display: block;
+
+    color: #374151;
+    font-size: 14px;
+}
+
+.historial-vacio p {
+    margin: 4px 0 0;
+
+    color: #7b8580;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   BOTÓN ASIGNACIÓN MASIVA
+   ========================================================= */
+
+.btn-asignar-masivo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+
+    min-height: 48px;
+    padding: 8px 16px 8px 9px;
+
+    border: none;
+    border-radius: 12px;
+
+    background: linear-gradient(
+        135deg,
+        #087f4f,
+        #149b63
+    );
+
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow: 0 5px 14px rgba(0, 100, 60, 0.20);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+/* Icono */
+
+.icono-asignacion-masiva {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.icono-asignacion-masiva i {
+    font-size: 15px;
+}
+
+
+/* Texto */
+
+.texto-asignacion-masiva {
+    white-space: nowrap;
+}
+
+
+/* Flecha */
+
+.flecha-asignacion-masiva {
+    font-size: 12px;
+    opacity: 0.75;
+
+    transition: transform 0.2s ease;
+}
+
+
+/* Hover */
+
+.btn-asignar-masivo:hover {
+    background: linear-gradient(
+        135deg,
+        #066b43,
+        #0f8b58
+    );
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 8px 18px rgba(0, 100, 60, 0.28);
+}
+
+.btn-asignar-masivo:hover .flecha-asignacion-masiva {
+    transform: translateX(3px);
+}
+
+
+/* Click */
+
+.btn-asignar-masivo:active {
+    transform: translateY(0);
+
+    box-shadow: 0 3px 8px rgba(0, 100, 60, 0.20);
+}
+
+/* =====================================================
+   SELECTOR DE CAPACITACIONES INDIVIDUAL
+   ===================================================== */
+
+.selector-capacitaciones-individual {
+    width: 100%;
+}
+
+
+/* ENCABEZADO */
+
+.encabezado-selector-capacitacion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 18px;
+}
+
+
+.titulo-selector-capacitacion {
+    display: block;
+    margin: 0;
+    color: #172033;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+
+.subtitulo-selector-capacitacion {
+    margin: 4px 0 0;
+    color: #7b8494;
+    font-size: 13px;
+}
+
+
+/* CONTADOR */
+
+.contador-capacitacion-seleccionada {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 9px 14px;
+
+    border-radius: 12px;
+
+    background: #f0f8f4;
+
+    color: #198754;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+.contador-capacitacion-seleccionada i {
+    font-size: 13px;
+}
+
+
+/* GRID */
+
+.grid-capacitaciones-individual {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 14px;
+
+    max-height: 300px;
+
+    overflow-y: auto;
+
+    padding: 4px;
+}
+
+
+/* TARJETA */
+
+.tarjeta-capacitacion-individual {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    width: 100%;
+
+    min-height: 82px;
+
+    padding: 14px 16px;
+
+    border: 1px solid #e1e7ec;
+
+    border-radius: 16px;
+
+    background: #ffffff;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+
+    font-family: inherit;
+}
+
+
+/* HOVER */
+
+.tarjeta-capacitacion-individual:hover {
+
+    border-color: #20a464;
+
+    background: #f7fcf9;
+
+    box-shadow:
+        0 6px 18px rgba(25, 135, 84, 0.10);
+
+    transform: translateY(-2px);
+}
+
+
+/* ICONO */
+
+.icono-tarjeta-capacitacion {
+
+    flex-shrink: 0;
+
+    width: 46px;
+    height: 46px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 13px;
+
+    background: #eaf7f0;
+
+    color: #198754;
+
+    font-size: 18px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+/* CONTENIDO */
+
+.contenido-tarjeta-capacitacion {
+
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.contenido-tarjeta-capacitacion h4 {
+
+    margin: 0 0 5px;
+
+    color: #172033;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    line-height: 1.3;
+}
+
+
+.contenido-tarjeta-capacitacion span {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    color: #8a93a2;
+
+    font-size: 11px;
+
+    font-weight: 500;
+}
+
+
+.contenido-tarjeta-capacitacion span i {
+
+    color: #198754;
+
+    font-size: 10px;
+}
+
+
+/* INDICADOR */
+
+.indicador-seleccion-capacitacion {
+
+    flex-shrink: 0;
+
+    width: 25px;
+    height: 25px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid #dce3e8;
+
+    border-radius: 50%;
+
+    color: transparent;
+
+    font-size: 11px;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+
+/* SELECCIONADA */
+
+.tarjeta-capacitacion-individual.seleccionada {
+
+    border-color: #198754;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f0fbf5,
+            #ffffff
+        );
+
+    box-shadow:
+        0 7px 20px rgba(25, 135, 84, 0.15);
+}
+
+
+/* ICONO SELECCIONADO */
+
+.tarjeta-capacitacion-individual.seleccionada
+.icono-tarjeta-capacitacion {
+
+    background: #198754;
+
+    color: #ffffff;
+}
+
+
+/* CHECK SELECCIONADO */
+
+.tarjeta-capacitacion-individual.seleccionada
+.indicador-seleccion-capacitacion {
+
+    border-color: #198754;
+
+    background: #198754;
+
+    color: #ffffff;
+}
+
+
+/* TEXTO DEL CONTADOR */
+
+.tarjeta-capacitacion-individual.seleccionada
+.contenido-tarjeta-capacitacion h4 {
+
+    color: #146c43;
+}
+
+
+/* SCROLL */
+
+.grid-capacitaciones-individual::-webkit-scrollbar {
+    width: 6px;
+}
+
+
+.grid-capacitaciones-individual::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+.grid-capacitaciones-individual::-webkit-scrollbar-thumb {
+
+    background: #cbd5d0;
+
+    border-radius: 10px;
+}
+
+
+.grid-capacitaciones-individual::-webkit-scrollbar-thumb:hover {
+
+    background: #198754;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+    .grid-capacitaciones-individual {
+        grid-template-columns: 1fr;
+    }
+
+    .encabezado-selector-capacitacion {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .contador-capacitacion-seleccionada {
+        width: 100%;
+    }
+
+}
+
+/* =====================================================
+   TARJETAS COMPACTAS DE CAPACITACIONES
+===================================================== */
+
+.capacitacion-seguimiento-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: all .25s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,.05);
+}
+
+.capacitacion-seguimiento-card:hover {
+    border-color: #198754;
+    box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+
+/* RESUMEN */
+
+.capacitacion-resumen {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 16px 18px;
+    cursor: pointer;
+}
+
+.capacitacion-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+}
+
+.capacitacion-icono {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 12px;
+    background: #e9f8f0;
+    color: #198754;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.capacitacion-texto {
+    min-width: 0;
+}
+
+.capacitacion-texto h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #172033;
+}
+
+.capacitacion-texto p {
+    margin: 3px 0 0;
+    font-size: 12px;
+    color: #718096;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    max-width: 500px;
+}
+
+
+/* ESTADO */
+
+.capacitacion-estado {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.flecha-capacitacion {
+    color: #64748b;
+    transition: transform .25s ease;
+}
+
+.flecha-capacitacion.rotada {
+    transform: rotate(180deg);
+}
+
+
+/* PROGRESO RESUMIDO */
+
+.capacitacion-progreso-resumen {
+    padding: 0 18px 15px;
+}
+
+.progreso-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.progreso-info span {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.progreso-info strong {
+    font-size: 13px;
+    color: #198754;
+}
+
+.progreso-barra {
+    height: 7px;
+    border-radius: 20px;
+    background: #e5e7eb;
+    overflow: hidden;
+}
+
+.progreso-capitulos {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 7px;
+    font-size: 11px;
+    color: #718096;
+}
+
+
+/* DETALLE */
+
+.capacitacion-detalle {
+    display: none;
+    border-top: 1px solid #edf2f7;
+    background: #fafcfb;
+}
+
+.capacitacion-detalle.mostrar {
+    display: block;
+}
+
+.capacitacion-detalle-contenido {
+    padding: 18px;
+}
+
+.detalle-separador {
+    display: none;
+}
+
+.detalle-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.detalle-item {
+    background: #ffffff;
+    border: 1px solid #edf2f7;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.detalle-item span {
+    display: block;
+    font-size: 11px;
+    color: #718096;
+    margin-bottom: 4px;
+}
+
+.detalle-item strong {
+    font-size: 13px;
+    color: #172033;
+}
+
+.texto-progreso {
+    color: #198754 !important;
+}
+
+
+/* MENSAJES */
+
+.detalle-mensaje {
+    margin-top: 12px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+}
+
+.detalle-mensaje strong {
+    display: block;
+    margin-bottom: 2px;
+}
+
+.detalle-mensaje span {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.detalle-mensaje.pendiente {
+    background: #fffbeb;
+    color: #92400e;
+}
+
+.detalle-mensaje.proceso {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.detalle-mensaje.finalizada {
+    background: #ecfdf5;
+    color: #166534;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+
+    .detalle-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .capacitacion-resumen {
+        align-items: flex-start;
+    }
+
+    .capacitacion-estado .estado-capacitacion {
+        display: none;
+    }
+
+    .detalle-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+/* =========================================
+   CAPACITACIONES EXPANDIBLES
+========================================= */
+
+.capacitacion-expandible {
+    background: #ffffff;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+
+/* TARJETA COMPACTA */
+
+.capacitacion-resumen {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.capacitacion-resumen:hover {
+    background: #f7faf8;
+}
+
+
+/* ICONO */
+
+.capacitacion-icono {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e8f7ef;
+    color: #159447;
+
+    font-size: 18px;
+}
+
+
+/* INFORMACIÓN */
+
+.capacitacion-info {
+    flex: 1;
+    min-width: 180px;
+}
+
+.capacitacion-info strong {
+    display: block;
+    font-size: 16px;
+    color: #1f2937;
+}
+
+.capacitacion-info small {
+    display: block;
+    margin-top: 3px;
+    color: #7b8794;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 400px;
+}
+
+
+/* PROGRESO */
+
+.capacitacion-progreso {
+    width: 130px;
+}
+
+.capacitacion-progreso span {
+    display: block;
+    text-align: right;
+    font-size: 13px;
+    font-weight: 700;
+    color: #159447;
+    margin-bottom: 5px;
+}
+
+.mini-progress {
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.mini-progress div {
+    height: 100%;
+    background: #159447;
+    border-radius: 10px;
+}
+
+
+/* ESTADO */
+
+.capacitacion-estado {
+    min-width: 100px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.capacitacion-estado.pendiente {
+    color: #b77900;
+}
+
+.capacitacion-estado.proceso {
+    color: #1677c8;
+}
+
+.capacitacion-estado.finalizada {
+    color: #159447;
+}
+
+
+/* FLECHA */
+
+.capacitacion-flecha {
+    width: 30px;
+    text-align: center;
+    color: #64748b;
+}
+
+
+/* =========================================
+   DETALLE
+========================================= */
+
+.capacitacion-detalle {
+    display: none;
+    padding: 0 18px 18px;
+    border-top: 1px solid #eef0f2;
+}
+
+.capacitacion-detalle.abierto {
+    display: block;
+}
+
+
+/* DATOS */
+
+.capacitacion-detalle-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.capacitacion-detalle-grid > div {
+    background: #f8faf9;
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.capacitacion-detalle-grid small {
+    display: block;
+    color: #7b8794;
+    margin-bottom: 5px;
+}
+
+.capacitacion-detalle-grid strong {
+    color: #1f2937;
+}
+
+
+/* PROGRESO GRANDE */
+
+.detalle-progreso {
+    margin-top: 16px;
+}
+
+.detalle-progreso > div:first-child {
+    margin-bottom: 7px;
+}
+
+.detalle-progreso .progress {
+    height: 9px;
+    border-radius: 10px;
+    background: #e9ecef;
+}
+
+
+/* MENSAJES */
+
+.detalle-mensaje {
+    margin-top: 14px;
+    padding: 11px 14px;
+    border-radius: 9px;
+    font-size: 13px;
+}
+
+.pendiente-msg {
+    background: #fff8e6;
+    color: #946200;
+}
+
+.proceso-msg {
+    background: #eaf5ff;
+    color: #1769aa;
+}
+
+.finalizada-msg {
+    background: #eaf8f0;
+    color: #167344;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+
+    .capacitacion-resumen {
+        flex-wrap: wrap;
+    }
+
+    .capacitacion-progreso {
+        width: 100%;
+        order: 5;
+    }
+
+    .capacitacion-estado {
+        margin-left: auto;
+    }
+
+    .capacitacion-detalle-grid {
+        grid-template-columns: 1fr;
+    }
+
+}

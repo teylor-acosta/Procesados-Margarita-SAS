@@ -250,6 +250,46 @@ router.get('/roles-accesos', proteger, soloSuperAdmin, (req, res) => {
 });
 
 /* =========================================
+   🔥 VER CAPACITACIÓN
+========================================= */
+
+router.get(
+    "/capacitacion/:id",
+    proteger,
+    (req, res) => {
+
+        res.sendFile(
+
+            path.join(
+                __dirname,
+                "../public/capacitacion.html"
+            )
+
+        );
+
+    }
+);
+
+// ==========================================
+// EVALUACIÓN DE CAPACITACIÓN
+// ==========================================
+
+router.get(
+    "/evaluacion-capacitacion",
+    proteger,
+    (req, res) => {
+
+        res.sendFile(
+            path.join(
+                __dirname,
+                "../public/evaluacion-capacitacion.html"
+            )
+        );
+
+    }
+);
+
+/* =========================================
    🔥 ADMINISTRAR CURSO
 ========================================= */
 

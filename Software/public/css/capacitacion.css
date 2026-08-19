@@ -1,0 +1,1530 @@
+/* ==========================================================
+   CAPACITACIÓN
+   Diseño exclusivo de esta interfaz
+   NO MODIFICA style1.css NI sidebar.css
+========================================================== */
+
+
+/* ==========================================================
+   CONTENEDOR PRINCIPAL
+========================================================== */
+
+.contenido-capacitacion {
+
+    margin-left: 280px;
+
+    width: calc(100% - 280px);
+
+    min-height: calc(100vh - 85px);
+
+    padding: 28px 32px 50px;
+
+    position: relative;
+
+}
+
+
+/* ==========================================================
+   BOTÓN VOLVER
+========================================================== */
+
+.volver-capacitaciones {
+
+    margin-bottom: 24px;
+
+}
+
+.volver-capacitaciones button {
+
+    border: none;
+
+    background: transparent;
+
+    color: #16a34a;
+
+    font-family: 'Averia Libre', cursive;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 5px 0;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+
+}
+
+.volver-capacitaciones button:hover {
+
+    color: #065f46;
+
+    transform: translateX(-3px);
+
+}
+
+
+/* ==========================================================
+   ENCABEZADO DE CAPACITACIÓN
+========================================================== */
+
+.encabezado-capacitacion {
+
+    width: 100%;
+
+    min-height: 125px;
+
+    background: rgba(255,255,255,.96);
+
+    border-radius: 22px;
+
+    padding: 26px 30px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 40px;
+
+    margin-bottom: 24px;
+
+    box-shadow:
+        0 12px 35px rgba(15,23,42,.10);
+
+    border: 1px solid rgba(255,255,255,.8);
+
+}
+
+
+/* ==========================================================
+   INFORMACIÓN
+========================================================== */
+
+.info-capacitacion {
+
+    flex: 1;
+
+    min-width: 0;
+
+}
+
+.etiqueta-capacitacion {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #16a34a;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    margin-bottom: 8px;
+
+}
+
+.etiqueta-capacitacion i {
+
+    font-size: 15px;
+
+}
+
+
+#tituloCurso {
+
+    font-family: 'Averia Libre', cursive !important;
+
+    font-size: 24px;
+
+    font-weight: 700;
+
+    color: #0f172a;
+
+    line-height: 1.25;
+
+    margin: 0 0 7px;
+
+}
+
+#descripcionCurso {
+
+    font-family: 'Averia Libre', cursive !important;
+
+    color: #64748b;
+
+    font-size: 15px;
+
+    line-height: 1.5;
+
+    margin: 0;
+
+}
+
+
+/* ==========================================================
+   PROGRESO
+========================================================== */
+
+.progreso-general {
+
+    width: 300px;
+
+    flex-shrink: 0;
+
+}
+
+.progreso-texto {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 8px;
+
+}
+
+.progreso-texto span {
+
+    color: #64748b;
+
+    font-size: 14px;
+
+    font-weight: 400;
+
+}
+
+.progreso-texto strong {
+
+    color: #16a34a;
+
+    font-size: 20px;
+
+    font-weight: 700;
+
+}
+
+.progreso-general .progress {
+
+    height: 9px;
+
+    background: #e2e8f0;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+}
+
+.progreso-general .progress-bar {
+
+    background: linear-gradient(
+        90deg,
+        #16a34a,
+        #22c55e
+    );
+
+    border-radius: 20px;
+
+    transition: width .5s ease;
+
+}
+
+
+/* ==========================================================
+   CUERPO DEL CURSO
+========================================================== */
+
+.contenedor-curso {
+
+    display: grid;
+
+    grid-template-columns: 285px minmax(0, 1fr);
+
+    gap: 24px;
+
+    align-items: start;
+
+}
+
+
+/* ==========================================================
+   LISTA DE CAPÍTULOS
+========================================================== */
+
+.lista-capitulos {
+
+    background: rgba(255,255,255,.97);
+
+    border-radius: 22px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 12px 35px rgba(15,23,42,.10);
+
+    border: 1px solid rgba(255,255,255,.8);
+
+    position: sticky;
+
+    top: 105px;
+
+}
+
+
+/* ==========================================================
+   TÍTULO LISTA
+========================================================== */
+
+.titulo-lista {
+
+    padding: 21px 22px;
+
+    border-bottom: 1px solid #e5e7eb;
+
+}
+
+.titulo-lista h3 {
+
+    margin: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    color: #0f172a;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+}
+
+.titulo-lista h3 i {
+
+    color: #16a34a;
+
+    font-size: 17px;
+
+}
+
+
+/* ==========================================================
+   CONTENEDOR CAPÍTULOS
+========================================================== */
+
+#contenedorCapitulos {
+
+    padding: 12px;
+
+}
+
+
+/* ==========================================================
+   CAPÍTULOS DINÁMICOS
+========================================================== */
+
+#contenedorCapitulos > * {
+
+    font-family: 'Averia Libre', cursive !important;
+
+}
+
+
+/* ==========================================================
+   CONTENIDO ACTUAL
+========================================================== */
+
+.contenido-actual {
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 20px;
+
+}
+
+
+/* ==========================================================
+   BLOQUE CAPÍTULO
+========================================================== */
+
+.bloque-capitulo {
+
+    width: 100%;
+
+    background: rgba(255,255,255,.97);
+
+    border-radius: 22px;
+
+    padding: 32px;
+
+    box-shadow:
+        0 12px 35px rgba(15,23,42,.10);
+
+    border: 1px solid rgba(255,255,255,.8);
+
+}
+
+
+/* ==========================================================
+   ESTADO INICIAL
+========================================================== */
+
+.estado-inicial {
+
+    min-height: 260px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+
+    padding: 30px;
+
+}
+
+.estado-inicial > i {
+
+    color: #16a34a;
+
+    font-size: 55px;
+
+    margin-bottom: 20px;
+
+}
+
+.estado-inicial h2 {
+
+    font-family: 'Averia Libre', cursive !important;
+
+    color: #0f172a;
+
+    font-size: 28px;
+
+    font-weight: 700;
+
+    margin-bottom: 10px;
+
+}
+
+.estado-inicial p {
+
+    color: #64748b;
+
+    font-size: 15px;
+
+    max-width: 520px;
+
+    line-height: 1.6;
+
+    margin: 0;
+
+}
+
+
+/* ==========================================================
+   SUBCAPÍTULOS
+========================================================== */
+
+.contenido-subcapitulos {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 20px;
+
+}
+
+
+/* ==========================================================
+   MATERIAL DE APOYO
+========================================================== */
+
+.material-apoyo,
+.evaluacion-capitulo {
+
+    background: rgba(255,255,255,.97);
+
+    border-radius: 22px;
+
+    padding: 28px;
+
+    box-shadow:
+        0 12px 35px rgba(15,23,42,.10);
+
+    border: 1px solid rgba(255,255,255,.8);
+
+}
+
+.titulo-seccion {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+
+}
+
+.titulo-seccion i {
+
+    color: #16a34a;
+
+    font-size: 19px;
+
+}
+
+.titulo-seccion h3 {
+
+    margin: 0;
+
+    font-family: 'Averia Libre', cursive !important;
+
+    font-size: 20px;
+
+    font-weight: 700;
+
+    color: #0f172a;
+
+}
+
+
+/* ==========================================================
+   NAVEGACIÓN
+========================================================== */
+
+.navegacion-capitulo {
+
+    width: 100%;
+
+    background: rgba(255,255,255,.97);
+
+    border-radius: 20px;
+
+    padding: 18px 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    box-shadow:
+        0 10px 30px rgba(15,23,42,.08);
+
+    border: 1px solid rgba(255,255,255,.8);
+
+}
+
+.navegacion-capitulo button {
+
+    font-family: 'Averia Libre', cursive !important;
+
+    font-weight: 700;
+
+    min-height: 48px;
+
+    padding: 10px 20px;
+
+    border-radius: 13px;
+
+}
+
+.navegacion-capitulo .btn-success {
+
+    background: #16a34a;
+
+    border-color: #16a34a;
+
+}
+
+.navegacion-capitulo .btn-success:hover {
+
+    background: #15803d;
+
+    border-color: #15803d;
+
+    transform: translateY(-1px);
+
+}
+
+
+/* ==========================================================
+   CARGANDO
+========================================================== */
+
+.cargando {
+
+    padding: 30px 15px;
+
+    text-align: center;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+}
+
+.cargando i {
+
+    color: #16a34a;
+
+    margin-right: 8px;
+
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 1200px) {
+
+    .contenido-capacitacion {
+
+        padding-left: 24px;
+
+        padding-right: 24px;
+
+    }
+
+    .contenedor-curso {
+
+        grid-template-columns: 250px minmax(0, 1fr);
+
+    }
+
+    .progreso-general {
+
+        width: 260px;
+
+    }
+
+}
+
+
+@media (max-width: 992px) {
+
+    .contenido-capacitacion {
+
+        margin-left: 0;
+
+        width: 100%;
+
+        padding: 25px 20px 40px;
+
+    }
+
+    .encabezado-capacitacion {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+    .progreso-general {
+
+        width: 100%;
+
+    }
+
+    .contenedor-curso {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .lista-capitulos {
+
+        position: static;
+
+        width: 100%;
+
+    }
+
+}
+
+
+@media (max-width: 576px) {
+
+    .contenido-capacitacion {
+
+        padding: 20px 14px 30px;
+
+    }
+
+    .encabezado-capacitacion {
+
+        padding: 22px;
+
+        border-radius: 18px;
+
+    }
+
+    #tituloCurso {
+
+        font-size: 21px;
+
+    }
+
+    .bloque-capitulo {
+
+        padding: 22px;
+
+    }
+
+    .estado-inicial {
+
+        min-height: 220px;
+
+    }
+
+    .estado-inicial h2 {
+
+        font-size: 23px;
+
+    }
+
+    .navegacion-capitulo {
+
+        padding: 14px;
+
+    }
+
+}
+
+/* ==========================================================
+   VIDEO DE CAPACITACIÓN
+========================================================== */
+
+.contenido-subcapitulos iframe,
+.contenido-subcapitulos video {
+
+    width: 100% !important;
+
+    max-width: 100% !important;
+
+    height: 520px !important;
+
+    min-height: 420px;
+
+    display: block;
+
+    margin: 25px auto;
+
+    border: none;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, .15);
+
+}
+
+
+/* Si el video está dentro de algún contenedor */
+
+.contenido-subcapitulos .video-container,
+.contenido-subcapitulos .video-wrapper,
+.contenido-subcapitulos .video-item {
+
+    width: 100% !important;
+
+    max-width: 100% !important;
+
+}
+
+
+/* YouTube / videos responsivos */
+
+.contenido-subcapitulos .ratio {
+
+    width: 100% !important;
+
+    max-width: 100% !important;
+
+    margin: 25px auto;
+
+}
+
+.contenido-subcapitulos .ratio iframe {
+
+    width: 100% !important;
+
+    height: 100% !important;
+
+}
+
+.contenido-subcapitulos iframe,
+.contenido-subcapitulos video {
+
+    width: 100% !important;
+
+    max-width: 900px !important;
+
+    height: 500px !important;
+
+    display: block;
+
+    margin: 30px auto;
+
+    border-radius: 18px;
+
+    border: none;
+
+    box-shadow: 0 10px 30px rgba(15,23,42,.15);
+
+}
+
+/* ==========================================================
+   CONTENIDO DE LA CAPACITACIÓN
+   Sin tarjetas blancas alrededor del texto y video
+========================================================== */
+
+.contenido-actual {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* Texto del capítulo */
+.contenido-subcapitulos {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 10px 0 20px 0;
+}
+
+/* Bloque donde aparece el contenido */
+.bloque-capitulo {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 0 30px 0;
+}
+
+/* Texto */
+.contenido-subcapitulos p {
+    background: transparent !important;
+    color: #0f172a;
+}
+
+/* Títulos */
+.contenido-subcapitulos h1,
+.contenido-subcapitulos h2,
+.contenido-subcapitulos h3,
+.contenido-subcapitulos h4 {
+    background: transparent !important;
+    color: #0f172a;
+}
+
+/* ==========================================================
+   VIDEO
+========================================================== */
+
+.video-capacitacion {
+    width: 100%;
+    max-width: 900px;
+    margin: 25px auto 30px auto;
+}
+
+.video-capacitacion iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: none;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .20);
+}
+
+/* ==========================================================
+   MENSAJE DE VIDEO PENDIENTE
+========================================================== */
+
+.video-bloqueado {
+    opacity: .95;
+}
+
+.mensaje-video {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.mensaje-video i {
+    color: #16a34a;
+    margin-right: 6px;
+}
+
+/* ==========================================================
+   BOTÓN SIGUIENTE BLOQUEADO
+========================================================== */
+
+#btnSiguiente:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ==========================================================
+   DISTRIBUCIÓN DEL CONTENIDO DE LA CAPACITACIÓN
+========================================================== */
+
+.contenedor-curso {
+    display: grid;
+    grid-template-columns: 245px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.lista-capitulos {
+    width: 100%;
+    position: sticky;
+    top: 105px;
+}
+
+.contenido-actual {
+    width: 100%;
+    min-width: 0;
+}
+
+.bloque-capitulo {
+    width: 100%;
+}
+
+.bloque-capitulo h1,
+.bloque-capitulo h2,
+.bloque-capitulo h3 {
+    margin-bottom: 10px;
+}
+
+.bloque-capitulo p {
+    margin-bottom: 20px;
+    line-height: 1.7;
+}
+
+/* ==========================================================
+   VIDEOS DE CAPACITACIÓN
+========================================================== */
+
+.contenido-subcapitulos {
+    width: 100%;
+}
+
+.contenido-subcapitulos iframe,
+.contenido-subcapitulos video {
+    display: block;
+    width: 90%;
+    max-width: 1000px;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    margin: 25px auto 30px;
+    border: none;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+}
+
+/* ==========================================================
+   AJUSTE FINAL - CONTENIDO DE CAPACITACIÓN
+   NO MODIFICAR style1.css
+========================================================== */
+
+/* Contenedor principal del curso */
+.contenedor-curso {
+    display: grid;
+    grid-template-columns: 245px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
+
+/* Menú de capítulos */
+.lista-capitulos {
+    width: 100%;
+    min-width: 0;
+    background: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+}
+
+/* Contenido derecho */
+.contenido-actual {
+    width: 100%;
+    min-width: 0;
+}
+
+/* ==========================================================
+   INFORMACIÓN DEL CAPÍTULO
+========================================================== */
+
+.bloque-capitulo {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 30px 34px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+}
+
+/* Estado inicial */
+.estado-inicial {
+    text-align: center;
+    padding: 50px 30px;
+}
+
+/* ==========================================================
+   CONTENIDO DEL CAPÍTULO
+========================================================== */
+
+.contenido-subcapitulos {
+    width: 100%;
+}
+
+/*
+   Cada contenido generado por JS tendrá aspecto de tarjeta
+   blanca para que el texto no quede directamente sobre
+   el fondo de la página.
+*/
+.contenido-subcapitulos > div,
+.contenido-subcapitulos .subcapitulo,
+.contenido-subcapitulos .contenido-video,
+.contenido-subcapitulos .contenido-texto {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 30px 34px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+}
+
+/* ==========================================================
+   TEXTO DEL CONTENIDO
+========================================================== */
+
+.contenido-subcapitulos h1,
+.contenido-subcapitulos h2,
+.contenido-subcapitulos h3,
+.contenido-subcapitulos h4 {
+    color: #0f172a;
+    margin-bottom: 15px;
+}
+
+.contenido-subcapitulos p {
+    color: #334155;
+    line-height: 1.7;
+    font-size: 16px;
+    margin-bottom: 18px;
+}
+
+/* ==========================================================
+   VIDEO
+========================================================== */
+
+.contenido-subcapitulos iframe {
+    display: block;
+    width: 85%;
+    max-width: 1100px;
+    min-height: 560px;
+    margin: 25px auto 10px;
+    border: none;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+/* Si el video está dentro de un contenedor */
+.contenido-subcapitulos .video-container,
+.contenido-subcapitulos .video-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+/* ==========================================================
+   NAVEGACIÓN
+========================================================== */
+
+.navegacion-capitulo {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 18px 20px;
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+}
+
+/* Botón siguiente */
+#btnSiguiente {
+    min-width: 120px;
+    min-height: 48px;
+    border-radius: 12px;
+    font-weight: 700;
+}
+
+/* Botón anterior */
+#btnAnterior {
+    min-width: 120px;
+    min-height: 48px;
+    border-radius: 12px;
+    font-weight: 700;
+}
+
+/* ==========================================================
+   MENÚ DE CAPÍTULOS
+========================================================== */
+
+.titulo-lista {
+    padding: 20px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.titulo-lista h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #0f172a;
+}
+
+#contenedorCapitulos {
+    padding: 10px;
+}
+
+#contenedorCapitulos button,
+#contenedorCapitulos .capitulo-item {
+    width: 100%;
+    border-radius: 12px;
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 1100px) {
+
+    .contenedor-curso {
+        grid-template-columns: 210px minmax(0, 1fr);
+    }
+
+    .contenido-subcapitulos iframe {
+        width: 95%;
+        min-height: 450px;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .contenedor-curso {
+        grid-template-columns: 1fr;
+    }
+
+    .contenido-subcapitulos iframe {
+        width: 100%;
+        min-height: 350px;
+    }
+
+    .bloque-capitulo,
+    .contenido-subcapitulos > div {
+        padding: 22px;
+    }
+
+}
+
+/* ==========================================================
+   AJUSTE FINAL - PANTALLA DE CAPACITACIÓN
+   NO MODIFICAR style1.css
+========================================================== */
+
+
+/* ==========================================================
+   INFORMACIÓN DEL CAPÍTULO
+========================================================== */
+
+#informacionCapitulo.bloque-capitulo {
+
+    background: #ffffff !important;
+
+    border-radius: 22px !important;
+
+    padding: 30px 34px !important;
+
+    margin: 0 0 30px 0 !important;
+
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08) !important;
+
+    width: 100% !important;
+
+    position: relative;
+
+    z-index: 2;
+}
+
+
+/* Contenedor interno del capítulo */
+
+#informacionCapitulo .estado-inicial {
+
+    background: transparent !important;
+
+}
+
+
+/* Título del capítulo */
+
+#informacionCapitulo h1,
+#informacionCapitulo h2 {
+
+    color: #0f172a !important;
+
+    margin-bottom: 12px !important;
+
+}
+
+
+/* Descripción */
+
+#informacionCapitulo p {
+
+    color: #475569 !important;
+
+    line-height: 1.7 !important;
+
+    margin-bottom: 0 !important;
+
+}
+
+
+/* ==========================================================
+   CONTENIDO DEL CAPÍTULO
+========================================================== */
+
+.contenido-actual {
+
+    width: 100%;
+
+    min-width: 0;
+
+}
+
+
+/* ==========================================================
+   TEXTO DEL SUBCAPÍTULO
+========================================================== */
+
+.contenido-subcapitulos {
+
+    width: 100%;
+
+    color: #0f172a;
+
+}
+
+
+/* Título del contenido */
+
+.contenido-subcapitulos h1,
+.contenido-subcapitulos h2,
+.contenido-subcapitulos h3,
+.contenido-subcapitulos h4 {
+
+    color: #0f172a !important;
+
+    line-height: 1.3;
+
+}
+
+
+/* Párrafos */
+
+.contenido-subcapitulos p {
+
+    color: #1e293b !important;
+
+    line-height: 1.7 !important;
+
+}
+
+
+/* ==========================================================
+   VIDEOS
+========================================================== */
+
+.contenido-subcapitulos iframe {
+
+    display: block;
+
+    width: 85% !important;
+
+    max-width: 1000px !important;
+
+    min-height: 520px !important;
+
+    height: auto;
+
+    aspect-ratio: 16 / 9;
+
+    margin: 30px auto !important;
+
+    border: none;
+
+    border-radius: 18px;
+
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.20);
+
+}
+
+
+/* Si el video está dentro de un contenedor */
+
+.contenido-subcapitulos .video-container,
+.contenido-subcapitulos .video-wrapper {
+
+    width: 100% !important;
+
+    display: flex;
+
+    justify-content: center;
+
+}
+
+
+/* ==========================================================
+   MENÚ DE CAPÍTULOS
+========================================================== */
+
+.lista-capitulos {
+
+    width: 245px;
+
+    min-width: 245px;
+
+}
+
+
+/* Contenedor de los botones */
+
+#contenedorCapitulos {
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    width: 100% !important;
+
+    gap: 6px !important;
+
+}
+
+
+/* Cada capítulo */
+
+#contenedorCapitulos > * {
+
+    width: 100% !important;
+
+    max-width: 100% !important;
+
+    margin: 0 !important;
+
+}
+
+
+/* Botones de capítulos */
+
+#contenedorCapitulos button {
+
+    width: 100% !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+
+    gap: 12px !important;
+
+    text-align: left !important;
+
+    padding: 12px 14px !important;
+
+    border-radius: 10px !important;
+
+}
+
+
+/* ==========================================================
+   DISTRIBUCIÓN GENERAL
+========================================================== */
+
+.contenedor-curso {
+
+    display: grid !important;
+
+    grid-template-columns: 245px minmax(0, 1fr) !important;
+
+    gap: 22px !important;
+
+    align-items: start !important;
+
+    width: 100% !important;
+
+}
+
+
+/* ==========================================================
+   NAVEGACIÓN
+========================================================== */
+
+.navegacion-capitulo {
+
+    width: 100% !important;
+
+    background: #ffffff !important;
+
+    border-radius: 20px !important;
+
+    padding: 16px 20px !important;
+
+    margin-top: 30px !important;
+
+    display: flex !important;
+
+    justify-content: space-between !important;
+
+    align-items: center !important;
+
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08) !important;
+
+}
+
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 992px) {
+
+    .contenedor-curso {
+
+        grid-template-columns: 1fr !important;
+
+    }
+
+    .lista-capitulos {
+
+        width: 100%;
+
+        min-width: 0;
+
+    }
+
+    #contenedorCapitulos {
+
+        display: grid !important;
+
+        grid-template-columns: repeat(2, 1fr);
+
+    }
+
+    .contenido-subcapitulos iframe {
+
+        width: 100% !important;
+
+        min-height: 400px !important;
+
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    #contenedorCapitulos {
+
+        grid-template-columns: 1fr !important;
+
+    }
+
+    .contenido-subcapitulos iframe {
+
+        min-height: 250px !important;
+
+    }
+
+}
+
+/* ==============================================
+   SWEETALERT - CAPACITACIÓN
+============================================== */
+
+.swal-capacitacion {
+
+    border-radius: 22px !important;
+
+    padding: 30px !important;
+
+    font-family: 'Averia Libre', cursive !important;
+
+}
+
+
+.swal-capacitacion-titulo {
+
+    color: #0f172a !important;
+
+    font-weight: 700 !important;
+
+}
+
+
+.swal-capacitacion-mensaje {
+
+    color: #475569 !important;
+
+    font-size: 16px !important;
+
+    line-height: 1.6 !important;
+
+}
+
+
+.swal-capacitacion-boton {
+
+    border-radius: 12px !important;
+
+    padding: 11px 25px !important;
+
+    font-family: 'Averia Libre', cursive !important;
+
+    font-weight: 700 !important;
+
+}

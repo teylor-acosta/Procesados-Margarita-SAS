@@ -20,6 +20,95 @@ async function iniciar(){
     configurarFiltros();
 }
 
+// =========================================
+// LISTAR CAPACITACIONES DISPONIBLES
+// =========================================
+
+router.get(
+    "/api/capacitaciones",
+    proteger,
+    async (req, res) => {
+
+        try {
+
+            const [capacitaciones] = await db.query(`
+                SELECT
+                    id,
+                    titulo AS nombre,
+                    estado
+                FROM cursos
+                WHERE estado = 'ACTIVO'
+                ORDER BY titulo ASC
+            `);
+
+            res.json({
+                success: true,
+                capacitaciones
+            });
+
+        } catch (error) {
+
+            console.error(
+                "Error obteniendo capacitaciones:",
+                error
+            );
+
+            res.status(500).json({
+                success: false,
+                capacitaciones: [],
+                mensaje: "Error obteniendo capacitaciones."
+            });
+
+        }
+
+    }
+);
+
+// =========================================
+// CAPACITACIONES DISPONIBLES PARA ASIGNAR
+// =========================================
+
+router.get(
+    "/api/capacitaciones",
+    proteger,
+    async (req, res) => {
+
+        try {
+
+            const [capacitaciones] = await db.query(`
+                SELECT
+                    id,
+                    titulo AS nombre,
+                    estado
+                FROM cursos
+                WHERE estado = 'ACTIVO'
+                ORDER BY titulo ASC
+            `);
+
+            res.json({
+                success: true,
+                capacitaciones
+            });
+
+        } catch (error) {
+
+            console.error(
+                "Error obteniendo capacitaciones:",
+                error
+            );
+
+            res.status(500).json({
+                success: false,
+                capacitaciones: [],
+                mensaje: "Error obteniendo capacitaciones"
+            });
+
+        }
+
+    }
+);
+
+
 /* =========================================
    DASHBOARD
 ========================================= */

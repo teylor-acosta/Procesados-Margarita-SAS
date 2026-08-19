@@ -36,7 +36,7 @@
    BODY Y FONDO CONFIGURACIÓN
 ========================================= */
 body {
-    font-family: 'Averia Libre', cursive;
+    font-family: 'Averia Libre', sans-serif;
     background: var(--gris);
     min-height: 100vh;
     overflow-x: hidden;
@@ -190,12 +190,12 @@ body::before {
 /* ==========================================================================
    🔥 FIX MAESTRO: SOBREESCRITURA DE FUENTE SOBRE BOOTSTRAP Y JS DINÁMICO
    ========================================================================== */
-body, 
-h1, h2, h3, h4, h5, h6, 
-.h1, .h2, .h3, .h4, .h5, .h6,
-p, span, a, button, input, select, textarea,
-.btn, .badge, .card, .menu-item, .acceso-card, .stat-card {
-    font-family: 'Averia Libre', cursive !important;
+body,  
+h1, h2, h3, h4, h5, h6,  
+.h1, .h2, .h3, .h4, .h5, .h6, 
+p, span, a, button, input, select, textarea, 
+.btn, .badge, .card, .menu-item, .acceso-card, .stat-card { 
+    font-family: 'Averia Libre', sans-serif !important; 
 }
 
 /* Regla ultra específica para asegurar el HTML inyectado desde JavaScript */
