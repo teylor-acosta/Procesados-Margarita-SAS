@@ -487,3 +487,92 @@ body {
     box-sizing: border-box;
 
 }
+
+/* ============================================
+   BARRA DE ACCIONES DEL CERTIFICADO
+   ============================================ */
+
+.barra-acciones {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.acciones-certificado {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-accion {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+/* VOLVER */
+
+.btn-volver {
+    background: #ffffff;
+    color: #333333;
+    border: 1px solid #dcdcdc;
+}
+
+.btn-volver:hover {
+    background: #f5f5f5;
+}
+
+/* DESCARGAR PDF */
+
+.btn-descargar {
+    background: #198754;
+    color: white;
+}
+
+.btn-descargar:hover {
+    background: #157347;
+    transform: translateY(-1px);
+}
+
+/* IMPRIMIR */
+
+.btn-imprimir {
+    background: #343a40;
+    color: white;
+}
+
+.btn-imprimir:hover {
+    background: #212529;
+    transform: translateY(-1px);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 600px) {
+
+    .barra-acciones {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .acciones-certificado {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .btn-accion {
+        width: 100%;
+        justify-content: center;
+    }
+}

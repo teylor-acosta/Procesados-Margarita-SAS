@@ -212,13 +212,17 @@ const textoCertificado =
 // GENERAR QR DEL CERTIFICADO
 // ========================================
 
+// ========================================
+// GENERAR QR DEL CERTIFICADO
+// ========================================
+
 const qrCertificado =
     document.getElementById("qrCertificado");
 
-if (qrCertificado && certificado.id) {
+if (qrCertificado && certificado.token_validacion) {
 
     const urlValidacion =
-        `${window.location.origin}/api/certificados-capacitacion/${certificado.id}`;
+        `${window.location.origin}/validar-certificado/${certificado.token_validacion}`;
 
     qrCertificado.src =
         `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(urlValidacion)}`;
@@ -228,6 +232,12 @@ if (qrCertificado && certificado.id) {
     console.log(
         "QR GENERADO:",
         urlValidacion
+    );
+
+} else {
+
+    console.warn(
+        "No se pudo generar el QR: falta token_validacion."
     );
 
 }
@@ -1420,11 +1430,14 @@ function mostrarError(
 
 function configurarEventos(){
 
+    // ========================================
+    // VOLVER
+    // ========================================
+
     const btnVolver =
         document.getElementById(
             "btnVolver"
         );
-
 
     btnVolver?.addEventListener(
         "click",
@@ -1436,11 +1449,14 @@ function configurarEventos(){
     );
 
 
+    // ========================================
+    // VOLVER DESDE ERROR
+    // ========================================
+
     const btnVolverError =
         document.getElementById(
             "btnVolverError"
         );
-
 
     btnVolverError?.addEventListener(
         "click",
@@ -1452,11 +1468,14 @@ function configurarEventos(){
     );
 
 
+    // ========================================
+    // IMPRIMIR
+    // ========================================
+
     const btnImprimir =
         document.getElementById(
             "btnImprimir"
         );
-
 
     btnImprimir?.addEventListener(
         "click",
@@ -1466,5 +1485,225 @@ function configurarEventos(){
 
         }
     );
+
+
+    // ========================================
+    // DESCARGAR PDF
+    // ========================================
+
+    const btnDescargarPDF =
+        document.getElementById(
+            "btnDescargarPDF"
+        );
+
+    btnDescargarPDF?.addEventListener(
+        "click",
+        descargarPDF
+    );
+
+}
+
+// ============================================
+// DESCARGAR CERTIFICADO COMO PDF
+// ============================================
+
+async function descargarPDF(){
+
+    const certificado =
+        document.getElementById(
+            "certificado"
+        );
+
+    const boton =
+        document.getElementById(
+            "btnDescargarPDF"
+        );
+
+
+    if(!certificado){
+
+        console.error(
+            "No se encontró el certificado."
+        );
+
+        return;
+
+    }
+
+
+    // ========================================
+    // COMPROBAR LIBRERÍA
+    // ========================================
+
+    if(typeof html2pdf === "undefined"){
+
+        alert(
+            "No fue posible cargar el generador de PDF."
+        );
+
+        return;
+
+    }
+
+
+    // ========================================
+    // DESACTIVAR BOTÓN
+    // ========================================
+
+    const textoOriginal =
+        boton
+            ? boton.innerHTML
+            : "";
+
+    if(boton){
+
+        boton.disabled = true;
+
+        boton.innerHTML =
+            "⏳ Generando PDF...";
+
+    }
+
+
+    try{
+
+        // ====================================
+        // ESPERAR A QUE LAS IMÁGENES CARGUEN
+        // ====================================
+
+        const imagenes =
+            certificado.querySelectorAll(
+                "img"
+            );
+
+        await Promise.all(
+
+            Array.from(imagenes).map(
+                imagen => {
+
+                    if(imagen.complete){
+
+                        return Promise.resolve();
+
+                    }
+
+                    return new Promise(
+                        resolve => {
+
+                            imagen.onload =
+                                resolve;
+
+                            imagen.onerror =
+                                resolve;
+
+                        }
+                    );
+
+                }
+            )
+
+        );
+
+
+        // ====================================
+        // ESPERAR FUENTES
+        // ====================================
+
+        if(document.fonts){
+
+            await document.fonts.ready;
+
+        }
+
+
+        // ====================================
+        // CONFIGURACIÓN PDF
+        // ====================================
+
+        const opciones = {
+
+            margin: 0,
+
+            filename:
+                "certificado-capacitacion.pdf",
+
+            image: {
+
+                type: "jpeg",
+
+                quality: 1
+
+            },
+
+            html2canvas: {
+
+                scale: 2,
+
+                useCORS: true,
+
+                allowTaint: false,
+
+                backgroundColor: "#ffffff"
+
+            },
+
+            jsPDF: {
+
+                unit: "px",
+
+                format: [
+                    1123,
+                    794
+                ],
+
+                orientation: "landscape"
+
+            }
+
+        };
+
+
+        // ====================================
+        // GENERAR PDF
+        // ====================================
+
+        await html2pdf()
+
+            .set(opciones)
+
+            .from(certificado)
+
+            .save();
+
+
+    }
+    catch(error){
+
+        console.error(
+            "ERROR GENERANDO PDF:",
+            error
+        );
+
+        alert(
+            "No fue posible generar el PDF."
+        );
+
+    }
+    finally{
+
+        // ====================================
+        // RESTAURAR BOTÓN
+        // ====================================
+
+        if(boton){
+
+            boton.disabled = false;
+
+            boton.innerHTML =
+                textoOriginal;
+
+        }
+
+    }
 
 }

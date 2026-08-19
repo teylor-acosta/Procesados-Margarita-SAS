@@ -1255,6 +1255,175 @@ router.get(
 );
 
 // ==========================================================
+// 🔐 VALIDAR CERTIFICADO MEDIANTE TOKEN
+// ==========================================================
+
+router.get(
+    "/api/validar-certificado/:token",
+    async (req, res) => {
+
+        try {
+
+            const token =
+                req.params.token;
+
+
+            // ============================================
+            // VALIDAR TOKEN
+            // ============================================
+
+            if (!token || token.length < 32) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    valido: false,
+
+                    mensaje:
+                        "Token de validación inválido."
+
+                });
+
+            }
+
+
+            // ============================================
+            // BUSCAR CERTIFICADO POR TOKEN
+            // ============================================
+
+            const [certificados] =
+                await db.query(
+                    `
+                    SELECT
+
+                        cu.id,
+
+                        cu.codigo_certificado,
+
+                        cu.nota_final,
+
+                        cu.fecha_emision,
+
+                        cu.fecha_vencimiento,
+
+                        c.titulo AS nombre_capacitacion,
+
+                        c.descripcion AS descripcion_capacitacion,
+
+                        e.nombre AS nombre_empleado
+
+                    FROM certificados_usuario cu
+
+                    INNER JOIN cursos c
+                        ON c.id = cu.curso_id
+
+                    INNER JOIN usuarios u
+                        ON u.ID = cu.usuario_id
+
+                    INNER JOIN empleados e
+                        ON e.id = u.empleado_id
+
+                    WHERE cu.token_validacion = ?
+
+                    LIMIT 1
+                    `,
+                    [
+                        token
+                    ]
+                );
+
+
+            // ============================================
+            // CERTIFICADO NO ENCONTRADO
+            // ============================================
+
+            if (certificados.length === 0) {
+
+                return res.status(404).json({
+
+                    success: true,
+
+                    valido: false,
+
+                    mensaje:
+                        "El certificado no existe o no es válido."
+
+                });
+
+            }
+
+
+            const certificado =
+                certificados[0];
+
+
+            // ============================================
+            // RESPUESTA PÚBLICA
+            // ============================================
+
+            return res.json({
+
+                success: true,
+
+                valido: true,
+
+                certificado: {
+
+                    codigo:
+                        certificado.codigo_certificado,
+
+                    nombre_empleado:
+                        certificado.nombre_empleado,
+
+                    nombre_capacitacion:
+                        certificado.nombre_capacitacion,
+
+                    descripcion:
+                        certificado.descripcion_capacitacion,
+
+                    nota:
+                        Number(
+                            certificado.nota_final
+                        ).toFixed(2),
+
+                    fecha_emision:
+                        certificado.fecha_emision,
+
+                    fecha_vencimiento:
+                        certificado.fecha_vencimiento
+
+                }
+
+            });
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "🔥 ERROR VALIDANDO CERTIFICADO:",
+                error
+            );
+
+
+            return res.status(500).json({
+
+                success: false,
+
+                valido: false,
+
+                mensaje:
+                    "No fue posible validar el certificado."
+
+            });
+
+        }
+
+    }
+);
+
+// ==========================================================
 // VER CERTIFICADO GENERADO
 // ==========================================================
 

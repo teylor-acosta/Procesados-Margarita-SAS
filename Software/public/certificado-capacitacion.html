@@ -51,30 +51,35 @@
 
         <div class="barra-acciones">
 
-            <button
-                id="btnVolver"
-                class="btn-accion btn-volver"
-            >
+    <button
+        type="button"
+        id="btnVolver"
+        class="btn-accion btn-volver"
+    >
+        ← Volver
+    </button>
 
-                <span>←</span>
+    <div class="acciones-certificado">
 
-                Volver
+        <button
+            type="button"
+            id="btnDescargarPDF"
+            class="btn-accion btn-descargar"
+        >
+            📥 Descargar PDF
+        </button>
 
-            </button>
+        <button
+            type="button"
+            id="btnImprimir"
+            class="btn-accion btn-imprimir"
+        >
+            🖨️ Imprimir
+        </button>
 
+    </div>
 
-            <button
-                id="btnImprimir"
-                class="btn-accion btn-imprimir"
-            >
-
-                🖨️
-
-                Imprimir / Guardar PDF
-
-            </button>
-
-        </div>
+</div>
 
 
         <!-- ========================================= -->
@@ -220,7 +225,9 @@
     <!-- JAVASCRIPT -->
     <!-- ========================================= -->
 
-    <script src="/js/certificado-capacitacion.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script src="/js/certificado-capacitacion.js"></script>
 
 </body>
 
