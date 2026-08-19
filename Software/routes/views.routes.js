@@ -20,6 +20,21 @@ router.get('/recuperar', (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'recuperar.html'));
 });
 
+
+// ============================================
+// 🔐 VALIDACIÓN PÚBLICA DE CERTIFICADOS
+// ============================================
+
+router.get('/validar-certificado/:token', (req, res) => {
+
+    res.sendFile(
+        path.join(
+            __dirname,
+            '../public/validar-certificado.html'
+        )
+    );
+
+});
 // ============================================
 // RUTAS PROTEGIDAS
 // ============================================
