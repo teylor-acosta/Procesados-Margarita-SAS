@@ -1452,6 +1452,7 @@ router.get(
                     cu.fecha_emision,
                     cu.codigo_certificado,
                     cu.fecha_vencimiento,
+                    cu.token_validacion,
 
                     c.titulo AS nombre_capacitacion,
                     c.descripcion AS descripcion_capacitacion,
@@ -1574,6 +1575,9 @@ router.get(
 
                     codigo_certificado:
                         certificado.codigo_certificado,
+
+                    token_validacion:
+        certificado.token_validacion,
 
                     plantilla:
                         configuracion.plantilla,
