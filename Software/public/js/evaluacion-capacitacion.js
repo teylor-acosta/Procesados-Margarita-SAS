@@ -5,7 +5,7 @@
 let evaluacionId = null;
 let cursoId = null;
 let capituloId = null;
-
+let capacitacionId = null;
 let evaluacionActual = null;
 let preguntasEvaluacion = [];
 
@@ -22,19 +22,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         );
 
     evaluacionId =
-        Number(
-            parametros.get("evaluacion")
-        );
+    Number(
+        parametros.get("evaluacion")
+    );
 
-    cursoId =
-        Number(
-            parametros.get("curso")
-        );
+cursoId =
+    Number(
+        parametros.get("curso")
+    );
 
-    
-    capituloId =
+capituloId =
     Number(
         parametros.get("capitulo")
+    );
+
+capacitacionId =
+    Number(
+        parametros.get("capacitacion")
     );
 
 
@@ -1586,11 +1590,8 @@ if(!confirmar.isConfirmed){
             // ==============================================
 
            window.location.href =
-
-    `/capacitacion/${cursoId}` +
-
+    `/capacitacion/${capacitacionId}` +
     `?capitulo=${capituloId}` +
-
     `&evaluacion_aprobada=1`;
 
         }

@@ -2545,27 +2545,27 @@ async function guardarAsignacion() {
             // -----------------------------------------
 
             const confirmacion =
-                await Swal.fire({
+    await Swal.fire({
 
-                    icon: "question",
+        icon: "question",
 
-                    title: "¿Asignar capacitaciones?",
+        title: "¿Asignar capacitaciones?",
 
-                    text:
-                        `Se asignarán $${capacitacionesActivas.length} capacitación${capacitacionesActivas.length !== 1 ? "es" : ""} al colaborador seleccionado.`,
+        text:
+            `Se asignarán ${capacitaciones.length} capacitación${capacitaciones.length !== 1 ? "es" : ""} al colaborador seleccionado.`,
 
-                    showCancelButton: true,
+        showCancelButton: true,
 
-                    confirmButtonText:
-                        "Sí, asignar",
+        confirmButtonText:
+            "Sí, asignar",
 
-                    cancelButtonText:
-                        "Cancelar",
+        cancelButtonText:
+            "Cancelar",
 
-                    confirmButtonColor:
-                        "#198754"
+        confirmButtonColor:
+            "#198754"
 
-                });
+    });
 
 
             if (!confirmacion.isConfirmed) {
