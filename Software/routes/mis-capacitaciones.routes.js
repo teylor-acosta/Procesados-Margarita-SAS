@@ -67,14 +67,14 @@ console.log("=================================");
             LIMIT 1
         )
 
-    LEFT JOIN certificados_usuario cert
-        ON cert.usuario_id = (
-            SELECT u.id
-            FROM usuarios u
-            WHERE u.empleado_id = ac.empleado_id
-            LIMIT 1
-        )
-        AND cert.curso_id = c.id
+    LEFT JOIN certificados_capacitacion cert
+    ON cert.usuario_id = (
+        SELECT u.id
+        FROM usuarios u
+        WHERE u.empleado_id = ac.empleado_id
+        LIMIT 1
+    )
+    AND cert.curso_id = c.id
 
     WHERE ac.empleado_id = ?
 

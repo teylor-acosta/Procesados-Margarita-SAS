@@ -829,6 +829,22 @@ function menuCapacitaciones(paginaActiva) {
 
         </a>
 
+         ${
+            paginaActiva === "capacitacion"
+            ? `
+                <a href="/mis-capacitaciones"
+                   class="menu-item">
+
+                    <i class="fas fa-arrow-left"></i>
+
+                    <span>Volver a mis capacitaciones</span>
+
+                </a>
+            `
+            : ""
+        }
+
+
         <a href="/panel"
            class="menu-item">
 
@@ -1283,6 +1299,36 @@ else if (pagina === "mis-capacitaciones") {
         menuCapacitaciones(
             "mis-capacitaciones"
         );
+
+}
+
+else if (pagina === "capacitacion") {
+
+    menu.innerHTML = `
+
+        <span class="menu-section-title">
+            Navegación
+        </span>
+
+        <a href="/dashboard"
+           class="menu-item">
+
+            <i class="fas fa-home"></i>
+
+            <span>Inicio</span>
+
+        </a>
+
+        <a href="/mis-capacitaciones"
+           class="menu-item">
+
+            <i class="fas fa-arrow-left"></i>
+
+            <span>Volver a mis capacitaciones</span>
+
+        </a>
+
+    `;
 
 }
 
