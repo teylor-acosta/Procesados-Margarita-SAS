@@ -672,63 +672,96 @@ LIMIT 1
             // 9. REGISTRAR CERTIFICADO
             // ==================================================
 
-            const [certificadoExistente] = await db.query(
-                `
-                SELECT id
-                FROM certificados_usuario
-                WHERE usuario_id = ?
-                AND codigo_certificado LIKE ?
-                LIMIT 1
-                `,
-                [
-                    usuarioId,
-                    `CERT-CAP-${capacitacionId}-${usuarioId}-%`
-                ]
-            );
+            // ==================================================
+// 9. REGISTRAR CERTIFICADO
+// ==================================================
 
+const tokenValidacion =
+    crypto.randomBytes(32).toString("hex");
 
-            if (certificadoExistente.length > 0) {
-
-                await db.query(
-                    `
-                    UPDATE certificados_usuario
-                    SET
-                        nota_final = ?,
-                        fecha_emision = NOW(),
-                        codigo_certificado = ?
-                    WHERE id = ?
-                    `,
-                    [
-                        notaFinal,
-                        codigo,
-                        certificadoExistente[0].id
-                    ]
-                );
-
-            } else {
-
-                await db.query(
+const [certificadoExistente] = await db.query(
     `
-    INSERT INTO certificados_usuario
-    (
-        usuario_id,
-        curso_id,
-        nota_final,
-        fecha_emision,
-        codigo_certificado
-    )
-    VALUES
-    (?, ?, ?, NOW(), ?)
+    SELECT
+        id,
+        token_validacion
+    FROM certificados_capacitacion
+    WHERE usuario_id = ?
+    AND curso_id = ?
+    LIMIT 1
     `,
     [
         usuarioId,
-        capacitacionId,
-        notaFinal,
-        codigo
+        capacitacionId
     ]
 );
 
-            }
+let certificadoId;
+let tokenFinal;
+
+if (certificadoExistente.length > 0) {
+
+    certificadoId =
+        certificadoExistente[0].id;
+
+    tokenFinal =
+        certificadoExistente[0].token_validacion;
+
+    // Si no tenía token, generar uno
+    if (!tokenFinal) {
+        tokenFinal =
+            tokenValidacion;
+    }
+
+    await db.query(
+        `
+        UPDATE certificados_capacitacion
+        SET
+            nota_final = ?,
+            fecha_emision = NOW(),
+            codigo_certificado = ?,
+            token_validacion = ?
+        WHERE id = ?
+        `,
+        [
+            notaFinal,
+            codigo,
+            tokenFinal,
+            certificadoId
+        ]
+    );
+
+} else {
+
+    tokenFinal =
+        tokenValidacion;
+
+    const [resultado] =
+        await db.query(
+            `
+            INSERT INTO certificados_capacitacion
+            (
+                usuario_id,
+                curso_id,
+                nota_final,
+                fecha_emision,
+                codigo_certificado,
+                token_validacion
+            )
+            VALUES
+            (?, ?, ?, NOW(), ?, ?)
+            `,
+            [
+                usuarioId,
+                capacitacionId,
+                notaFinal,
+                codigo,
+                tokenFinal
+            ]
+        );
+
+    certificadoId =
+        resultado.insertId;
+}
 
 
             // ==================================================
@@ -778,43 +811,48 @@ LIMIT 1
                     "Capacitación finalizada correctamente.",
 
                 certificado: {
+    id:
+        certificadoId,
 
-                    codigo: codigo,
+    codigo:
+        codigo,
 
-                    capacitacion:
-                        capacitacion.nombre,
+    token_validacion:
+        tokenFinal,
 
-                    nota:
-                        notaFinal,
+    capacitacion:
+        capacitacion.nombre,
 
-                    fecha_emision:
-                        new Date(),
+    nota:
+        notaFinal,
 
-                    mostrar_qr:
-                        configuracion.mostrar_qr,
+    fecha_emision:
+        new Date(),
 
-                    mostrar_sello:
-                        configuracion.mostrar_sello,
+    mostrar_qr:
+        configuracion.mostrar_qr,
 
-                    plantilla:
-                        configuracion.plantilla,
+    mostrar_sello:
+        configuracion.mostrar_sello,
 
-                    firma_izquierda:
-                        configuracion.firma_izquierda,
+    plantilla:
+        configuracion.plantilla,
 
-                    firma_derecha:
-                        configuracion.firma_derecha,
+    firma_izquierda:
+        configuracion.firma_izquierda,
 
-                    sello:
-                        configuracion.sello,
+    firma_derecha:
+        configuracion.firma_derecha,
 
-                    texto:
-                        configuracion.texto_certificado,
+    sello:
+        configuracion.sello,
 
-                    configuracion:
-                        configuracion.configuracion
+    texto:
+        configuracion.texto_certificado,
 
-                }
+    configuracion:
+        configuracion.configuracion
+}
 
             });
 
@@ -1404,7 +1442,7 @@ router.get(
 
                         e.nombre AS nombre_empleado
 
-                    FROM certificados_usuario cu
+                    FROM certificados_capacitacion cu
 
                     INNER JOIN cursos c
                         ON c.id = cu.curso_id
@@ -1550,7 +1588,7 @@ router.get(
 
                     e.nombre AS nombre_empleado
 
-                FROM certificados_usuario cu
+                FROM certificados_capacitacion cu
 
                 INNER JOIN cursos c
                     ON c.id = cu.curso_id

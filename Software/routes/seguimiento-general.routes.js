@@ -136,9 +136,10 @@ router.get(
             `);
 
             const [[asignaciones]] = await db.query(`
-                SELECT COUNT(*) AS total
-                FROM asignaciones_capacitaciones
-            `);
+    SELECT COUNT(*) AS total
+    FROM asignaciones_capacitaciones
+    WHERE estado <> 'ANULADA'
+`);
 
             const [[proceso]] = await db.query(`
                 SELECT COUNT(*) AS total
@@ -260,6 +261,18 @@ router.get(
             `,[id]);
 
             /* ==========================
+   CERTIFICADOS
+========================== */
+
+const [[certificados]] = await db.query(`
+    SELECT COUNT(*) AS total
+    FROM certificados_capacitacion cc
+    INNER JOIN usuarios u
+        ON u.id = cc.usuario_id
+    WHERE u.empleado_id = ?
+`, [id]);
+
+            /* ==========================
    CAPACITACIONES / CURSOS
 ========================== */
 
@@ -303,15 +316,17 @@ const [capacitaciones] = await db.query(`
 
             res.json({
 
-                success:true,
+    success: true,
 
-                empleado,
+    empleado,
 
-                induccion,
+    induccion,
 
-                capacitaciones
+    certificados: Number(certificados.total || 0),
 
-            });
+    capacitaciones
+
+});
 
         } catch(error){
 
@@ -349,23 +364,40 @@ router.get(
 
             const [[resumen]] = await db.query(`
 
-                SELECT
+    SELECT
 
-                    COUNT(*) AS asignadas,
+        SUM(
+            estado IN ('PENDIENTE', 'EN_PROCESO')
+        ) AS asignadas,
 
-                    SUM(
-                        estado='EN_PROCESO'
-                    ) AS proceso,
+        SUM(
+            estado = 'EN_PROCESO'
+        ) AS proceso,
 
-                    SUM(
-                        estado='FINALIZADA'
-                    ) AS finalizadas
+        SUM(
+            estado = 'FINALIZADA'
+        ) AS finalizadas
 
-                FROM asignaciones_capacitaciones
+    FROM asignaciones_capacitaciones
 
-                WHERE empleado_id = ?
+    WHERE empleado_id = ?
 
-            `, [id]);
+`, [id]);
+
+// =========================================
+// CERTIFICADOS DE CAPACITACIÓN
+// =========================================
+
+const [[certificados]] = await db.query(
+    `
+    SELECT COUNT(*) AS total
+    FROM certificados_capacitacion cc
+    INNER JOIN usuarios u
+        ON u.id = cc.usuario_id
+    WHERE u.empleado_id = ?
+    `,
+    [id]
+);
 
 
             // =========================================
@@ -434,7 +466,7 @@ ORDER BY ac.fecha_asignacion DESC
 
                     finalizadas: resumen.finalizadas || 0,
 
-                    certificados: 0
+                    certificados: certificados.total || 0
 
                 },
 
@@ -591,22 +623,68 @@ for (const capacitacion of capacitaciones) {
         // VERIFICAR SI YA ESTÁ ASIGNADA
         // -------------------------------------
 
-        const [[existente]] =
-            await connection.query(`
-                SELECT id
-                FROM asignaciones_capacitaciones
-                WHERE capacitacion_id = ?
-                  AND empleado_id = ?
-                LIMIT 1
-            `, [
-                capacitacion.id,
-                empleadoId
-            ]);
+        // -------------------------------------
+// VERIFICAR SI YA ESTÁ ASIGNADA
+// -------------------------------------
 
-        if (existente) {
-            existentes++;
-            continue;
-        }
+const [[existente]] =
+    await connection.query(`
+        SELECT
+            id,
+            estado
+        FROM asignaciones_capacitaciones
+        WHERE capacitacion_id = ?
+          AND empleado_id = ?
+        LIMIT 1
+    `, [
+        capacitacion.id,
+        empleadoId
+    ]);
+
+
+// -------------------------------------
+// SI YA EXISTE UNA ASIGNACIÓN
+// -------------------------------------
+
+if (existente) {
+
+    // =====================================
+    // SI ESTABA ANULADA → REACTIVARLA
+    // =====================================
+
+    if (existente.estado === "ANULADA") {
+
+        await connection.query(`
+            UPDATE asignaciones_capacitaciones
+            SET
+                estado = 'PENDIENTE',
+                asignado_por = ?,
+                fecha_asignacion = NOW(),
+                obligatorio = ?,
+                fecha_limite = ?
+            WHERE id = ?
+        `, [
+            asignadoPor,
+            capacitacion.obligatorio ? 1 : 0,
+            capacitacion.fecha_limite || null,
+            existente.id
+        ]);
+
+        asignados++;
+
+        continue;
+    }
+
+
+    // =====================================
+    // SI YA ESTÁ ACTIVA O FINALIZADA
+    // NO CREAR OTRA
+    // =====================================
+
+    existentes++;
+
+    continue;
+}
 
         // -------------------------------------
         // CREAR ASIGNACIÓN
@@ -689,6 +767,108 @@ for (const capacitacion of capacitaciones) {
         } finally {
 
             connection.release();
+
+        }
+
+    }
+);
+
+/* =====================================================
+   ANULAR ASIGNACIÓN DE CAPACITACIÓN
+===================================================== */
+
+router.patch(
+    "/api/seguimiento-general/anular-asignacion/:id",
+    proteger,
+    async (req, res) => {
+
+        try {
+
+            const { id } = req.params;
+
+            // =========================================
+            // BUSCAR LA ASIGNACIÓN
+            // =========================================
+
+            const [[asignacion]] = await db.query(`
+                SELECT
+                    id,
+                    empleado_id,
+                    capacitacion_id,
+                    estado
+                FROM asignaciones_capacitaciones
+                WHERE id = ?
+                LIMIT 1
+            `, [id]);
+
+            if (!asignacion) {
+
+                return res.status(404).json({
+                    success: false,
+                    message: "La asignación no existe."
+                });
+
+            }
+
+            // =========================================
+            // NO ANULAR UNA CAPACITACIÓN FINALIZADA
+            // =========================================
+
+            if (asignacion.estado === "FINALIZADA") {
+
+                return res.status(400).json({
+                    success: false,
+                    message:
+                        "No se puede anular una capacitación que ya fue finalizada."
+                });
+
+            }
+
+            // =========================================
+            // VERIFICAR SI YA ESTÁ ANULADA
+            // =========================================
+
+            if (asignacion.estado === "ANULADA") {
+
+                return res.status(400).json({
+                    success: false,
+                    message:
+                        "Esta asignación ya se encuentra anulada."
+                });
+
+            }
+
+            // =========================================
+            // ANULAR ASIGNACIÓN
+            // =========================================
+
+            await db.query(`
+                UPDATE asignaciones_capacitaciones
+                SET estado = 'ANULADA'
+                WHERE id = ?
+            `, [id]);
+
+            // =========================================
+            // RESPUESTA
+            // =========================================
+
+            res.json({
+                success: true,
+                message:
+                    "La asignación fue anulada correctamente."
+            });
+
+        } catch (error) {
+
+            console.error(
+                "ERROR ANULANDO ASIGNACIÓN:",
+                error
+            );
+
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
 
         }
 

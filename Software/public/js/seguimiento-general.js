@@ -603,7 +603,13 @@ const panelCapacitaciones =
             </span>
 
             <strong>
-                ${data.capacitaciones.length}
+                ${
+    data.capacitaciones.filter(
+        cap =>
+            cap.estado === "PENDIENTE" ||
+            cap.estado === "EN_PROCESO"
+    ).length
+}
             </strong>
 
             <small>
@@ -629,8 +635,8 @@ const panelCapacitaciones =
             </span>
 
             <strong>
-                0
-            </strong>
+    ${data.certificados ?? 0}
+</strong>
 
             <small>
                 certificados disponibles
@@ -760,7 +766,11 @@ try {
         dataCapacitaciones.capacitaciones || [];
 
        const capacitacionesActivas =
-    capacitaciones.filter(cap => cap.estado !== "FINALIZADA");
+    capacitaciones.filter(
+        cap =>
+            cap.estado !== "FINALIZADA" &&
+            cap.estado !== "ANULADA"
+    );
 
 const capacitacionesFinalizadas =
     capacitaciones.filter(cap => cap.estado === "FINALIZADA");
@@ -975,6 +985,26 @@ const capacitacionesFinalizadas =
                     </div>
 
                 </div>
+
+                ${
+    cap.estado !== "FINALIZADA"
+    ? `
+        <div class="acciones-capacitacion">
+
+            <button
+                type="button"
+                class="btn-anular-asignacion"
+                onclick="event.stopPropagation(); anularAsignacion(${cap.id})"
+                title="Anular asignación"
+            >
+                <i class="fas fa-ban"></i>
+                Anular asignación
+            </button>
+
+        </div>
+    `
+    : ""
+}
 
 
                 ${
@@ -2975,6 +3005,146 @@ window.toggleDetalleCapacitacion = function(index) {
             flecha.classList.remove("fa-chevron-down");
             flecha.classList.add("fa-chevron-up");
         }
+
+    }
+
+};
+// =====================================================
+// ANULAR ASIGNACIÓN
+// =====================================================
+
+window.anularAsignacion = async function(idAsignacion) {
+
+    try {
+
+        // =========================================
+        // CONFIRMACIÓN
+        // =========================================
+
+        const confirmacion = await Swal.fire({
+
+            icon: "warning",
+
+            title: "¿Anular asignación?",
+
+            text:
+                "La capacitación dejará de estar asignada a este colaborador.",
+
+            showCancelButton: true,
+
+            confirmButtonText:
+                "Sí, anular",
+
+            cancelButtonText:
+                "Cancelar",
+
+            confirmButtonColor:
+                "#dc3545",
+
+            cancelButtonColor:
+                "#6c757d"
+
+        });
+
+        if (!confirmacion.isConfirmed) {
+            return;
+        }
+
+
+        // =========================================
+        // ENVIAR AL BACKEND
+        // =========================================
+
+        const respuesta = await fetch(
+            `/api/seguimiento-general/anular-asignacion/${idAsignacion}`,
+            {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+
+        const data = await respuesta.json();
+
+
+        // =========================================
+        // ERROR
+        // =========================================
+
+        if (!respuesta.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                "No se pudo anular la asignación."
+            );
+
+        }
+
+
+        // =========================================
+        // ACTUALIZAR RESUMEN
+        // =========================================
+
+        await cargarResumen();
+
+
+        // =========================================
+        // ACTUALIZAR EMPLEADO ACTUAL
+        // =========================================
+
+        const empleadoActivo =
+            document.querySelector(
+                ".empleado-card.active"
+            );
+
+        if (empleadoActivo) {
+
+            await cargarDetalleEmpleado(
+                empleadoActivo.dataset.id
+            );
+
+        }
+
+
+        // =========================================
+        // RESULTADO
+        // =========================================
+
+        await Swal.fire({
+
+            icon: "success",
+
+            title: "Asignación anulada",
+
+            text:
+                data.message ||
+                "La asignación fue anulada correctamente.",
+
+            confirmButtonColor:
+                "#198754"
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Error anulando asignación:",
+            error
+        );
+
+        Swal.fire({
+
+            icon: "error",
+
+            title: "Error",
+
+            text:
+                error.message ||
+                "Ocurrió un error al anular la asignación."
+
+        });
 
     }
 
