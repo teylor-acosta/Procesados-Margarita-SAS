@@ -1528,3 +1528,34 @@
     font-weight: 700 !important;
 
 }
+
+/* ==============================================
+   ESTADO DE LOS VIDEOS
+   ============================================== */
+
+.estado-video {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* VIDEO PENDIENTE */
+
+.estado-video-pendiente {
+    background: #f3f4f6;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+}
+
+/* VIDEO COMPLETADO */
+
+.estado-video-completado {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
+}

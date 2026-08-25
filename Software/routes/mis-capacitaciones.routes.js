@@ -468,62 +468,34 @@ console.log("=================================");
         // ==========================================
 
         await db.query(`
-
-            INSERT INTO progreso_capacitaciones (
-
-                asignacion_id,
-
-                porcentaje,
-
-                capitulos_completados,
-
-                total_capitulos,
-
-                ultimo_capitulo,
-
-                nota_final,
-
-                aprobado,
-
-                fecha_inicio,
-
-                ultima_actividad
-
-            )
-
-            SELECT
-
-                ?,
-
-                0,
-
-                0,
-
-                COUNT(*),
-
-                NULL,
-
-                NULL,
-
-                0,
-
-                NOW(),
-
-                NOW()
-
-            FROM capitulos_curso
-
-            WHERE curso_id = ?
-
-            AND activo = 1
-
-        `, [
-
-            cursoAsignadoID,
-
-            asignacion.capacitacion_id
-
-        ]);
+    INSERT INTO progreso_capacitaciones (
+        asignacion_id,
+        porcentaje,
+        capitulos_completados,
+        total_capitulos,
+        ultimo_capitulo,
+        nota_final,
+        aprobado,
+        fecha_inicio,
+        ultima_actividad
+    )
+    SELECT
+        ?,
+        0,
+        0,
+        COUNT(*),
+        NULL,
+        NULL,
+        0,
+        NOW(),
+        NOW()
+    FROM capitulos_curso
+    WHERE curso_id = ?
+    AND activo = 1
+`, [
+    asignacionID,
+    asignacion.capacitacion_id
+]);
 
 
         // ==========================================
@@ -591,30 +563,28 @@ router.get(
             const [asignaciones] = await db.query(`
 
                 SELECT
+    ca.id,
+    ca.curso_id,
+    ca.empleado_id,
+    ca.estado,
+    ca.progreso,
+    ca.fecha_inicio,
+    ca.fecha_final,
 
-                    ca.id,
-                    ca.curso_id,
-                    ca.empleado_id,
-                    ca.estado,
-                    ca.progreso,
-                    ca.fecha_inicio,
-                    ca.fecha_final,
+    c.titulo AS nombre,
+    c.descripcion,
+    c.imagen,
+    c.obligatorio
 
-                    c.nombre,
-                    c.descripcion,
-                    c.imagen,
-                    c.obligatorio,
-                    c.intensidad_horaria
+FROM curso_asignados ca
 
-                FROM curso_asignados ca
+INNER JOIN cursos c
+    ON c.id = ca.curso_id
 
-                INNER JOIN cursos c
-                    ON c.id = ca.curso_id
+WHERE ca.id = ?
+AND ca.empleado_id = ?
 
-                WHERE ca.id = ?
-                AND ca.empleado_id = ?
-
-                LIMIT 1
+LIMIT 1
 
             `, [
                 asignacionID,

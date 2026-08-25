@@ -3,6 +3,7 @@
 // ==============================================
 
 let capacitacionId = null;
+let cursoId = null;
 let capitulos = [];
 let capituloActual = 0;
 
@@ -92,8 +93,8 @@ async function cargarCapacitacion(){
         // ==========================================
 
         const respuestaCurso = await fetch(
-            `/api/curso/${capacitacionId}`
-        );
+    `/api/capacitacion/${capacitacionId}`
+);
 
         const datosCurso =
             await respuestaCurso.json();
@@ -114,7 +115,12 @@ async function cargarCapacitacion(){
         }
 
         const curso =
-            datosCurso.curso;
+    datosCurso.curso;
+
+cursoId = Number(curso.curso_id);
+
+console.log("ID ASIGNACIÓN:", capacitacionId);
+console.log("ID CURSO REAL:", cursoId);
 
         // ==========================================
         // MOSTRAR INFORMACIÓN DEL CURSO
@@ -135,35 +141,62 @@ async function cargarCapacitacion(){
         // 2. OBTENER CAPÍTULOS
         // ==========================================
 
-        const respuestaCapitulos =
-            await fetch(
-                `/api/cursos/${capacitacionId}/capitulos`
-            );
+console.log(
+    "CAPÍTULOS DEL CURSO:",
+    datosCurso.capitulos
+);
 
-        const datosCapitulos =
-            await respuestaCapitulos.json();
 
-        console.log(
-            "DATOS CAPÍTULOS:",
-            datosCapitulos
-        );
+// ==========================================
+// VALIDAR CAPÍTULOS
+// ==========================================
 
-        if(!datosCapitulos.success){
+if (
+    !Array.isArray(datosCurso.capitulos)
+) {
 
-            console.error(
-                "No se pudieron cargar los capítulos."
-            );
+    console.error(
+        "La respuesta del curso no contiene un arreglo de capítulos."
+    );
 
-            return;
+    capitulos = [];
 
-        }
+} else {
 
-        capitulos =
-    datosCapitulos.capitulos || [];
+    capitulos = [
+        ...datosCurso.capitulos
+    ];
+
+}
+
+
+// ==========================================
+// MOSTRAR INFORMACIÓN
+// ==========================================
 
 console.log(
-    "CAPÍTULOS:",
+    "CAPÍTULOS RECIBIDOS:",
     capitulos
+);
+
+console.log(
+    "ES ARRAY:",
+    Array.isArray(capitulos)
+);
+
+console.log(
+    "CANTIDAD:",
+    capitulos.length
+);
+
+console.log(
+    "CAPÍTULOS ASIGNADOS:",
+    capitulos
+);
+
+console.log(
+    "CANTIDAD ASIGNADA:",
+    capitulos.length
 );
 
 // ==========================================
@@ -173,9 +206,9 @@ console.log(
 try {
 
     const respuestaProgreso =
-        await fetch(
-            `/api/cursos/${capacitacionId}/progreso`
-        );
+    await fetch(
+        `/api/cursos/${cursoId}/progreso`
+    );
 
     const datosProgreso =
         await respuestaProgreso.json();
@@ -568,6 +601,13 @@ async function seleccionarCapitulo(index){
 
     }
 
+    // ==========================================
+    // REINICIAR ESTADO DE LOS VIDEOS
+    // ==========================================
+
+    videosCompletados = new Set();
+    totalVideosActuales = 0;
+
     capituloActual = index;
 
     const capitulo =
@@ -830,54 +870,63 @@ bloque.dataset.subcapituloId =
 
             bloque.innerHTML = `
 
-                <div class="subcapitulo-header">
+    <div class="subcapitulo-header">
 
-                    <div>
+        <div>
 
-                        <span class="subcapitulo-numero">
+            <span class="subcapitulo-numero">
 
-                            ${numero}
+                ${numero}
 
-                        </span>
+            </span>
 
-                        <div>
+            <div>
 
-                            <h3>
+                <h3>
 
-                                ${subcapitulo.titulo ||
-                                  `Subcapítulo ${numero}`}
+                    ${subcapitulo.titulo ||
+                      `Subcapítulo ${numero}`}
 
-                            </h3>
+                </h3>
 
-                            ${
-                                subcapitulo.descripcion
-                                ?
+                ${
+                    subcapitulo.descripcion
+                    ?
 
-                                `<p>
-                                    ${subcapitulo.descripcion}
-                                </p>`
+                    `<p>
+                        ${subcapitulo.descripcion}
+                    </p>`
 
-                                :
+                    :
 
-                                ""
-                            }
+                    ""
+                }
 
-                        </div>
+            </div>
 
-                    </div>
+        </div>
 
-                </div>
+        <!-- ESTADO DEL VIDEO -->
+        <span
+            class="estado-video estado-video-pendiente"
+            data-estado-video="${subcapitulo.id}"
+        >
+            <i class="fas fa-circle"></i>
+            Pendiente
+        </span>
+
+    </div>
 
 
-                <div class="video-contenedor">
+    <div class="video-contenedor">
 
-                    ${crearVideo(
-                        subcapitulo
-                    )}
+        ${crearVideo(
+            subcapitulo
+        )}
 
-                </div>
+    </div>
 
-            `;
+`;
 
 
             contenedor.appendChild(
@@ -886,6 +935,58 @@ bloque.dataset.subcapituloId =
 
         }
     );
+
+}
+
+// ==========================================================
+// ACTUALIZAR ESTADO VISUAL DEL VIDEO
+// ==========================================================
+
+function actualizarEstadoVisualVideo(
+    subcapituloId,
+    visto
+) {
+
+    const estado =
+        document.querySelector(
+            `[data-estado-video="${subcapituloId}"]`
+        );
+
+    if (!estado) {
+        return;
+    }
+
+    if (visto) {
+
+        estado.classList.remove(
+            "estado-video-pendiente"
+        );
+
+        estado.classList.add(
+            "estado-video-completado"
+        );
+
+        estado.innerHTML = `
+            <i class="fas fa-circle-check"></i>
+            Visto
+        `;
+
+    } else {
+
+        estado.classList.remove(
+            "estado-video-completado"
+        );
+
+        estado.classList.add(
+            "estado-video-pendiente"
+        );
+
+        estado.innerHTML = `
+            <i class="fas fa-circle"></i>
+            Pendiente
+        `;
+
+    }
 
 }
 
@@ -1104,9 +1205,9 @@ async function habilitarSiguiente() {
     try {
 
         const respuesta =
-            await fetch(
-                `/api/cursos/${capacitacionId}/evaluaciones`
-            );
+    await fetch(
+        `/api/cursos/${cursoId}/evaluaciones`
+    );
 
 
         const datos =
@@ -1347,10 +1448,11 @@ async function habilitarSiguiente() {
             // ==========================================
 
             window.location.href =
-                `/evaluacion-capacitacion` +
-                `?evaluacion=${evaluacion.id}` +
-                `&curso=${capacitacionId}` +
-                `&capitulo=${capitulo.id}`;
+    `/evaluacion-capacitacion` +
+    `?evaluacion=${evaluacion.id}` +
+    `&curso=${cursoId}` +
+    `&capitulo=${capitulo.id}` +
+    `&capacitacion=${capacitacionId}`;
 
 
             return;
@@ -1480,9 +1582,9 @@ async function cargarVideosVistos() {
     try {
 
         const respuesta =
-            await fetch(
-                `/api/cursos/${capacitacionId}/progreso-videos`
-            );
+    await fetch(
+        `/api/cursos/${cursoId}/progreso-videos`
+    );
 
 
         const datos =
@@ -1544,6 +1646,11 @@ async function cargarVideosVistos() {
                             ) ===
                             subcapituloId
                     );
+
+                    actualizarEstadoVisualVideo(
+    subcapituloId,
+    estaVisto
+);
 
 
                 if (estaVisto) {
@@ -1713,6 +1820,11 @@ function controlarVideo(){
                     subcapituloId
                 );
 
+                actualizarEstadoVisualVideo(
+    subcapituloId,
+    true
+);
+
 
                 // ==========================================
                 // COMPROBAR SI YA TERMINÓ TODOS
@@ -1827,6 +1939,11 @@ if(
         subcapituloId
     );
 
+    actualizarEstadoVisualVideo(
+    subcapituloId,
+    true
+);
+
 
     // ==========================================
     // COMPROBAR PROGRESO
@@ -1866,22 +1983,45 @@ async function marcarVideoVisto(subcapituloId) {
             );
 
             return false;
-
         }
+
+        console.log(
+            "=========================================="
+        );
+
+        console.log(
+            "GUARDANDO VIDEO VISTO"
+        );
+
+        console.log(
+            "CAPACITACIÓN ID:",
+            capacitacionId
+        );
+
+        console.log(
+            "SUBCAPÍTULO ID:",
+            subcapituloId
+        );
+
+        console.log(
+    "URL:",
+    `/api/cursos/${cursoId}/progreso-videos`
+);
+
+        console.log(
+            "=========================================="
+        );
 
 
         const respuesta =
-            await fetch(
-                `/api/cursos/${capacitacionId}/progreso-video`,
-                {
-
+    await fetch(
+        `/api/cursos/${cursoId}/progreso-videos`,
+        {
                     method: "POST",
 
                     headers: {
-
                         "Content-Type":
                             "application/json"
-
                     },
 
                     body: JSON.stringify({
@@ -1900,7 +2040,8 @@ async function marcarVideoVisto(subcapituloId) {
 
 
         console.log(
-            "VIDEO GUARDADO:",
+            "RESPUESTA VIDEO:",
+            respuesta.status,
             datos
         );
 
@@ -1915,6 +2056,10 @@ async function marcarVideoVisto(subcapituloId) {
 
         }
 
+
+        console.log(
+            "VIDEO GUARDADO CORRECTAMENTE"
+        );
 
         return true;
 
@@ -2002,9 +2147,9 @@ async function guardarProgreso(){
     try {
 
         const respuesta =
-            await fetch(
-                `/api/cursos/${capacitacionId}/progreso`,
-                {
+    await fetch(
+        `/api/cursos/${cursoId}/progreso`,
+        {
                     method: "POST",
 
                     headers: {
@@ -2137,25 +2282,17 @@ async function finalizarCapacitacion() {
         // ======================================================
 
         const respuesta =
-            await fetch(
-
-                `/api/capacitaciones/${capacitacionId}/generar-certificado`,
-
-                {
-
-                    method:
-                        "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json"
-
-                    }
-
-                }
-
-            );
+    await fetch(
+        `/api/capacitaciones/${cursoId}/generar-certificado`,
+        {
+            method:
+                "POST",
+            headers: {
+                "Content-Type":
+                    "application/json"
+            }
+        }
+    );
 
 
         const datos =
@@ -2389,14 +2526,11 @@ document.addEventListener("DOMContentLoaded", () => {
             // ==================================
 
             window.location.href =
-
-                `/evaluacion-capacitacion` +
-
-                `?evaluacion=${evaluacionId}` +
-
-                `&curso=${capacitacionId}` +
-
-                `&capitulo=${capitulo.id}`;
+    `/evaluacion-capacitacion` +
+    `?evaluacion=${evaluacionId}` +
+    `&curso=${cursoId}` +
+    `&capitulo=${capitulo.id}` +
+    `&capacitacion=${capacitacionId}`;
 
 
             return;

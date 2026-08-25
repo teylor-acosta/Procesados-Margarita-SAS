@@ -9,6 +9,7 @@ const {
 } = require("../middlewares/auth");
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
 const multer = require("multer");
 
 // ============================================
@@ -1133,6 +1134,14 @@ router.post(
             const codigo =
                 `CERT-CAP-${curso_id}-${usuario_id}-${Date.now()}`;
 
+
+                // ============================================
+// GENERAR TOKEN DE VALIDACIÓN
+// ============================================
+
+const tokenValidacion =
+    crypto.randomBytes(32).toString("hex");
+
             // ============================================
             // FECHA DE EMISIÓN
             // ============================================
@@ -1140,76 +1149,158 @@ router.post(
             const fechaEmision = new Date();
 
             // ============================================
-            // GUARDAR / ACTUALIZAR CERTIFICADO
-            // ============================================
+// GUARDAR / ACTUALIZAR CERTIFICADO
+// ============================================
 
-            /*
-             * IMPORTANTE:
-             *
-             * certificados_usuario actualmente
-             * pertenece al flujo de inducción.
-             *
-             * Por eso NO insertamos aquí todavía.
-             *
-             * Primero devolvemos todos los datos
-             * necesarios para que el certificado
-             * de capacitación tenga su propio registro.
-             */
+const [certificadoExistente] = await db.query(
+    `
+    SELECT
+        id,
+        token_validacion
+    FROM certificados_usuario
+    WHERE usuario_id = ?
+    AND curso_id = ?
+    LIMIT 1
+    `,
+    [
+        usuario_id,
+        curso_id
+    ]
+);
 
-            res.json({
+let certificadoId;
+let tokenFinal;
 
-                success: true,
+if (certificadoExistente.length > 0) {
 
-                mensaje:
-                    "Certificado listo para generar.",
+    certificadoId =
+        certificadoExistente[0].id;
 
-                certificado: {
+    tokenFinal =
+        certificadoExistente[0].token_validacion;
 
-                    usuario_id,
+    // Si el certificado anterior no tiene token,
+    // generamos uno nuevo.
+    if (!tokenFinal) {
+        tokenFinal = tokenValidacion;
+    }
 
-                    curso_id,
+    await db.query(
+        `
+        UPDATE certificados_usuario
+        SET
+            nota_final = ?,
+            fecha_emision = NOW(),
+            codigo_certificado = ?,
+            token_validacion = ?
+        WHERE id = ?
+        `,
+        [
+            notaFinal,
+            codigo,
+            tokenFinal,
+            certificadoId
+        ]
+    );
 
-                    nombre_capacitacion:
-                        capacitacion.nombre,
+} else {
 
-                    nota_final:
-                        Number(notaFinal).toFixed(2),
+    tokenFinal =
+        tokenValidacion;
 
-                    fecha_emision:
-                        fechaEmision,
+    const [resultado] = await db.query(
+        `
+        INSERT INTO certificados_usuario
+        (
+            usuario_id,
+            curso_id,
+            nota_final,
+            fecha_emision,
+            codigo_certificado,
+            token_validacion
+        )
+        VALUES
+        (?, ?, ?, NOW(), ?, ?)
+        `,
+        [
+            usuario_id,
+            curso_id,
+            notaFinal,
+            codigo,
+            tokenFinal
+        ]
+    );
 
-                    codigo_certificado:
-                        codigo,
+    certificadoId =
+        resultado.insertId;
+}
 
-                    plantilla:
-                        certificadoConfig.plantilla,
 
-                    mostrar_qr:
-                        Boolean(certificadoConfig.mostrar_qr),
+// ============================================
+// RESPUESTA
+// ============================================
 
-                    mostrar_sello:
-                        Boolean(certificadoConfig.mostrar_sello),
+res.json({
 
-                    texto_certificado:
-                        certificadoConfig.texto_certificado,
+    success: true,
 
-                    firma_izquierda:
-                        certificadoConfig.firma_izquierda,
+    mensaje:
+        "Certificado listo para generar.",
 
-                    firma_derecha:
-                        certificadoConfig.firma_derecha,
+    certificado: {
 
-                    sello:
-                        certificadoConfig.sello,
+        id:
+            certificadoId,
 
-                    configuracion:
-                        certificadoConfig.configuracion
+        usuario_id,
 
-                }
+        curso_id,
 
-            });
+        nombre_capacitacion:
+            capacitacion.nombre,
+
+        nota_final:
+            Number(notaFinal).toFixed(2),
+
+        fecha_emision:
+            fechaEmision,
+
+        codigo_certificado:
+            codigo,
+
+        token_validacion:
+            tokenFinal,
+
+        plantilla:
+            certificadoConfig.plantilla,
+
+        mostrar_qr:
+            Boolean(certificadoConfig.mostrar_qr),
+
+        mostrar_sello:
+            Boolean(certificadoConfig.mostrar_sello),
+
+        texto_certificado:
+            certificadoConfig.texto_certificado,
+
+        firma_izquierda:
+            certificadoConfig.firma_izquierda,
+
+        firma_derecha:
+            certificadoConfig.firma_derecha,
+
+        sello:
+            certificadoConfig.sello,
+
+        configuracion:
+            certificadoConfig.configuracion
+
+      }
+
+});
 
         }
+
 
         catch (error) {
 

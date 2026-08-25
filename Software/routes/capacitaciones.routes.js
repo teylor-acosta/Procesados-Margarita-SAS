@@ -2460,65 +2460,6 @@ router.get(
     }
 );
 
-// ==========================================
-// INFORMACIÓN DEL CURSO
-// ==========================================
-
-router.get(
-    "/api/curso/:id",
-    proteger,
-    async (req, res) => {
-
-        try {
-
-            const { id } = req.params;
-
-            const [[curso]] =
-            await db.query(
-
-                `
-                SELECT *
-                FROM cursos
-                WHERE id = ?
-                `,
-
-                [id]
-
-            );
-
-            if (!curso) {
-
-                return res.json({
-
-                    success: false
-
-                });
-
-            }
-
-            res.json({
-
-                success: true,
-
-                curso
-
-            });
-
-        } catch (error) {
-
-            console.error(error);
-
-            res.status(500).json({
-
-                success: false
-
-            });
-
-        }
-
-    }
-
-);
 
 // ==========================================
 // OBTENER CURSO
@@ -3540,212 +3481,6 @@ router.put(
 // MARCAR VIDEO / SUBCAPÍTULO COMO VISTO
 // ==========================================================
 
-router.post(
-    "/api/cursos/:cursoId/progreso-video",
-    proteger,
-    async (req, res) => {
-
-        try {
-
-            const cursoId =
-                Number(req.params.cursoId);
-
-            const usuarioId =
-                req.session.usuarioID;
-
-            const {
-                sub_capitulo_id
-            } = req.body;
-
-
-            // ======================================================
-            // VALIDAR SUBCAPÍTULO
-            // ======================================================
-
-            if (!sub_capitulo_id) {
-
-                return res.status(400).json({
-
-                    success: false,
-
-                    mensaje:
-                        "No se recibió el subcapítulo."
-
-                });
-
-            }
-
-
-            // ======================================================
-            // VERIFICAR QUE EL SUBCAPÍTULO PERTENEZCA
-            // A LA CAPACITACIÓN
-            // ======================================================
-
-            const [subcapitulos] =
-                await db.query(
-
-                    `
-                    SELECT sc.id
-
-                    FROM sub_capitulos_curso sc
-
-                    INNER JOIN capitulos_curso c
-                        ON c.id = sc.capitulo_id
-
-                    WHERE sc.id = ?
-                    AND c.curso_id = ?
-
-                    LIMIT 1
-                    `,
-
-                    [
-                        sub_capitulo_id,
-                        cursoId
-                    ]
-
-                );
-
-
-            if (
-                subcapitulos.length === 0
-            ) {
-
-                return res.status(404).json({
-
-                    success: false,
-
-                    mensaje:
-                        "El subcapítulo no pertenece a esta capacitación."
-
-                });
-
-            }
-
-
-            // ======================================================
-            // VERIFICAR SI YA EXISTE EL REGISTRO
-            // ======================================================
-
-            const [existente] =
-                await db.query(
-
-                    `
-                    SELECT id
-                    FROM progreso_videos
-
-                    WHERE usuario_id = ?
-                    AND sub_capitulo_id = ?
-
-                    LIMIT 1
-                    `,
-
-                    [
-                        usuarioId,
-                        sub_capitulo_id
-                    ]
-
-                );
-
-
-            // ======================================================
-            // SI YA EXISTE → ACTUALIZAR
-            // ======================================================
-
-            if (
-                existente.length > 0
-            ) {
-
-                await db.query(
-
-                    `
-                    UPDATE progreso_videos
-
-                    SET
-                        visto = 1,
-                        fecha_visto = NOW()
-
-                    WHERE id = ?
-                    `,
-
-                    [
-                        existente[0].id
-                    ]
-
-                );
-
-            }
-
-            // ======================================================
-            // SI NO EXISTE → INSERTAR
-            // ======================================================
-
-            else {
-
-                await db.query(
-
-                    `
-                    INSERT INTO progreso_videos
-                    (
-                        usuario_id,
-                        sub_capitulo_id,
-                        visto,
-                        fecha_visto
-                    )
-
-                    VALUES
-                    (
-                        ?, ?, 1, NOW()
-                    )
-                    `,
-
-                    [
-                        usuarioId,
-                        sub_capitulo_id
-                    ]
-
-                );
-
-            }
-
-
-            res.json({
-
-                success: true,
-
-                mensaje:
-                    "Video marcado como visto."
-
-            });
-
-
-        }
-        catch (error) {
-
-            console.error(
-                "ERROR GUARDANDO PROGRESO DEL VIDEO:",
-                error
-            );
-
-
-            res.status(500).json({
-
-                success: false,
-
-                mensaje:
-                    "Error guardando el progreso del video."
-
-            });
-
-        }
-
-    }
-);
-
-
-// ==========================================================
-// OBTENER VIDEOS VISTOS
-// ==========================================================
-
 router.get(
     "/api/cursos/:cursoId/progreso-videos",
     proteger,
@@ -3759,10 +3494,8 @@ router.get(
             const usuarioId =
                 req.session.usuarioID;
 
-
             const [videos] =
                 await db.query(
-
                     `
                     SELECT
                         pv.id,
@@ -3770,7 +3503,7 @@ router.get(
                         pv.visto,
                         pv.fecha_visto
 
-                    FROM progreso_videos pv
+                    FROM progreso_videos_curso pv
 
                     INNER JOIN sub_capitulos_curso sc
                         ON sc.id = pv.sub_capitulo_id
@@ -3779,29 +3512,24 @@ router.get(
                         ON c.id = sc.capitulo_id
 
                     WHERE pv.usuario_id = ?
+                    AND pv.curso_id = ?
                     AND c.curso_id = ?
                     AND pv.visto = 1
 
                     ORDER BY
                         pv.sub_capitulo_id ASC
                     `,
-
                     [
                         usuarioId,
+                        cursoId,
                         cursoId
                     ]
-
                 );
 
-
             res.json({
-
                 success: true,
-
                 videos
-
             });
-
 
         }
         catch (error) {
@@ -3811,20 +3539,17 @@ router.get(
                 error
             );
 
-
             res.status(500).json({
-
                 success: false,
-
                 mensaje:
                     "Error obteniendo el progreso de los videos."
-
             });
 
         }
 
     }
 );
+
 
 // ==========================================================
 // OBTENER PROGRESO DE CAPACITACIÓN
@@ -3973,6 +3698,194 @@ router.get(
     }
 );
 
+// ==========================================================
+// MARCAR VIDEO / SUBCAPÍTULO COMO VISTO
+// ==========================================================
+
+router.post(
+    "/api/cursos/:cursoId/progreso-videos",
+    proteger,
+    async (req, res) => {
+
+        try {
+
+            const cursoId =
+                Number(req.params.cursoId);
+
+            const usuarioId =
+                req.session.usuarioID;
+
+            const {
+                sub_capitulo_id
+            } = req.body;
+
+
+            // ======================================================
+            // VALIDAR DATOS
+            // ======================================================
+
+            if (
+                !cursoId ||
+                !sub_capitulo_id
+            ) {
+
+                return res.status(400).json({
+                    success: false,
+                    mensaje:
+                        "Faltan datos para registrar el video."
+                });
+
+            }
+
+
+            // ======================================================
+            // VERIFICAR QUE EL SUBCAPÍTULO PERTENECE AL CURSO
+            // ======================================================
+
+            const [subcapitulos] =
+                await db.query(
+                    `
+                    SELECT
+                        sc.id
+
+                    FROM sub_capitulos_curso sc
+
+                    INNER JOIN capitulos_curso c
+                        ON c.id = sc.capitulo_id
+
+                    WHERE sc.id = ?
+                    AND c.curso_id = ?
+
+                    LIMIT 1
+                    `,
+                    [
+                        sub_capitulo_id,
+                        cursoId
+                    ]
+                );
+
+
+            if (
+                subcapitulos.length === 0
+            ) {
+
+                return res.status(404).json({
+                    success: false,
+                    mensaje:
+                        "El video no pertenece a esta capacitación."
+                });
+
+            }
+
+
+            // ======================================================
+            // VERIFICAR SI YA FUE REGISTRADO
+            // ======================================================
+
+            const [existente] =
+                await db.query(
+                    `
+                    SELECT id
+
+                    FROM progreso_videos_curso
+
+                    WHERE usuario_id = ?
+                    AND curso_id = ?
+                    AND sub_capitulo_id = ?
+
+                    LIMIT 1
+                    `,
+                    [
+                        usuarioId,
+                        cursoId,
+                        sub_capitulo_id
+                    ]
+                );
+
+
+            // ======================================================
+            // SI YA EXISTE
+            // ======================================================
+
+            if (
+                existente.length > 0
+            ) {
+
+                return res.json({
+                    success: true,
+                    mensaje:
+                        "El video ya estaba registrado.",
+                    yaRegistrado: true
+                });
+
+            }
+
+
+            // ======================================================
+            // REGISTRAR VIDEO
+            // ======================================================
+
+            await db.query(
+                `
+                INSERT INTO progreso_videos_curso
+                (
+                    usuario_id,
+                    curso_id,
+                    sub_capitulo_id,
+                    visto,
+                    fecha_visto
+                )
+
+                VALUES
+                (
+                    ?, ?, ?, 1, NOW()
+                )
+                `,
+                [
+                    usuarioId,
+                    cursoId,
+                    sub_capitulo_id
+                ]
+            );
+
+
+            // ======================================================
+            // RESPUESTA
+            // ======================================================
+
+            res.json({
+
+                success: true,
+
+                mensaje:
+                    "Video registrado correctamente.",
+
+                yaRegistrado: false
+
+            });
+
+
+        }
+        catch (error) {
+
+            console.error(
+                "ERROR REGISTRANDO VIDEO:",
+                error
+            );
+
+            res.status(500).json({
+
+                success: false,
+
+                mensaje:
+                    "Error registrando el progreso del video."
+
+            });
+
+        }
+
+    }
+);
 
 
 // ==========================================================
