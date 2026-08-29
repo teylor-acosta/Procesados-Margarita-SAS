@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Configuración de Nómina - Procesados Margarita</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap"
+        rel="stylesheet">
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="stylesheet" href="/css/style1.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/nomina-configuracion.css">
+
+    <link
+        rel="icon"
+        href="/img/Gemini_Generated_Image_bo9w5fbo9w5fbo9w-removebg-preview.png">
+</head>
+
+<body data-pagina="nomina-configuracion">
+
+    <!-- SIDEBAR -->
+    <div id="sidebarContainer"></div>
+
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay">
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar-custom">
+
+        <div class="navbar-left">
+
+            <i
+                class="fas fa-bars menu-toggle"
+                id="btnOpenSidebar">
+            </i>
+
+            <span class="empresa-nombre">
+                Configuración de Nómina
+            </span>
+
+        </div>
+
+    </nav>
+
+
+    <!-- ===================================================== -->
+    <!-- CONTENIDO -->
+    <!-- ===================================================== -->
+
+    <main class="nomina-config">
+
+        <!-- CABECERA -->
+
+        <section class="config-header">
+
+            <div class="config-header-icon">
+                <i class="fas fa-gear"></i>
+            </div>
+
+            <div>
+
+                <h1>
+                    Configuración de Nómina
+                </h1>
+
+                <p>
+                    Administra los parámetros, tarifas, recargos,
+                    salarios y demás reglas utilizadas para la
+                    liquidación de nómina.
+                </p>
+
+            </div>
+
+        </section>
+        <!-- ================================================= -->
+<!-- PARÁMETROS GENERALES -->
+<!-- ================================================= -->
+
+<section class="config-section">
+
+    <div class="section-title">
+
+        <div class="section-icon green">
+            <i class="fas fa-sliders"></i>
+        </div>
+
+        <div>
+            <h2>Parámetros generales</h2>
+
+            <p>
+                Valores generales utilizados por el sistema
+                de nómina.
+            </p>
+        </div>
+
+    </div>
+
+    <div
+        class="parametros-grid"
+        id="parametrosContainer"
+    >
+
+        <div class="config-loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            Cargando parámetros...
+        </div>
+
+    </div>
+
+</section>
+        <!-- ================================================= -->
+        <!-- HORAS EXTRA + RECARGOS -->
+        <!-- ================================================= -->
+
+        <div class="config-two-columns">
+
+
+            <!-- HORAS EXTRA -->
+
+            <section class="config-section compact-section">
+
+                <div class="section-title">
+
+                    <div class="section-icon blue">
+                        <i class="fas fa-clock"></i>
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Horas extra
+                        </h2>
+
+                        <p>
+                            Configuración de horas suplementarias.
+                        </p>
+
+                    </div>
+
+                    <button class="btn-nuevo">
+                        <i class="fas fa-plus"></i>
+                        Nuevo
+                    </button>
+
+                </div>
+
+
+                <div class="table-responsive">
+
+                    <table class="config-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Código</th>
+                                <th>Concepto</th>
+                                <th>Recargo</th>
+                                <th>Factor</th>
+                                <th>Estado</th>
+                                <th></th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>
+                                    <span class="codigo">
+                                        HED
+                                    </span>
+                                </td>
+
+                                <td>
+                                    Hora extra diurna
+                                </td>
+
+                                <td>
+                                    25%
+                                </td>
+
+                                <td>
+                                    1.25
+                                </td>
+
+                                <td>
+                                    <span class="estado activo">
+                                        Activo
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <button class="btn-action">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    <span class="codigo">
+                                        HEN
+                                    </span>
+                                </td>
+
+                                <td>
+                                    Hora extra nocturna
+                                </td>
+
+                                <td>
+                                    75%
+                                </td>
+
+                                <td>
+                                    1.75
+                                </td>
+
+                                <td>
+                                    <span class="estado activo">
+                                        Activo
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <button class="btn-action">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    <span class="codigo">
+                                        HEDF
+                                    </span>
+                                </td>
+
+                                <td>
+                                    Hora extra diurna
+                                    dominical o festiva
+                                </td>
+
+                                <td>
+                                    115%
+                                </td>
+
+                                <td>
+                                    2.15
+                                </td>
+
+                                <td>
+                                    <span class="estado activo">
+                                        Activo
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <button class="btn-action">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    <span class="codigo">
+                                        HENF
+                                    </span>
+                                </td>
+
+                                <td>
+                                    Hora extra nocturna
+                                    dominical o festiva
+                                </td>
+
+                                <td>
+                                    165%
+                                </td>
+
+                                <td>
+                                    2.65
+                                </td>
+
+                                <td>
+                                    <span class="estado activo">
+                                        Activo
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <button class="btn-action">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- RECARGOS -->
+
+            <section class="config-section compact-section">
+
+                <div class="section-title">
+
+                    <div class="section-icon purple">
+                        <i class="fas fa-moon"></i>
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Recargos
+                        </h2>
+
+                        <p>
+                            Factores aplicables según jornada y día.
+                        </p>
+
+                    </div>
+
+                    <button class="btn-nuevo purple-btn">
+                        <i class="fas fa-plus"></i>
+                        Nuevo
+                    </button>
+
+                </div>
+
+
+                <div class="table-responsive">
+
+                    <table class="config-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Código</th>
+                                <th>Concepto</th>
+                                <th>Recargo</th>
+                                <th>Factor</th>
+                                <th>Estado</th>
+                                <th></th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+
+                                <td>
+                                    <span class="codigo purple-code">
+                                        RN
+                                    </span>
+                                </td>
+
+                                <td>
+                                    Recargo nocturno ordinario
+                                </td>
+
+                                <td>
+                                    35%
+                                </td>
+
+                                <td>
+                                    1.35
+                                </td>
+
+                                <td>
+                                    <span class="estado activo">
+                                        Activo
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <button class="btn-action">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    <span class="codigo purple-code">
+                                        RDF
+                                    </span>
+                                </td>
+
+                                <td>
+                                    Recargo dominical o festivo
+                                </td>
+
+                                <td>
+                                    90%
+                                </td>
+
+                                <td>
+                                    1.90
+                                </td>
+
+                                <td>
+                                    <span class="estado activo">
+                                        Activo
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <button class="btn-action">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    <span class="codigo purple-code">
+                                        RNDF
+                                    </span>
+                                </td>
+
+                                <td>
+                                    Recargo nocturno dominical
+                                    o festivo
+                                </td>
+
+                                <td>
+                                    125%
+                                </td>
+
+                                <td>
+                                    2.25
+                                </td>
+
+                                <td>
+                                    <span class="estado activo">
+                                        Activo
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <button class="btn-action">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- SALARIOS + MATERIALES -->
+        <!-- ================================================= -->
+
+        <div class="config-two-columns">
+
+
+            <!-- SALARIOS -->
+
+            <section class="config-section compact-section">
+
+                <div class="section-title">
+
+                    <div class="section-icon green">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Salarios y auxilio de transporte
+                        </h2>
+
+                        <p>
+                            Valores vigentes utilizados en liquidación.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="valores-grid">
+
+                    <div class="valor-card">
+
+                        <span>
+                            Salario mínimo legal vigente
+                        </span>
+
+                        <strong>
+                            $ 1.623.500
+                        </strong>
+
+                        <small>
+                            Vigente desde 01/01/2026
+                        </small>
+
+                        <button class="btn-editar">
+                            <i class="fas fa-plus"></i>
+                            Nuevo valor
+                        </button>
+
+                    </div>
+
+
+                    <div class="valor-card">
+
+                        <span>
+                            Auxilio de transporte
+                        </span>
+
+                        <strong>
+                            $ 200.000
+                        </strong>
+
+                        <small>
+                            Vigente desde 01/01/2026
+                        </small>
+
+                        <button class="btn-editar">
+                            <i class="fas fa-plus"></i>
+                            Nuevo valor
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- MATERIALES -->
+
+            <section class="config-section compact-section">
+
+                <div class="section-title">
+
+                    <div class="section-icon orange">
+                        <i class="fas fa-cubes"></i>
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Materiales de producción
+                        </h2>
+
+                        <p>
+                            Valores utilizados para liquidación por producción.
+                        </p>
+
+                    </div>
+
+                    <button class="btn-nuevo orange-btn">
+                        <i class="fas fa-plus"></i>
+                        Nuevo
+                    </button>
+
+                </div>
+
+
+                <div class="table-responsive">
+
+                    <table class="config-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Código</th>
+                                <th>Material</th>
+                                <th>Unidad</th>
+                                <th>Precio</th>
+                                <th>Estado</th>
+                                <th></th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+
+                                <td>
+                                    MAT-001
+                                </td>
+
+                                <td>
+                                    Material de producción
+                                </td>
+
+                                <td>
+                                    KG
+                                </td>
+
+                                <td>
+                                    $ 0
+                                </td>
+
+                                <td>
+                                    <span class="estado activo">
+                                        Activo
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <button class="btn-action">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- AVISO -->
+
+        <div class="config-notice">
+
+            <i class="fas fa-circle-info"></i>
+
+            <span>
+                Los porcentajes, factores y parámetros pueden cambiar
+                según la normativa vigente. Se recomienda mantener
+                actualizadas las fechas de vigencia para conservar el
+                histórico de los valores utilizados en cada liquidación.
+            </span>
+
+        </div>
+
+    </main>
+
+
+    <!-- SIDEBAR -->
+<script src="/js/sidebar.js"></script>
+
+<!-- BOOTSTRAP JS -->
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<!-- CONFIGURACIÓN DE NÓMINA -->
+<script src="/js/nomina-configuracion.js?v=2"></script>
+
+</body>
+
+</html>
