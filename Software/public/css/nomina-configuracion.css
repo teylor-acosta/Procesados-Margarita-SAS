@@ -1,0 +1,1797 @@
+/* ============================================================
+   CONFIGURACIÓN DE NÓMINA
+   PROCESADOS MARGARITA
+   ============================================================ */
+
+
+/* ============================================================
+   VARIABLES
+   ============================================================ */
+
+:root {
+
+    --verde: #16a34a;
+    --verde-claro: #dcfce7;
+
+    --azul: #2563eb;
+    --azul-claro: #dbeafe;
+
+    --morado: #9333ea;
+    --morado-claro: #f3e8ff;
+
+    --naranja: #ea580c;
+    --naranja-claro: #ffedd5;
+
+    --cyan: #0891b2;
+    --cyan-claro: #cffafe;
+
+    --gris-azul: #475569;
+
+    --texto: #1e293b;
+    --texto-secundario: #64748b;
+
+    --borde: #e2e8f0;
+
+    --blanco: #ffffff;
+
+    --sombra:
+        0 12px 35px rgba(15, 23, 42, .08);
+
+    --sombra-hover:
+        0 18px 40px rgba(15, 23, 42, .14);
+
+}
+
+
+/* ============================================================
+   CONTENEDOR PRINCIPAL
+   ============================================================ */
+
+.nomina-config {
+
+    margin-left: 240px;
+
+    width: calc(100% - 240px);
+
+    min-height: calc(100vh - 70px);
+
+    box-sizing: border-box;
+
+    padding: 30px 36px 40px;
+
+    position: relative;
+
+    overflow-x: hidden;
+
+    color: var(--texto);
+
+    font-family: 'Averia Libre', sans-serif;
+
+}
+
+
+/* ============================================================
+   FONDO
+   ============================================================ */
+
+.nomina-config::before {
+
+    content: "";
+
+    position: fixed;
+
+    top: 70px;
+    left: 240px;
+    right: 0;
+    bottom: 0;
+
+    z-index: -2;
+
+    background:
+        linear-gradient(
+            rgba(255,255,255,.25),
+            rgba(255,255,255,.25)
+        ),
+        url('/img/fondo.jpg');
+
+    background-size: cover;
+
+    background-position: center;
+
+    pointer-events: none;
+
+}
+
+
+/* ============================================================
+   CABECERA
+   ============================================================ */
+
+.config-header {
+
+    width: 100%;
+
+    max-width: 1550px;
+
+    margin: 0 auto 28px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 18px;
+
+}
+
+
+/* ============================================================
+   ICONO CABECERA
+   ============================================================ */
+
+.config-header-icon {
+
+    width: 70px;
+    height: 70px;
+
+    min-width: 70px;
+
+    border-radius: 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #9333ea,
+            #7c3aed
+        );
+
+    color: white;
+
+    font-size: 34px;
+
+    box-shadow:
+        0 10px 25px rgba(147,51,234,.28);
+
+}
+
+
+/* ============================================================
+   TITULO PRINCIPAL
+   ============================================================ */
+
+.config-header h1 {
+
+    margin: 0 0 5px;
+
+    font-size: 2.45rem;
+
+    line-height: 1.1;
+
+    font-weight: 700;
+
+    color: #1e293b;
+
+}
+
+
+/* ============================================================
+   DESCRIPCION PRINCIPAL
+   ============================================================ */
+
+.config-header p {
+
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 1.02rem;
+
+    line-height: 1.45;
+
+}
+
+
+/* ============================================================
+   SECCIONES
+   ============================================================ */
+
+.config-section {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 22px;
+
+    margin: 0;
+
+    background:
+        rgba(255,255,255,.95);
+
+    border:
+        1px solid rgba(255,255,255,.9);
+
+    border-radius: 22px;
+
+    box-shadow: var(--sombra);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+
+}
+
+
+.config-section:hover {
+
+    box-shadow: var(--sombra-hover);
+
+}
+
+
+/* ============================================================
+   PARÁMETROS GENERALES
+   ============================================================ */
+
+.config-section:first-of-type {
+
+    width: 100%;
+
+    max-width: 1550px;
+
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+
+/* ============================================================
+   TITULO DE SECCIÓN
+   ============================================================ */
+
+.section-title {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 13px;
+
+    margin-bottom: 18px;
+
+}
+
+
+/* ============================================================
+   ICONO DE SECCIÓN
+   ============================================================ */
+
+.section-icon {
+
+    width: 44px;
+    height: 44px;
+
+    min-width: 44px;
+
+    border-radius: 13px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 19px;
+
+}
+
+
+/* ============================================================
+   COLORES ICONOS
+   ============================================================ */
+
+.section-icon.green {
+
+    background: var(--verde-claro);
+
+    color: var(--verde);
+
+}
+
+
+.section-icon.blue {
+
+    background: var(--azul-claro);
+
+    color: var(--azul);
+
+}
+
+
+.section-icon.purple {
+
+    background: var(--morado-claro);
+
+    color: var(--morado);
+
+}
+
+
+.section-icon.orange {
+
+    background: var(--naranja-claro);
+
+    color: var(--naranja);
+
+}
+
+
+/* ============================================================
+   TITULO SECCION
+   ============================================================ */
+
+.section-title h2 {
+
+    margin: 0;
+
+    font-size: 1.45rem;
+
+    line-height: 1.15;
+
+    font-weight: 700;
+
+    color: #1e293b;
+
+}
+
+
+/* ============================================================
+   DESCRIPCION SECCION
+   ============================================================ */
+
+.section-title p {
+
+    margin: 4px 0 0;
+
+    color: #64748b;
+
+    font-size: .90rem;
+
+    line-height: 1.3;
+
+}
+
+
+/* ============================================================
+   GRID DE PARAMETROS
+   ============================================================ */
+
+.parametros-grid {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(7, minmax(130px, 1fr));
+
+    gap: 13px;
+
+}
+
+
+/* ============================================================
+   TARJETA PARAMETRO
+   ============================================================ */
+
+.parametro-card {
+
+    min-width: 0;
+
+    min-height: 170px;
+
+    padding: 16px;
+
+    box-sizing: border-box;
+
+    border:
+        1px solid var(--borde);
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff,
+            #f8fafc
+        );
+
+    display: flex;
+
+    flex-direction: column;
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+
+}
+
+
+.parametro-card:hover {
+
+    transform: translateY(-3px);
+
+    border-color: #86efac;
+
+    box-shadow:
+        0 8px 20px rgba(15,23,42,.08);
+
+}
+
+
+/* ============================================================
+   NOMBRE PARAMETRO
+   ============================================================ */
+
+.parametro-card > span {
+
+    display: block;
+
+    min-height: 38px;
+
+    color: #64748b;
+
+    font-size: .82rem;
+
+    font-weight: 700;
+
+    line-height: 1.3;
+
+}
+
+
+/* ============================================================
+   VALOR PARAMETRO
+   ============================================================ */
+
+.parametro-card > strong {
+
+    display: block;
+
+    margin-top: 8px;
+
+    color: #1e293b;
+
+    font-size: 1.75rem;
+
+    line-height: 1;
+
+    font-weight: 700;
+
+}
+
+
+/* ============================================================
+   UNIDAD
+   ============================================================ */
+
+.parametro-card > small {
+
+    margin-top: 5px;
+
+    color: #94a3b8;
+
+    font-size: .78rem;
+
+    font-weight: 600;
+
+}
+
+
+/* ============================================================
+   FECHA VIGENCIA
+   ============================================================ */
+
+.parametro-card > em {
+
+    margin-top: auto;
+
+    padding-top: 9px;
+
+    color: #94a3b8;
+
+    font-size: .72rem;
+
+    line-height: 1.25;
+
+    font-style: normal;
+
+}
+
+
+/* ============================================================
+   BOTON EDITAR
+   ============================================================ */
+
+.btn-editar {
+
+    margin-top: 9px;
+
+    align-self: flex-start;
+
+    border:
+        1px solid #86efac;
+
+    border-radius: 8px;
+
+    background: #f0fdf4;
+
+    color: #15803d;
+
+    padding: 6px 11px;
+
+    font-family: inherit;
+
+    font-size: .75rem;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: .2s;
+
+}
+
+
+.btn-editar:hover {
+
+    background: #dcfce7;
+
+    border-color: #4ade80;
+
+    transform: translateY(-1px);
+
+}
+
+
+/* ============================================================
+   DOS COLUMNAS
+   HORAS EXTRA / RECARGOS
+   ============================================================ */
+
+.config-two-columns {
+
+    width: 100%;
+
+    max-width: 1550px;
+
+    margin: 20px auto 0;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+
+    gap: 20px;
+
+}
+
+
+/* ============================================================
+   SECCIONES COMPACTAS
+   ============================================================ */
+
+.compact-section {
+
+    min-width: 0;
+
+    min-height: 320px;
+
+}
+
+
+/* ============================================================
+   BOTON NUEVO
+   ============================================================ */
+
+.btn-nuevo {
+
+    margin-left: auto;
+
+    border: none;
+
+    border-radius: 10px;
+
+    padding: 9px 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #3b82f6
+        );
+
+    color: white;
+
+    font-family: inherit;
+
+    font-size: .80rem;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    box-shadow:
+        0 5px 12px rgba(37,99,235,.22);
+
+    transition: .2s;
+
+}
+
+
+.btn-nuevo:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 18px rgba(37,99,235,.28);
+
+}
+
+
+/* ============================================================
+   BOTON NUEVO MORADO
+   ============================================================ */
+
+.purple-btn {
+
+    background:
+        linear-gradient(
+            135deg,
+            #9333ea,
+            #7c3aed
+        );
+
+    box-shadow:
+        0 5px 12px rgba(147,51,234,.22);
+
+}
+
+
+/* ============================================================
+   BOTON NUEVO NARANJA
+   ============================================================ */
+
+.orange-btn {
+
+    background:
+        linear-gradient(
+            135deg,
+            #ea580c,
+            #f97316
+        );
+
+    box-shadow:
+        0 5px 12px rgba(234,88,12,.22);
+
+}
+
+
+/* ============================================================
+   TABLA
+   ============================================================ */
+
+.table-responsive {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+    border-radius: 10px;
+
+}
+
+
+.config-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+
+/* ============================================================
+   CABECERA TABLA
+   ============================================================ */
+
+.config-table thead th {
+    padding: 12px 10px;
+
+    border-bottom: 1px solid #e2e8f0;
+
+    color: #64748b;
+
+    font-size: 0.90rem;
+
+    font-weight: 700;
+
+    text-align: left;
+
+    white-space: nowrap;
+}
+
+
+/* ============================================================
+   CELDAS TABLA
+   ============================================================ */
+
+.config-table tbody td {
+    padding: 14px 10px;
+
+    border-bottom: 1px solid #f1f5f9;
+
+    color: #475569;
+
+    font-size: 0.92rem;
+
+    font-weight: 500;
+
+    line-height: 1.4;
+
+    vertical-align: middle;
+}
+
+
+/* ============================================================
+   ULTIMA FILA
+   ============================================================ */
+
+.config-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* ============================================================
+   HOVER FILA
+   ============================================================ */
+
+.config-table tbody tr {
+    transition: background .15s ease;
+}
+
+.config-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+
+/* ============================================================
+   CODIGOS
+   ============================================================ */
+
+.codigo {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 44px;
+
+    padding: 6px 9px;
+
+    border-radius: 8px;
+
+    background: #eff6ff;
+
+    color: #2563eb;
+
+    font-size: 0.78rem;
+
+    font-weight: 700;
+}
+
+
+.purple-code {
+    background: #faf5ff;
+
+    color: #9333ea;
+}
+
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+
+.estado {
+    display: inline-flex;
+
+    align-items: center;
+
+    padding: 6px 10px;
+
+    border-radius: 20px;
+
+    font-size: 0.76rem;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+.estado.activo {
+    background: #dcfce7;
+
+    color: #15803d;
+}
+
+
+/* =========================================================
+   BOTÓN EDITAR - HORAS EXTRA
+   ========================================================= */
+
+.btn-action {
+    width: 38px;
+    height: 38px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+
+    background: #eff6ff;
+    color: #2563eb;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.btn-action:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 5px 12px rgba(37, 99, 235, 0.20);
+}
+
+.btn-action:active {
+    transform: translateY(0);
+
+    box-shadow:
+        0 2px 5px rgba(37, 99, 235, 0.15);
+}
+
+.btn-action i {
+    pointer-events: none;
+}
+
+
+/* ============================================================
+   SALARIOS Y AUXILIO
+   ============================================================ */
+
+.valores-grid {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 15px;
+
+}
+
+
+/* ============================================================
+   TARJETA VALOR
+   ============================================================ */
+
+.valor-card {
+
+    min-width: 0;
+
+    padding: 19px;
+
+    border:
+        1px solid #e2e8f0;
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff,
+            #f8fafc
+        );
+
+    box-sizing: border-box;
+
+}
+
+
+/* ============================================================
+   NOMBRE VALOR
+   ============================================================ */
+
+.valor-card > span {
+
+    display: block;
+
+    color: #64748b;
+
+    font-size: .82rem;
+
+    font-weight: 700;
+
+    line-height: 1.3;
+
+}
+
+
+/* ============================================================
+   VALOR DINERO
+   ============================================================ */
+
+.valor-card > strong {
+
+    display: block;
+
+    margin-top: 9px;
+
+    color: #059669;
+
+    font-size: 1.65rem;
+
+    line-height: 1;
+
+    font-weight: 700;
+
+}
+
+
+/* ============================================================
+   FECHA
+   ============================================================ */
+
+.valor-card > small {
+
+    display: block;
+
+    margin-top: 8px;
+
+    color: #94a3b8;
+
+    font-size: .72rem;
+
+}
+
+
+/* ============================================================
+   BOTON NUEVO VALOR
+   ============================================================ */
+
+.valor-card .btn-editar {
+
+    margin-top: 12px;
+
+}
+
+
+/* ============================================================
+   MATERIALES DE PRODUCCIÓN
+   ============================================================ */
+
+.materiales-section {
+
+    min-width: 0;
+
+}
+
+
+/* ============================================================
+   PRECIO MATERIAL
+   ============================================================ */
+
+.precio-material {
+
+    font-weight: 700;
+
+    color: #ea580c;
+
+}
+
+
+/* ============================================================
+   AVISO FINAL
+   ============================================================ */
+
+.config-notice {
+
+    width: 100%;
+
+    max-width: 1550px;
+
+    margin: 18px auto 0;
+
+    box-sizing: border-box;
+
+    padding: 12px 17px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    border-radius: 11px;
+
+    background:
+        rgba(239,246,255,.95);
+
+    border:
+        1px solid #bfdbfe;
+
+    color: #475569;
+
+    font-size: .76rem;
+
+    line-height: 1.4;
+
+}
+
+
+.config-notice i {
+
+    color: #2563eb;
+
+    font-size: 15px;
+
+    flex-shrink: 0;
+
+}
+
+
+/* ============================================================
+   ESPACIOS
+   ============================================================ */
+
+.config-two-columns:last-of-type {
+
+    margin-bottom: 0;
+
+}
+
+
+/* ============================================================
+   DESKTOP GRANDE
+   ============================================================ */
+
+@media (min-width: 1600px) {
+
+    .nomina-config {
+
+        padding-left: 42px;
+
+        padding-right: 42px;
+
+    }
+
+
+    .config-header {
+
+        max-width: 1650px;
+
+    }
+
+
+    .config-section,
+    .config-two-columns,
+    .config-notice {
+
+        max-width: 1650px;
+
+    }
+
+
+    .parametro-card {
+
+        min-height: 175px;
+
+        padding: 17px;
+
+    }
+
+
+    .parametro-card > span {
+
+        font-size: .85rem;
+
+    }
+
+
+    .parametro-card > strong {
+
+        font-size: 1.85rem;
+
+    }
+
+}
+
+
+/* ============================================================
+   LAPTOP
+   ============================================================ */
+
+@media (max-width: 1400px) {
+
+    .parametros-grid {
+
+        grid-template-columns:
+            repeat(4, minmax(150px, 1fr));
+
+    }
+
+}
+
+
+/* ============================================================
+   LAPTOP PEQUEÑO
+   ============================================================ */
+
+@media (max-width: 1150px) {
+
+    .nomina-config {
+
+        padding-left: 25px;
+
+        padding-right: 25px;
+
+    }
+
+
+    .config-header h1 {
+
+        font-size: 2.1rem;
+
+    }
+
+
+    .parametros-grid {
+
+        grid-template-columns:
+            repeat(3, minmax(150px, 1fr));
+
+    }
+
+
+    .config-two-columns {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+
+/* ============================================================
+   TABLET
+   ============================================================ */
+
+@media (max-width: 992px) {
+
+    .nomina-config {
+
+        margin-left: 0;
+
+        width: 100%;
+
+        padding:
+            25px 20px 30px;
+
+    }
+
+
+    .nomina-config::before {
+
+        left: 0;
+
+    }
+
+
+    .config-header {
+
+        margin-bottom: 22px;
+
+    }
+
+
+    .config-header h1 {
+
+        font-size: 2rem;
+
+    }
+
+
+    .config-header p {
+
+        font-size: .95rem;
+
+    }
+
+
+    .parametros-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(150px, 1fr));
+
+    }
+
+
+    .config-two-columns {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .compact-section {
+
+        min-height: auto;
+
+    }
+
+}
+
+
+/* ============================================================
+   MOVIL
+   ============================================================ */
+
+@media (max-width: 600px) {
+
+    .nomina-config {
+
+        padding:
+            20px 12px 25px;
+
+    }
+
+
+    .config-header {
+
+        align-items: flex-start;
+
+        gap: 12px;
+
+    }
+
+
+    .config-header-icon {
+
+        width: 54px;
+
+        height: 54px;
+
+        min-width: 54px;
+
+        border-radius: 15px;
+
+        font-size: 24px;
+
+    }
+
+
+    .config-header h1 {
+
+        font-size: 1.65rem;
+
+    }
+
+
+    .config-header p {
+
+        font-size: .85rem;
+
+    }
+
+
+    .config-section {
+
+        padding: 16px;
+
+        border-radius: 18px;
+
+    }
+
+
+    .section-title {
+
+        flex-wrap: wrap;
+
+    }
+
+
+    .section-title h2 {
+
+        font-size: 1.2rem;
+
+    }
+
+
+    .section-title p {
+
+        font-size: .78rem;
+
+    }
+
+
+    .parametros-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 9px;
+
+    }
+
+
+    .parametro-card {
+
+        min-height: 145px;
+
+        padding: 12px;
+
+    }
+
+
+    .parametro-card > span {
+
+        font-size: .75rem;
+
+    }
+
+
+    .parametro-card > strong {
+
+        font-size: 1.4rem;
+
+    }
+
+
+    .parametro-card > small {
+
+        font-size: .70rem;
+
+    }
+
+
+    .parametro-card > em {
+
+        font-size: .65rem;
+
+    }
+
+
+    .config-two-columns {
+
+        gap: 14px;
+
+        margin-top: 14px;
+
+    }
+
+
+    .btn-nuevo {
+
+        padding: 8px 11px;
+
+        font-size: .72rem;
+
+    }
+
+
+    .config-table {
+
+        min-width: 600px;
+
+    }
+
+
+    .valores-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .config-notice {
+
+        align-items: flex-start;
+
+        font-size: .70rem;
+
+    }
+
+}
+
+
+/* ============================================================
+   MOVIL PEQUEÑO
+   ============================================================ */
+
+@media (max-width: 420px) {
+
+    .parametros-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .config-header {
+
+        gap: 10px;
+
+    }
+
+
+    .config-header h1 {
+
+        font-size: 1.45rem;
+
+    }
+
+
+    .config-header-icon {
+
+        width: 48px;
+
+        height: 48px;
+
+        min-width: 48px;
+
+        font-size: 21px;
+
+    }
+
+}
+
+/* ============================================================
+   DISTRIBUCIÓN DE COLUMNAS
+   ============================================================ */
+
+.config-table th:nth-child(1),
+.config-table td:nth-child(1) {
+    width: 90px;
+}
+
+
+.config-table th:nth-child(2),
+.config-table td:nth-child(2) {
+    width: 50%;
+}
+
+
+.config-table th:nth-child(3),
+.config-table td:nth-child(3) {
+    width: 100px;
+}
+
+
+.config-table th:nth-child(4),
+.config-table td:nth-child(4) {
+    width: 90px;
+}
+
+
+.config-table th:nth-child(5),
+.config-table td:nth-child(5) {
+    width: 100px;
+}
+
+
+.config-table th:last-child,
+.config-table td:last-child {
+    width: 55px;
+
+    text-align: center;
+}
+
+/* =========================================================
+   MODAL CONFIGURACIÓN DE NÓMINA
+========================================================= */
+
+.config-modal {
+    border: none;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.20);
+}
+
+
+.config-modal .modal-header {
+    padding: 22px 26px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
+}
+
+
+.config-modal .modal-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #172033;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+.config-modal .modal-title i {
+    color: #16a34a;
+}
+
+
+.config-modal .modal-body {
+    padding: 26px;
+    background: #ffffff;
+}
+
+
+/* =========================================================
+   CAMPOS DEL FORMULARIO
+========================================================= */
+
+.config-form-group {
+    margin-bottom: 20px;
+}
+
+
+.config-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #344054;
+}
+
+
+.config-form-group input {
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 13px;
+
+    border: 1px solid #d9e1ec;
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    font-size: 16px;
+    color: #172033;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.config-form-group input:focus {
+    border-color: #16a34a;
+
+    box-shadow:
+        0 0 0 3px rgba(22, 163, 74, 0.12);
+}
+
+
+.config-form-group input:disabled {
+    background: #f5f7fa;
+    color: #667085;
+    cursor: not-allowed;
+}
+
+
+.config-form-group small {
+    display: block;
+    margin-top: 7px;
+
+    font-size: 13px;
+    line-height: 1.4;
+
+    color: #667085;
+}
+
+
+/* =========================================================
+   BOTONES DEL MODAL
+========================================================= */
+
+.config-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+
+    margin-top: 28px;
+    padding-top: 18px;
+
+    border-top: 1px solid #edf0f4;
+}
+
+
+.btn-modal-primary,
+.btn-modal-secondary {
+    min-height: 44px;
+
+    padding: 0 18px;
+
+    border-radius: 9px;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease;
+}
+
+
+.btn-modal-primary {
+    border: none;
+
+    background: #16a34a;
+    color: #ffffff;
+
+    box-shadow:
+        0 5px 14px rgba(22, 163, 74, 0.20);
+}
+
+
+.btn-modal-primary:hover {
+    background: #15803d;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 7px 18px rgba(22, 163, 74, 0.25);
+}
+
+
+.btn-modal-secondary {
+    border: 1px solid #d9e1ec;
+
+    background: #ffffff;
+    color: #475467;
+}
+
+
+.btn-modal-secondary:hover {
+    background: #f8fafc;
+}
+
+
+/* =========================================================
+   SWITCH
+========================================================= */
+
+.config-modal .form-switch {
+    padding-left: 2.8em;
+}
+
+
+.config-modal .form-check-input {
+    width: 2.4em;
+    height: 1.3em;
+
+    cursor: pointer;
+}
+
+
+.config-modal .form-check-input:checked {
+    background-color: #16a34a;
+    border-color: #16a34a;
+}
+
+
+/* =========================================================
+   SWITCH - REQUIERE AUTORIZACIÓN
+   ========================================================= */
+
+.config-switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 28px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.config-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.config-slider {
+    position: absolute;
+    inset: 0;
+    background-color: #d1d5db;
+    border: 1px solid #b8bec7;
+    border-radius: 30px;
+    transition: 0.25s ease;
+}
+
+.config-slider::before {
+    content: "";
+    position: absolute;
+
+    width: 20px;
+    height: 20px;
+
+    left: 3px;
+    top: 3px;
+
+    background-color: #ffffff;
+    border-radius: 50%;
+
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+
+    transition: 0.25s ease;
+}
+
+/* ACTIVADO */
+
+.config-switch input:checked + .config-slider {
+    background-color: #16a34a;
+    border-color: #16a34a;
+}
+
+.config-switch input:checked + .config-slider::before {
+    transform: translateX(24px);
+}
+
+/* Efecto al pasar el mouse */
+
+.config-switch:hover .config-slider {
+    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.10);
+}
+
+/* Enfoque con teclado */
+
+.config-switch input:focus-visible + .config-slider {
+    outline: 3px solid rgba(22, 163, 74, 0.20);
+    outline-offset: 2px;
+}

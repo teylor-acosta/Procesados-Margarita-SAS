@@ -192,6 +192,14 @@ app.use(
     require('./routes/seguimiento-general.routes')
 );
 
+app.use(
+    require('./routes/nomina.routes')
+);
+
+app.use(
+    require('./routes/nomina-configuracion.routes')
+);
+
 // ============================================
 // 🔥 SIDEBAR DINÁMICO
 // ============================================
