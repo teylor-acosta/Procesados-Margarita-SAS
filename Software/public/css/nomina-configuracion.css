@@ -1621,6 +1621,33 @@
     cursor: not-allowed;
 }
 
+/* =========================================================
+   CAMPO DE VALOR MONETARIO
+   ========================================================= */
+
+.input-moneda {
+    position: relative;
+    width: 100%;
+}
+
+.input-moneda .simbolo-moneda {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    font-size: 16px;
+    font-weight: 700;
+    color: #344054;
+
+    pointer-events: none;
+    z-index: 2;
+}
+
+.input-moneda input {
+    padding-left: 32px !important;
+}
+
 
 .config-form-group small {
     display: block;

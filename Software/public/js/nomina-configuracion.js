@@ -87,6 +87,8 @@ async function inicializarConfiguracion() {
 await cargarRecargos();
 
 await cargarSalarioMinimo();
+await cargarAuxilioTransporte();
+await cargarMateriales();
 
 
         // ================================
@@ -98,7 +100,6 @@ await cargarSalarioMinimo();
 
         prepararBotonesSalarios();
 
-        prepararBotonesMateriales();
 
 
     } catch (error) {
@@ -400,6 +401,203 @@ async function cargarSalarioMinimo() {
 
         console.error(
             '❌ Error cargando salario mínimo:',
+            error
+        );
+
+    }
+
+}
+
+/* =========================================================
+   CARGAR AUXILIO DE TRANSPORTE
+   ========================================================= */
+
+async function cargarAuxilioTransporte() {
+
+    try {
+
+        const response =
+            await fetch(
+                API_NOMINA.auxilio,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    cache: 'no-store'
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Error HTTP ${response.status}`
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.ok) {
+
+            throw new Error(
+                data.error ||
+                'No fue posible cargar el auxilio de transporte.'
+            );
+
+        }
+
+
+        auxiliosNomina =
+            Array.isArray(data.data)
+                ? data.data
+                : [];
+
+
+        const auxilio =
+            auxiliosNomina[0];
+
+
+        if (!auxilio) {
+
+            console.warn(
+                '⚠️ No existe auxilio de transporte activo.'
+            );
+
+            return;
+
+        }
+
+
+        // =====================================================
+        // BUSCAR LA SECCIÓN
+        // =====================================================
+
+        const secciones =
+            document.querySelectorAll(
+                '.config-section'
+            );
+
+
+        let encontrado = false;
+
+
+        secciones.forEach(
+            section => {
+
+                const titulo =
+                    section.querySelector('h2');
+
+
+                if (!titulo) {
+                    return;
+                }
+
+
+                if (
+                    titulo.textContent
+                        .trim()
+                        .toLowerCase() !==
+                    'salarios y auxilio de transporte'
+                ) {
+
+                    return;
+
+                }
+
+
+                const tarjetas =
+                    section.querySelectorAll(
+                        '.valor-card'
+                    );
+
+
+                if (
+                    tarjetas.length < 2
+                ) {
+
+                    console.warn(
+                        '⚠️ No se encontró la tarjeta del auxilio.'
+                    );
+
+                    return;
+
+                }
+
+
+                // =================================================
+                // SEGUNDA TARJETA = AUXILIO
+                // =================================================
+
+                const tarjeta =
+                    tarjetas[1];
+
+
+                const valor =
+                    tarjeta.querySelector(
+                        'strong'
+                    );
+
+
+                const fecha =
+                    tarjeta.querySelector(
+                        'small'
+                    );
+
+
+                if (valor) {
+
+                    valor.textContent =
+                        `$ ${Number(
+                            auxilio.valor
+                        ).toLocaleString(
+                            'es-CO'
+                        )}`;
+
+                }
+
+
+                if (fecha) {
+
+                    fecha.textContent =
+                        `Vigente desde ${
+                            formatearFecha(
+                                auxilio.fecha_inicio
+                            )
+                        }`;
+
+                }
+
+
+                encontrado = true;
+
+            }
+        );
+
+
+        if (!encontrado) {
+
+            console.warn(
+                '⚠️ No se pudo actualizar visualmente el auxilio.'
+            );
+
+        }
+
+
+        console.log(
+            '🚍 Auxilio de transporte cargado:',
+            auxilio
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            '❌ Error cargando auxilio de transporte:',
             error
         );
 
@@ -3737,14 +3935,18 @@ async function nuevoSalario() {
                             Valor
                         </label>
 
-                        <input
-                            type="number"
-                            id="nuevoSalarioValor"
-                            min="0"
-                            step="0.01"
-                            placeholder="1623500"
-                            required
-                        >
+                        <div class="input-moneda">
+    <span class="simbolo-moneda">$</span>
+
+    <input
+        type="text"
+        id="nuevoSalarioValor"
+        inputmode="numeric"
+        autocomplete="off"
+        placeholder="2.000.000"
+        required
+    >
+</div>
 
                     </div>
 
@@ -3850,6 +4052,29 @@ async function nuevoSalario() {
         return;
     }
 
+    const campoValor =
+    document.getElementById('nuevoSalarioValor');
+
+if (campoValor) {
+
+    campoValor.addEventListener('input', function () {
+
+        // Dejar únicamente números
+        let valor = this.value.replace(/\D/g, '');
+
+        // Si está vacío, dejarlo vacío
+        if (!valor) {
+            this.value = '';
+            return;
+        }
+
+        // Formato colombiano: 2.000.000
+        this.value = Number(valor).toLocaleString('es-CO');
+
+    });
+
+}
+
 
     form.addEventListener(
         'submit',
@@ -3891,23 +4116,28 @@ async function nuevoSalario() {
             }
 
 
-            const valorNumerico =
-                Number(valor.value);
+            const valorLimpio =
+    valor.value
+        .replace(/\./g, '')
+        .replace(/\D/g, '');
 
+const valorNumerico =
+    Number(valorLimpio);
 
-            if (
-                Number.isNaN(valorNumerico) ||
-                valorNumerico <= 0
-            ) {
+if (
+    !valorLimpio ||
+    Number.isNaN(valorNumerico) ||
+    valorNumerico <= 0
+) {
 
-                mostrarNotificacion(
-                    'El valor del salario mínimo no es válido.',
-                    'error'
-                );
+    mostrarNotificacion(
+        'El valor del salario mínimo no es válido.',
+        'error'
+    );
 
-                return;
+    return;
 
-            }
+}
 
 
             try {
@@ -3963,17 +4193,18 @@ async function nuevoSalario() {
                 }
 
 
-                cerrarModal();
+                // =================================================
+// ACTUALIZAR INFORMACIÓN VISUAL
+// =================================================
 
+await cargarSalarioMinimo();
 
-                mostrarNotificacion(
-                    'Salario mínimo actualizado correctamente.',
-                    'success'
-                );
+cerrarModal();
 
-
-                // Recargar la configuración
-                await cargarSalarioMinimo();
+mostrarNotificacion(
+    'Salario mínimo actualizado correctamente.',
+    'success'
+);
 
 
             } catch (error) {
@@ -4003,6 +4234,8 @@ async function nuevoSalario() {
 }
 
 
+
+
 /* =========================================================
    AUXILIO DE TRANSPORTE
    ========================================================= */
@@ -4010,57 +4243,62 @@ async function nuevoSalario() {
 function nuevoAuxilio() {
 
     mostrarModal(
-
         'Nuevo auxilio de transporte',
-
         `
-
-            <form
-                onsubmit="
-                    event.preventDefault();
-                    mostrarNotificacion(
-                        'El auxilio se conectará con la base de datos en el siguiente paso.',
-                        'success'
-                    );
-                    cerrarModal();
-                "
-            >
+            <form id="formNuevoAuxilio">
 
                 <div class="config-form-grid">
 
+                    <!-- VALOR DEL AUXILIO -->
                     <div class="config-form-group">
 
                         <label>
                             Valor del auxilio
                         </label>
 
-                        <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder="200000"
-                            required
-                        >
+                        <div class="input-moneda">
+
+                            <span class="simbolo-moneda">$</span>
+
+                            <input
+                                type="text"
+                                id="nuevoAuxilioValor"
+                                inputmode="numeric"
+                                autocomplete="off"
+                                placeholder="200.000"
+                                required
+                            >
+
+                        </div>
 
                     </div>
 
 
+                    <!-- SALARIO MÁXIMO -->
                     <div class="config-form-group">
 
                         <label>
                             Salario máximo para aplicar
                         </label>
 
-                        <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder="4870500"
-                        >
+                        <div class="input-moneda">
+
+                            <span class="simbolo-moneda">$</span>
+
+                            <input
+                                type="text"
+                                id="nuevoAuxilioSalarioMaximo"
+                                inputmode="numeric"
+                                autocomplete="off"
+                                placeholder="4.870.500"
+                            >
+
+                        </div>
 
                     </div>
 
 
+                    <!-- FECHA -->
                     <div class="config-form-group">
 
                         <label>
@@ -4069,12 +4307,14 @@ function nuevoAuxilio() {
 
                         <input
                             type="date"
+                            id="nuevoAuxilioFecha"
                             required
                         >
 
                     </div>
 
 
+                    <!-- OBSERVACIÓN -->
                     <div class="config-form-group config-form-full">
 
                         <label>
@@ -4082,6 +4322,7 @@ function nuevoAuxilio() {
                         </label>
 
                         <textarea
+                            id="nuevoAuxilioObservacion"
                             rows="3"
                             placeholder="Observación del valor vigente"
                         ></textarea>
@@ -4091,6 +4332,29 @@ function nuevoAuxilio() {
                 </div>
 
 
+                <!-- INFORMACIÓN HISTÓRICA -->
+                <div class="config-info-box">
+
+                    <i class="fas fa-history"></i>
+
+                    <div>
+
+                        <strong>
+                            Vigencia histórica
+                        </strong>
+
+                        <p>
+                            El auxilio anterior no será eliminado.
+                            Se cerrará su vigencia y se creará
+                            un nuevo registro.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BOTONES -->
                 <div class="config-modal-actions">
 
                     <button
@@ -4101,13 +4365,13 @@ function nuevoAuxilio() {
                         Cancelar
                     </button>
 
+
                     <button
                         type="submit"
                         class="btn-modal-primary"
                     >
 
                         <i class="fas fa-save"></i>
-
                         Guardar
 
                     </button>
@@ -4115,13 +4379,520 @@ function nuevoAuxilio() {
                 </div>
 
             </form>
-
         `
+    );
 
+
+    // =====================================================
+    // OBTENER CAMPOS
+    // =====================================================
+
+    const campoValor =
+        document.getElementById(
+            'nuevoAuxilioValor'
+        );
+
+
+    const campoSalarioMaximo =
+        document.getElementById(
+            'nuevoAuxilioSalarioMaximo'
+        );
+
+
+    // =====================================================
+    // FORMATEAR MONEDA
+    // =====================================================
+
+    function formatearMoneda(input) {
+
+        if (!input) {
+            return;
+        }
+
+
+        input.addEventListener(
+            'input',
+            function () {
+
+                let valor =
+                    this.value.replace(/\D/g, '');
+
+
+                if (!valor) {
+
+                    this.value = '';
+
+                    return;
+                }
+
+
+                this.value =
+                    Number(valor)
+                        .toLocaleString('es-CO');
+
+            }
+        );
+
+    }
+
+
+    formatearMoneda(
+        campoValor
+    );
+
+
+    formatearMoneda(
+        campoSalarioMaximo
+    );
+
+
+    // =====================================================
+    // SUBMIT
+    // =====================================================
+
+    const form =
+        document.getElementById(
+            'formNuevoAuxilio'
+        );
+
+
+    if (!form) {
+        return;
+    }
+
+
+    form.addEventListener(
+        'submit',
+        async event => {
+
+            event.preventDefault();
+
+
+            const valor =
+                document.getElementById(
+                    'nuevoAuxilioValor'
+                );
+
+
+            const salarioMaximo =
+                document.getElementById(
+                    'nuevoAuxilioSalarioMaximo'
+                );
+
+
+            const fecha =
+                document.getElementById(
+                    'nuevoAuxilioFecha'
+                );
+
+
+            const observacion =
+                document.getElementById(
+                    'nuevoAuxilioObservacion'
+                );
+
+
+            if (
+                !valor ||
+                !fecha ||
+                !valor.value ||
+                !fecha.value
+            ) {
+
+                mostrarNotificacion(
+                    'Debes ingresar el valor y la fecha de inicio.',
+                    'error'
+                );
+
+                return;
+            }
+
+
+            // =================================================
+            // LIMPIAR VALORES MONETARIOS
+            // =================================================
+
+            const valorLimpio =
+                valor.value
+                    .replace(/\./g, '')
+                    .replace(/\D/g, '');
+
+
+            const salarioMaximoLimpio =
+                salarioMaximo &&
+                salarioMaximo.value
+                    ? salarioMaximo.value
+                        .replace(/\./g, '')
+                        .replace(/\D/g, '')
+                    : '';
+
+
+            const valorNumerico =
+                Number(valorLimpio);
+
+
+            const salarioMaximoNumerico =
+                salarioMaximoLimpio
+                    ? Number(salarioMaximoLimpio)
+                    : null;
+
+
+            // =================================================
+            // VALIDAR VALOR
+            // =================================================
+
+            if (
+                !valorLimpio ||
+                Number.isNaN(valorNumerico) ||
+                valorNumerico <= 0
+            ) {
+
+                mostrarNotificacion(
+                    'El valor del auxilio no es válido.',
+                    'error'
+                );
+
+                return;
+            }
+
+
+            // =================================================
+            // VALIDAR SALARIO MÁXIMO
+            // =================================================
+
+            if (
+                salarioMaximoNumerico !== null &&
+                (
+                    Number.isNaN(
+                        salarioMaximoNumerico
+                    ) ||
+                    salarioMaximoNumerico <= 0
+                )
+            ) {
+
+                mostrarNotificacion(
+                    'El salario máximo para aplicar no es válido.',
+                    'error'
+                );
+
+                return;
+            }
+
+
+            // =================================================
+            // GUARDAR
+            // =================================================
+
+            try {
+
+                bloquearModalBotones(true);
+
+
+                const response =
+                    await fetch(
+                        API_NOMINA.auxilio,
+                        {
+
+                            method: 'POST',
+
+                            headers: {
+
+                                'Content-Type':
+                                    'application/json',
+
+                                'Accept':
+                                    'application/json'
+
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    valor:
+                                        valorNumerico,
+
+                                    salario_maximo_aplica:
+                                        salarioMaximoNumerico,
+
+                                    fecha_inicio:
+                                        fecha.value,
+
+                                    observacion:
+                                        observacion
+                                            ? observacion.value.trim()
+                                            : ''
+
+                                })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.ok
+                ) {
+
+                    throw new Error(
+                        data.error ||
+                        data.mensaje ||
+                        'No fue posible guardar el auxilio de transporte.'
+                    );
+
+                }
+
+
+                // =================================================
+                // ACTUALIZAR INFORMACIÓN
+                // =================================================
+
+                await cargarAuxilioTransporte();
+
+
+                cerrarModal();
+
+
+                mostrarNotificacion(
+                    'Auxilio de transporte actualizado correctamente.',
+                    'success'
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    '❌ Error guardando auxilio de transporte:',
+                    error
+                );
+
+
+                mostrarNotificacion(
+                    error.message ||
+                    'Error guardando el auxilio de transporte.',
+                    'error'
+                );
+
+
+            } finally {
+
+                bloquearModalBotones(false);
+
+            }
+
+        }
     );
 
 }
 
+/* =========================================================
+   CARGAR MATERIALES
+   ========================================================= */
+
+async function cargarMateriales() {
+
+    try {
+
+        const response =
+            await fetch(
+                API_NOMINA.materiales,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    cache: 'no-store'
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Error HTTP ${response.status}`
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.ok) {
+
+            throw new Error(
+                data.error ||
+                'No fue posible cargar los materiales.'
+            );
+
+        }
+
+
+       materialesNomina =
+    Array.isArray(data.data)
+        ? data.data
+        : [];
+
+
+console.log(
+    '🧱 Materiales cargados:',
+    materialesNomina
+);
+
+
+// Pintar materiales en la tabla
+renderizarMateriales();
+
+
+    } catch (error) {
+
+        console.error(
+            '❌ Error cargando materiales:',
+            error
+        );
+
+        materialesNomina = [];
+
+    }
+
+}
+
+/* =========================================================
+   RENDERIZAR MATERIALES
+   ========================================================= */
+
+function renderizarMateriales() {
+
+    const tbody =
+        document.getElementById('materialesBody');
+
+
+    if (!tbody) {
+
+        console.error(
+            '❌ No existe #materialesBody'
+        );
+
+        return;
+
+    }
+
+
+    // Limpiar contenido actual
+    tbody.innerHTML = '';
+
+
+    // Sin materiales
+    if (!materialesNomina.length) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td
+                    colspan="6"
+                    style="text-align:center;"
+                >
+                    <div class="config-empty">
+                        <i class="fas fa-box-open"></i>
+                        <p>
+                            No hay materiales registrados.
+                        </p>
+                    </div>
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    // Crear filas
+    tbody.innerHTML =
+        materialesNomina
+            .map(material => {
+
+                const precio =
+                    Number(
+                        material.precio_por_unidad
+                    ) || 0;
+
+
+                const precioFormateado =
+                    precio.toLocaleString(
+                        'es-CO'
+                    );
+
+
+                const estado =
+                    Number(material.activo) === 1;
+
+
+                return `
+                    <tr>
+
+                        <td>
+                            ${escapeHtml(
+                                material.codigo || ''
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                material.nombre || ''
+                            )}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                material.unidad || ''
+                            )}
+                        </td>
+
+                        <td>
+                            $ ${precioFormateado}
+                        </td>
+
+                        <td>
+                            <span
+                                class="estado-badge ${
+                                    estado
+                                        ? 'activo'
+                                        : 'inactivo'
+                                }"
+                            >
+                                ${
+                                    estado
+                                        ? 'Activo'
+                                        : 'Inactivo'
+                                }
+                            </span>
+                        </td>
+
+                        <td>
+                            <button
+                                type="button"
+                                class="btn-action"
+                                title="Editar material"
+                            >
+                                <i class="fas fa-pen"></i>
+                            </button>
+                        </td>
+
+                    </tr>
+                `;
+
+            })
+            .join('');
+
+
+    // Preparar botones de edición
+    prepararBotonesMateriales();
+
+}
 
 /* =========================================================
    MATERIALES
@@ -4226,95 +4997,115 @@ function prepararBotonesMateriales() {
    EDITAR MATERIAL
    ========================================================= */
 
-function editarMaterialDesdeFila(
-    fila
-) {
+function editarMaterialDesdeFila(fila) {
 
     const celdas =
         fila.querySelectorAll('td');
 
 
-    if (
-        celdas.length < 4
-    ) {
+    if (celdas.length < 4) {
+        return;
+    }
+
+
+    const material =
+        materialesNomina.find(
+            item =>
+                item.codigo ===
+                celdas[0].textContent.trim()
+        );
+
+
+    if (!material) {
+
+        mostrarNotificacion(
+            'No fue posible encontrar la información del material.',
+            'error'
+        );
 
         return;
-
     }
 
 
     const codigo =
-        celdas[0]
-            .textContent
-            .trim();
-
+        material.codigo;
 
     const nombre =
-        celdas[1]
-            .textContent
-            .trim();
-
+        material.nombre || '';
 
     const unidad =
-        celdas[2]
-            .textContent
-            .trim();
-
+        material.unidad || '';
 
     const precio =
-        celdas[3]
-            .textContent
-            .trim();
+        Number(
+            material.precio_por_unidad || 0
+        );
+
+
+    const fechaInicio =
+        material.fecha_inicio
+            ? String(
+                material.fecha_inicio
+            ).substring(0, 10)
+            : new Date()
+                .toISOString()
+                .substring(0, 10);
 
 
     mostrarModal(
-
         `Editar material ${codigo}`,
-
         `
+            <form id="formEditarMaterial">
 
-            <form
-                onsubmit="
-                    event.preventDefault();
-                    mostrarNotificacion(
-                        'La edición de materiales se conectará con la base de datos en el siguiente paso.',
-                        'success'
-                    );
-                    cerrarModal();
-                "
-            >
+                <!-- =========================================
+                     INFORMACIÓN DEL MATERIAL
+                     ========================================= -->
 
-                <div class="config-form-grid">
+                <div class="config-info-box">
 
-                    <div class="config-form-group">
+                    <i class="fas fa-box"></i>
 
-                        <label>
-                            Código
-                        </label>
+                    <div>
 
-                        <input
-                            type="text"
-                            value="${escapeHtml(codigo)}"
-                            disabled
-                        >
+                        <strong>
+                            ${escapeHtml(nombre)}
+                        </strong>
+
+                        <p>
+                            Código:
+                            <strong>
+                                ${escapeHtml(codigo)}
+                            </strong>
+                        </p>
 
                     </div>
 
+                </div>
+
+
+                <div class="config-form-grid">
+
+
+                    <!-- NOMBRE -->
 
                     <div class="config-form-group">
 
                         <label>
-                            Material
+                            Nombre del material
                         </label>
 
                         <input
                             type="text"
+                            id="editarMaterialNombre"
                             value="${escapeHtml(nombre)}"
+                            maxlength="150"
                             required
                         >
 
                     </div>
 
+
+                    <!-- UNIDAD -->
 
                     <div class="config-form-group">
 
@@ -4322,58 +5113,140 @@ function editarMaterialDesdeFila(
                             Unidad
                         </label>
 
-                        <input
-                            type="text"
-                            value="${escapeHtml(unidad)}"
+                        <select
+                            id="editarMaterialUnidad"
                             required
                         >
+
+                            <option value="">
+                                Seleccionar unidad
+                            </option>
+
+                            <option
+                                value="KG"
+                                ${unidad === 'KG' ? 'selected' : ''}
+                            >
+                                Kilogramo (KG)
+                            </option>
+
+                            <option
+                                value="UNIDAD"
+                                ${unidad === 'UNIDAD' ? 'selected' : ''}
+                            >
+                                Unidad
+                            </option>
+
+                            <option
+                                value="TON"
+                                ${unidad === 'TON' ? 'selected' : ''}
+                            >
+                                Tonelada (TON)
+                            </option>
+
+                        </select>
 
                     </div>
 
 
+                    <!-- PRECIO -->
+
+                    <div class="config-form-group">
+
+                        <label id="editarMaterialPrecioLabel">
+                            Precio
+                        </label>
+
+                        <div class="input-moneda">
+
+                            <span class="simbolo-moneda">
+                                $
+                            </span>
+
+                            <input
+                                type="text"
+                                id="editarMaterialPrecio"
+                                inputmode="numeric"
+                                autocomplete="off"
+                                value="${precio.toLocaleString('es-CO')}"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FECHA -->
+
                     <div class="config-form-group">
 
                         <label>
-                            Precio por unidad
+                            Fecha de inicio
                         </label>
 
                         <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            value="${escapeHtml(
-                                limpiarMoneda(precio)
-                            )}"
+                            type="date"
+                            id="editarMaterialFecha"
+                            value="${fechaInicio}"
                             required
                         >
+
+                        <small>
+                            Fecha desde la cual comienza a aplicarse
+                            el precio del material.
+                        </small>
+
+                    </div>
+
+
+                    <!-- DESCRIPCIÓN -->
+
+                    <div class="config-form-group config-form-full">
+
+                        <label>
+                            Descripción
+                        </label>
+
+                        <textarea
+                            id="editarMaterialDescripcion"
+                            rows="3"
+                            maxlength="500"
+                            placeholder="Descripción del material"
+                        >${escapeHtml(material.descripcion || material.observacion || '')}</textarea>
 
                     </div>
 
                 </div>
 
 
+                <!-- =========================================
+                     HISTORIAL
+                     ========================================= -->
+
                 <div class="config-info-box">
 
-                    <i class="fas fa-link"></i>
+                    <i class="fas fa-clock-rotate-left"></i>
 
                     <div>
 
                         <strong>
-                            Integración futura con Producción
+                            Historial de precios
                         </strong>
 
                         <p>
-                            Este material será posteriormente
-                            relacionado con Producción para que
-                            Nómina pueda consultar automáticamente
-                            los kilos aprobados y calcular el
-                            valor correspondiente.
+                            Si cambias el precio y estableces
+                            una nueva fecha de inicio, el precio
+                            anterior se conservará como histórico.
                         </p>
 
                     </div>
 
                 </div>
 
+
+                <!-- =========================================
+                     ACCIONES
+                     ========================================= -->
 
                 <div class="config-modal-actions">
 
@@ -4392,16 +5265,327 @@ function editarMaterialDesdeFila(
 
                         <i class="fas fa-save"></i>
 
-                        Guardar
+                        Guardar cambios
 
                     </button>
 
                 </div>
 
             </form>
-
         `
+    );
 
+
+    // =====================================================
+    // CAMBIAR TEXTO DEL PRECIO SEGÚN UNIDAD
+    // =====================================================
+
+    const inputUnidad =
+        document.getElementById(
+            'editarMaterialUnidad'
+        );
+
+    const etiquetaPrecio =
+        document.getElementById(
+            'editarMaterialPrecioLabel'
+        );
+
+
+    function actualizarEtiquetaPrecio() {
+
+        if (!inputUnidad || !etiquetaPrecio) {
+            return;
+        }
+
+
+        if (inputUnidad.value === 'KG') {
+
+            etiquetaPrecio.textContent =
+                'Precio por kilogramo';
+
+        } else if (
+            inputUnidad.value === 'UNIDAD'
+        ) {
+
+            etiquetaPrecio.textContent =
+                'Precio por unidad';
+
+        } else if (
+            inputUnidad.value === 'TON'
+        ) {
+
+            etiquetaPrecio.textContent =
+                'Precio por tonelada';
+
+        } else {
+
+            etiquetaPrecio.textContent =
+                'Precio';
+
+        }
+
+    }
+
+
+    if (inputUnidad) {
+
+        inputUnidad.addEventListener(
+            'change',
+            actualizarEtiquetaPrecio
+        );
+
+    }
+
+
+    actualizarEtiquetaPrecio();
+
+
+    // =====================================================
+    // FORMATEAR PRECIO
+    // =====================================================
+
+    const inputPrecio =
+        document.getElementById(
+            'editarMaterialPrecio'
+        );
+
+
+    if (inputPrecio) {
+
+        inputPrecio.addEventListener(
+            'input',
+            () => {
+
+                let valor =
+                    inputPrecio.value
+                        .replace(/\D/g, '');
+
+
+                if (!valor) {
+
+                    inputPrecio.value = '';
+
+                    return;
+                }
+
+
+                inputPrecio.value =
+                    Number(valor)
+                        .toLocaleString('es-CO');
+
+            }
+        );
+
+    }
+
+
+    // =====================================================
+    // GUARDAR CAMBIOS
+    // =====================================================
+
+    const form =
+        document.getElementById(
+            'formEditarMaterial'
+        );
+
+
+    if (!form) {
+
+        console.error(
+            '❌ No se encontró #formEditarMaterial'
+        );
+
+        return;
+    }
+
+
+    form.addEventListener(
+        'submit',
+        async event => {
+
+            event.preventDefault();
+
+
+            const nombre =
+                document.getElementById(
+                    'editarMaterialNombre'
+                ).value.trim();
+
+
+            const unidad =
+                document.getElementById(
+                    'editarMaterialUnidad'
+                ).value;
+
+
+            const descripcion =
+                document.getElementById(
+                    'editarMaterialDescripcion'
+                ).value.trim();
+
+
+            const fechaInicio =
+                document.getElementById(
+                    'editarMaterialFecha'
+                ).value;
+
+
+            const precioTexto =
+                document.getElementById(
+                    'editarMaterialPrecio'
+                ).value;
+
+
+            const precio =
+                Number(
+                    precioTexto
+                        .replace(/\./g, '')
+                        .replace(',', '.')
+                );
+
+
+            // =============================================
+            // VALIDACIONES
+            // =============================================
+
+            if (!nombre) {
+
+                mostrarNotificacion(
+                    'El nombre del material es obligatorio.',
+                    'error'
+                );
+
+                return;
+            }
+
+
+            if (!unidad) {
+
+                mostrarNotificacion(
+                    'Selecciona la unidad del material.',
+                    'error'
+                );
+
+                return;
+            }
+
+
+            if (
+                Number.isNaN(precio) ||
+                precio < 0
+            ) {
+
+                mostrarNotificacion(
+                    'Ingresa un precio válido.',
+                    'error'
+                );
+
+                return;
+            }
+
+
+            if (!fechaInicio) {
+
+                mostrarNotificacion(
+                    'Selecciona la fecha de inicio.',
+                    'error'
+                );
+
+                return;
+            }
+
+
+            try {
+
+                bloquearModalBotones(true);
+
+
+                const response =
+                    await fetch(
+                        `${API_NOMINA.materiales}/${material.id}`,
+                        {
+                            method: 'PUT',
+
+                            headers: {
+                                'Content-Type':
+                                    'application/json',
+
+                                'Accept':
+                                    'application/json'
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    nombre,
+
+                                    descripcion,
+
+                                    unidad,
+
+                                    precio_por_unidad:
+                                        precio,
+
+                                    fecha_inicio:
+                                        fechaInicio
+
+                                })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.ok
+                ) {
+
+                    throw new Error(
+                        data.error ||
+                        data.mensaje ||
+                        'No fue posible actualizar el material.'
+                    );
+
+                }
+
+
+                await cargarMateriales();
+
+
+                cerrarModal();
+
+
+                mostrarNotificacion(
+                    'Material actualizado correctamente.',
+                    'success'
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    '❌ Error actualizando material:',
+                    error
+                );
+
+
+                mostrarNotificacion(
+                    error.message ||
+                    'Error actualizando el material.',
+                    'error'
+                );
+
+
+            } finally {
+
+                bloquearModalBotones(false);
+
+            }
+
+        }
     );
 
 }
@@ -4414,38 +5598,34 @@ function editarMaterialDesdeFila(
 function nuevoMaterial() {
 
     mostrarModal(
-
         'Nuevo material de producción',
-
         `
+            <form id="formNuevoMaterial">
 
-            <form
-                onsubmit="
-                    event.preventDefault();
-                    mostrarNotificacion(
-                        'El material se conectará con la base de datos en el siguiente paso.',
-                        'success'
-                    );
-                    cerrarModal();
-                "
-            >
+                <div class="config-info-box">
 
-                <div class="config-form-grid">
+                    <i class="fas fa-box"></i>
 
-                    <div class="config-form-group">
+                    <div>
 
-                        <label>
-                            Código
-                        </label>
+                        <strong>
+                            Registrar material
+                        </strong>
 
-                        <input
-                            type="text"
-                            placeholder="Ej. MAT-002"
-                            required
-                        >
+                        <p>
+                            El material quedará disponible para
+                            futuras liquidaciones de producción.
+                        </p>
 
                     </div>
 
+                </div>
+
+
+                <div class="config-form-grid">
+
+
+                    <!-- NOMBRE -->
 
                     <div class="config-form-group">
 
@@ -4455,12 +5635,16 @@ function nuevoMaterial() {
 
                         <input
                             type="text"
+                            id="nuevoMaterialNombre"
                             placeholder="Ej. Plástico PET"
+                            maxlength="150"
                             required
                         >
 
                     </div>
 
+
+                    <!-- UNIDAD -->
 
                     <div class="config-form-group">
 
@@ -4469,11 +5653,16 @@ function nuevoMaterial() {
                         </label>
 
                         <select
+                            id="nuevoMaterialUnidad"
                             required
                         >
 
+                            <option value="">
+                                Seleccionar unidad
+                            </option>
+
                             <option value="KG">
-                                KG
+                                Kilogramo (KG)
                             </option>
 
                             <option value="UNIDAD">
@@ -4481,30 +5670,42 @@ function nuevoMaterial() {
                             </option>
 
                             <option value="TON">
-                                Tonelada
+                                Tonelada (TON)
                             </option>
 
                         </select>
 
                     </div>
 
+                    <!-- PRECIO -->
 
-                    <div class="config-form-group">
+<div class="config-form-group">
 
-                        <label>
-                            Precio por unidad
-                        </label>
+    <label id="nuevoMaterialPrecioLabel">
+        Precio
+    </label>
 
-                        <input
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder="0"
-                            required
-                        >
+    <div class="input-moneda">
 
-                    </div>
+        <span class="simbolo-moneda">
+            $
+        </span>
 
+        <input
+            type="text"
+            id="nuevoMaterialPrecio"
+            inputmode="numeric"
+            autocomplete="off"
+            placeholder="0"
+            required
+        >
+
+    </div>
+
+</div>
+
+
+                    <!-- DESCRIPCIÓN -->
 
                     <div class="config-form-group config-form-full">
 
@@ -4513,12 +5714,16 @@ function nuevoMaterial() {
                         </label>
 
                         <textarea
+                            id="nuevoMaterialDescripcion"
                             rows="3"
+                            maxlength="500"
                             placeholder="Descripción del material"
                         ></textarea>
 
                     </div>
 
+
+                    <!-- FECHA -->
 
                     <div class="config-form-group">
 
@@ -4528,29 +5733,35 @@ function nuevoMaterial() {
 
                         <input
                             type="date"
+                            id="nuevoMaterialFecha"
                             required
                         >
 
+                        <small>
+                            Fecha desde la cual comienza a aplicarse
+                            el precio del material.
+                        </small>
+
                     </div>
+
 
                 </div>
 
 
                 <div class="config-info-box">
 
-                    <i class="fas fa-industry"></i>
+                    <i class="fas fa-clock-rotate-left"></i>
 
                     <div>
 
                         <strong>
-                            Preparado para Producción
+                            Historial de precios
                         </strong>
 
                         <p>
-                            Más adelante Producción podrá
-                            utilizar estos materiales y Nómina
-                            consultará el precio vigente para
-                            calcular el pago por kilos.
+                            Cuando el precio cambie posteriormente,
+                            el valor anterior se conservará como
+                            histórico.
                         </p>
 
                     </div>
@@ -4567,6 +5778,7 @@ function nuevoMaterial() {
                     >
                         Cancelar
                     </button>
+
 
                     <button
                         type="submit"
@@ -4581,10 +5793,369 @@ function nuevoMaterial() {
 
                 </div>
 
+
             </form>
-
         `
+    );
 
+
+    // =========================================================
+    // FECHA POR DEFECTO
+    // =========================================================
+
+    const fecha =
+        document.getElementById(
+            'nuevoMaterialFecha'
+        );
+
+
+    if (fecha) {
+
+        const hoy =
+            new Date();
+
+
+        const año =
+            hoy.getFullYear();
+
+
+        const mes =
+            String(
+                hoy.getMonth() + 1
+            ).padStart(2, '0');
+
+
+        const dia =
+            String(
+                hoy.getDate()
+            ).padStart(2, '0');
+
+
+        fecha.value =
+            `${año}-${mes}-${dia}`;
+
+    }
+
+
+    // =========================================================
+    // FORMATEAR PRECIO
+    // =========================================================
+
+    const inputPrecio =
+        document.getElementById(
+            'nuevoMaterialPrecio'
+        );
+
+        // =========================================================
+// ACTUALIZAR TEXTO DEL PRECIO SEGÚN LA UNIDAD
+// =========================================================
+
+const inputUnidad =
+    document.getElementById(
+        'nuevoMaterialUnidad'
+    );
+
+const etiquetaPrecio =
+    document.getElementById(
+        'nuevoMaterialPrecioLabel'
+    );
+
+
+if (inputUnidad && etiquetaPrecio) {
+
+    inputUnidad.addEventListener(
+        'change',
+        () => {
+
+            const unidad =
+                inputUnidad.value;
+
+
+            if (unidad === 'KG') {
+
+                etiquetaPrecio.textContent =
+                    'Precio por kilogramo';
+
+            } else if (unidad === 'UNIDAD') {
+
+                etiquetaPrecio.textContent =
+                    'Precio por unidad';
+
+            } else if (unidad === 'TON') {
+
+                etiquetaPrecio.textContent =
+                    'Precio por tonelada';
+
+            } else {
+
+                etiquetaPrecio.textContent =
+                    'Precio';
+
+            }
+
+        }
+    );
+
+}
+
+
+    if (inputPrecio) {
+
+        inputPrecio.addEventListener(
+            'input',
+            () => {
+
+                let valor =
+                    inputPrecio.value
+                        .replace(/\D/g, '');
+
+
+                if (!valor) {
+
+                    inputPrecio.value = '';
+
+                    return;
+
+                }
+
+
+                inputPrecio.value =
+                    Number(valor)
+                        .toLocaleString('es-CO');
+
+            }
+        );
+
+    }
+
+
+    // =========================================================
+    // GUARDAR
+    // =========================================================
+
+    const form =
+        document.getElementById(
+            'formNuevoMaterial'
+        );
+
+
+    if (!form) {
+
+        console.error(
+            '❌ No se encontró #formNuevoMaterial'
+        );
+
+        return;
+
+    }
+
+
+    form.addEventListener(
+        'submit',
+        async event => {
+
+            event.preventDefault();
+
+            const nombre =
+                document.getElementById(
+                    'nuevoMaterialNombre'
+                ).value.trim();
+
+
+            const unidad =
+                document.getElementById(
+                    'nuevoMaterialUnidad'
+                ).value;
+
+
+            const descripcion =
+                document.getElementById(
+                    'nuevoMaterialDescripcion'
+                ).value.trim();
+
+
+            const fechaInicio =
+                document.getElementById(
+                    'nuevoMaterialFecha'
+                ).value;
+
+
+            // ---------------------------------------------
+            // CONVERTIR PRECIO
+            // ---------------------------------------------
+
+            const precioTexto =
+                document.getElementById(
+                    'nuevoMaterialPrecio'
+                ).value;
+
+
+            const precio =
+                Number(
+                    precioTexto
+                        .replace(/\./g, '')
+                        .replace(',', '.')
+                );
+
+
+            // ---------------------------------------------
+            // VALIDACIONES
+            // ---------------------------------------------
+
+            if (!nombre) {
+
+                mostrarNotificacion(
+                    'El nombre del material es obligatorio.',
+                    'error'
+                );
+
+                return;
+
+            }
+
+
+            if (!unidad) {
+
+                mostrarNotificacion(
+                    'Selecciona la unidad del material.',
+                    'error'
+                );
+
+                return;
+
+            }
+
+
+            if (
+                Number.isNaN(precio) ||
+                precio < 0
+            ) {
+
+                mostrarNotificacion(
+                    'Ingresa un precio válido.',
+                    'error'
+                );
+
+                return;
+
+            }
+
+
+            if (!fechaInicio) {
+
+                mostrarNotificacion(
+                    'Selecciona la fecha de inicio.',
+                    'error'
+                );
+
+                return;
+
+            }
+
+
+            // ---------------------------------------------
+            // GUARDAR EN BACKEND
+            // ---------------------------------------------
+
+            try {
+
+                bloquearModalBotones(true);
+
+
+                const response =
+                    await fetch(
+                        API_NOMINA.materiales,
+                        {
+
+                            method: 'POST',
+
+                            headers: {
+
+                                'Content-Type':
+                                    'application/json',
+
+                                'Accept':
+                                    'application/json'
+
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    nombre,
+
+                                    descripcion,
+
+                                    unidad,
+
+                                    precio_por_unidad:
+                                        precio,
+
+                                    fecha_inicio:
+                                        fechaInicio
+
+                                })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    !response.ok ||
+                    !data.ok
+                ) {
+
+                    throw new Error(
+                        data.error ||
+                        data.mensaje ||
+                        'No fue posible guardar el material.'
+                    );
+
+                }
+
+
+                // -----------------------------------------
+                // RECARGAR TABLA
+                // -----------------------------------------
+
+                await cargarMateriales();
+
+
+                cerrarModal();
+
+
+                mostrarNotificacion(
+                    'Material creado correctamente.',
+                    'success'
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    '❌ Error guardando material:',
+                    error
+                );
+
+
+                mostrarNotificacion(
+                    error.message ||
+                    'Error guardando el material.',
+                    'error'
+                );
+
+
+            } finally {
+
+                bloquearModalBotones(false);
+
+            }
+
+        }
     );
 
 }

@@ -1872,41 +1872,53 @@ function cambiarTipoVideo(){
 
 async function administrarVideo(id){
 
+    console.log("🎥 administrarVideo ejecutada");
+    console.log("ID recibido:", id);
+
     subCapituloVideo = id;
 
+    const modalSubElement =
+        document.getElementById("modalSubCapitulos");
+
+    const modalVideoElement =
+        document.getElementById("modalVideo");
+
     const modalSub =
-    bootstrap.Modal.getInstance(
-        document.getElementById(
-            "modalSubCapitulos"
-        )
-    );
+        bootstrap.Modal.getOrCreateInstance(
+            modalSubElement
+        );
 
     const modalVideo =
-    bootstrap.Modal.getOrCreateInstance(
-        document.getElementById(
-            "modalVideo"
-        )
-    );
+        bootstrap.Modal.getOrCreateInstance(
+            modalVideoElement
+        );
 
-    document
-    .getElementById("modalSubCapitulos")
-    .addEventListener(
+    // Función que se ejecutará cuando
+    // termine de cerrarse el modal de subcapítulos
+    const abrirVideo = async () => {
+
+        console.log("✅ modalSubCapitulos cerrado");
+        console.log("🎥 Abriendo modalVideo");
+
+        modalSubElement.removeEventListener(
+            "hidden.bs.modal",
+            abrirVideo
+        );
+
+        modalVideo.show();
+
+        await cargarVideo();
+
+    };
+
+    // Esperar a que Bootstrap termine
+    // de cerrar el modal actual
+    modalSubElement.addEventListener(
         "hidden.bs.modal",
-        async function abrirVideo(){
-
-            document
-            .getElementById("modalSubCapitulos")
-            .removeEventListener(
-                "hidden.bs.modal",
-                abrirVideo
-            );
-
-            modalVideo.show();
-
-            await cargarVideo();
-
-        }
+        abrirVideo
     );
+
+    console.log("🔽 Cerrando modalSubCapitulos");
 
     modalSub.hide();
 

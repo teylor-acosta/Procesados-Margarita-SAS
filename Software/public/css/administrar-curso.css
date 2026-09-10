@@ -118,77 +118,59 @@
 
 }
 
-/*======================================
-MODAL VIDEO
-======================================*/
+/* ==========================================
+   MODAL ADMINISTRAR VIDEO
+========================================== */
 
-#modalVideo{
-
-    z-index:3000 !important;
-
+#modalVideo {
+    z-index: 3000 !important;
 }
 
-#modalVideo .modal-dialog{
-
-    max-width:1200px;
-
-    margin:1rem auto;
-
+#modalVideo .modal-dialog {
+    max-width: 1200px;
+    margin: 1rem auto;
 }
 
-#modalVideo .modal-content{
-
-    min-height:85vh;
-
-    max-height:95vh;
-
+#modalVideo .modal-content {
+    min-height: 85vh;
+    max-height: 95vh;
 }
 
-#modalVideo .modal-body{
-
-    overflow-y:auto;
-
+#modalVideo .modal-body {
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 #videoPreview,
-#youtubePreview{
-
-    width:100%;
-
-    min-height:420px;
-
-    border-radius:12px;
-
+#youtubePreview {
+    width: 100%;
+    min-height: 420px;
+    border-radius: 12px;
 }
 
-#videoPreview{
-
-    background:#000;
-
-    object-fit:contain;
-
+#videoPreview {
+    background: #000;
+    object-fit: contain;
 }
 
-@media(max-width:992px){
+.modal-backdrop {
+    z-index: 1990 !important;
+}
+
+@media (max-width: 992px) {
 
     #videoPreview,
-    #youtubePreview{
-
-        min-height:300px;
-
+    #youtubePreview {
+        min-height: 300px;
     }
-
 }
 
-@media(max-width:768px){
+@media (max-width: 768px) {
 
     #videoPreview,
-    #youtubePreview{
-
-        min-height:220px;
-
+    #youtubePreview {
+        min-height: 220px;
     }
-
 }
 
 .opcion-card{
