@@ -774,6 +774,262 @@ if (existente) {
 );
 
 /* =====================================================
+   ASIGNACIÓN MASIVA DE CAPACITACIONES
+===================================================== */
+
+router.post(
+    "/api/seguimiento-general/asignar-capacitacion-masiva",
+    proteger,
+    async (req, res) => {
+
+        const connection = await db.getConnection();
+
+        try {
+
+            const {
+                capacitacion_id,
+                empleados,
+                obligatorio,
+                fecha_limite
+            } = req.body;
+
+            // =========================================
+            // VALIDAR CAPACITACIÓN
+            // =========================================
+
+            if (!capacitacion_id) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Debe seleccionar una capacitación."
+                });
+            }
+
+            // =========================================
+            // VALIDAR EMPLEADOS
+            // =========================================
+
+            if (
+                !Array.isArray(empleados) ||
+                empleados.length === 0
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Debe seleccionar al menos un empleado."
+                });
+            }
+
+            // =========================================
+            // VERIFICAR CAPACITACIÓN
+            // =========================================
+
+            const [[capacitacion]] = await connection.query(`
+                SELECT
+                    id,
+                    titulo AS nombre,
+                    obligatorio,
+                    fecha_limite
+                FROM cursos
+                WHERE id = ?
+                  AND estado = 'ACTIVO'
+                LIMIT 1
+            `, [capacitacion_id]);
+
+            if (!capacitacion) {
+                return res.status(404).json({
+                    success: false,
+                    message: "La capacitación no existe o está inactiva."
+                });
+            }
+
+            // =========================================
+            // USUARIO QUE REALIZA LA ASIGNACIÓN
+            // =========================================
+
+            const asignadoPor = req.session.usuarioID;
+
+            if (!asignadoPor) {
+                return res.status(401).json({
+                    success: false,
+                    message: "No se pudo identificar al usuario que realiza la asignación."
+                });
+            }
+
+            // =========================================
+            // VALORES DE ASIGNACIÓN
+            // =========================================
+
+            const esObligatoria =
+                obligatorio !== undefined
+                    ? Number(obligatorio)
+                    : (capacitacion.obligatorio ? 1 : 0);
+
+            const fechaLimite =
+                fecha_limite !== undefined
+                    ? (fecha_limite || null)
+                    : (capacitacion.fecha_limite || null);
+
+            // =========================================
+            // INICIAR TRANSACCIÓN
+            // =========================================
+
+            await connection.beginTransaction();
+
+            let asignados = 0;
+            let existentes = 0;
+            let empleadosNoValidos = 0;
+
+            // =========================================
+            // PROCESAR EMPLEADOS
+            // =========================================
+
+            for (const empleadoId of empleados) {
+
+                // -------------------------------------
+                // VERIFICAR EMPLEADO ACTIVO
+                // -------------------------------------
+
+                const [[empleado]] =
+                    await connection.query(`
+                        SELECT id
+                        FROM empleados
+                        WHERE id = ?
+                          AND activo = 'SI'
+                        LIMIT 1
+                    `, [empleadoId]);
+
+                if (!empleado) {
+                    empleadosNoValidos++;
+                    continue;
+                }
+
+                // -------------------------------------
+                // VERIFICAR ASIGNACIÓN EXISTENTE
+                // -------------------------------------
+
+                const [[existente]] =
+                    await connection.query(`
+                        SELECT
+                            id,
+                            estado
+                        FROM asignaciones_capacitaciones
+                        WHERE capacitacion_id = ?
+                          AND empleado_id = ?
+                        LIMIT 1
+                    `, [
+                        capacitacion_id,
+                        empleadoId
+                    ]);
+
+                // -------------------------------------
+                // YA EXISTE
+                // -------------------------------------
+
+                if (existente) {
+
+                    // Reactivar si estaba anulada
+                    if (existente.estado === "ANULADA") {
+
+                        await connection.query(`
+                            UPDATE asignaciones_capacitaciones
+                            SET
+                                estado = 'PENDIENTE',
+                                asignado_por = ?,
+                                fecha_asignacion = NOW(),
+                                obligatorio = ?,
+                                fecha_limite = ?
+                            WHERE id = ?
+                        `, [
+                            asignadoPor,
+                            esObligatoria,
+                            fechaLimite,
+                            existente.id
+                        ]);
+
+                        asignados++;
+
+                    } else {
+
+                        existentes++;
+
+                    }
+
+                    continue;
+                }
+
+                // -------------------------------------
+                // CREAR NUEVA ASIGNACIÓN
+                // -------------------------------------
+
+                await connection.query(`
+                    INSERT INTO asignaciones_capacitaciones (
+                        capacitacion_id,
+                        empleado_id,
+                        asignado_por,
+                        fecha_asignacion,
+                        estado,
+                        obligatorio,
+                        fecha_limite
+                    )
+                    VALUES (
+                        ?,
+                        ?,
+                        ?,
+                        NOW(),
+                        'PENDIENTE',
+                        ?,
+                        ?
+                    )
+                `, [
+                    capacitacion_id,
+                    empleadoId,
+                    asignadoPor,
+                    esObligatoria,
+                    fechaLimite
+                ]);
+
+                asignados++;
+            }
+
+            // =========================================
+            // CONFIRMAR
+            // =========================================
+
+            await connection.commit();
+
+            res.json({
+                success: true,
+                message: "Asignación masiva completada correctamente.",
+                resultados: {
+                    asignados,
+                    existentes,
+                    empleadosNoValidos
+                }
+            });
+
+        } catch (error) {
+
+            await connection.rollback();
+
+            console.error(
+                "ERROR EN ASIGNACIÓN MASIVA:",
+                error
+            );
+
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+
+        } finally {
+
+            connection.release();
+
+        }
+
+    }
+);
+
+/* =====================================================
    ANULAR ASIGNACIÓN DE CAPACITACIÓN
 ===================================================== */
 

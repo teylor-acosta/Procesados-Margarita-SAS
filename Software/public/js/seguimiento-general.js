@@ -2814,27 +2814,21 @@ async function guardarAsignacion() {
         // -----------------------------------------
 
         const respuesta =
-            await fetch(
-                "/api/seguimiento-general/asignar-capacitacion",
-                {
-                    method: "POST",
+    await fetch(
+        "/api/seguimiento-general/asignar-capacitacion-masiva",
+        {
+            method: "POST",
 
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-                    body: JSON.stringify({
-
-                        capacitacion_ids: [
-                            capacitacionMasiva
-                        ],
-
-                        empleados: empleados
-
-                    })
-
-                }
-            );
+            body: JSON.stringify({
+                capacitacion_id: capacitacionMasiva,
+                empleados: empleados
+            })
+        }
+    );
 
 
         const data =
