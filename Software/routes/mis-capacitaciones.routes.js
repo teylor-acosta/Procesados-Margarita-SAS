@@ -77,8 +77,9 @@ console.log("=================================");
     AND cert.curso_id = c.id
 
     WHERE ac.empleado_id = ?
+  AND ac.estado <> 'ANULADA'
 
-    ORDER BY ac.fecha_asignacion DESC
+ORDER BY ac.fecha_asignacion DESC
 
 `;
 
