@@ -205,28 +205,29 @@ AND evaluacion_id = ?
 ];
         } else {
 
-            sqlInsert = `
-                INSERT INTO resultados_evaluaciones 
+    sqlInsert = `
+        INSERT INTO resultados_evaluaciones 
 
-                (
-usuario_id,
-evaluacion_id,
-nota,
-aprobado,
-fecha_evaluacion
-)
+        (
+            usuario_id,
+            capitulo_id,
+            evaluacion_id,
+            nota,
+            aprobado,
+            fecha_evaluacion
+        )
 
-                VALUES (?, ?, ?, ?, NOW())
-            `;
+        VALUES (?, ?, ?, ?, ?, NOW())
+    `;
 
-            params = [
-    usuario_id,
-    evaluacion_id,
-    nota,
-    aprobado
-];
-
-        }
+    params = [
+        usuario_id,
+        capitulo_id,
+        evaluacion_id,
+        nota,
+        aprobado
+    ];
+}
 
         await db.query(
             sqlInsert,
