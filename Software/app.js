@@ -200,6 +200,10 @@ app.use(
     require('./routes/nomina-configuracion.routes')
 );
 
+app.use(
+    require('./routes/nomina-prestamos.routes')
+);
+
 // ============================================
 // 🔥 SIDEBAR DINÁMICO
 // ============================================

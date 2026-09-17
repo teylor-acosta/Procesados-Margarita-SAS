@@ -1,0 +1,3220 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Préstamos - Procesados Margarita</title>
+
+
+    <!-- Google Fonts -->
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    >
+
+
+    <!-- CSS ERP -->
+    <link
+        rel="stylesheet"
+        href="/css/style1.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/sidebar.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/nomina-prestamos.css"
+    >
+
+</head>
+
+
+<body data-pagina="nomina-prestamos">
+
+
+    <!-- =====================================================
+         SIDEBAR GLOBAL
+         ===================================================== -->
+
+    <div id="sidebarContainer"></div>
+
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+    ></div>
+
+
+    <!-- =====================================================
+         NAVBAR GLOBAL
+         ===================================================== -->
+
+    <nav class="navbar-custom">
+
+        <div class="navbar-left">
+
+            <i
+                class="fas fa-bars menu-toggle"
+                id="btnOpenSidebar"
+            ></i>
+
+            <span class="empresa-nombre">
+                Préstamos
+            </span>
+
+        </div>
+
+
+        <div class="acciones-navbar">
+
+            <a
+                href="/nomina"
+                class="btn-light"
+            >
+
+                <i class="fas fa-arrow-left"></i>
+
+                Volver
+
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         CONTENIDO PRINCIPAL
+         ===================================================== -->
+
+    <main class="prestamos-dashboard">
+
+
+        <!-- =================================================
+             ENCABEZADO
+             ================================================= -->
+
+        <section class="prestamos-hero">
+
+            <div class="prestamos-hero-info">
+
+                <div class="prestamos-hero-icon">
+
+                    <i class="fas fa-hand-holding-dollar"></i>
+
+                </div>
+
+
+                <div class="prestamos-hero-text">
+
+                    <span class="prestamos-overline">
+                        MÓDULO DE NÓMINA
+                    </span>
+
+                    <h1>
+                        Préstamos
+                    </h1>
+
+                    <p>
+                        Administra los préstamos de los empleados,
+                        sus cuotas, pagos y saldos pendientes.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="btn-nuevo-prestamo"
+                id="btnNuevoPrestamo"
+            >
+
+                <i class="fas fa-plus"></i>
+
+                Nuevo préstamo
+
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             TARJETAS RESUMEN
+             ================================================= -->
+
+        <section class="prestamos-kpis">
+
+
+            <!-- =============================================
+                 PRÉSTAMOS ACTIVOS
+                 ============================================= -->
+
+            <article class="prestamo-kpi kpi-verde">
+
+                <div class="kpi-superior">
+
+                    <div class="kpi-icon">
+
+                        <i class="fas fa-file-invoice-dollar"></i>
+
+                    </div>
+
+                    <div class="kpi-texto">
+
+                        <span>
+                            Préstamos activos
+                        </span>
+
+                        <strong id="totalPrestamosActivos">
+                            12
+                        </strong>
+
+                        <small>
+                            Actualmente vigentes
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="kpi-inferior">
+
+                    <div
+    id="variacionPrestamosActivos"
+    class="kpi-variacion positiva"
+>
+
+    <i class="fas fa-arrow-trend-up"></i>
+
+    <div>
+        <strong id="porcentajePrestamosActivos">
+            0%
+        </strong>
+
+        <span>
+            vs. mes anterior
+        </span>
+    </div>
+
+</div>
+
+
+                    <div class="mini-grafica">
+
+                        <svg
+                            viewBox="0 0 150 55"
+                            preserveAspectRatio="none"
+                            aria-hidden="true"
+                        >
+
+                            <defs>
+
+                                <linearGradient
+                                    id="areaVerde"
+                                    x1="0"
+                                    y1="0"
+                                    x2="0"
+                                    y2="1"
+                                >
+
+                                    <stop
+                                        offset="0%"
+                                        stop-color="#22c55e"
+                                        stop-opacity=".24"
+                                    />
+
+                                    <stop
+                                        offset="100%"
+                                        stop-color="#22c55e"
+                                        stop-opacity="0"
+                                    />
+
+                                </linearGradient>
+
+                            </defs>
+
+
+                            <path
+    id="graficaAreaPrestamosActivos"
+    class="grafica-area verde"
+></path>
+
+<path
+    id="graficaLineaPrestamosActivos"
+    class="grafica-linea verde"
+></path>
+
+                        </svg>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- =============================================
+                 CAPITAL
+                 ============================================= -->
+
+            <article class="prestamo-kpi kpi-azul">
+
+                <div class="kpi-superior">
+
+                    <div class="kpi-icon">
+
+                        <i class="fas fa-money-bill-transfer"></i>
+
+                    </div>
+
+                    <div class="kpi-texto">
+
+                        <span>
+                            Capital desembolsado
+                        </span>
+
+                        <strong id="capitalPrestado">
+                            $ 8.500.000
+                        </strong>
+
+                        <small>
+                            Valor total entregado
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="kpi-inferior">
+
+                    <div
+    id="variacionCapitalDesembolsado"
+    class="kpi-variacion positiva azul"
+>
+
+    <i class="fas fa-arrow-trend-up"></i>
+
+    <div>
+        <strong id="porcentajeCapitalDesembolsado">
+            0%
+        </strong>
+
+        <span>
+            vs. mes anterior
+        </span>
+    </div>
+
+</div>
+
+
+                    <div class="mini-grafica">
+
+                        <svg
+                            viewBox="0 0 150 55"
+                            preserveAspectRatio="none"
+                            aria-hidden="true"
+                        >
+
+                            <defs>
+
+                                <linearGradient
+                                    id="areaAzul"
+                                    x1="0"
+                                    y1="0"
+                                    x2="0"
+                                    y2="1"
+                                >
+
+                                    <stop
+                                        offset="0%"
+                                        stop-color="#2563eb"
+                                        stop-opacity=".20"
+                                    />
+
+                                    <stop
+                                        offset="100%"
+                                        stop-color="#2563eb"
+                                        stop-opacity="0"
+                                    />
+
+                                </linearGradient>
+
+                            </defs>
+
+
+                            <path
+    id="graficaAreaCapitalDesembolsado"
+    class="grafica-area azul"
+></path>
+
+<path
+    id="graficaLineaCapitalDesembolsado"
+    class="grafica-linea azul"
+></path>
+
+                        </svg>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- =============================================
+                 SALDO
+                 ============================================= -->
+
+            <article class="prestamo-kpi kpi-naranja">
+
+                <div class="kpi-superior">
+
+                    <div class="kpi-icon">
+
+                        <i class="fas fa-wallet"></i>
+
+                    </div>
+
+                    <div class="kpi-texto">
+
+                        <span>
+                            Saldo por cobrar
+                        </span>
+
+                        <strong id="saldoPendiente">
+                            $ 5.200.000
+                        </strong>
+
+                        <small>
+                            Pendiente de recuperación
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="kpi-inferior">
+
+                    <div
+    id="variacionSaldoPorCobrar"
+    class="kpi-variacion negativa"
+>
+
+    <i class="fas fa-arrow-trend-down"></i>
+
+    <div>
+        <strong id="porcentajeSaldoPorCobrar">
+            0%
+        </strong>
+
+        <span>
+            vs. mes anterior
+        </span>
+    </div>
+
+</div>
+
+
+                    <div class="mini-grafica">
+
+                        <svg
+                            viewBox="0 0 150 55"
+                            preserveAspectRatio="none"
+                            aria-hidden="true"
+                        >
+
+                            <defs>
+
+                                <linearGradient
+                                    id="areaNaranja"
+                                    x1="0"
+                                    y1="0"
+                                    x2="0"
+                                    y2="1"
+                                >
+
+                                    <stop
+                                        offset="0%"
+                                        stop-color="#f97316"
+                                        stop-opacity=".20"
+                                    />
+
+                                    <stop
+                                        offset="100%"
+                                        stop-color="#f97316"
+                                        stop-opacity="0"
+                                    />
+
+                                </linearGradient>
+
+                            </defs>
+
+
+                            <path
+    id="graficaAreaSaldoPorCobrar"
+    class="grafica-area naranja"
+></path>
+
+<path
+    id="graficaLineaSaldoPorCobrar"
+    class="grafica-linea naranja"
+></path>
+
+                        </svg>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- =============================================
+                 CUOTAS
+                 ============================================= -->
+
+            <article class="prestamo-kpi kpi-morado">
+
+                <div class="kpi-superior">
+
+                    <div class="kpi-icon">
+
+                        <i class="fas fa-calendar-check"></i>
+
+                    </div>
+
+                    <div class="kpi-texto">
+
+                        <span>
+                            Cuotas pendientes
+                        </span>
+
+                        <strong id="cuotasPendientes">
+                            34
+                        </strong>
+
+                        <small>
+                            Próximos descuentos
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="kpi-inferior">
+
+                    <div
+    id="variacionCuotasPendientes"
+    class="kpi-variacion negativa morado"
+>
+
+    <i class="fas fa-arrow-trend-down"></i>
+
+    <div>
+        <strong id="porcentajeCuotasPendientes">
+            0%
+        </strong>
+
+        <span>
+            vs. mes anterior
+        </span>
+    </div>
+
+</div>
+
+
+                    <div class="mini-grafica">
+
+                        <svg
+                            viewBox="0 0 150 55"
+                            preserveAspectRatio="none"
+                            aria-hidden="true"
+                        >
+
+                            <defs>
+
+                                <linearGradient
+                                    id="areaMorado"
+                                    x1="0"
+                                    y1="0"
+                                    x2="0"
+                                    y2="1"
+                                >
+
+                                    <stop
+                                        offset="0%"
+                                        stop-color="#8b5cf6"
+                                        stop-opacity=".22"
+                                    />
+
+                                    <stop
+                                        offset="100%"
+                                        stop-color="#8b5cf6"
+                                        stop-opacity="0"
+                                    />
+
+                                </linearGradient>
+
+                            </defs>
+
+
+                            <path
+    id="graficaAreaCuotasPendientes"
+    class="grafica-area morado"
+></path>
+
+<path
+    id="graficaLineaCuotasPendientes"
+    class="grafica-linea morado"
+></path>
+
+                        </svg>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+        </section>
+
+
+        <!-- =================================================
+             BUSCADOR Y FILTROS
+             ================================================= -->
+
+        <section class="prestamos-toolbar">
+
+
+            <div class="prestamos-buscador">
+
+                <i class="fas fa-search"></i>
+
+                <input
+                    type="text"
+                    id="buscarPrestamo"
+                    placeholder="Buscar empleado, documento o número de préstamo..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <div class="prestamos-filtros">
+
+
+                <button
+                    type="button"
+                    class="filtro-prestamo active"
+                    data-estado="TODOS"
+                >
+
+                    <i class="fas fa-list"></i>
+
+                    Todos los estados
+
+                    <i class="fas fa-chevron-down"></i>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="filtro-prestamo"
+                    data-estado="ACTIVO"
+                >
+
+                    Activos
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="filtro-prestamo"
+                    data-estado="PAGADO"
+                >
+
+                    Pagados
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="filtro-prestamo"
+                    data-estado="CANCELADO"
+                >
+
+                    Cancelados
+
+                </button>
+
+
+            </div>
+
+
+            <button
+                type="button"
+                class="btn-limpiar-filtros"
+                id="btnLimpiarFiltros"
+                title="Limpiar filtros"
+            >
+
+                <i class="fas fa-rotate-right"></i>
+
+                Limpiar
+
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             LISTADO
+             ================================================= -->
+
+        <section class="prestamos-listado">
+
+
+            <header class="listado-header">
+
+                <div>
+
+                    <span class="listado-overline">
+                        CONTROL DE PRÉSTAMOS
+                    </span>
+
+                    <h2>
+                        Préstamos registrados
+                    </h2>
+
+                    <p>
+                        Consulta el estado y comportamiento de las
+                        obligaciones de los empleados.
+                    </p>
+
+                </div>
+
+
+                <span
+                    class="cantidad-resultados"
+                    id="cantidadPrestamos"
+                >
+                    2 registros
+                </span>
+
+            </header>
+
+
+            <!-- =================================================
+                 LISTA DE PRÉSTAMOS
+                 ================================================= -->
+
+            <div
+                class="prestamos-list"
+                id="prestamosList"
+            >
+
+
+                <!-- =================================================
+                     CARLOS PÉREZ
+                     ================================================= -->
+
+                <article
+                    class="prestamo-card"
+                    data-estado="ACTIVO"
+                    data-empleado="carlos perez"
+                    data-documento="123456789"
+                    data-prestamo="0001"
+                >
+
+
+                    <!-- PERSONA -->
+
+                    <div class="prestamo-persona">
+
+                        <div class="prestamo-avatar">
+
+                            CP
+
+                        </div>
+
+
+                        <div class="prestamo-persona-info">
+
+                            <div class="prestamo-nombre-linea">
+
+                                <h3>
+                                    Carlos Pérez
+                                </h3>
+
+                            </div>
+
+
+                            <span class="prestamo-documento">
+                                CC 123.456.789
+                            </span>
+
+
+                            <span class="prestamo-numero">
+                                Préstamo #0001
+                            </span>
+
+
+                            <span class="estado-prestamo activo">
+
+                                <i class="fas fa-circle"></i>
+
+                                Activo
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- VALOR -->
+
+                    <div class="prestamo-info">
+
+                        <span>
+                            Valor inicial
+                        </span>
+
+                        <strong>
+                            $ 400.000
+                        </strong>
+
+                    </div>
+
+
+                    <!-- INTERÉS -->
+
+                    <div class="prestamo-info">
+
+                        <span>
+                            Interés
+                        </span>
+
+                        <strong>
+                            Sin interés
+                        </strong>
+
+                    </div>
+
+
+                    <!-- CUOTA -->
+
+                    <div class="prestamo-info">
+
+                        <span>
+                            Valor de cuota
+                        </span>
+
+                        <strong>
+                            $ 100.000
+                        </strong>
+
+                        <small>
+                            Quincenal
+                        </small>
+
+                    </div>
+
+
+                    <!-- PROGRESO -->
+
+                    <div class="prestamo-progreso">
+
+                        <div class="progreso-cabecera">
+
+                            <div>
+
+                                <span>
+                                    Saldo pendiente
+                                </span>
+
+                                <strong>
+                                    $ 200.000
+                                </strong>
+
+                            </div>
+
+                            <span class="progreso-porcentaje">
+                                50%
+                            </span>
+
+                        </div>
+
+
+                        <div class="progreso-barra">
+
+                            <div
+                                class="progreso-fill verde"
+                                style="width: 50%;"
+                            ></div>
+
+                        </div>
+
+
+                        <div class="progreso-pie">
+
+                            <span>
+                                $ 200.000 pagados
+                            </span>
+
+                            <span>
+                                de $ 400.000
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- GRÁFICA CIRCULAR -->
+
+                    <div class="progreso-circular">
+
+                        <div
+                            class="circular-chart verde"
+                            style="--progreso: 50%;"
+                        >
+
+                            <div class="circular-centro">
+
+                                <strong>
+                                    50%
+                                </strong>
+
+                                <span>
+                                    pagado
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PRÓXIMA CUOTA -->
+
+                    <div class="proxima-cuota">
+
+                        <div class="proxima-cuota-icon">
+
+                            <i class="fas fa-calendar-days"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Próxima cuota
+                            </span>
+
+                            <strong>
+                                15 Sep 2026
+                            </strong>
+
+                            <small>
+                                En 4 días
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACCIONES -->
+
+                    <div class="prestamo-acciones">
+
+                        <button
+                            type="button"
+                            class="btn-menu-prestamo"
+                            title="Más opciones"
+                        >
+
+                            <i class="fas fa-ellipsis"></i>
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="btn-ver-prestamo"
+                            data-prestamo-id="1"
+                        >
+
+                            Ver préstamo
+
+                            <i class="fas fa-arrow-right"></i>
+
+                        </button>
+
+                    </div>
+
+
+                </article>
+
+
+                <!-- =================================================
+                     MARÍA GÓMEZ
+                     ================================================= -->
+
+                <article
+                    class="prestamo-card prestamo-morado"
+                    data-estado="ACTIVO"
+                    data-empleado="maria gomez"
+                    data-documento="1098765432"
+                    data-prestamo="0002"
+                >
+
+
+                    <!-- PERSONA -->
+
+                    <div class="prestamo-persona">
+
+                        <div class="prestamo-avatar morado">
+
+                            MG
+
+                        </div>
+
+
+                        <div class="prestamo-persona-info">
+
+                            <div class="prestamo-nombre-linea">
+
+                                <h3>
+                                    María Gómez
+                                </h3>
+
+                            </div>
+
+
+                            <span class="prestamo-documento">
+                                CC 1.098.765.432
+                            </span>
+
+
+                            <span class="prestamo-numero">
+                                Préstamo #0002
+                            </span>
+
+
+                            <span class="estado-prestamo activo">
+
+                                <i class="fas fa-circle"></i>
+
+                                Activo
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- VALOR -->
+
+                    <div class="prestamo-info">
+
+                        <span>
+                            Valor inicial
+                        </span>
+
+                        <strong>
+                            $ 800.000
+                        </strong>
+
+                    </div>
+
+
+                    <!-- INTERÉS -->
+
+                    <div class="prestamo-info">
+
+                        <span>
+                            Interés
+                        </span>
+
+                        <strong>
+                            5%
+                        </strong>
+
+                    </div>
+
+
+                    <!-- CUOTA -->
+
+                    <div class="prestamo-info">
+
+                        <span>
+                            Valor de cuota
+                        </span>
+
+                        <strong>
+                            $ 200.000
+                        </strong>
+
+                        <small>
+                            Mensual
+                        </small>
+
+                    </div>
+
+
+                    <!-- PROGRESO -->
+
+                    <div class="prestamo-progreso">
+
+                        <div class="progreso-cabecera">
+
+                            <div>
+
+                                <span>
+                                    Saldo pendiente
+                                </span>
+
+                                <strong>
+                                    $ 500.000
+                                </strong>
+
+                            </div>
+
+                            <span class="progreso-porcentaje morado-text">
+                                38%
+                            </span>
+
+                        </div>
+
+
+                        <div class="progreso-barra">
+
+                            <div
+                                class="progreso-fill morado"
+                                style="width: 38%;"
+                            ></div>
+
+                        </div>
+
+
+                        <div class="progreso-pie">
+
+                            <span>
+                                $ 300.000 pagados
+                            </span>
+
+                            <span>
+                                de $ 800.000
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- GRÁFICA CIRCULAR -->
+
+                    <div class="progreso-circular">
+
+                        <div
+                            class="circular-chart morado"
+                            style="--progreso: 38%;"
+                        >
+
+                            <div class="circular-centro">
+
+                                <strong>
+                                    38%
+                                </strong>
+
+                                <span>
+                                    pagado
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PRÓXIMA CUOTA -->
+
+                    <div class="proxima-cuota morado-bg">
+
+                        <div class="proxima-cuota-icon">
+
+                            <i class="fas fa-calendar-days"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Próxima cuota
+                            </span>
+
+                            <strong>
+                                30 Sep 2026
+                            </strong>
+
+                            <small>
+                                En 19 días
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACCIONES -->
+
+                    <div class="prestamo-acciones">
+
+                        <button
+                            type="button"
+                            class="btn-menu-prestamo"
+                            title="Más opciones"
+                        >
+
+                            <i class="fas fa-ellipsis"></i>
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="btn-ver-prestamo"
+                            data-prestamo-id="2"
+                        >
+
+                            Ver préstamo
+
+                            <i class="fas fa-arrow-right"></i>
+
+                        </button>
+
+                    </div>
+
+
+                </article>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 SIN RESULTADOS
+                 ================================================= -->
+
+            <div
+                class="prestamos-vacio"
+                id="prestamosVacio"
+                hidden
+            >
+
+                <div class="vacio-icon">
+
+                    <i class="fas fa-hand-holding-dollar"></i>
+
+                </div>
+
+                <h3>
+                    No hay préstamos para mostrar
+                </h3>
+
+                <p>
+                    No encontramos préstamos que coincidan
+                    con los filtros seleccionados.
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =====================================================
+         MODAL NUEVO PRÉSTAMO
+         ===================================================== -->
+
+    <div
+        class="modal fade"
+        id="modalNuevoPrestamo"
+        tabindex="-1"
+        aria-hidden="true"
+    >
+
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+
+            <div class="modal-content modal-prestamo">
+
+
+                <div class="modal-header modal-prestamo-header">
+
+                    <div class="modal-titulo">
+
+                        <div class="modal-icon">
+
+                            <i class="fas fa-hand-holding-dollar"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                NUEVO REGISTRO
+                            </span>
+
+                            <h2>
+                                Nuevo préstamo
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar"
+                    ></button>
+
+                </div>
+
+
+                <div class="modal-body">
+
+
+                    <!-- EMPLEADO -->
+
+                    <div class="form-bloque">
+
+                        <div class="form-bloque-titulo">
+
+                            <i class="fas fa-user"></i>
+
+                            Información del empleado
+
+                        </div>
+
+
+                        <label
+    for="buscadorEmpleadoPrestamo"
+    class="form-label"
+>
+    Empleado
+</label>
+
+<div class="empleado-buscador">
+
+    <div class="empleado-buscador-input">
+
+        <i class="fas fa-search"></i>
+
+        <input
+            type="text"
+            id="buscadorEmpleadoPrestamo"
+            class="form-control"
+            autocomplete="off"
+            placeholder="Buscar por nombre o documento..."
+        >
+
+    </div>
+
+    <div
+        id="resultadosEmpleadosPrestamo"
+        class="resultados-empleados"
+        hidden
+    ></div>
+
+</div>
+
+<input
+    type="hidden"
+    id="empleadoPrestamo"
+    value=""
+>
+
+                    </div>
+
+
+                    <!-- CONDICIONES -->
+
+                    <div class="form-bloque">
+
+                        <div class="form-bloque-titulo">
+
+                            <i class="fas fa-file-invoice-dollar"></i>
+
+                            Condiciones del préstamo
+
+                        </div>
+
+
+                        <div class="row g-3">
+
+
+                            <div class="col-md-6">
+
+                                <label
+                                    for="fechaPrestamo"
+                                    class="form-label"
+                                >
+                                    Fecha del préstamo
+                                </label>
+
+                                <input
+                                    type="date"
+                                    id="fechaPrestamo"
+                                    class="form-control"
+                                >
+
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <label
+                                    for="valorPrestamo"
+                                    class="form-label"
+                                >
+                                    Valor del préstamo
+                                </label>
+
+                                <input
+    type="text"
+    id="valorPrestamo"
+    class="form-control"
+    inputmode="numeric"
+    autocomplete="off"
+    placeholder="$ 0"
+>
+
+                            </div>
+
+
+                            <div class="col-12">
+
+                                <div class="interes-opcion">
+
+                                    <div>
+
+                                        <label
+                                            class="form-label"
+                                            for="tieneInteres"
+                                        >
+                                            ¿El préstamo tiene interés?
+                                        </label>
+
+                                        <p>
+                                            El porcentaje se define según
+                                            el acuerdo realizado.
+                                        </p>
+
+                                    </div>
+
+
+                                    <div class="form-check form-switch">
+
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            id="tieneInteres"
+                                        >
+
+                                        <label
+                                            class="form-check-label"
+                                            for="tieneInteres"
+                                        >
+                                            Aplicar interés
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                class="col-md-6"
+                                id="contenedorPorcentajeInteres"
+                                hidden
+                            >
+
+                                <label
+                                    for="porcentajeInteres"
+                                    class="form-label"
+                                >
+                                    Porcentaje de interés pactado
+                                </label>
+
+                                <div class="input-con-sufijo">
+
+                                    <input
+                                        type="number"
+                                        id="porcentajeInteres"
+                                        class="form-control"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="0.00"
+                                    >
+
+                                    <span>
+                                        %
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <label
+                                    for="medioDesembolso"
+                                    class="form-label"
+                                >
+                                    Medio de desembolso
+                                </label>
+
+                                <select
+                                    id="medioDesembolso"
+                                    class="form-control"
+                                >
+
+                                    <option value="">
+                                        Seleccione...
+                                    </option>
+
+                                    <option value="TRANSFERENCIA">
+                                        Transferencia
+                                    </option>
+
+                                    <option value="EFECTIVO">
+                                        Efectivo
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PLAN -->
+
+                    <div class="form-bloque">
+
+                        <div class="form-bloque-titulo">
+
+                            <i class="fas fa-calendar-days"></i>
+
+                            Plan de pago
+
+                        </div>
+
+
+                        <div class="row g-3">
+
+    <!-- PERIODICIDAD -->
+    <div class="col-md-3">
+
+        <label
+            for="periodicidadPrestamo"
+            class="form-label"
+        >
+            Periodicidad
+        </label>
+
+        <select
+            id="periodicidadPrestamo"
+            class="form-control"
+        >
+
+            <option value="">
+                Seleccione...
+            </option>
+
+            <option value="QUINCENAL">
+                Quincenal
+            </option>
+
+            <option value="MENSUAL">
+                Mensual
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- CANTIDAD DE CUOTAS -->
+    <div class="col-md-3">
+
+        <label
+            for="cantidadCuotas"
+            class="form-label"
+        >
+            Cantidad de cuotas
+        </label>
+
+        <input
+            type="number"
+            id="cantidadCuotas"
+            class="form-control"
+            min="1"
+            step="1"
+            placeholder="Ej. 5"
+        >
+
+    </div>
+
+
+    <!-- VALOR DE CUOTA -->
+    <div class="col-md-3">
+
+        <label
+            for="valorCuota"
+            class="form-label"
+        >
+            Valor de cuota
+        </label>
+
+        <input
+            type="text"
+            id="valorCuota"
+            class="form-control"
+            inputmode="numeric"
+            autocomplete="off"
+            placeholder="$ 0"
+        >
+
+    </div>
+
+
+    <!-- PRIMERA CUOTA -->
+    <div class="col-md-3">
+
+        <label
+            for="fechaPrimeraCuota"
+            class="form-label"
+        >
+            Primera cuota
+        </label>
+
+        <input
+            type="date"
+            id="fechaPrimeraCuota"
+            class="form-control"
+        >
+
+    </div>
+
+</div>
+
+                    </div>
+
+
+                    <!-- OBSERVACIÓN -->
+
+                    <div class="form-bloque">
+
+                        <div class="form-bloque-titulo">
+
+                            <i class="fas fa-note-sticky"></i>
+
+                            Observación
+
+                        </div>
+
+
+                        <textarea
+                            id="observacionPrestamo"
+                            class="form-control"
+                            rows="3"
+                            placeholder="Ingrese alguna observación o condición especial..."
+                        ></textarea>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="modal-footer modal-prestamo-footer">
+
+                    <button
+                        type="button"
+                        class="btn-cancelar-prestamo"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn-guardar-prestamo"
+                        id="btnGuardarPrestamo"
+                    >
+
+                        <i class="fas fa-check"></i>
+
+                        Crear préstamo
+
+                    </button>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+     MODAL DETALLE DEL PRÉSTAMO
+     ===================================================== -->
+
+<div
+    class="modal fade"
+    id="modalDetallePrestamo"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+
+        <div class="modal-content modal-prestamo">
+
+            <!-- HEADER -->
+
+            <div class="modal-header modal-prestamo-header">
+
+                <div class="modal-titulo">
+
+                    <div class="modal-icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+
+                    <div>
+
+                        <span>
+                            DETALLE DEL PRÉSTAMO
+                        </span>
+
+                        <h2 id="detallePrestamoTitulo">
+                            Préstamo
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Cerrar"
+                ></button>
+
+            </div>
+
+
+            <!-- CUERPO -->
+
+            <div class="modal-body">
+
+                <!-- CARGANDO -->
+
+                <div
+                    id="detallePrestamoCargando"
+                    class="text-center py-5"
+                >
+
+                    <div
+                        class="spinner-border text-success mb-3"
+                        role="status"
+                    ></div>
+
+                    <p class="mb-0">
+                        Cargando información del préstamo...
+                    </p>
+
+                </div>
+
+
+                <!-- CONTENIDO -->
+
+                <div
+                    id="detallePrestamoContenido"
+                    hidden
+                >
+
+                    <!-- =========================================
+                         INFORMACIÓN GENERAL
+                         ========================================= -->
+
+                    <div class="form-bloque">
+
+                        <div class="form-bloque-titulo">
+
+                            <i class="fas fa-user"></i>
+
+                            Información del empleado
+
+                        </div>
+
+
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+
+                                <label class="form-label">
+                                    Empleado
+                                </label>
+
+                                <div
+                                    class="detalle-dato"
+                                    id="detalleEmpleado"
+                                >
+                                    -
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-4">
+
+                                <label class="form-label">
+                                    Documento
+                                </label>
+
+                                <div
+                                    class="detalle-dato"
+                                    id="detalleDocumento"
+                                >
+                                    -
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-4">
+
+                                <label class="form-label">
+                                    Estado
+                                </label>
+
+                                <div
+                                    class="detalle-dato"
+                                    id="detalleEstado"
+                                >
+                                    -
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         CONDICIONES
+                         ========================================= -->
+
+                    <div class="form-bloque">
+
+                        <div class="form-bloque-titulo">
+
+                            <i class="fas fa-money-bill-wave"></i>
+
+                            Condiciones financieras
+
+                        </div>
+
+
+                        <div class="row g-3">
+
+                            <div class="col-md-3">
+
+                                <label class="form-label">
+                                    Valor del préstamo
+                                </label>
+
+                                <div
+                                    class="detalle-dato"
+                                    id="detalleValorPrestamo"
+                                >
+                                    -
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-3">
+
+                                <label class="form-label">
+                                    Interés
+                                </label>
+
+                                <div
+                                    class="detalle-dato"
+                                    id="detalleInteres"
+                                >
+                                    -
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-3">
+
+                                <label class="form-label">
+                                    Saldo pendiente
+                                </label>
+
+                                <div
+                                    class="detalle-dato"
+                                    id="detalleSaldo"
+                                >
+                                    -
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-3">
+
+                                <label class="form-label">
+                                    Desembolso
+                                </label>
+
+                                <div
+                                    class="detalle-dato"
+                                    id="detalleDesembolso"
+                                >
+                                    -
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         PLAN DE PAGOS
+                         ========================================= -->
+
+                    <div class="form-bloque">
+
+                        <div class="form-bloque-titulo">
+
+                            <i class="fas fa-calendar-days"></i>
+
+                            Plan de pagos
+
+                        </div>
+
+
+                        <div class="table-responsive">
+
+                            <table
+                                class="table align-middle mb-0"
+                            >
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Cuota
+                                        </th>
+
+                                        <th>
+                                            Fecha programada
+                                        </th>
+
+                                        <th>
+                                            Capital
+                                        </th>
+
+                                        <th>
+                                            Interés
+                                        </th>
+
+                                        <th>
+                                            Valor cuota
+                                        </th>
+
+                                        <th>
+                                            Estado
+                                        </th>
+
+                                        <th>
+                                            Fecha pago
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody
+                                    id="detalleCuotas"
+                                >
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         OBSERVACIÓN
+                         ========================================= -->
+
+                    <div
+                        class="form-bloque"
+                        id="detalleObservacionBloque"
+                        hidden
+                    >
+
+                        <div class="form-bloque-titulo">
+
+                            <i class="fas fa-note-sticky"></i>
+
+                            Observación
+
+                        </div>
+
+
+                        <p
+                            id="detalleObservacion"
+                            class="mb-0"
+                        ></p>
+
+                    </div>
+
+
+                    <!-- =========================================
+                         MOVIMIENTOS
+                         ========================================= -->
+
+                    <div class="form-bloque">
+
+                        <div class="form-bloque-titulo">
+
+                            <i class="fas fa-clock-rotate-left"></i>
+
+                            Movimientos
+
+                        </div>
+
+
+                        <div
+                            id="detalleMovimientos"
+                        >
+
+                            <div
+                                class="text-muted"
+                            >
+                                No hay movimientos registrados.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="modal-footer modal-prestamo-footer">
+
+                <button
+                    type="button"
+                    class="btn-cancelar-prestamo"
+                    data-bs-dismiss="modal"
+                >
+
+                    Cerrar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ============================================================
+     MODAL REGISTRAR PAGO DE CUOTA
+     ============================================================ -->
+
+<div
+    class="modal fade"
+    id="modalRegistrarPago"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content modal-prestamo">
+
+            <!-- HEADER -->
+
+            <div class="modal-header modal-prestamo-header">
+
+                <div class="modal-titulo">
+
+                    <div class="modal-icon">
+                        <i class="fas fa-money-bill-transfer"></i>
+                    </div>
+
+                    <div>
+
+                        <span>REGISTRAR PAGO</span>
+
+                        <h2 id="pagoPrestamoTitulo">
+                            Pago de cuota
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Cerrar"
+                ></button>
+
+            </div>
+
+
+            <!-- BODY -->
+
+            <div class="modal-body">
+
+                <!-- INFORMACIÓN DEL PRÉSTAMO -->
+
+                <div class="form-bloque">
+
+                    <div class="form-bloque-titulo">
+
+                        <i class="fas fa-file-invoice-dollar"></i>
+
+                        Información del préstamo
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <!-- EMPLEADO -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Empleado
+                            </label>
+
+                            <div
+                                class="detalle-dato"
+                                id="pagoEmpleado"
+                            >
+                                -
+                            </div>
+
+                        </div>
+
+
+                        <!-- SALDO -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Saldo pendiente
+                            </label>
+
+                            <div
+                                class="detalle-dato"
+                                id="pagoSaldoPendiente"
+                            >
+                                -
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DATOS DEL PAGO -->
+
+                <div class="form-bloque">
+
+                    <div class="form-bloque-titulo">
+
+                        <i class="fas fa-receipt"></i>
+
+                        Datos del pago
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <!-- CUOTA -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="pagoCuota"
+                                class="form-label"
+                            >
+                                Cuota a pagar
+                            </label>
+
+                            <select
+                                id="pagoCuota"
+                                class="form-control"
+                            >
+
+                                <option value="">
+                                    Seleccione una cuota...
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- VALOR -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Valor de la cuota
+                            </label>
+
+                            <div
+                                class="detalle-dato"
+                                id="pagoValorCuota"
+                            >
+                                -
+                            </div>
+
+                        </div>
+
+
+                        <!-- FECHA -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="pagoFecha"
+                                class="form-label"
+                            >
+                                Fecha del pago
+                            </label>
+
+                            <input
+                                type="date"
+                                id="pagoFecha"
+                                class="form-control"
+                            >
+
+                        </div>
+
+
+                        <!-- MEDIO -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="pagoMedio"
+                                class="form-label"
+                            >
+                                Medio de pago
+                            </label>
+
+                            <select
+                                id="pagoMedio"
+                                class="form-control"
+                            >
+
+                                <option value="">
+                                    Seleccione...
+                                </option>
+
+                                <option value="TRANSFERENCIA">
+                                    Transferencia
+                                </option>
+
+                                <option value="EFECTIVO">
+                                    Efectivo
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- OBSERVACIÓN -->
+
+                <div class="form-bloque">
+
+                    <div class="form-bloque-titulo">
+
+                        <i class="fas fa-note-sticky"></i>
+
+                        Observación
+
+                    </div>
+
+
+                    <textarea
+                        id="pagoObservacion"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Ingrese una observación sobre el pago..."
+                    ></textarea>
+
+                </div>
+
+
+                <!-- ADVERTENCIA -->
+
+                <div
+                    class="alert alert-success d-flex align-items-start gap-2 mb-0"
+                >
+
+                    <i class="fas fa-circle-info mt-1"></i>
+
+                    <div>
+                        Al registrar el pago, la cuota será marcada como
+                        <strong>pagada</strong> y el saldo pendiente del
+                        préstamo será actualizado automáticamente.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="modal-footer modal-prestamo-footer">
+
+                <button
+                    type="button"
+                    class="btn-cancelar-prestamo"
+                    data-bs-dismiss="modal"
+                >
+                    Cancelar
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn-guardar-prestamo"
+                    id="btnRegistrarPago"
+                >
+
+                    <i class="fas fa-check"></i>
+
+                    Registrar pago
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ============================================================
+     MODAL ABONO EXTRAORDINARIO
+     ============================================================ -->
+
+<div
+    class="modal fade"
+    id="modalAbonoExtraordinario"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content modal-prestamo">
+
+            <!-- HEADER -->
+
+            <div class="modal-header modal-prestamo-header">
+
+                <div class="modal-titulo">
+
+                    <div class="modal-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+
+                    <div>
+
+                        <span>ABONO EXTRAORDINARIO</span>
+
+                        <h2 id="abonoPrestamoTitulo">
+                            Préstamo
+                        </h2>
+
+                    </div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Cerrar"
+                ></button>
+
+            </div>
+
+
+            <!-- BODY -->
+
+            <div class="modal-body">
+
+                <!-- INFORMACIÓN DEL PRÉSTAMO -->
+
+                <div class="form-bloque">
+
+                    <div class="form-bloque-titulo">
+
+                        <i class="fas fa-file-invoice-dollar"></i>
+
+                        Información del préstamo
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Empleado
+                            </label>
+
+                            <div
+                                class="detalle-dato"
+                                id="abonoEmpleado"
+                            >
+                                -
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Saldo pendiente
+                            </label>
+
+                            <div
+                                class="detalle-dato"
+                                id="abonoSaldoPendiente"
+                            >
+                                -
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DATOS DEL ABONO -->
+
+                <div class="form-bloque">
+
+                    <div class="form-bloque-titulo">
+
+                        <i class="fas fa-money-bill-wave"></i>
+
+                        Datos del abono
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="abonoValor"
+                                class="form-label"
+                            >
+                                Valor del abono
+                            </label>
+
+                            <input
+                                type="text"
+                                id="abonoValor"
+                                class="form-control"
+                                inputmode="numeric"
+                                autocomplete="off"
+                                placeholder="$ 0"
+                            >
+
+                            <small
+                                class="text-muted"
+                                id="abonoSaldoDespues"
+                            >
+                                Nuevo saldo: -
+                            </small>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="abonoFecha"
+                                class="form-label"
+                            >
+                                Fecha del abono
+                            </label>
+
+                            <input
+                                type="date"
+                                id="abonoFecha"
+                                class="form-control"
+                            >
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="abonoMedio"
+                                class="form-label"
+                            >
+                                Medio de pago
+                            </label>
+
+                            <select
+                                id="abonoMedio"
+                                class="form-control"
+                            >
+
+                                <option value="">
+                                    Seleccione...
+                                </option>
+
+                                <option value="TRANSFERENCIA">
+                                    Transferencia
+                                </option>
+
+                                <option value="EFECTIVO">
+                                    Efectivo
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- OBSERVACIÓN -->
+
+                <div class="form-bloque">
+
+                    <div class="form-bloque-titulo">
+
+                        <i class="fas fa-note-sticky"></i>
+
+                        Observación
+
+                    </div>
+
+
+                    <textarea
+                        id="abonoObservacion"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Ingrese una observación sobre el abono..."
+                    ></textarea>
+
+                </div>
+
+
+                <!-- INFORMACIÓN -->
+
+                <div
+                    class="alert alert-success d-flex align-items-start gap-2 mb-0"
+                >
+
+                    <i class="fas fa-circle-info mt-1"></i>
+
+                    <div>
+                        El abono extraordinario se descontará directamente
+                        del saldo pendiente y quedará registrado en el
+                        historial del préstamo. Las cuotas programadas
+                        no serán modificadas.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="modal-footer modal-prestamo-footer">
+
+                <button
+                    type="button"
+                    class="btn-cancelar-prestamo"
+                    data-bs-dismiss="modal"
+                >
+                    Cancelar
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn-guardar-prestamo"
+                    id="btnRegistrarAbono"
+                >
+
+                    <i class="fas fa-check"></i>
+
+                    Registrar abono
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ============================================================
+     MODAL APLAZAR CUOTA
+     ============================================================ -->
+
+<div
+    class="modal fade"
+    id="modalAplazarCuota"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content modal-prestamo">
+
+            <!-- HEADER -->
+
+            <div class="modal-header modal-prestamo-header">
+
+                <div class="modal-titulo">
+
+                    <div class="modal-icon">
+                        <i class="fas fa-calendar-xmark"></i>
+                    </div>
+
+                    <div>
+
+                        <span>GESTIÓN DE CUOTA</span>
+
+                        <h2 id="aplazarPrestamoTitulo">
+                            Aplazar cuota
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Cerrar"
+                ></button>
+
+            </div>
+
+
+            <!-- BODY -->
+
+            <div class="modal-body">
+
+                <!-- INFORMACIÓN DEL PRÉSTAMO -->
+
+                <div class="form-bloque">
+
+                    <div class="form-bloque-titulo">
+
+                        <i class="fas fa-file-invoice-dollar"></i>
+
+                        Información del préstamo
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <!-- EMPLEADO -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Empleado
+                            </label>
+
+                            <div
+                                class="detalle-dato"
+                                id="aplazarEmpleado"
+                            >
+                                -
+                            </div>
+
+                        </div>
+
+
+                        <!-- SALDO PRÉSTAMO -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Saldo pendiente del préstamo
+                            </label>
+
+                            <div
+                                class="detalle-dato"
+                                id="aplazarSaldoPrestamo"
+                            >
+                                -
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CUOTA -->
+
+                <div class="form-bloque">
+
+                    <div class="form-bloque-titulo">
+
+                        <i class="fas fa-calendar-days"></i>
+
+                        Cuota a aplazar
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <!-- CUOTA -->
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Número de cuota
+                            </label>
+
+                            <div
+                                class="detalle-dato"
+                                id="aplazarNumeroCuota"
+                            >
+                                -
+                            </div>
+
+                        </div>
+
+
+                        <!-- FECHA -->
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Fecha programada
+                            </label>
+
+                            <div
+                                class="detalle-dato"
+                                id="aplazarFechaCuota"
+                            >
+                                -
+                            </div>
+
+                        </div>
+
+
+                        <!-- VALOR ORIGINAL -->
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Valor original
+                            </label>
+
+                            <div
+                                class="detalle-dato"
+                                id="aplazarValorOriginal"
+                            >
+                                -
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- VALOR A DESCONTAR -->
+
+                <div class="form-bloque">
+
+                    <div class="form-bloque-titulo">
+
+                        <i class="fas fa-money-bill-wave"></i>
+
+                        Valor a descontar ahora
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="aplazarValorDescontar"
+                                class="form-label"
+                            >
+                                ¿Cuánto desea descontar en esta cuota?
+                            </label>
+
+                            <input
+                                type="text"
+                                id="aplazarValorDescontar"
+                                class="form-control"
+                                inputmode="numeric"
+                                autocomplete="off"
+                                placeholder="$ 0"
+                            >
+
+                            <small
+                                class="text-muted"
+                                id="aplazarSaldoCuota"
+                            >
+                                Saldo que quedará aplazado: -
+                            </small>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="aplazarMedio"
+                                class="form-label"
+                            >
+                                Medio de pago
+                            </label>
+
+                            <select
+                                id="aplazarMedio"
+                                class="form-control"
+                            >
+
+                                <option value="">
+                                    Seleccione...
+                                </option>
+
+                                <option value="TRANSFERENCIA">
+                                    Transferencia
+                                </option>
+
+                                <option value="EFECTIVO">
+                                    Efectivo
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FORMA DE APLAZAMIENTO -->
+
+                <div class="form-bloque">
+
+                    <div class="form-bloque-titulo">
+
+                        <i class="fas fa-arrows-rotate"></i>
+
+                        ¿Qué desea hacer con el saldo aplazado?
+
+                    </div>
+
+
+                    <!-- ACUMULAR -->
+
+                    <div class="form-check mb-3">
+
+                        <input
+                            class="form-check-input"
+                            type="radio"
+                            name="opcionAplazamiento"
+                            id="aplazarAcumular"
+                            value="ACUMULAR"
+                            checked
+                        >
+
+                        <label
+                            class="form-check-label"
+                            for="aplazarAcumular"
+                        >
+
+                            <strong>
+                                Acumular en la siguiente cuota
+                            </strong>
+
+                            <div class="text-muted small">
+                                El saldo pendiente se sumará al valor de
+                                la próxima cuota.
+                            </div>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- MANTENER VALOR NORMAL -->
+
+                    <div class="form-check mb-3">
+
+                        <input
+                            class="form-check-input"
+                            type="radio"
+                            name="opcionAplazamiento"
+                            id="aplazarMantenerNormal"
+                            value="MANTENER_VALOR_NORMAL"
+                        >
+
+                        <label
+                            class="form-check-label"
+                            for="aplazarMantenerNormal"
+                        >
+
+                            <strong>
+                                Mantener el valor normal de las cuotas
+                            </strong>
+
+                            <div class="text-muted small">
+                                El saldo aplazado se trasladará a una nueva
+                                cuota al final del plan, manteniendo el valor
+                                normal de las cuotas.
+                            </div>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- REPROGRAMAR -->
+
+                    <div class="form-check">
+
+                        <input
+                            class="form-check-input"
+                            type="radio"
+                            name="opcionAplazamiento"
+                            id="aplazarReprogramar"
+                            value="REPROGRAMAR"
+                        >
+
+                        <label
+                            class="form-check-label"
+                            for="aplazarReprogramar"
+                        >
+
+                            <strong>
+                                Reprogramar manualmente
+                            </strong>
+
+                            <div class="text-muted small">
+                                Permite seleccionar una fecha futura para
+                                cobrar el saldo aplazado.
+                            </div>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FECHA REPROGRAMACIÓN -->
+
+                <div
+    class="form-bloque"
+    id="contenedorFechaReprogramacion"
+    style="display: none;"
+>
+
+                    <div class="form-bloque-titulo">
+
+                        <i class="fas fa-calendar-plus"></i>
+
+                        Nueva fecha de cobro
+
+                    </div>
+
+
+                    <label
+                        for="aplazarFechaReprogramada"
+                        class="form-label"
+                    >
+                        Fecha programada
+                    </label>
+
+                    <input
+                        type="date"
+                        id="aplazarFechaReprogramada"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <!-- FECHA DEL MOVIMIENTO -->
+
+                <div class="form-bloque">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="aplazarFecha"
+                                class="form-label"
+                            >
+                                Fecha del aplazamiento
+                            </label>
+
+                            <input
+                                type="date"
+                                id="aplazarFecha"
+                                class="form-control"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- OBSERVACIÓN -->
+
+                <div class="form-bloque">
+
+                    <div class="form-bloque-titulo">
+
+                        <i class="fas fa-note-sticky"></i>
+
+                        Motivo / observación
+
+                    </div>
+
+
+                    <textarea
+                        id="aplazarObservacion"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Indique el motivo del aplazamiento..."
+                    ></textarea>
+
+                </div>
+
+
+                <!-- INFORMACIÓN -->
+
+                <div
+                    class="alert alert-warning d-flex align-items-start gap-2 mb-0"
+                >
+
+                    <i class="fas fa-circle-info mt-1"></i>
+
+                    <div>
+
+                        La cuota actual quedará registrada como
+                        <strong>aplazada</strong>.
+
+                        El valor que no se descuente ahora se trasladará
+                        según la opción seleccionada y quedará registrado
+                        en el historial del préstamo.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="modal-footer modal-prestamo-footer">
+
+                <button
+                    type="button"
+                    class="btn-cancelar-prestamo"
+                    data-bs-dismiss="modal"
+                >
+                    Cancelar
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn-guardar-prestamo"
+                    id="btnConfirmarAplazamiento"
+                >
+
+                    <i class="fas fa-calendar-check"></i>
+
+                    Confirmar aplazamiento
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+    <!-- =====================================================
+         SCRIPTS
+         ===================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    ></script>
+
+    <script src="/js/sidebar.js"></script>
+
+    <script src="/js/nomina-prestamos.js"></script>
+
+
+</body>
+
+</html>

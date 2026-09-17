@@ -529,42 +529,53 @@ document
     }
 );
 
-    // ===========================
-    // NUEVO CAPÍTULO
-    // ===========================
-
     document
-    .getElementById("btnNuevoCapitulo")
-    .addEventListener("click",(e)=>{
+.getElementById("btnNuevoCapitulo")
+.addEventListener("click",(e)=>{
 
-        e.preventDefault();
+    e.preventDefault();
 
-        // Ya no estamos editando
-        capituloEditando = null;
+    // ==========================================
+    // NUEVO CAPÍTULO
+    // ==========================================
 
-        // Limpiar formulario
-        document.getElementById(
-            "formNuevoCapitulo"
-        ).reset();
+    capituloEditando = null;
 
-        // Valores por defecto
-        document.getElementById(
-            "porcentajeCapitulo"
-        ).value = 70;
+    // Limpiar campos del capítulo
+    document.getElementById(
+        "numeroCapitulo"
+    ).value = "";
 
-        // Cambiar el título nuevamente
-        document.querySelector(
-            "#modalNuevoCapitulo .modal-title"
-        ).innerHTML = `
-            <i class="fas fa-book"></i>
-            Nuevo Capítulo
-        `;
+    document.getElementById(
+        "ordenCapitulo"
+    ).value = "";
 
-        modalCapitulos.hide();
+    document.getElementById(
+        "tituloCapitulo"
+    ).value = "";
 
-        modalNuevoCapitulo.show();
+    document.getElementById(
+        "descripcionCapitulo"
+    ).value = "";
 
-    });
+    // Valor predeterminado
+    document.getElementById(
+        "porcentajeCapitulo"
+    ).value = 70;
+
+    // Cambiar título del modal
+    document.querySelector(
+        "#modalNuevoCapitulo .modal-title"
+    ).innerHTML = `
+        <i class="fas fa-book"></i>
+        Nuevo Capítulo
+    `;
+
+    modalCapitulos.hide();
+
+    modalNuevoCapitulo.show();
+
+});
 
     // ===========================
     // GUARDAR CAPÍTULO

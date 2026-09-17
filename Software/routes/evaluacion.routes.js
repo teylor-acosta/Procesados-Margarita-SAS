@@ -4,58 +4,64 @@ const router = express.Router();
 const { proteger } = require('../middlewares/auth');
 
 // ============================================
-// 🔥 OBTENER PREGUNTAS
+// 🔥 OBTENER PREGUNTAS DE LA EVALUACIÓN
 // ============================================
 
-router.get('/api/preguntas-evaluacion/:capituloId', proteger, async (req, res) => {
+router.get(
+    '/api/preguntas-evaluacion/:capituloId',
+    proteger,
+    async (req, res) => {
 
-    try {
+        try {
 
-        const db = req.app.get('db');
+            const db = req.app.get('db');
 
-        const sql = `
-            SELECT
-    id,
-    pregunta,
-    opcion_a,
-    opcion_b,
-    opcion_c,
-    opcion_d,
-    respuesta_correcta,
-    puntos
-FROM preguntas_induccion
-WHERE evaluacion_id = ?
-        `;
+            const { capituloId } = req.params;
 
-        const [results] = await db.query(
-            sql,
-            [req.params.capituloId]
-        );
+            const sql = `
+                SELECT
+                    p.id,
+                    p.pregunta,
+                    p.opcion_a,
+                    p.opcion_b,
+                    p.opcion_c,
+                    p.opcion_d,
+                    p.respuesta_correcta,
+                    p.puntos
+                FROM preguntas_induccion p
+                INNER JOIN evaluaciones_induccion e
+                    ON e.id = p.evaluacion_id
+                WHERE e.capitulo_id = ?
+                AND e.estado = 'ACTIVA'
+                ORDER BY p.id ASC
+            `;
 
-        res.json({
+            const [results] = await db.query(
+                sql,
+                [capituloId]
+            );
 
-            success: true,
-            preguntas: results
+            res.json({
+                success: true,
+                preguntas: results
+            });
 
-        });
+        } catch (err) {
 
-    } catch(err) {
+            console.error(
+                'Error al cargar preguntas:',
+                err
+            );
 
-        console.error(
-            "Error al cargar preguntas:",
-            err
-        );
+            res.status(500).json({
+                success: false,
+                message: err.message
+            });
 
-        res.status(500).json({
-
-            success: false,
-            message: err.message
-
-        });
+        }
 
     }
-
-});
+);
 
 
 // ============================================
@@ -68,12 +74,12 @@ router.post('/api/guardar-evaluacion', proteger, async (req, res) => {
 
         const db = req.app.get('db');
 
-        const { evaluacion_id, respuestas } = req.body;
+        const { capitulo_id, respuestas } = req.body;
 
         const usuario_id =
             req.session.usuarioID;
 
-        if (!evaluacion_id || !respuestas) {
+        if (!capitulo_id || !respuestas) {
 
     return res.json({
         success: false,
@@ -81,6 +87,34 @@ router.post('/api/guardar-evaluacion', proteger, async (req, res) => {
     });
 
 }
+const sqlEvaluacion = `
+    SELECT
+        id,
+        porcentaje_aprobacion
+    FROM evaluaciones_induccion
+    WHERE capitulo_id = ?
+    AND estado = 'ACTIVA'
+    LIMIT 1
+`;
+
+const [evaluacionResult] = await db.query(
+    sqlEvaluacion,
+    [capitulo_id]
+);
+
+if (evaluacionResult.length === 0) {
+
+    return res.json({
+        success: false,
+        message: "No existe una evaluación activa para este capítulo"
+    });
+
+}
+
+const evaluacion_id = evaluacionResult[0].id;
+
+const porcentajeAprobacion =
+    evaluacionResult[0].porcentaje_aprobacion || 70;
 
         const sqlGetPreguntas = `
             SELECT
@@ -129,7 +163,7 @@ WHERE evaluacion_id = ?
         );
 
         const aprobado =
-            nota >= 70 ? 1 : 0;
+            nota >= porcentajeAprobacion ? 1 : 0;
 
         const sqlCheck = `
             SELECT id
