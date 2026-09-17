@@ -842,7 +842,10 @@ router.get('/nomina/prestamos/lista', async (req, res) => {
                     SELECT SUM(m.valor)
                     FROM nomina_prestamos_movimientos m
                     WHERE m.cuota_id = c.id
-                      AND m.tipo_movimiento = 'ABONO_EXTRAORDINARIO'
+                      AND m.tipo_movimiento IN (
+    'ABONO_EXTRAORDINARIO',
+    'PAGO_CUOTA'
+)
                 ),
                 0
             ),
@@ -1024,7 +1027,10 @@ router.get('/nomina/prestamos/:id', async (req, res) => {
                         SELECT SUM(m.valor)
                         FROM nomina_prestamos_movimientos m
                         WHERE m.cuota_id = c.id
-                          AND m.tipo_movimiento = 'ABONO_EXTRAORDINARIO'
+                          AND m.tipo_movimiento IN (
+                            'ABONO_EXTRAORDINARIO',
+                            'PAGO_CUOTA'
+                          )
                     ),
                     0
                 ),
@@ -1328,7 +1334,10 @@ const [abonosCuota] =
             ) AS total_abonado
         FROM nomina_prestamos_movimientos
         WHERE cuota_id = ?
-          AND tipo_movimiento = 'ABONO_EXTRAORDINARIO'
+  AND tipo_movimiento IN (
+      'ABONO_EXTRAORDINARIO',
+      'PAGO_CUOTA'
+  )
     `, [
         cuotaId
     ]);
@@ -2194,13 +2203,14 @@ router.post(
                 Number(req.params.id);
 
             const {
-                cuota_id,
-                valor_descontar,
-                opcion_aplazamiento,
-                medio_pago,
-                fecha_aplazamiento,
-                observacion
-            } = req.body;
+    cuota_id,
+    valor_descontar,
+    opcion_aplazamiento,
+    medio_pago,
+    fecha_aplazamiento,
+    fecha_reprogramada,
+    observacion
+} = req.body;
 
 
             /* =================================================
@@ -2287,6 +2297,16 @@ router.post(
                         'Debe indicar la fecha del aplazamiento.'
                 });
             }
+
+            if (
+    opcion_aplazamiento === 'REPROGRAMAR' &&
+    !fecha_reprogramada
+) {
+    return res.status(400).json({
+        ok: false,
+        error: 'Debe seleccionar la fecha en la que se cobrará el saldo reprogramado.'
+    });
+}
 
 
             /* =================================================
@@ -2861,18 +2881,103 @@ router.post(
                ================================================= */
 
             if (
-                opcion_aplazamiento ===
-                'REPROGRAMAR'
-            ) {
+    opcion_aplazamiento ===
+    'REPROGRAMAR'
+) {
 
-                /*
-                 * No se cambia ninguna fecha aquí.
-                 *
-                 * La reprogramación manual se manejará
-                 * posteriormente desde la interfaz de
-                 * administración del plan de cuotas.
-                 */
-            }
+    /* =================================================
+       CREAR CUOTA EN LA FECHA SELECCIONADA
+       ================================================= */
+
+    const [ultimaCuotaResult] =
+        await connection.query(
+            `
+            SELECT
+                numero_cuota
+            FROM nomina_prestamos_cuotas
+            WHERE prestamo_id = ?
+            ORDER BY numero_cuota DESC
+            LIMIT 1
+            FOR UPDATE
+            `,
+            [prestamoId]
+        );
+
+    const nuevaNumeroCuota =
+        ultimaCuotaResult.length > 0
+            ? Number(
+                ultimaCuotaResult[0].numero_cuota
+            ) + 1
+            : 1;
+
+
+    /* =================================================
+       CREAR CUOTA REPROGRAMADA
+       ================================================= */
+
+    await connection.query(
+        `
+        INSERT INTO nomina_prestamos_cuotas (
+            prestamo_id,
+            numero_cuota,
+            fecha_programada,
+            valor_capital,
+            valor_interes,
+            valor_cuota,
+            estado,
+            fecha_pago,
+            observacion,
+            fecha_registro
+        )
+        VALUES (
+            ?,
+            ?,
+            ?,
+            ?,
+            0,
+            ?,
+            'PENDIENTE',
+            NULL,
+            ?,
+            NOW()
+        )
+        `,
+        [
+            prestamoId,
+            nuevaNumeroCuota,
+            fecha_reprogramada,
+            valorAplazado,
+            valorAplazado,
+            `Saldo reprogramado de cuota #${cuota.numero_cuota} para el ${fecha_reprogramada}`
+        ]
+    );
+
+
+    /* =================================================
+       ACTUALIZAR FECHA FINAL DEL PRÉSTAMO
+       SOLO SI LA NUEVA FECHA ES POSTERIOR
+       ================================================= */
+
+    await connection.query(
+        `
+        UPDATE nomina_prestamos
+        SET
+            fecha_finalizacion =
+                CASE
+                    WHEN fecha_finalizacion IS NULL
+                         OR fecha_finalizacion < ?
+                    THEN ?
+                    ELSE fecha_finalizacion
+                END
+        WHERE id = ?
+        `,
+        [
+            fecha_reprogramada,
+            fecha_reprogramada,
+            prestamoId
+        ]
+    );
+}
 
 
             /* =================================================

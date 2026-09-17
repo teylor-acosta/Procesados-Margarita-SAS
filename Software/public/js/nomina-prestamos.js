@@ -2637,13 +2637,11 @@ const medioAplazamiento =
  */
 function actualizarOpcionAplazamiento() {
 
-    /*
-     * Ocultar por defecto la fecha
-     * de reprogramación.
-     */
+    // Ocultar por defecto
     if (contenedorFechaReprogramacion) {
-    contenedorFechaReprogramacion.hidden = false;
-}
+        contenedorFechaReprogramacion.hidden = true;
+        contenedorFechaReprogramacion.style.display = 'none';
+    }
 
 
     /*
@@ -3015,6 +3013,197 @@ const medioAplazamiento =
     );
 
 
+
+    function confirmarAplazamientoBonito(
+    numeroCuota,
+    valorCuota,
+    valorDescontar,
+    valorAplazado
+) {
+    return new Promise((resolve) => {
+
+        const modalConfirmacion =
+            document.createElement('div');
+
+        modalConfirmacion.innerHTML = `
+            <div
+                class="modal fade"
+                id="modalConfirmacionAplazamiento"
+                tabindex="-1"
+                aria-hidden="true"
+            >
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="fas fa-calendar-check"></i>
+                                Confirmar aplazamiento
+                            </h5>
+
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Cerrar"
+                            ></button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="text-center mb-3">
+                                <div
+                                    style="
+                                        width: 60px;
+                                        height: 60px;
+                                        margin: 0 auto 15px;
+                                        border-radius: 50%;
+                                        background: rgba(0, 128, 0, 0.10);
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                    "
+                                >
+                                    <i
+                                        class="fas fa-calendar-plus"
+                                        style="
+                                            font-size: 27px;
+                                            color: #008f4c;
+                                        "
+                                    ></i>
+                                </div>
+
+                                <h5 class="mb-1">
+                                    ¿Desea aplazar esta cuota?
+                                </h5>
+
+                                <p class="text-muted mb-0">
+                                    Revise la información antes de continuar.
+                                </p>
+                            </div>
+
+                            <div
+                                style="
+                                    background: #f7f8f8;
+                                    border-radius: 12px;
+                                    padding: 15px;
+                                "
+                            >
+
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Cuota</span>
+                                    <strong>#${numeroCuota}</strong>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Valor de la cuota</span>
+                                    <strong>
+                                        ${formatearMoneda(valorCuota)}
+                                    </strong>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Descontar ahora</span>
+                                    <strong>
+                                        ${formatearMoneda(valorDescontar)}
+                                    </strong>
+                                </div>
+
+                                <hr>
+
+                                <div class="d-flex justify-content-between">
+                                    <span>
+                                        <strong>Valor aplazado</strong>
+                                    </span>
+
+                                    <strong style="color: #008f4c;">
+                                        ${formatearMoneda(valorAplazado)}
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <button
+                                type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal"
+                                id="btnCancelarConfirmacionAplazamiento"
+                            >
+                                <i class="fas fa-times"></i>
+                                Cancelar
+                            </button>
+
+                            <button
+                                type="button"
+                                class="btn"
+                                id="btnAceptarConfirmacionAplazamiento"
+                                style="
+                                    background: #008f4c;
+                                    color: white;
+                                "
+                            >
+                                <i class="fas fa-check"></i>
+                                Confirmar aplazamiento
+                            </button>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(
+            modalConfirmacion.firstElementChild
+        );
+
+        const elemento =
+            document.getElementById(
+                'modalConfirmacionAplazamiento'
+            );
+
+        const modal =
+            new bootstrap.Modal(elemento);
+
+        const aceptar =
+            document.getElementById(
+                'btnAceptarConfirmacionAplazamiento'
+            );
+
+        const cancelar =
+            document.getElementById(
+                'btnCancelarConfirmacionAplazamiento'
+            );
+
+        let resultado = false;
+
+        aceptar.addEventListener('click', () => {
+
+            resultado = true;
+
+            modal.hide();
+        });
+
+        elemento.addEventListener(
+            'hidden.bs.modal',
+            () => {
+
+                elemento.remove();
+
+                resolve(resultado);
+            },
+            { once: true }
+        );
+
+        modal.show();
+    });
+}
+
+
 if (btnConfirmarAplazamiento) {
 
     btnConfirmarAplazamiento.addEventListener(
@@ -3163,18 +3352,34 @@ if (btnConfirmarAplazamiento) {
                CONFIRMACIÓN
                ============================================= */
 
-            const confirmar =
-                confirm(
-                    `¿Desea aplazar la cuota #${cuotaAplazarActual.numero_cuota}?\n\n` +
-                    `Valor de la cuota: ${formatearMoneda(valorCuota)}\n` +
-                    `Descontar ahora: ${formatearMoneda(valorDescontar)}\n` +
-                    `Valor aplazado: ${formatearMoneda(valorAplazado)}`
-                );
+            /*
+ * Ocultar el modal principal antes
+ * de mostrar la confirmación.
+ */
+if (modalAplazarCuota) {
+    modalAplazarCuota.hide();
+}
 
+const confirmar =
+    await confirmarAplazamientoBonito(
+        cuotaAplazarActual.numero_cuota,
+        valorCuota,
+        valorDescontar,
+        valorAplazado
+    );
 
-            if (!confirmar) {
-                return;
-            }
+if (!confirmar) {
+
+    /*
+     * Si cancela la confirmación,
+     * volver a mostrar el modal de aplazamiento.
+     */
+    if (modalAplazarCuota) {
+        modalAplazarCuota.show();
+    }
+
+    return;
+}
 
 
             /* =============================================
@@ -3205,24 +3410,19 @@ if (btnConfirmarAplazamiento) {
                             },
 
                             body: JSON.stringify({
-                                cuota_id:
-                                    cuotaAplazarActual.id,
+    cuota_id: cuotaAplazarActual.id,
+    valor_descontar: valorDescontar,
+    opcion_aplazamiento: opcionAplazamiento,
+    medio_pago: medioPago,
+    fecha_aplazamiento: fechaAplazamiento,
 
-                                valor_descontar:
-                                    valorDescontar,
+    fecha_reprogramada:
+        fechaReprogramada
+            ? fechaReprogramada.value
+            : null,
 
-                                opcion_aplazamiento:
-                                    opcionAplazamiento,
-
-                                medio_pago:
-                                    medioPago,
-
-                                fecha_aplazamiento:
-                                    fechaAplazamiento,
-
-                                observacion:
-                                    observacion
-                            })
+    observacion
+})
                         }
                     );
 
