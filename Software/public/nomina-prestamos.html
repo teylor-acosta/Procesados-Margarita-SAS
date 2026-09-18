@@ -3201,6 +3201,486 @@
 
 </div>
 
+<!-- ============================================================
+     MODAL CANCELACIÓN ANTICIPADA
+     ============================================================ -->
+
+<div
+    class="modal fade"
+    id="modalCancelarAnticipado"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content modal-prestamo">
+
+            <!-- HEADER -->
+
+            <div class="modal-header modal-prestamo-header">
+
+                <div class="modal-titulo">
+
+                    <div class="modal-icon">
+                        <i class="fas fa-hand-holding-dollar"></i>
+                    </div>
+
+                    <div>
+
+                        <span>
+                            CANCELACIÓN ANTICIPADA
+                        </span>
+
+                        <h2 id="cancelarPrestamoTitulo">
+                            Cancelar préstamo
+                        </h2>
+
+                    </div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Cerrar"
+                ></button>
+
+            </div>
+
+
+            <!-- BODY -->
+
+            <div class="modal-body">
+
+                <!-- INFORMACIÓN DEL PRÉSTAMO -->
+
+                <div class="form-bloque">
+
+                    <div class="form-bloque-titulo">
+
+                        <i class="fas fa-file-invoice-dollar"></i>
+
+                        Información del préstamo
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Empleado
+                            </label>
+
+                            <div
+                                class="detalle-dato"
+                                id="cancelarEmpleado"
+                            >
+                                -
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Saldo pendiente
+                            </label>
+
+                            <div
+                                class="detalle-dato"
+                                id="cancelarSaldoPendiente"
+                            >
+                                -
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DATOS DE LA CANCELACIÓN -->
+
+                <div class="form-bloque">
+
+                    <div class="form-bloque-titulo">
+
+                        <i class="fas fa-receipt"></i>
+
+                        Datos de la cancelación
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="cancelarFecha"
+                                class="form-label"
+                            >
+                                Fecha de cancelación
+                            </label>
+
+                            <input
+                                type="date"
+                                id="cancelarFecha"
+                                class="form-control"
+                            >
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="cancelarMedio"
+                                class="form-label"
+                            >
+                                Medio de pago
+                            </label>
+
+                            <select
+                                id="cancelarMedio"
+                                class="form-control"
+                            >
+
+                                <option value="">
+                                    Seleccione...
+                                </option>
+
+                                <option value="TRANSFERENCIA">
+                                    Transferencia
+                                </option>
+
+                                <option value="EFECTIVO">
+                                    Efectivo
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- OBSERVACIÓN -->
+
+                <div class="form-bloque">
+
+                    <div class="form-bloque-titulo">
+
+                        <i class="fas fa-note-sticky"></i>
+
+                        Observación
+
+                    </div>
+
+
+                    <textarea
+                        id="cancelarObservacion"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Ingrese una observación sobre la cancelación..."
+                    ></textarea>
+
+                </div>
+
+
+                <!-- ADVERTENCIA -->
+
+                <div
+                    class="alert alert-warning d-flex align-items-start gap-2 mb-0"
+                >
+
+                    <i class="fas fa-triangle-exclamation mt-1"></i>
+
+                    <div>
+
+                        <strong>Atención:</strong>
+
+                        esta operación cancelará anticipadamente el préstamo,
+                        registrará el pago del saldo pendiente y dejará la
+                        obligación completamente pagada.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="modal-footer modal-prestamo-footer">
+
+                <button
+                    type="button"
+                    class="btn-cancelar-prestamo"
+                    data-bs-dismiss="modal"
+                >
+                    Cancelar
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn-guardar-prestamo"
+                    id="btnCancelarAnticipado"
+                >
+
+                    <i class="fas fa-check"></i>
+
+                    Cancelar préstamo
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ============================================================
+     MODAL ANULAR PRÉSTAMO
+     ============================================================ -->
+
+<div
+    class="modal fade"
+    id="modalAnularPrestamo"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content modal-prestamo">
+
+            <!-- HEADER -->
+
+            <div class="modal-header modal-prestamo-header">
+
+                <div class="modal-titulo">
+
+                    <div class="modal-icon">
+                        <i class="fas fa-ban"></i>
+                    </div>
+
+                    <div>
+
+                        <span>
+                            ANULACIÓN DE PRÉSTAMO
+                        </span>
+
+                        <h2 id="anularPrestamoTitulo">
+                            Anular préstamo
+                        </h2>
+
+                    </div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Cerrar"
+                ></button>
+
+            </div>
+
+
+            <!-- BODY -->
+
+            <div class="modal-body">
+
+                <!-- INFORMACIÓN DEL PRÉSTAMO -->
+
+                <div class="form-bloque">
+
+                    <div class="form-bloque-titulo">
+
+                        <i class="fas fa-file-invoice-dollar"></i>
+
+                        Información del préstamo
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+                        <!-- EMPLEADO -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Empleado
+                            </label>
+
+                            <div
+                                class="detalle-dato"
+                                id="anularEmpleado"
+                            >
+                                -
+                            </div>
+
+                        </div>
+
+
+                        <!-- VALOR INICIAL -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Valor inicial
+                            </label>
+
+                            <div
+                                class="detalle-dato"
+                                id="anularValorInicial"
+                            >
+                                -
+                            </div>
+
+                        </div>
+
+
+                        <!-- SALDO PENDIENTE -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Saldo pendiente
+                            </label>
+
+                            <div
+                                class="detalle-dato"
+                                id="anularSaldoPendiente"
+                            >
+                                -
+                            </div>
+
+                        </div>
+
+
+                        <!-- ESTADO -->
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Estado actual
+                            </label>
+
+                            <div
+                                class="detalle-dato"
+                                id="anularEstado"
+                            >
+                                -
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MOTIVO -->
+
+                <div class="form-bloque">
+
+                    <div class="form-bloque-titulo">
+
+                        <i class="fas fa-note-sticky"></i>
+
+                        Motivo de la anulación
+
+                    </div>
+
+
+                    <textarea
+                        id="anularObservacion"
+                        class="form-control"
+                        rows="4"
+                        placeholder="Indique el motivo por el cual se anula el préstamo..."
+                    ></textarea>
+
+                </div>
+
+
+                <!-- ADVERTENCIA -->
+
+                <div
+                    class="alert alert-danger d-flex align-items-start gap-2 mb-0"
+                >
+
+                    <i class="fas fa-triangle-exclamation mt-1"></i>
+
+                    <div>
+
+                        <strong>Atención:</strong>
+
+                        esta operación anulará el préstamo y sus cuotas
+                        pendientes.
+
+                        <br>
+
+                        <strong>
+                            La anulación solamente está permitida si el
+                            préstamo no registra ningún pago realizado.
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="modal-footer modal-prestamo-footer">
+
+                <button
+                    type="button"
+                    class="btn-cancelar-prestamo"
+                    data-bs-dismiss="modal"
+                >
+                    Cerrar
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn-guardar-prestamo"
+                    id="btnAnularPrestamo"
+                >
+
+                    <i class="fas fa-ban"></i>
+
+                    Anular préstamo
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 
     <!-- =====================================================
          SCRIPTS

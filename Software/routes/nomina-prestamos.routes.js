@@ -3213,6 +3213,737 @@ router.post(
     }
 );
 
+/* ============================================================
+   CANCELAR PRÉSTAMO ANTICIPADAMENTE
+   ============================================================ */
+
+router.post(
+    '/nomina/prestamos/:id/cancelar-anticipadamente',
+    async (req, res) => {
+
+        const db = req.app.get('db');
+        const usuarioId = req.session.usuarioID;
+
+        if (!usuarioId) {
+            return res.status(401).json({
+                ok: false,
+                error: 'La sesión del usuario no es válida.'
+            });
+        }
+
+        let connection = null;
+
+        try {
+
+            const prestamoId =
+                Number(req.params.id);
+
+            const {
+                fecha_cancelacion,
+                medio_pago,
+                observacion
+            } = req.body;
+
+
+            /* =================================================
+               VALIDAR ID
+               ================================================= */
+
+            if (
+                !Number.isInteger(prestamoId) ||
+                prestamoId <= 0
+            ) {
+
+                return res.status(400).json({
+                    ok: false,
+                    error: 'El préstamo indicado no es válido.'
+                });
+
+            }
+
+
+            /* =================================================
+               VALIDAR FECHA
+               ================================================= */
+
+            if (!fecha_cancelacion) {
+
+                return res.status(400).json({
+                    ok: false,
+                    error:
+                        'Debe indicar la fecha de la cancelación.'
+                });
+
+            }
+
+
+            /* =================================================
+               VALIDAR MEDIO DE PAGO
+               ================================================= */
+
+            if (
+                medio_pago !== 'TRANSFERENCIA' &&
+                medio_pago !== 'EFECTIVO'
+            ) {
+
+                return res.status(400).json({
+                    ok: false,
+                    error:
+                        'Debe seleccionar un medio de pago válido.'
+                });
+
+            }
+
+
+            /* =================================================
+               CONEXIÓN
+               ================================================= */
+
+            connection =
+                await db.getConnection();
+
+            await connection.beginTransaction();
+
+
+            /* =================================================
+               CONSULTAR Y BLOQUEAR PRÉSTAMO
+               ================================================= */
+
+            const [prestamos] =
+                await connection.query(
+                    `
+                    SELECT
+                        id,
+                        empleado_id,
+                        valor_prestamo,
+                        valor_interes,
+                        saldo_pendiente,
+                        estado
+                    FROM nomina_prestamos
+                    WHERE id = ?
+                    LIMIT 1
+                    FOR UPDATE
+                    `,
+                    [
+                        prestamoId
+                    ]
+                );
+
+
+            /* =================================================
+               VALIDAR EXISTENCIA
+               ================================================= */
+
+            if (!prestamos.length) {
+
+                await connection.rollback();
+                connection.release();
+                connection = null;
+
+                return res.status(404).json({
+                    ok: false,
+                    error: 'El préstamo no existe.'
+                });
+
+            }
+
+
+            const prestamo =
+                prestamos[0];
+
+
+            /* =================================================
+               VALIDAR ESTADO
+               ================================================= */
+
+            if (prestamo.estado !== 'ACTIVO') {
+
+                await connection.rollback();
+                connection.release();
+                connection = null;
+
+                return res.status(400).json({
+                    ok: false,
+                    error:
+                        'Solo se pueden cancelar anticipadamente préstamos activos.'
+                });
+
+            }
+
+
+            /* =================================================
+               SALDO PENDIENTE
+               ================================================= */
+
+            const saldoActual =
+                Number(
+                    prestamo.saldo_pendiente || 0
+                );
+
+
+            if (saldoActual <= 0) {
+
+                await connection.rollback();
+                connection.release();
+                connection = null;
+
+                return res.status(400).json({
+                    ok: false,
+                    error:
+                        'El préstamo no tiene saldo pendiente para cancelar.'
+                });
+
+            }
+
+
+            /* =================================================
+               ANULAR CUOTAS PENDIENTES
+               
+               Las cuotas ya pagadas NO se modifican.
+               ================================================= */
+
+            await connection.query(
+                `
+                UPDATE nomina_prestamos_cuotas
+                SET
+                    estado = 'ANULADA',
+                    observacion = CONCAT(
+                        COALESCE(observacion, ''),
+                        CASE
+                            WHEN COALESCE(observacion, '') = ''
+                            THEN ''
+                            ELSE ' | '
+                        END,
+                        'Anulada por cancelación anticipada del préstamo'
+                    )
+                WHERE prestamo_id = ?
+                  AND estado IN (
+                      'PENDIENTE',
+                      'VENCIDA',
+                      'APLAZADA'
+                  )
+                `,
+                [
+                    prestamoId
+                ]
+            );
+
+
+            /* =================================================
+               REGISTRAR MOVIMIENTO
+               ================================================= */
+
+            await connection.query(
+                `
+                INSERT INTO nomina_prestamos_movimientos (
+                    prestamo_id,
+                    cuota_id,
+                    tipo_movimiento,
+                    fecha_movimiento,
+                    valor,
+                    valor_capital,
+                    valor_interes,
+                    medio_pago,
+                    observacion,
+                    usuario_id,
+                    fecha_registro
+                )
+                VALUES (
+                    ?,
+                    NULL,
+                    'CANCELACION_ANTICIPADA',
+                    ?,
+                    ?,
+                    ?,
+                    0,
+                    ?,
+                    ?,
+                    ?,
+                    NOW()
+                )
+                `,
+                [
+                    prestamoId,
+                    `${fecha_cancelacion} 00:00:00`,
+                    saldoActual,
+                    saldoActual,
+                    medio_pago,
+                    observacion || null,
+                    usuarioId
+                ]
+            );
+
+
+            /* =================================================
+               ACTUALIZAR PRÉSTAMO
+               ================================================= */
+
+            await connection.query(
+                `
+                UPDATE nomina_prestamos
+                SET
+                    saldo_pendiente = 0,
+                    estado = 'PAGADO',
+                    fecha_finalizacion = ?
+                WHERE id = ?
+                `,
+                [
+                    fecha_cancelacion,
+                    prestamoId
+                ]
+            );
+
+
+            /* =================================================
+               CONFIRMAR TRANSACCIÓN
+               ================================================= */
+
+            await connection.commit();
+
+            connection.release();
+            connection = null;
+
+
+            /* =================================================
+               RESPUESTA
+               ================================================= */
+
+            return res.json({
+
+                ok: true,
+
+                mensaje:
+                    'El préstamo fue cancelado anticipadamente y quedó totalmente pagado.',
+
+                cancelacion: {
+
+                    prestamo_id:
+                        prestamoId,
+
+                    saldo_anterior:
+                        saldoActual,
+
+                    saldo_nuevo:
+                        0,
+
+                    estado:
+                        'PAGADO',
+
+                    fecha_cancelacion,
+
+                    medio_pago
+
+                }
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                '❌ Error cancelando préstamo anticipadamente:',
+                error
+            );
+
+
+            if (connection) {
+
+                try {
+
+                    await connection.rollback();
+
+                } catch (rollbackError) {
+
+                    console.error(
+                        '❌ Error realizando rollback de la cancelación:',
+                        rollbackError
+                    );
+
+                }
+
+                connection.release();
+
+            }
+
+
+            return res.status(500).json({
+
+                ok: false,
+
+                error:
+                    error.message ||
+                    'Error interno al cancelar anticipadamente el préstamo.'
+
+            });
+
+        }
+
+    }
+);
+
+/* ============================================================
+   ANULAR PRÉSTAMO
+   ============================================================ */
+
+router.post(
+    '/nomina/prestamos/:id/anular',
+    async (req, res) => {
+
+        const db = req.app.get('db');
+        const usuarioId = req.session.usuarioID;
+
+        if (!usuarioId) {
+            return res.status(401).json({
+                ok: false,
+                error: 'La sesión del usuario no es válida.'
+            });
+        }
+
+        let connection = null;
+
+        try {
+
+            const prestamoId =
+                Number(req.params.id);
+
+            const {
+                observacion
+            } = req.body;
+
+
+            /* =================================================
+               VALIDAR ID
+               ================================================= */
+
+            if (
+                !Number.isInteger(prestamoId) ||
+                prestamoId <= 0
+            ) {
+
+                return res.status(400).json({
+                    ok: false,
+                    error: 'El préstamo indicado no es válido.'
+                });
+
+            }
+
+
+            /* =================================================
+               CONEXIÓN
+               ================================================= */
+
+            connection =
+                await db.getConnection();
+
+            await connection.beginTransaction();
+
+
+            /* =================================================
+               CONSULTAR Y BLOQUEAR PRÉSTAMO
+               ================================================= */
+
+            const [prestamos] =
+                await connection.query(
+                    `
+                    SELECT
+                        id,
+                        empleado_id,
+                        valor_prestamo,
+                        saldo_pendiente,
+                        estado
+                    FROM nomina_prestamos
+                    WHERE id = ?
+                    LIMIT 1
+                    FOR UPDATE
+                    `,
+                    [
+                        prestamoId
+                    ]
+                );
+
+
+            /* =================================================
+               VALIDAR EXISTENCIA
+               ================================================= */
+
+            if (!prestamos.length) {
+
+                await connection.rollback();
+                connection.release();
+                connection = null;
+
+                return res.status(404).json({
+                    ok: false,
+                    error: 'El préstamo no existe.'
+                });
+
+            }
+
+
+            const prestamo =
+                prestamos[0];
+
+
+            /* =================================================
+               VALIDAR ESTADO
+               ================================================= */
+
+            if (prestamo.estado !== 'ACTIVO') {
+
+                await connection.rollback();
+                connection.release();
+                connection = null;
+
+                return res.status(400).json({
+                    ok: false,
+                    error:
+                        'Solo se pueden anular préstamos que se encuentren activos.'
+                });
+
+            }
+
+
+            /* =================================================
+               VERIFICAR SI EXISTEN CUOTAS PAGADAS
+               
+               Si existe al menos una cuota PAGADA,
+               el préstamo NO puede ser anulado.
+               ================================================= */
+
+            const [cuotasPagadas] =
+                await connection.query(
+                    `
+                    SELECT
+                        COUNT(*) AS total
+                    FROM nomina_prestamos_cuotas
+                    WHERE prestamo_id = ?
+                      AND estado = 'PAGADA'
+                    `,
+                    [
+                        prestamoId
+                    ]
+                );
+
+
+            const totalCuotasPagadas =
+                Number(
+                    cuotasPagadas[0]?.total || 0
+                );
+
+
+            if (totalCuotasPagadas > 0) {
+
+                await connection.rollback();
+                connection.release();
+                connection = null;
+
+                return res.status(400).json({
+                    ok: false,
+                    error:
+                        'No es posible anular este préstamo porque ya registra cuotas pagadas. Los préstamos con pagos realizados deben conservar su historial.'
+                });
+
+            }
+
+
+            /* =================================================
+               ANULAR CUOTAS
+               
+               Como ya verificamos que no existen cuotas pagadas,
+               podemos anular todas las cuotas que todavía estén
+               pendientes, vencidas o aplazadas.
+               ================================================= */
+
+            await connection.query(
+                `
+                UPDATE nomina_prestamos_cuotas
+                SET
+                    estado = 'ANULADA',
+                    observacion = CONCAT(
+                        COALESCE(observacion, ''),
+                        CASE
+                            WHEN COALESCE(observacion, '') = ''
+                            THEN ''
+                            ELSE ' | '
+                        END,
+                        'Cuota anulada por anulación del préstamo'
+                    )
+                WHERE prestamo_id = ?
+                  AND estado IN (
+                      'PENDIENTE',
+                      'VENCIDA',
+                      'APLAZADA'
+                  )
+                `,
+                [
+                    prestamoId
+                ]
+            );
+
+
+            /* =================================================
+               REGISTRAR LA ANULACIÓN EN EL HISTORIAL
+               
+               La tabla de movimientos no tiene un tipo
+               específico ANULACION, por lo que utilizamos
+               AJUSTE para conservar la trazabilidad.
+               ================================================= */
+
+            await connection.query(
+                `
+                INSERT INTO nomina_prestamos_movimientos (
+                    prestamo_id,
+                    cuota_id,
+                    tipo_movimiento,
+                    fecha_movimiento,
+                    valor,
+                    valor_capital,
+                    valor_interes,
+                    medio_pago,
+                    observacion,
+                    usuario_id,
+                    fecha_registro
+                )
+                VALUES (
+                    ?,
+                    NULL,
+                    'AJUSTE',
+                    NOW(),
+                    0,
+                    0,
+                    0,
+                    NULL,
+                    ?,
+                    ?,
+                    NOW()
+                )
+                `,
+                [
+                    prestamoId,
+                    observacion
+                        ? `ANULACIÓN DE PRÉSTAMO: ${observacion}`
+                        : 'ANULACIÓN DE PRÉSTAMO',
+                    usuarioId
+                ]
+            );
+
+
+            /* =================================================
+               ACTUALIZAR PRÉSTAMO
+               ================================================= */
+
+            await connection.query(
+                `
+                UPDATE nomina_prestamos
+                SET
+                    saldo_pendiente = 0,
+                    estado = 'ANULADO',
+                    fecha_finalizacion = CURDATE(),
+                    observacion = CONCAT(
+                        COALESCE(observacion, ''),
+                        CASE
+                            WHEN COALESCE(observacion, '') = ''
+                            THEN ''
+                            ELSE ' | '
+                        END,
+                        ? 
+                    )
+                WHERE id = ?
+                `,
+                [
+                    observacion
+                        ? `ANULADO: ${observacion}`
+                        : 'PRÉSTAMO ANULADO',
+                    prestamoId
+                ]
+            );
+
+
+            /* =================================================
+               CONFIRMAR TRANSACCIÓN
+               ================================================= */
+
+            await connection.commit();
+
+            connection.release();
+            connection = null;
+
+
+            /* =================================================
+               RESPUESTA
+               ================================================= */
+
+            return res.json({
+
+                ok: true,
+
+                mensaje:
+                    'El préstamo fue anulado correctamente.',
+
+                anulacion: {
+
+                    prestamo_id:
+                        prestamoId,
+
+                    saldo_anterior:
+                        Number(
+                            prestamo.saldo_pendiente || 0
+                        ),
+
+                    saldo_nuevo:
+                        0,
+
+                    estado:
+                        'ANULADO'
+
+                }
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                '❌ Error anulando préstamo:',
+                error
+            );
+
+
+            if (connection) {
+
+                try {
+
+                    await connection.rollback();
+
+                } catch (rollbackError) {
+
+                    console.error(
+                        '❌ Error realizando rollback de la anulación:',
+                        rollbackError
+                    );
+
+                }
+
+                connection.release();
+
+            }
+
+
+            return res.status(500).json({
+
+                ok: false,
+
+                error:
+                    error.message ||
+                    'Error interno al anular el préstamo.'
+
+            });
+
+        }
+
+    }
+);
+
 
 /* ============================================================
    CREAR PRÉSTAMO

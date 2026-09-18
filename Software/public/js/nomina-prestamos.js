@@ -513,14 +513,22 @@ function renderizarPrestamos(prestamos) {
                 : 0;
 
         const claseColor =
+    prestamo.estado === 'ANULADO'
+        ? ' prestamo-anulado'
+        : (
             indice % 2 === 0
                 ? ''
-                : ' prestamo-morado';
+                : ' prestamo-morado'
+        );
 
         const claseProgreso =
+    prestamo.estado === 'ANULADO'
+        ? 'anulado'
+        : (
             indice % 2 === 0
                 ? 'verde'
-                : 'morado';
+                : 'morado'
+        );
 
         const nombre =
             prestamo.empleado || 'Empleado';
@@ -590,9 +598,17 @@ function renderizarPrestamos(prestamos) {
 
             <div class="prestamo-persona">
 
-                <div class="prestamo-avatar ${indice % 2 === 0 ? '' : 'morado'}">
-                    ${obtenerIniciales(nombre)}
-                </div>
+                <div class="prestamo-avatar ${
+    prestamo.estado === 'ANULADO'
+        ? 'anulado'
+        : (
+            indice % 2 === 0
+                ? ''
+                : 'morado'
+        )
+}">
+    ${obtenerIniciales(nombre)}
+</div>
 
                 <div class="prestamo-persona-info">
 
@@ -691,9 +707,17 @@ function renderizarPrestamos(prestamos) {
 
                     </div>
 
-                    <span class="progreso-porcentaje ${indice % 2 === 0 ? '' : 'morado-text'}">
-                        ${porcentaje}%
-                    </span>
+                    <span class="progreso-porcentaje ${
+    prestamo.estado === 'ANULADO'
+        ? 'anulado-text'
+        : (
+            indice % 2 === 0
+                ? ''
+                : 'morado-text'
+        )
+}">
+    ${prestamo.estado === 'ANULADO' ? '⊘' : `${porcentaje}%`}
+</span>
 
                 </div>
 
@@ -734,15 +758,15 @@ function renderizarPrestamos(prestamos) {
 
                     <div class="circular-centro">
 
-                        <strong>
-                            ${porcentaje}%
-                        </strong>
+    <strong>
+        ${prestamo.estado === 'ANULADO' ? '⊘' : `${porcentaje}%`}
+    </strong>
 
-                        <span>
-                            pagado
-                        </span>
+    <span>
+        ${prestamo.estado === 'ANULADO' ? 'Anulado' : 'pagado'}
+    </span>
 
-                    </div>
+</div>
 
                 </div>
 
@@ -946,14 +970,23 @@ function actualizarIndicadoresPrestamos(prestamos) {
 
 
     const capital =
-        prestamos.reduce(
-            (total, prestamo) =>
+    prestamos.reduce(
+        (total, prestamo) => {
+
+            if (prestamo.estado === 'ANULADO') {
+                return total;
+            }
+
+            return (
                 total +
                 Number(
                     prestamo.valor_prestamo || 0
-                ),
-            0
-        );
+                )
+            );
+
+        },
+        0
+    );
 
 
     const saldo =
@@ -1042,14 +1075,23 @@ async function actualizarIndicadoresPrestamos(prestamos) {
 
 
     const capital =
-        prestamos.reduce(
-            (total, prestamo) =>
+    prestamos.reduce(
+        (total, prestamo) => {
+
+            if (prestamo.estado === 'ANULADO') {
+                return total;
+            }
+
+            return (
                 total +
                 Number(
                     prestamo.valor_prestamo || 0
-                ),
-            0
-        );
+                )
+            );
+
+        },
+        0
+    );
 
 
     const saldo =
@@ -1536,8 +1578,15 @@ function actualizarMiniGraficas(historico) {
 
 
             const coincideEstado =
-                estadoSeleccionado === 'TODOS' ||
-                estado === estadoSeleccionado;
+    estadoSeleccionado === 'TODOS' ||
+    (
+        estadoSeleccionado === 'CANCELADO' &&
+        (
+            estado === 'CANCELADO' ||
+            estado === 'ANULADO'
+        )
+    ) ||
+    estado === estadoSeleccionado;
 
 
             const mostrar =
@@ -2230,22 +2279,22 @@ document.addEventListener('click', event => {
         <div class="dropdown-divider"></div>
 
         <button
-            type="button"
-            class="dropdown-item"
-            disabled
-        >
-            <i class="fas fa-circle-check"></i>
-            Cancelar anticipadamente
-        </button>
+    type="button"
+    class="dropdown-item accion-cancelar-anticipado"
+    data-prestamo-id="${prestamoId}"
+>
+    <i class="fas fa-circle-check"></i>
+    Cancelar anticipadamente
+</button>
 
         <button
-            type="button"
-            class="dropdown-item text-danger"
-            disabled
-        >
-            <i class="fas fa-ban"></i>
-            Anular préstamo
-        </button>
+    type="button"
+    class="dropdown-item accion-anular-prestamo"
+    data-prestamo-id="${prestamoId}"
+>
+    <i class="fas fa-ban"></i>
+    Anular préstamo
+</button>
 
     `;
 
@@ -2268,6 +2317,736 @@ document.addEventListener('click', event => {
     menuAccionesPrestamo = menu;
 
 });
+
+/* ========================================================
+   CANCELAR ANTICIPADAMENTE
+   ======================================================== */
+
+document.addEventListener('click', async event => {
+
+    const boton =
+        event.target.closest(
+            '.accion-cancelar-anticipado'
+        );
+
+    if (!boton) {
+        return;
+    }
+
+    const prestamoId =
+        boton.dataset.prestamoId;
+
+    if (!prestamoId) {
+
+        mostrarMensaje(
+            'No fue posible identificar el préstamo.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    /*
+     * Cerrar menú de tres puntos
+     */
+
+    if (menuAccionesPrestamo) {
+
+        menuAccionesPrestamo.remove();
+
+        menuAccionesPrestamo = null;
+
+    }
+
+
+    /*
+     * Obtener modal
+     */
+
+    const modalElement =
+        document.getElementById(
+            'modalCancelarAnticipado'
+        );
+
+    if (!modalElement) {
+
+        mostrarMensaje(
+            'No fue posible abrir el formulario de cancelación anticipada.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    /*
+     * Guardar ID del préstamo seleccionado
+     */
+
+    modalElement.dataset.prestamoId =
+        prestamoId;
+
+
+    /*
+     * Obtener información del préstamo
+     */
+
+    try {
+
+        const respuesta =
+            await fetch(
+                `/nomina/prestamos/${prestamoId}`
+            );
+
+        const resultado =
+            await respuesta.json();
+
+        if (
+            !respuesta.ok ||
+            !resultado.ok
+        ) {
+
+            throw new Error(
+                resultado.error ||
+                'No fue posible consultar el préstamo.'
+            );
+
+        }
+
+
+        const prestamo =
+            resultado.prestamo;
+
+
+        /*
+         * ELEMENTOS DEL MODAL
+         */
+
+        const titulo =
+            document.getElementById(
+                'cancelarPrestamoTitulo'
+            );
+
+        const empleado =
+            document.getElementById(
+                'cancelarEmpleado'
+            );
+
+        const saldo =
+            document.getElementById(
+                'cancelarSaldoPendiente'
+            );
+
+        const fecha =
+            document.getElementById(
+                'cancelarFecha'
+            );
+
+        const observacion =
+            document.getElementById(
+                'cancelarObservacion'
+            );
+
+
+        /*
+         * TÍTULO
+         */
+
+        if (titulo) {
+
+            titulo.textContent =
+                `Préstamo #${String(
+                    prestamo.id
+                ).padStart(4, '0')}`;
+
+        }
+
+
+        /*
+         * EMPLEADO
+         */
+
+        if (empleado) {
+
+            empleado.textContent =
+                prestamo.empleado ||
+                'Sin empleado';
+
+        }
+
+
+        /*
+         * SALDO PENDIENTE
+         */
+
+        if (saldo) {
+
+            saldo.textContent =
+                formatearMoneda(
+                    prestamo.saldo_pendiente
+                );
+
+        }
+
+
+        /*
+         * FECHA ACTUAL
+         */
+
+        if (fecha) {
+
+            const hoy =
+                new Date();
+
+            fecha.value =
+                `${hoy.getFullYear()}-${String(
+                    hoy.getMonth() + 1
+                ).padStart(2, '0')}-${String(
+                    hoy.getDate()
+                ).padStart(2, '0')}`;
+
+        }
+
+
+        /*
+         * LIMPIAR OBSERVACIÓN
+         */
+
+        if (observacion) {
+
+            observacion.value = '';
+
+        }
+
+
+        /*
+         * MOSTRAR MODAL
+         */
+
+        const modal =
+            bootstrap.Modal.getOrCreateInstance(
+                modalElement
+            );
+
+        modal.show();
+
+
+    } catch (error) {
+
+        console.error(
+            '❌ Error cargando cancelación anticipada:',
+            error
+        );
+
+        mostrarMensaje(
+            error.message ||
+            'No fue posible cargar la información del préstamo.',
+            'error'
+        );
+
+    }
+
+});
+
+/* ========================================================
+   CONFIRMAR CANCELACIÓN ANTICIPADA
+   ======================================================== */
+
+const btnCancelarAnticipado =
+    document.getElementById('btnCancelarAnticipado');
+
+if (btnCancelarAnticipado) {
+
+    btnCancelarAnticipado.addEventListener('click', async () => {
+
+        const modalElement =
+            document.getElementById('modalCancelarAnticipado');
+
+        if (!modalElement) {
+            return;
+        }
+
+        const prestamoId =
+            modalElement.dataset.prestamoId;
+
+        const fecha =
+            document.getElementById('cancelarFecha');
+
+        const medio =
+            document.getElementById('cancelarMedio');
+
+        const observacion =
+            document.getElementById('cancelarObservacion');
+
+        if (!prestamoId) {
+
+            mostrarMensaje(
+                'No fue posible identificar el préstamo.',
+                'error'
+            );
+
+            return;
+        }
+
+        if (!fecha || !fecha.value) {
+
+            mostrarMensaje(
+                'Seleccione la fecha de cancelación.',
+                'error'
+            );
+
+            return;
+        }
+
+        if (!medio || !medio.value) {
+
+            mostrarMensaje(
+                'Seleccione el medio de pago.',
+                'error'
+            );
+
+            return;
+        }
+
+        try {
+
+            btnCancelarAnticipado.disabled = true;
+
+            btnCancelarAnticipado.innerHTML = `
+                <i class="fas fa-spinner fa-spin"></i>
+                Procesando...
+            `;
+
+            const respuesta =
+                await fetch(
+                    `/nomina/prestamos/${prestamoId}/cancelar-anticipadamente`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            fecha_cancelacion: fecha.value,
+                            medio_pago: medio.value,
+                            observacion:
+                                observacion
+                                    ? observacion.value.trim()
+                                    : ''
+                        })
+                    }
+                );
+
+            const resultado =
+                await respuesta.json();
+
+            if (!respuesta.ok || !resultado.ok) {
+
+                throw new Error(
+                    resultado.error ||
+                    'No fue posible cancelar anticipadamente el préstamo.'
+                );
+
+            }
+
+            const modal =
+                bootstrap.Modal.getOrCreateInstance(
+                    modalElement
+                );
+
+            modal.hide();
+
+            mostrarMensaje(
+                resultado.mensaje ||
+                'El préstamo fue cancelado anticipadamente.',
+                'success'
+            );
+
+            await cargarPrestamos();
+
+        } catch (error) {
+
+            console.error(
+                '❌ Error cancelando anticipadamente:',
+                error
+            );
+
+            mostrarMensaje(
+                error.message ||
+                'No fue posible cancelar anticipadamente el préstamo.',
+                'error'
+            );
+
+        } finally {
+
+            btnCancelarAnticipado.disabled = false;
+
+            btnCancelarAnticipado.innerHTML = `
+                <i class="fas fa-circle-check"></i>
+                Cancelar préstamo
+            `;
+
+        }
+
+    });
+
+}
+
+/* ========================================================
+   ANULAR PRÉSTAMO
+   ======================================================== */
+
+document.addEventListener('click', async event => {
+
+    const boton =
+        event.target.closest(
+            '.accion-anular-prestamo'
+        );
+
+    if (!boton) {
+        return;
+    }
+
+    const prestamoId =
+        boton.dataset.prestamoId;
+
+    if (!prestamoId) {
+        mostrarMensaje(
+            'No fue posible identificar el préstamo.',
+            'error'
+        );
+        return;
+    }
+
+    /* Cerrar menú de acciones */
+
+    const menuAccionesPrestamo =
+        document.querySelector(
+            '.menu-acciones-prestamo'
+        );
+
+    if (menuAccionesPrestamo) {
+        menuAccionesPrestamo.remove();
+    }
+
+
+    const modalElement =
+        document.getElementById(
+            'modalAnularPrestamo'
+        );
+
+    if (!modalElement) {
+        console.error(
+            '❌ No existe el modalAnularPrestamo'
+        );
+        return;
+    }
+
+
+    /* Guardar ID del préstamo en el modal */
+
+    modalElement.dataset.prestamoId =
+        prestamoId;
+
+
+    try {
+
+        /* Obtener información actual del préstamo */
+
+        const respuesta =
+            await fetch(
+                `/nomina/prestamos/${prestamoId}`
+            );
+
+        const resultado =
+            await respuesta.json();
+
+        if (!respuesta.ok || !resultado.ok) {
+
+            throw new Error(
+                resultado.error ||
+                'No fue posible consultar el préstamo.'
+            );
+
+        }
+
+
+        const prestamo =
+            resultado.prestamo;
+
+
+        /* =========================================
+           CARGAR INFORMACIÓN EN EL MODAL
+           ========================================= */
+
+        const titulo =
+            document.getElementById(
+                'anularPrestamoTitulo'
+            );
+
+        const empleado =
+            document.getElementById(
+                'anularEmpleado'
+            );
+
+        const valorInicial =
+            document.getElementById(
+                'anularValorInicial'
+            );
+
+        const saldo =
+            document.getElementById(
+                'anularSaldoPendiente'
+            );
+
+        const estado =
+            document.getElementById(
+                'anularEstado'
+            );
+
+        const observacion =
+            document.getElementById(
+                'anularObservacion'
+            );
+
+
+        if (titulo) {
+
+            titulo.textContent =
+                `Préstamo #${String(prestamo.id).padStart(4, '0')}`;
+
+        }
+
+
+        if (empleado) {
+
+            empleado.textContent =
+                prestamo.empleado ||
+                'Sin empleado';
+
+        }
+
+
+        if (valorInicial) {
+
+            valorInicial.textContent =
+                formatearMoneda(
+                    prestamo.valor_prestamo
+                );
+
+        }
+
+
+        if (saldo) {
+
+            saldo.textContent =
+                formatearMoneda(
+                    prestamo.saldo_pendiente
+                );
+
+        }
+
+
+        if (estado) {
+
+            estado.textContent =
+                prestamo.estado ||
+                '-';
+
+        }
+
+
+        if (observacion) {
+
+            observacion.value = '';
+
+        }
+
+
+        /* =========================================
+           MOSTRAR MODAL
+           ========================================= */
+
+        const modal =
+            bootstrap.Modal.getOrCreateInstance(
+                modalElement
+            );
+
+        modal.show();
+
+
+    } catch (error) {
+
+        console.error(
+            '❌ Error cargando préstamo para anulación:',
+            error
+        );
+
+        mostrarMensaje(
+            error.message ||
+            'No fue posible cargar la información del préstamo.',
+            'error'
+        );
+
+    }
+
+});
+
+/* ========================================================
+   CONFIRMAR ANULACIÓN DE PRÉSTAMO
+   ======================================================== */
+
+const btnAnularPrestamo =
+    document.getElementById('btnAnularPrestamo');
+
+if (btnAnularPrestamo) {
+
+    btnAnularPrestamo.addEventListener(
+        'click',
+        async () => {
+
+            const modalElement =
+                document.getElementById(
+                    'modalAnularPrestamo'
+                );
+
+            if (!modalElement) {
+                return;
+            }
+
+            const prestamoId =
+                modalElement.dataset.prestamoId;
+
+            const observacion =
+                document.getElementById(
+                    'anularObservacion'
+                );
+
+            if (!prestamoId) {
+
+                mostrarMensaje(
+                    'No fue posible identificar el préstamo.',
+                    'error'
+                );
+
+                return;
+            }
+
+
+            try {
+
+                btnAnularPrestamo.disabled = true;
+
+                btnAnularPrestamo.innerHTML =
+                    `
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Anulando...
+                    `;
+
+
+                const respuesta =
+                    await fetch(
+                        `/nomina/prestamos/${prestamoId}/anular`,
+                        {
+                            method: 'POST',
+
+                            headers: {
+                                'Content-Type':
+                                    'application/json'
+                            },
+
+                            body: JSON.stringify({
+
+                                observacion:
+                                    observacion
+                                        ? observacion.value.trim()
+                                        : ''
+
+                            })
+
+                        }
+                    );
+
+
+                const resultado =
+                    await respuesta.json();
+
+
+                if (
+                    !respuesta.ok ||
+                    !resultado.ok
+                ) {
+
+                    throw new Error(
+                        resultado.error ||
+                        'No fue posible anular el préstamo.'
+                    );
+
+                }
+
+
+                /* ============================================
+                   CERRAR MODAL
+                   ============================================ */
+
+                const modal =
+                    bootstrap.Modal
+                        .getOrCreateInstance(
+                            modalElement
+                        );
+
+                modal.hide();
+
+
+                /* ============================================
+                   MENSAJE
+                   ============================================ */
+
+                mostrarMensaje(
+                    resultado.mensaje ||
+                    'El préstamo fue anulado correctamente.',
+                    'success'
+                );
+
+
+                /* ============================================
+                   ACTUALIZAR LISTADO
+                   ============================================ */
+
+                await cargarPrestamos();
+
+
+            } catch (error) {
+
+                console.error(
+                    '❌ Error anulando préstamo:',
+                    error
+                );
+
+
+                mostrarMensaje(
+                    error.message ||
+                    'No fue posible anular el préstamo.',
+                    'error'
+                );
+
+
+            } finally {
+
+                btnAnularPrestamo.disabled = false;
+
+                btnAnularPrestamo.innerHTML =
+                    `
+                    <i class="fas fa-ban"></i>
+                    Anular préstamo
+                    `;
+
+            }
+
+        }
+    );
+
+}
 
 /* ========================================================
    APLAZAR CUOTA

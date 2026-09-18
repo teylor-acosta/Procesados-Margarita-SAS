@@ -887,6 +887,10 @@
     border-left-color: #8b5cf6;
 }
 
+.prestamo-card.prestamo-anulado {
+    border-left-color: #dc2626;
+}
+
 .prestamo-card:last-child {
     margin-bottom: 0;
 }
@@ -937,6 +941,11 @@
     background: #f0e7ff;
 
     color: #7c3aed;
+}
+
+.prestamo-avatar.anulado {
+    background: #fee2e2;
+    color: #dc2626;
 }
 
 .prestamo-persona-info {
@@ -1009,6 +1018,11 @@
 
 .estado-prestamo i {
     font-size: 5px;
+}
+
+.estado-prestamo.anulado {
+    background: rgba(220, 38, 38, 0.12);
+    color: #dc2626;
 }
 
 
@@ -1111,6 +1125,10 @@
     color: #7c3aed !important;
 }
 
+.progreso-porcentaje.anulado-text {
+    color: #dc2626 !important;
+}
+
 .progreso-barra {
     width: 100%;
 
@@ -1137,6 +1155,10 @@
 
 .progreso-fill.morado {
     background: #8b5cf6;
+}
+
+.progreso-fill.anulado {
+    background: #dc2626;
 }
 
 .progreso-pie {
@@ -1196,6 +1218,22 @@
         );
 }
 
+.circular-chart.anulado {
+    background:
+        conic-gradient(
+            #dc2626 var(--progreso),
+            #f1dede var(--progreso)
+        );
+}
+
+.circular-chart.anulado .circular-centro strong {
+    color: #dc2626;
+}
+
+.circular-chart.anulado .circular-centro span {
+    color: #dc2626;
+}
+
 .circular-chart::before {
     content: "";
 
@@ -1235,7 +1273,6 @@
 
     font-size: 7px;
 }
-
 
 /* ============================================================
    PRÓXIMA CUOTA
