@@ -18,6 +18,48 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalElement =
         document.getElementById('modalNuevoPrestamo');
 
+        const btnDescuentosNomina =
+    document.getElementById('btnDescuentosNomina');
+
+const modalDescuentosElement =
+    document.getElementById('modalDescuentosNomina');
+
+const descuentoEmpleado =
+    document.getElementById('descuentoEmpleado');
+
+    const descuentoEmpleadoBusqueda =
+    document.getElementById('descuentoEmpleadoBusqueda');
+
+const listaEmpleadosDescuento =
+    document.getElementById('listaEmpleadosDescuento');
+
+const contenedorConsolidadoPrestamo =
+    document.getElementById('contenedorConsolidadoPrestamo');
+
+const mensajeSinEmpleadoDescuento =
+    document.getElementById('mensajeSinEmpleadoDescuento');
+
+const descuentoCantidadPrestamos =
+    document.getElementById('descuentoCantidadPrestamos');
+
+const descuentoSaldoTotal =
+    document.getElementById('descuentoSaldoTotal');
+
+const listaPrestamosDescuento =
+    document.getElementById('listaPrestamosDescuento');
+
+const valorDescuentoNomina =
+    document.getElementById('valorDescuentoNomina');
+
+const descuentoSaldoFinal =
+    document.getElementById('descuentoSaldoFinal');
+
+const observacionDescuentoNomina =
+    document.getElementById('observacionDescuentoNomina');
+
+const btnRealizarDescuento =
+    document.getElementById('btnRealizarDescuento');
+
     const buscarPrestamo =
         document.getElementById('buscarPrestamo');
 
@@ -300,6 +342,34 @@ function seleccionarEmpleadoPrestamo(empleado) {
 
     }
 
+    /* ============================================================
+   MODAL DESCUENTOS NÓMINA
+   ============================================================ */
+
+const modalDescuentosNomina =
+    new bootstrap.Modal(
+        modalDescuentosElement
+    );
+
+btnDescuentosNomina?.addEventListener(
+    'click',
+    async () => {
+
+        try {
+
+            await cargarEmpleadosDescuento();
+
+            modalDescuentosNomina.show();
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    }
+);
+
 
     /* ========================================================
        INTERÉS
@@ -414,6 +484,754 @@ function seleccionarEmpleadoPrestamo(empleado) {
         });
 
     }
+
+    /* ============================================================
+   CARGAR EMPLEADOS PARA DESCUENTO
+   ============================================================ */
+
+async function cargarEmpleadosDescuento() {
+
+    try {
+
+        const response =
+            await fetch(
+                '/nomina/prestamos/empleados'
+            );
+
+        const data =
+            await response.json();
+
+        if (!data.ok) {
+
+            throw new Error(
+                data.error ||
+                'No fue posible cargar empleados.'
+            );
+
+        }
+
+        empleadosPrestamo =
+            data.empleados || [];
+
+        descuentoEmpleadoBusqueda.value = '';
+        descuentoEmpleado.value = '';
+
+        listaEmpleadosDescuento.innerHTML = '';
+
+        contenedorConsolidadoPrestamo.hidden = true;
+        mensajeSinEmpleadoDescuento.hidden = false;
+
+        btnRealizarDescuento.disabled = true;
+
+    } catch (error) {
+
+        console.error(
+            'Error cargando empleados:',
+            error
+        );
+
+    }
+
+}
+
+/* ============================================================
+   BUSCADOR DE EMPLEADOS PARA DESCUENTOS
+   ============================================================ */
+
+descuentoEmpleadoBusqueda?.addEventListener(
+    'input',
+    () => {
+
+        const texto =
+            descuentoEmpleadoBusqueda.value
+                .trim()
+                .toLowerCase();
+
+        listaEmpleadosDescuento.innerHTML = '';
+
+        descuentoEmpleado.value = '';
+
+        contenedorConsolidadoPrestamo.hidden = true;
+        mensajeSinEmpleadoDescuento.hidden = false;
+        btnRealizarDescuento.disabled = true;
+
+        if (!texto) {
+            return;
+        }
+
+        const empleadosFiltrados =
+            empleadosPrestamo.filter(
+                empleado => {
+
+                    const nombre =
+                        String(
+                            empleado.nombre || ''
+                        ).toLowerCase();
+
+                    const documento =
+                        String(
+                            empleado.numero_documento || ''
+                        ).toLowerCase();
+
+                    const tipoDocumento =
+                        String(
+                            empleado.tipo_documento || ''
+                        ).toLowerCase();
+
+                    return (
+                        nombre.includes(texto) ||
+                        documento.includes(texto) ||
+                        tipoDocumento.includes(texto)
+                    );
+
+                }
+            );
+
+        empleadosFiltrados
+            .slice(0, 10)
+            .forEach(
+                empleado => {
+
+                    const opcion =
+                        document.createElement('button');
+
+                    opcion.type = 'button';
+
+                    opcion.className =
+                        'list-group-item list-group-item-action';
+
+                    opcion.innerHTML = `
+                        <strong>
+                            ${empleado.nombre}
+                        </strong>
+                        <br>
+                        <small class="text-muted">
+                            ${empleado.tipo_documento || ''} 
+                            ${empleado.numero_documento || ''}
+                        </small>
+                    `;
+
+                    opcion.addEventListener(
+                        'click',
+                        () => {
+
+                            seleccionarEmpleadoDescuento(
+                                empleado
+                            );
+
+                        }
+                    );
+
+                    listaEmpleadosDescuento.appendChild(
+                        opcion
+                    );
+
+                }
+            );
+
+        if (empleadosFiltrados.length === 0) {
+
+            const sinResultados =
+                document.createElement('div');
+
+            sinResultados.className =
+                'list-group-item text-muted';
+
+            sinResultados.textContent =
+                'No se encontraron empleados.';
+
+            listaEmpleadosDescuento.appendChild(
+                sinResultados
+            );
+
+        }
+
+    }
+);
+
+function seleccionarEmpleadoDescuento(empleado) {
+
+    descuentoEmpleadoBusqueda.value =
+        `${empleado.nombre} - ${empleado.tipo_documento || ''} ${empleado.numero_documento || ''}`;
+
+    descuentoEmpleado.value =
+        empleado.id;
+
+    listaEmpleadosDescuento.innerHTML = '';
+
+    cargarConsolidadoPrestamo(
+        empleado.id
+    );
+
+    cargarHistorialDescuentos(
+        empleado.id
+    );
+}
+
+
+/* ============================================================
+   CARGAR HISTORIAL DE DESCUENTOS
+   ============================================================ */
+
+async function cargarHistorialDescuentos(empleadoId) {
+
+    const contenedor =
+        document.getElementById(
+            'historialDescuentosNomina'
+        );
+
+    if (!contenedor) {
+        return;
+    }
+
+    contenedor.innerHTML = `
+        <div class="text-center text-muted py-3">
+            <i class="fas fa-spinner fa-spin mb-2"></i>
+            <p class="mb-0">
+                Cargando historial...
+            </p>
+        </div>
+    `;
+
+    try {
+
+        const response =
+            await fetch(
+                `/nomina/prestamos/empleado/${empleadoId}/historial-descuentos`
+            );
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.ok) {
+            throw new Error(
+                data.error ||
+                'No fue posible cargar el historial.'
+            );
+        }
+
+
+        /* ====================================================
+           SIN REGISTROS
+           ==================================================== */
+
+        if (
+            !data.historial ||
+            data.historial.length === 0
+        ) {
+
+            contenedor.innerHTML = `
+                <div class="text-center text-muted py-3">
+
+                    <i class="fas fa-history fa-lg mb-2"></i>
+
+                    <p class="mb-0">
+                        No hay descuentos registrados
+                        para este empleado.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        /* ====================================================
+           MOSTRAR HISTORIAL
+           ==================================================== */
+
+        contenedor.innerHTML = '';
+
+        data.historial.forEach(registro => {
+
+            const fecha =
+                new Date(
+                    `${registro.fecha_descuento}T00:00:00`
+                );
+
+            const fechaTexto = String(
+    registro.fecha_descuento || ''
+);
+
+const soloFecha = fechaTexto
+    .split('T')[0]
+    .split(' ')[0];
+
+let fechaFormateada = 'Sin fecha';
+
+const partesFecha = soloFecha.split('-');
+
+if (
+    partesFecha.length === 3 &&
+    partesFecha[0].length === 4
+) {
+    fechaFormateada =
+        `${partesFecha[2]}/${partesFecha[1]}/${partesFecha[0]}`;
+}
+
+
+            const quincena =
+                registro.tipo_periodo === 'QUINCENA_1'
+                    ? '1.ª quincena'
+                    : '2.ª quincena';
+
+
+            const saldoInicial =
+                Number(
+                    registro.saldo_inicial || 0
+                );
+
+            const descuento =
+                Number(
+                    registro.valor_descuento || 0
+                );
+
+            const saldoFinal =
+                Number(
+                    registro.saldo_final || 0
+                );
+
+
+            contenedor.innerHTML += `
+
+                <div class="card mb-2 border">
+
+                    <div class="card-body py-3">
+
+                        <div
+                            class="d-flex justify-content-between
+                                   align-items-start mb-2"
+                        >
+
+                            <div>
+
+                                <strong>
+                                    ${fechaFormateada}
+                                </strong>
+
+                                <span
+                                    class="badge bg-light text-dark border ms-2"
+                                >
+                                    ${quincena}
+                                </span>
+
+                            </div>
+
+                            <small class="text-muted">
+                                Registro #${registro.id}
+                            </small>
+
+                        </div>
+
+
+                        <div class="row g-2">
+
+                            <div class="col-md-4">
+
+                                <small class="text-muted d-block">
+                                    Saldo inicial
+                                </small>
+
+                                <strong>
+                                    ${formatearMoneda(saldoInicial)}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="col-md-4">
+
+                                <small class="text-muted d-block">
+                                    Descuento
+                                </small>
+
+                                <strong class="text-success">
+                                    ${formatearMoneda(descuento)}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="col-md-4">
+
+                                <small class="text-muted d-block">
+                                    Saldo trasladado
+                                </small>
+
+                                <strong>
+                                    ${formatearMoneda(saldoFinal)}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        ${
+                            registro.observacion
+                                ? `
+                                    <div class="mt-2">
+                                        <small class="text-muted">
+                                            <i class="fas fa-comment me-1"></i>
+                                            ${registro.observacion}
+                                        </small>
+                                    </div>
+                                  `
+                                : ''
+                        }
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            'Error cargando historial de descuentos:',
+            error
+        );
+
+        contenedor.innerHTML = `
+
+            <div class="alert alert-danger mb-0">
+
+                <i class="fas fa-circle-exclamation me-2"></i>
+
+                No fue posible cargar el historial.
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+/* ============================================================
+   CALCULAR SALDO FINAL DEL DESCUENTO
+   ============================================================ */
+
+valorDescuentoNomina?.addEventListener(
+    'input',
+    () => {
+
+        const saldoTexto =
+            descuentoSaldoTotal.textContent
+                .replace(/[^\d]/g, '');
+
+        const saldoTotal =
+            Number(saldoTexto || 0);
+
+        let valorDescuento =
+            Number(
+                valorDescuentoNomina.value
+                    .replace(/[^\d]/g, '') || 0
+            );
+
+        if (valorDescuento < 0) {
+            valorDescuento = 0;
+        }
+
+        if (valorDescuento > saldoTotal) {
+            valorDescuento = saldoTotal;
+        }
+
+        /*
+         * FORMATEAR EL CAMPO COMO MONEDA
+         * Ejemplo:
+         * 1252545 → $ 1.252.545
+         */
+        valorDescuentoNomina.value =
+            formatearMoneda(valorDescuento);
+
+        const saldoFinal =
+            saldoTotal - valorDescuento;
+
+        descuentoSaldoFinal.textContent =
+            formatearMoneda(saldoFinal);
+    }
+);
+
+btnRealizarDescuento?.addEventListener(
+    'click',
+    async () => {
+
+        try {
+
+            const empleadoId = Number(
+                descuentoEmpleado.value
+            );
+
+            if (!empleadoId) {
+                alert('Debe seleccionar un empleado.');
+                return;
+            }
+
+            const saldoTexto =
+                descuentoSaldoTotal.textContent
+                    .replace(/[^\d]/g, '');
+
+            const saldoInicial =
+                Number(saldoTexto || 0);
+
+            const valorDescuento =
+                Number(
+                    valorDescuentoNomina.value
+                        .replace(/[^\d]/g, '') || 0
+                );
+
+            if (valorDescuento < 0) {
+                alert('El valor del descuento no puede ser negativo.');
+                return;
+            }
+
+            if (valorDescuento > saldoInicial) {
+                alert(
+                    'El valor del descuento no puede superar el saldo pendiente.'
+                );
+                return;
+            }
+
+            const resultado = await Swal.fire({
+    title: '¿Registrar descuento?',
+    html: `
+        <div style="font-size: 16px;">
+            Se registrará un descuento de
+            <strong>
+                ${formatearMoneda(valorDescuento)}
+            </strong>
+            sobre el saldo del préstamo.
+        </div>
+    `,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, registrar',
+    cancelButtonText: 'Cancelar',
+    reverseButtons: true,
+    confirmButtonColor: '#198754',
+    cancelButtonColor: '#6c757d',
+    allowOutsideClick: false
+});
+
+if (!resultado.isConfirmed) {
+    return;
+}
+
+            btnRealizarDescuento.disabled = true;
+
+            const fecha = new Date();
+
+            const fechaDescuento =
+                fecha.toISOString().split('T')[0];
+
+            const tipoPeriodo =
+                fecha.getDate() <= 15
+                    ? 'QUINCENA_1'
+                    : 'QUINCENA_2';
+
+            const response = await fetch(
+                '/nomina/prestamos/descuento-nomina',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        empleado_id: empleadoId,
+                        fecha_descuento: fechaDescuento,
+                        tipo_periodo: tipoPeriodo,
+                        valor_descuento: valorDescuento,
+                        observacion:
+                            observacionDescuentoNomina.value.trim()
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok || !data.ok) {
+                throw new Error(
+                    data.error ||
+                    'No fue posible registrar el descuento.'
+                );
+            }
+
+            await Swal.fire({
+    title: 'Descuento registrado',
+    text: data.mensaje,
+    icon: 'success',
+    confirmButtonText: 'Aceptar',
+    confirmButtonColor: '#198754',
+    allowOutsideClick: false
+});
+
+            await cargarConsolidadoPrestamo(
+                empleadoId
+            );
+
+        } catch (error) {
+
+            console.error(
+                'Error realizando descuento de nómina:',
+                error
+            );
+
+            alert(
+                error.message ||
+                'No fue posible registrar el descuento.'
+            );
+
+        } finally {
+
+            btnRealizarDescuento.disabled = false;
+
+        }
+
+    }
+);
+
+/* ============================================================
+   CONSULTAR CONSOLIDADO
+   ============================================================ */
+
+descuentoEmpleado?.addEventListener(
+    'change',
+    async () => {
+
+        const empleadoId =
+            descuentoEmpleado.value;
+
+        if (!empleadoId) {
+
+            contenedorConsolidadoPrestamo.hidden =
+                true;
+
+            mensajeSinEmpleadoDescuento.hidden =
+                false;
+
+            btnRealizarDescuento.disabled =
+                true;
+
+            return;
+
+        }
+
+        await cargarConsolidadoPrestamo(
+            empleadoId
+        );
+
+    }
+);
+
+async function cargarConsolidadoPrestamo(
+    empleadoId
+) {
+
+    try {
+
+        const response =
+            await fetch(
+                `/nomina/prestamos/empleado/${empleadoId}/consolidado`
+            );
+
+        const data =
+            await response.json();
+
+        if (!data.ok) {
+
+            throw new Error(
+                data.error ||
+                'No fue posible consultar el consolidado.'
+            );
+
+        }
+
+        mensajeSinEmpleadoDescuento.hidden =
+            true;
+
+        contenedorConsolidadoPrestamo.hidden =
+            false;
+
+        btnRealizarDescuento.disabled =
+            false;
+
+        descuentoCantidadPrestamos.textContent =
+            data.cantidad_prestamos;
+
+        descuentoSaldoTotal.textContent =
+            formatearMoneda(
+                data.saldo_total
+            );
+
+        descuentoSaldoFinal.textContent =
+            formatearMoneda(
+                data.saldo_total
+            );
+
+        listaPrestamosDescuento.innerHTML =
+            '';
+
+        data.prestamos.forEach(
+            prestamo => {
+
+                listaPrestamosDescuento.innerHTML +=
+                    `
+                    <div class="card mb-2">
+
+                        <div class="card-body d-flex justify-content-between">
+
+                            <div>
+
+                                <strong>
+                                    Préstamo #${prestamo.id}
+                                </strong>
+
+                                <div class="text-muted">
+                                    ${prestamo.estado}
+                                </div>
+
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    ${formatearMoneda(
+                                        prestamo.saldo_pendiente
+                                    )}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    `;
+
+            }
+        );
+
+        valorDescuentoNomina.value =
+            '$ 0';
+
+        observacionDescuentoNomina.value =
+            '';
+
+    } catch (error) {
+
+        console.error(
+            'Error cargando consolidado:',
+            error
+        );
+
+    }
+
+}
 
     /* ========================================================
    CARGAR PRÉSTAMOS DESDE LA BASE DE DATOS

@@ -4516,9 +4516,1024 @@ function sumarMes(fecha) {
     return nuevaFecha;
 }
 
-
 /* ============================================================
-   EXPORTAR ROUTER
+   CONSULTAR SALDO TOTAL DE PRÉSTAMOS POR EMPLEADO
    ============================================================ */
 
+router.get(
+    '/nomina/prestamos/empleado/:empleadoId/consolidado',
+    async (req, res) => {
+
+        const db = req.app.get('db');
+
+        let connection = null;
+
+        try {
+
+            const empleadoId =
+                Number(req.params.empleadoId);
+
+
+            /* ====================================================
+               VALIDAR EMPLEADO
+               ==================================================== */
+
+            if (
+                !Number.isInteger(empleadoId) ||
+                empleadoId <= 0
+            ) {
+
+                return res.status(400).json({
+                    ok: false,
+                    error:
+                        'El empleado indicado no es válido.'
+                });
+
+            }
+
+
+            /* ====================================================
+               CONEXIÓN
+               ==================================================== */
+
+            connection =
+                await db.getConnection();
+
+
+            /* ====================================================
+               VALIDAR QUE EL EMPLEADO EXISTA
+               ==================================================== */
+
+            const [empleados] =
+                await connection.query(
+                    `
+                    SELECT
+                        id,
+                        nombre,
+                        numero_documento
+                    FROM empleados
+                    WHERE id = ?
+                    `,
+                    [
+                        empleadoId
+                    ]
+                );
+
+
+            if (
+                empleados.length === 0
+            ) {
+
+                return res.status(404).json({
+                    ok: false,
+                    error:
+                        'El empleado no existe.'
+                });
+
+            }
+
+
+            const empleado =
+                empleados[0];
+
+
+            /* ====================================================
+               CONSULTAR PRÉSTAMOS ACTIVOS
+               ==================================================== */
+
+            const [prestamos] =
+                await connection.query(
+                    `
+                    SELECT
+                        id,
+                        fecha_prestamo,
+                        valor_prestamo,
+                        valor_interes,
+                        saldo_pendiente,
+                        estado
+                    FROM nomina_prestamos
+                    WHERE empleado_id = ?
+                      AND estado = 'ACTIVO'
+                      AND saldo_pendiente > 0
+                    ORDER BY
+                        fecha_prestamo ASC,
+                        id ASC
+                    `,
+                    [
+                        empleadoId
+                    ]
+                );
+
+
+            /* ====================================================
+               CALCULAR SALDO TOTAL
+               ==================================================== */
+
+            const saldoTotal =
+                prestamos.reduce(
+                    (
+                        total,
+                        prestamo
+                    ) => {
+
+                        return total +
+                            Number(
+                                prestamo.saldo_pendiente || 0
+                            );
+
+                    },
+                    0
+                );
+
+
+            /* ====================================================
+               RESPUESTA
+               ==================================================== */
+
+            return res.json({
+
+                ok: true,
+
+                empleado: {
+
+                    id:
+                        empleado.id,
+
+                    nombre:
+                        empleado.nombre,
+
+                    numero_documento:
+                        empleado.numero_documento
+
+                },
+
+                saldo_total:
+                    saldoTotal,
+
+                cantidad_prestamos:
+                    prestamos.length,
+
+                prestamos
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                '❌ Error consultando consolidado de préstamos:',
+                error
+            );
+
+
+            return res.status(500).json({
+
+                ok: false,
+
+                error:
+                    'No fue posible consultar el saldo total de préstamos.'
+
+            });
+
+
+        } finally {
+
+            if (connection) {
+
+                connection.release();
+
+            }
+
+        }
+
+    }
+);
+
+/* ============================================================
+   REGISTRAR DESCUENTO DE PRÉSTAMOS POR NÓMINA
+   ============================================================ */
+
+router.post(
+    '/nomina/prestamos/descuento-nomina',
+    async (req, res) => {
+
+        const db = req.app.get('db');
+
+        const usuarioId =
+            req.session.usuarioID;
+
+        let connection = null;
+
+        try {
+
+            /* ====================================================
+               DATOS RECIBIDOS
+               ==================================================== */
+
+            const {
+                empleado_id,
+                fecha_descuento,
+                tipo_periodo,
+                valor_descuento,
+                observacion
+            } = req.body;
+
+
+            /* ====================================================
+               VALIDAR SESIÓN
+               ==================================================== */
+
+            if (!usuarioId) {
+
+                return res.status(401).json({
+                    ok: false,
+                    error:
+                        'La sesión del usuario no es válida.'
+                });
+
+            }
+
+
+            /* ====================================================
+               VALIDAR EMPLEADO
+               ==================================================== */
+
+            const empleadoId =
+                Number(empleado_id);
+
+            if (
+                !Number.isInteger(empleadoId) ||
+                empleadoId <= 0
+            ) {
+
+                return res.status(400).json({
+                    ok: false,
+                    error:
+                        'El empleado indicado no es válido.'
+                });
+
+            }
+
+
+            /* ====================================================
+               VALIDAR FECHA
+               ==================================================== */
+
+            if (!fecha_descuento) {
+
+                return res.status(400).json({
+                    ok: false,
+                    error:
+                        'Debe indicar la fecha del descuento.'
+                });
+
+            }
+
+
+            /* ====================================================
+               VALIDAR QUINCENA
+               ==================================================== */
+
+            if (
+                tipo_periodo !== 'QUINCENA_1' &&
+                tipo_periodo !== 'QUINCENA_2'
+            ) {
+
+                return res.status(400).json({
+                    ok: false,
+                    error:
+                        'Debe seleccionar una quincena válida.'
+                });
+
+            }
+
+
+            /* ====================================================
+               VALIDAR VALOR
+               ==================================================== */
+
+            const valorDescuento =
+                Number(valor_descuento);
+
+            if (
+                !Number.isFinite(valorDescuento) ||
+                valorDescuento < 0
+            ) {
+
+                return res.status(400).json({
+                    ok: false,
+                    error:
+                        'El valor del descuento debe ser mayor o igual a cero.'
+                });
+
+            }
+
+
+            /* ====================================================
+               CONEXIÓN
+               ==================================================== */
+
+            connection =
+                await db.getConnection();
+
+            await connection.beginTransaction();
+
+
+            /* ====================================================
+               CONSULTAR PRÉSTAMOS ACTIVOS Y BLOQUEARLOS
+               ==================================================== */
+
+            const [prestamos] =
+                await connection.query(
+                    `
+                    SELECT
+                        id,
+                        empleado_id,
+                        saldo_pendiente,
+                        estado
+                    FROM nomina_prestamos
+                    WHERE empleado_id = ?
+                      AND estado = 'ACTIVO'
+                      AND saldo_pendiente > 0
+                    ORDER BY
+                        fecha_prestamo ASC,
+                        id ASC
+                    FOR UPDATE
+                    `,
+                    [
+                        empleadoId
+                    ]
+                );
+
+
+            /* ====================================================
+               CALCULAR SALDO TOTAL
+               ==================================================== */
+
+            const saldoInicial =
+                prestamos.reduce(
+                    (
+                        total,
+                        prestamo
+                    ) => {
+
+                        return total +
+                            Number(
+                                prestamo.saldo_pendiente || 0
+                            );
+
+                    },
+                    0
+                );
+
+
+            /* ====================================================
+               VALIDAR DESCUENTO
+               ==================================================== */
+
+            if (
+                valorDescuento >
+                saldoInicial + 0.01
+            ) {
+
+                await connection.rollback();
+
+                connection.release();
+
+                connection = null;
+
+                return res.status(400).json({
+                    ok: false,
+                    error:
+                        'El valor del descuento no puede superar el saldo total pendiente.'
+                });
+
+            }
+
+
+            /* ====================================================
+               CALCULAR SALDO FINAL
+               ==================================================== */
+
+            const saldoFinal =
+                Math.max(
+                    saldoInicial -
+                    valorDescuento,
+                    0
+                );
+
+
+            /* ====================================================
+               REGISTRAR CABECERA DEL DESCUENTO
+               ==================================================== */
+
+            const [resultadoDescuento] =
+                await connection.query(
+                    `
+                    INSERT INTO nomina_descuentos_prestamos (
+                        empleado_id,
+                        fecha_descuento,
+                        tipo_periodo,
+                        saldo_inicial,
+                        valor_descuento,
+                        saldo_final,
+                        observacion,
+                        usuario_id,
+                        fecha_registro
+                    )
+                    VALUES (
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        NOW()
+                    )
+                    `,
+                    [
+                        empleadoId,
+                        fecha_descuento,
+                        tipo_periodo,
+                        saldoInicial,
+                        valorDescuento,
+                        saldoFinal,
+                        observacion || null,
+                        usuarioId
+                    ]
+                );
+
+
+            const descuentoId =
+                resultadoDescuento.insertId;
+
+
+            /* ====================================================
+               DISTRIBUIR DESCUENTO ENTRE PRÉSTAMOS
+               ==================================================== */
+
+            let restante =
+                valorDescuento;
+
+            let ordenAplicacion = 1;
+
+            const prestamosAfectados = [];
+
+
+            for (
+                const prestamo of prestamos
+            ) {
+
+                if (
+                    restante <= 0.01
+                ) {
+                    break;
+                }
+
+
+                const saldoAnterior =
+                    Number(
+                        prestamo.saldo_pendiente || 0
+                    );
+
+
+                const valorAplicado =
+                    Math.min(
+                        restante,
+                        saldoAnterior
+                    );
+
+
+                if (
+                    valorAplicado <= 0
+                ) {
+                    continue;
+                }
+
+
+                const saldoNuevo =
+                    Math.max(
+                        saldoAnterior -
+                        valorAplicado,
+                        0
+                    );
+
+
+                const nuevoEstado =
+                    saldoNuevo <= 0.01
+                        ? 'PAGADO'
+                        : 'ACTIVO';
+
+
+                /* ================================================
+                   ACTUALIZAR PRÉSTAMO
+                   ================================================ */
+
+                await connection.query(
+                    `
+                    UPDATE nomina_prestamos
+                    SET
+                        saldo_pendiente = ?,
+                        estado = ?,
+                        fecha_finalizacion =
+                            CASE
+                                WHEN ? = 'PAGADO'
+                                THEN ?
+                                ELSE fecha_finalizacion
+                            END
+                    WHERE id = ?
+                    `,
+                    [
+                        saldoNuevo,
+                        nuevoEstado,
+                        nuevoEstado,
+                        fecha_descuento,
+                        prestamo.id
+                    ]
+                );
+
+
+                /* ================================================
+                   REGISTRAR MOVIMIENTO DEL PRÉSTAMO
+                   ================================================ */
+
+                await connection.query(
+                    `
+                    INSERT INTO nomina_prestamos_movimientos (
+                        prestamo_id,
+                        cuota_id,
+                        tipo_movimiento,
+                        fecha_movimiento,
+                        valor,
+                        valor_capital,
+                        valor_interes,
+                        medio_pago,
+                        observacion,
+                        usuario_id,
+                        fecha_registro
+                    )
+                    VALUES (
+                        ?,
+                        NULL,
+                        'DESCUENTO_NOMINA',
+                        ?,
+                        ?,
+                        ?,
+                        0,
+                        'NÓMINA',
+                        ?,
+                        ?,
+                        NOW()
+                    )
+                    `,
+                    [
+                        prestamo.id,
+                        `${fecha_descuento} 00:00:00`,
+                        valorAplicado,
+                        valorAplicado,
+                        observacion ||
+                            `Descuento de nómina ${tipo_periodo}`,
+                        usuarioId
+                    ]
+                );
+
+
+                /* ================================================
+                   GUARDAR DETALLE
+                   ================================================ */
+
+                await connection.query(
+                    `
+                    INSERT INTO nomina_descuentos_prestamos_detalle (
+                        descuento_id,
+                        prestamo_id,
+                        orden_aplicacion,
+                        saldo_anterior,
+                        valor_aplicado,
+                        saldo_nuevo,
+                        fecha_registro
+                    )
+                    VALUES (
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        NOW()
+                    )
+                    `,
+                    [
+                        descuentoId,
+                        prestamo.id,
+                        ordenAplicacion,
+                        saldoAnterior,
+                        valorAplicado,
+                        saldoNuevo
+                    ]
+                );
+
+
+                prestamosAfectados.push({
+                    prestamo_id:
+                        prestamo.id,
+
+                    saldo_anterior:
+                        saldoAnterior,
+
+                    valor_aplicado:
+                        valorAplicado,
+
+                    saldo_nuevo:
+                        saldoNuevo,
+
+                    estado:
+                        nuevoEstado
+                });
+
+
+                restante -=
+                    valorAplicado;
+
+                ordenAplicacion++;
+
+            }
+
+
+            /* ====================================================
+               VALIDAR QUE TODO EL DESCUENTO FUE APLICADO
+               ==================================================== */
+
+            if (
+                restante > 0.01
+            ) {
+
+                await connection.rollback();
+
+                connection.release();
+
+                connection = null;
+
+                return res.status(400).json({
+                    ok: false,
+                    error:
+                        'No fue posible aplicar completamente el descuento al saldo disponible.'
+                });
+
+            }
+
+
+            /* ====================================================
+               CONFIRMAR TRANSACCIÓN
+               ==================================================== */
+
+            await connection.commit();
+
+            connection.release();
+
+            connection = null;
+
+
+            /* ====================================================
+               RESPUESTA
+               ==================================================== */
+
+            return res.json({
+
+                ok: true,
+
+                mensaje:
+                    valorDescuento === 0
+                        ? 'Descuento registrado con valor $0. El saldo se trasladará a la siguiente quincena.'
+                        : 'Descuento de nómina registrado correctamente.',
+
+                descuento: {
+
+                    id:
+                        descuentoId,
+
+                    empleado_id:
+                        empleadoId,
+
+                    fecha_descuento:
+                        fecha_descuento,
+
+                    tipo_periodo:
+                        tipo_periodo,
+
+                    saldo_inicial:
+                        saldoInicial,
+
+                    valor_descuento:
+                        valorDescuento,
+
+                    saldo_final:
+                        saldoFinal,
+
+                    prestamos_afectados:
+                        prestamosAfectados
+
+                }
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                '❌ Error registrando descuento de préstamo por nómina:',
+                error
+            );
+
+
+            if (connection) {
+
+                try {
+
+                    await connection.rollback();
+
+                } catch (rollbackError) {
+
+                    console.error(
+                        '❌ Error realizando rollback del descuento:',
+                        rollbackError
+                    );
+
+                }
+
+                connection.release();
+
+            }
+
+
+            return res.status(500).json({
+
+                ok: false,
+
+                error:
+                    error.message ||
+                    'Error interno al registrar el descuento de nómina.'
+
+            });
+
+        }
+
+    }
+);
+
+/* ============================================================
+   HISTORIAL DE DESCUENTOS DE PRÉSTAMOS POR EMPLEADO
+   ============================================================ */
+
+router.get(
+    '/nomina/prestamos/empleado/:empleadoId/historial-descuentos',
+    async (req, res) => {
+
+        const db = req.app.get('db');
+
+        let connection = null;
+
+        try {
+
+            const empleadoId =
+                Number(req.params.empleadoId);
+
+
+            /* ====================================================
+               VALIDAR EMPLEADO
+               ==================================================== */
+
+            if (
+                !Number.isInteger(empleadoId) ||
+                empleadoId <= 0
+            ) {
+
+                return res.status(400).json({
+                    ok: false,
+                    error:
+                        'El empleado indicado no es válido.'
+                });
+
+            }
+
+
+            /* ====================================================
+               CONEXIÓN
+               ==================================================== */
+
+            connection =
+                await db.getConnection();
+
+
+            /* ====================================================
+               VALIDAR QUE EL EMPLEADO EXISTA
+               ==================================================== */
+
+            const [empleados] =
+                await connection.query(
+                    `
+                    SELECT
+                        id,
+                        nombre,
+                        numero_documento
+                    FROM empleados
+                    WHERE id = ?
+                    `,
+                    [
+                        empleadoId
+                    ]
+                );
+
+
+            if (
+                empleados.length === 0
+            ) {
+
+                return res.status(404).json({
+                    ok: false,
+                    error:
+                        'El empleado no existe.'
+                });
+
+            }
+
+
+            /* ====================================================
+               CONSULTAR HISTORIAL
+               ==================================================== */
+
+            const [historial] =
+                await connection.query(
+                    `
+                    SELECT
+                        d.id,
+                        d.fecha_descuento,
+                        d.tipo_periodo,
+                        d.saldo_inicial,
+                        d.valor_descuento,
+                        d.saldo_final,
+                        d.observacion,
+                        d.usuario_id,
+                        d.fecha_registro,
+                        u.usuario AS usuario_registro
+                    FROM nomina_descuentos_prestamos d
+                    LEFT JOIN usuarios u
+                        ON u.ID = d.usuario_id
+                    WHERE d.empleado_id = ?
+                    ORDER BY
+                        d.fecha_descuento DESC,
+                        d.id DESC
+                    `,
+                    [
+                        empleadoId
+                    ]
+                );
+
+
+            /* ====================================================
+               RESPUESTA
+               ==================================================== */
+
+            return res.json({
+
+                ok: true,
+
+                empleado: empleados[0],
+
+                historial
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                '❌ Error consultando historial de descuentos:',
+                error
+            );
+
+
+            return res.status(500).json({
+
+                ok: false,
+
+                error:
+                    'No fue posible consultar el historial de descuentos.'
+
+            });
+
+
+        } finally {
+
+            if (connection) {
+
+                connection.release();
+
+            }
+
+        }
+
+    }
+);
+
+/* ============================================================
+   HISTORIAL DE DESCUENTOS DE PRÉSTAMOS POR EMPLEADO
+   ============================================================ */
+
+router.get(
+    '/nomina/prestamos/empleado/:empleadoId/historial-descuentos',
+    async (req, res) => {
+
+        const db = req.app.get('db');
+
+        let connection = null;
+
+        try {
+
+            const empleadoId =
+                Number(req.params.empleadoId);
+
+
+            if (
+                !Number.isInteger(empleadoId) ||
+                empleadoId <= 0
+            ) {
+
+                return res.status(400).json({
+                    ok: false,
+                    error: 'El empleado indicado no es válido.'
+                });
+
+            }
+
+
+            connection =
+                await db.getConnection();
+
+
+            const [historial] =
+                await connection.query(
+                    `
+                    SELECT
+                        id,
+                        empleado_id,
+                        fecha_descuento,
+                        tipo_periodo,
+                        saldo_inicial,
+                        valor_descuento,
+                        saldo_final,
+                        observacion,
+                        usuario_id,
+                        fecha_registro
+                    FROM nomina_descuentos_prestamos
+                    WHERE empleado_id = ?
+                    ORDER BY
+                        fecha_descuento DESC,
+                        id DESC
+                    `,
+                    [empleadoId]
+                );
+
+
+            return res.json({
+
+                ok: true,
+
+                historial
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+                '❌ Error consultando historial de descuentos:',
+                error
+            );
+
+
+            return res.status(500).json({
+
+                ok: false,
+
+                error:
+                    'No fue posible consultar el historial de descuentos.'
+
+            });
+
+
+        } finally {
+
+            if (connection) {
+
+                connection.release();
+
+            }
+
+        }
+
+    }
+);
 module.exports = router;
