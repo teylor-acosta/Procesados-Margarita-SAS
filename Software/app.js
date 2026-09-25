@@ -213,6 +213,10 @@ app.use(
     require('./routes/sidebar.routes')
 );
 
+app.use(
+    require('./routes/nomina-novedades.routes')
+);
+
 // ============================================
 // TEST DB
 // ============================================

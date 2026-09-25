@@ -546,6 +546,18 @@ ${modulosRH.map(modulo => `
 
 `).join("")}
 
+<a
+    href="/nomina"
+    class="menu-item submenu-item ${paginaActiva === 'nomina' ? 'active' : ''}">
+
+    <i class="fas fa-money-check-dollar"></i>
+
+    <span>
+        Nómina
+    </span>
+
+</a>
+
             </div>
 
         </div>
@@ -793,6 +805,247 @@ function menuUsuarios(paginaActiva) {
     </div>
 
 `;
+}
+
+/* =====================================
+   MENÚ NÓMINA
+===================================== */
+
+function menuNomina(paginaActiva) {
+
+    return `
+
+        <span class="menu-section-title">
+            Recursos Humanos
+        </span>
+
+        <a href="/panel"
+           class="menu-item">
+
+            <i class="fas fa-th-large"></i>
+
+            <span>
+                Panel
+            </span>
+
+        </a>
+
+
+        <!-- ==============================
+             RECURSOS HUMANOS
+        =============================== -->
+
+        <div class="menu-group ">
+
+            <div class="menu-item menu-parent">
+
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:10px;
+                ">
+
+                    <i class="fas fa-users-cog"></i>
+
+                    <span>
+                        Recursos Humanos
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-down menu-arrow"></i>
+
+            </div>
+
+
+            <div class="submenu">
+
+                <a href="/recursos-humanos"
+                   class="menu-item submenu-item">
+
+                    <i class="fas fa-house"></i>
+
+                    <span>
+                        Inicio Recursos Humanos
+                    </span>
+
+                </a>
+
+
+                <a href="/empleados-menu"
+                   class="menu-item submenu-item">
+
+                    <i class="fas fa-users"></i>
+
+                    <span>
+                        Empleados
+                    </span>
+
+                </a>
+
+
+                <a href="/usuarios"
+                   class="menu-item submenu-item">
+
+                    <i class="fas fa-user-shield"></i>
+
+                    <span>
+                        Usuarios
+                    </span>
+
+                </a>
+
+
+                <a href="/nomina"
+                   class="menu-item submenu-item active">
+
+                    <i class="fas fa-money-check-dollar"></i>
+
+                    <span>
+                        Nómina
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==============================
+             MÓDULO NÓMINA
+        =============================== -->
+
+        <div class="menu-group open">
+
+            <div class="menu-item menu-parent">
+
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:10px;
+                ">
+
+                    <i class="fas fa-money-check-dollar"></i>
+
+                    <span>
+                        Módulo Nómina
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-down menu-arrow"></i>
+
+            </div>
+
+
+            <div class="submenu">
+
+
+                <!-- INICIO -->
+
+                <a href="/nomina"
+                   class="menu-item submenu-item ${paginaActiva === 'nomina' ? 'active' : ''}">
+
+                    <i class="fas fa-house"></i>
+
+                    <span>
+                        Inicio Módulo
+                    </span>
+
+                </a>
+
+
+                <!-- LIQUIDACIÓN -->
+
+                <a href="/nomina/liquidacion"
+                   class="menu-item submenu-item ${paginaActiva === 'nomina-liquidacion' ? 'active' : ''}">
+
+                    <i class="fas fa-calculator"></i>
+
+                    <span>
+                        Liquidación de Nómina
+                    </span>
+
+                </a>
+
+
+                <!-- NOVEDADES -->
+
+                <a href="/nomina/novedades"
+                   class="menu-item submenu-item ${paginaActiva === 'nomina-novedades' ? 'active' : ''}">
+
+                    <i class="fas fa-file-circle-plus"></i>
+
+                    <span>
+                        Novedades
+                    </span>
+
+                </a>
+
+
+                <!-- PRÉSTAMOS -->
+
+                <a href="/nomina/prestamos"
+                   class="menu-item submenu-item ${paginaActiva === 'nomina-prestamos' ? 'active' : ''}">
+
+                    <i class="fas fa-hand-holding-dollar"></i>
+
+                    <span>
+                        Préstamos
+                    </span>
+
+                </a>
+
+
+                <!-- PRODUCCIÓN -->
+
+                <a href="/nomina/produccion"
+                   class="menu-item submenu-item ${paginaActiva === 'nomina-produccion' ? 'active' : ''}">
+
+                    <i class="fas fa-industry"></i>
+
+                    <span>
+                        Liquidación por Producción
+                    </span>
+
+                </a>
+
+
+                <!-- CONFIGURACIÓN -->
+
+                <a href="/nomina/configuracion"
+                   class="menu-item submenu-item ${paginaActiva === 'nomina-configuracion' ? 'active' : ''}">
+
+                    <i class="fas fa-gear"></i>
+
+                    <span>
+                        Configuración
+                    </span>
+
+                </a>
+
+
+                <!-- HISTORIAL -->
+
+                <a href="/nomina/historial"
+                   class="menu-item submenu-item ${paginaActiva === 'nomina-historial' ? 'active' : ''}">
+
+                    <i class="fas fa-chart-line"></i>
+
+                    <span>
+                        Historial y Reportes
+                    </span>
+
+                </a>
+
+
+            </div>
+
+        </div>
+
+    `;
+
 }
 
 function menuCapacitaciones(paginaActiva) {
@@ -1276,6 +1529,73 @@ else if (pagina === "historial-usuarios") {
     menu.innerHTML =
         menuUsuarios(
             "historial-usuarios"
+        );
+
+}
+
+/* =====================================
+   MÓDULO NÓMINA
+===================================== */
+
+else if (pagina === "nomina") {
+
+    menu.innerHTML =
+        menuNomina(
+            "nomina"
+        );
+
+}
+
+else if (pagina === "nomina-liquidacion") {
+
+    menu.innerHTML =
+        menuNomina(
+            "nomina-liquidacion"
+        );
+
+}
+
+else if (pagina === "nomina-novedades") {
+
+    menu.innerHTML =
+        menuNomina(
+            "nomina-novedades"
+        );
+
+}
+
+else if (pagina === "nomina-prestamos") {
+
+    menu.innerHTML =
+        menuNomina(
+            "nomina-prestamos"
+        );
+
+}
+
+else if (pagina === "nomina-produccion") {
+
+    menu.innerHTML =
+        menuNomina(
+            "nomina-produccion"
+        );
+
+}
+
+else if (pagina === "nomina-configuracion") {
+
+    menu.innerHTML =
+        menuNomina(
+            "nomina-configuracion"
+        );
+
+}
+
+else if (pagina === "nomina-historial") {
+
+    menu.innerHTML =
+        menuNomina(
+            "nomina-historial"
         );
 
 }

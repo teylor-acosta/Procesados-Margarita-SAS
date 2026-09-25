@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Novedades - Procesados Margarita</title>
+
+
+    <!-- =====================================================
+         GOOGLE FONTS
+         ===================================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         BOOTSTRAP
+         ===================================================== -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         FONT AWESOME
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    >
+
+
+    <!-- =====================================================
+         CSS GENERAL DEL ERP
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="/css/style1.css"
+    >
+
+
+    <!-- =====================================================
+         SIDEBAR GLOBAL
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="/css/sidebar.css"
+    >
+
+
+    <!-- =====================================================
+         CSS PROPIO DE NOVEDADES
+         ===================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="/css/nomina-novedades.css"
+    >
+
+</head>
+
+
+<body data-pagina="nomina-novedades">
+
+
+    <!-- =====================================================
+         SIDEBAR GLOBAL
+         ===================================================== -->
+
+    <div id="sidebarContainer"></div>
+
+
+    <!-- =====================================================
+         OVERLAY SIDEBAR MÓVIL
+         ===================================================== -->
+
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+    ></div>
+
+
+    <!-- =====================================================
+         NAVBAR GLOBAL
+         ===================================================== -->
+
+    <nav class="navbar-custom">
+
+        <div class="navbar-left">
+
+            <i
+                class="fas fa-bars menu-toggle"
+                id="btnOpenSidebar"
+            ></i>
+
+
+            <span class="empresa-nombre">
+                Novedades
+            </span>
+
+        </div>
+
+
+        <div class="acciones-navbar">
+
+            <a
+                href="/nomina"
+                class="btn-light"
+            >
+
+                <i class="fas fa-arrow-left"></i>
+
+                Volver
+
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         CONTENIDO PRINCIPAL
+         ===================================================== -->
+
+    <main class="novedades-container">
+
+
+        <!-- =================================================
+             ENCABEZADO
+             ================================================= -->
+
+        <section class="novedades-header">
+
+            <div class="novedades-header-info">
+
+                <span class="novedades-overline">
+                    GESTIÓN DE NÓMINA
+                </span>
+
+                <h1>
+                    Novedades
+                </h1>
+
+                <p>
+                    Gestión y seguimiento de las novedades de nómina.
+                </p>
+
+            </div>
+
+
+            <div class="novedades-header-actions">
+
+                <button
+                    type="button"
+                    id="btnRegistrarNovedad"
+                    class="btn-novedad-primary"
+                >
+
+                    <i class="fas fa-plus"></i>
+
+                    Registrar novedad
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             TARJETAS RESUMEN
+             ================================================= -->
+
+        <section class="novedades-kpi-grid">
+
+
+            <!-- =================================================
+                 PENDIENTES
+                 ================================================= -->
+
+            <article class="novedad-kpi-card kpi-pendientes">
+
+                <div class="novedad-kpi-info">
+
+                    <span>
+                        Pendientes
+                    </span>
+
+                    <strong id="kpiPendientes">
+                        0
+                    </strong>
+
+                    <small>
+                        Requieren revisión
+                    </small>
+
+                </div>
+
+
+                <div class="novedad-kpi-icon">
+
+                    <i class="fas fa-clock"></i>
+
+                </div>
+
+            </article>
+
+
+            <!-- =================================================
+                 APROBADAS
+                 ================================================= -->
+
+            <article class="novedad-kpi-card kpi-aprobadas">
+
+                <div class="novedad-kpi-info">
+
+                    <span>
+                        Aprobadas
+                    </span>
+
+                    <strong id="kpiAprobadas">
+                        0
+                    </strong>
+
+                    <small>
+                        Novedades aprobadas
+                    </small>
+
+                </div>
+
+
+                <div class="novedad-kpi-icon">
+
+                    <i class="fas fa-circle-check"></i>
+
+                </div>
+
+            </article>
+
+
+            <!-- =================================================
+                 RECHAZADAS
+                 ================================================= -->
+
+            <article class="novedad-kpi-card kpi-rechazadas">
+
+                <div class="novedad-kpi-info">
+
+                    <span>
+                        Rechazadas
+                    </span>
+
+                    <strong id="kpiRechazadas">
+                        0
+                    </strong>
+
+                    <small>
+                        Novedades rechazadas
+                    </small>
+
+                </div>
+
+
+                <div class="novedad-kpi-icon">
+
+                    <i class="fas fa-circle-xmark"></i>
+
+                </div>
+
+            </article>
+
+
+            <!-- =================================================
+                 HISTORIAL
+                 ================================================= -->
+
+            <article
+                class="novedad-kpi-card kpi-historial historial-kpi-clickable"
+                data-bs-toggle="modal"
+                data-bs-target="#modalHistorialNovedades"
+                role="button"
+                tabindex="0"
+                aria-label="Abrir historial de novedades"
+            >
+
+                <div class="novedad-kpi-info">
+
+                    <span>
+                        Historial
+                    </span>
+
+                    <strong id="kpiHistorial">
+                        0
+                    </strong>
+
+                    <small>
+                        Novedades archivadas
+                    </small>
+
+                </div>
+
+
+                <div class="novedad-kpi-icon">
+
+                    <i class="fas fa-clock-rotate-left"></i>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =================================================
+             PANEL PRINCIPAL
+             ================================================= -->
+
+        <section class="novedades-panel">
+
+
+            <!-- =================================================
+                 CABECERA DEL PANEL
+                 ================================================= -->
+
+            <header class="novedades-panel-header">
+
+                <div>
+
+                    <span class="novedades-panel-overline">
+                        CONTROL DE NOVEDADES
+                    </span>
+
+                    <h2>
+                        Novedades registradas
+                    </h2>
+
+                    <p>
+                        Consulta y gestión de las novedades
+                        actualmente disponibles.
+                    </p>
+
+                </div>
+
+
+                <!-- =================================================
+                     BOTÓN HISTORIAL
+                     ================================================= -->
+
+                <div class="novedades-panel-header-actions">
+
+                    <button
+                        type="button"
+                        id="btnVerHistorial"
+                        class="btn-novedad-secondary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalHistorialNovedades"
+                    >
+
+                        <i class="fas fa-clock-rotate-left"></i>
+
+                        Ver historial
+
+                    </button>
+
+                </div>
+
+            </header>
+
+
+            <!-- =================================================
+                 FILTROS
+                 ================================================= -->
+
+            <div class="novedades-filtros">
+
+                <div class="novedades-filtros-grid">
+
+
+                    <!-- =================================================
+                         BUSCAR
+                         ================================================= -->
+
+                    <div class="novedad-filtro">
+
+                        <label for="buscarNovedad">
+                            Buscar
+                        </label>
+
+
+                        <div class="novedad-input-wrapper">
+
+                            <i
+                                class="fas fa-magnifying-glass"
+                            ></i>
+
+
+                            <input
+                                type="text"
+                                id="buscarNovedad"
+                                class="form-control"
+                                placeholder="Empleado, documento o novedad..."
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         TIPO DE NOVEDAD
+                         ================================================= -->
+
+                    <div class="novedad-filtro">
+
+                        <label for="filtroTipo">
+                            Tipo de novedad
+                        </label>
+
+
+                        <select
+                            id="filtroTipo"
+                            class="form-control"
+                        >
+
+                            <option value="">
+                                Todos los tipos
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         ESTADO
+                         ================================================= -->
+
+                    <div class="novedad-filtro">
+
+                        <label for="filtroEstado">
+                            Estado
+                        </label>
+
+
+                        <select
+                            id="filtroEstado"
+                            class="form-control"
+                        >
+
+                            <option value="">
+                                Todos
+                            </option>
+
+                            <option value="PENDIENTE">
+                                Pendiente
+                            </option>
+
+                            <option value="APROBADA">
+                                Aprobada
+                            </option>
+
+                            <option value="RECHAZADA">
+                                Rechazada
+                            </option>
+
+                            <option value="ANULADA">
+                                Anulada
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         MES
+                         ================================================= -->
+
+                    <div class="novedad-filtro">
+
+                        <label for="filtroMes">
+                            Mes
+                        </label>
+
+
+                        <input
+                            type="month"
+                            id="filtroMes"
+                            class="form-control"
+                        >
+
+                    </div>
+
+
+                    <!-- =================================================
+                         LIMPIAR
+                         ================================================= -->
+
+                    <div class="novedad-filtro filtro-limpiar">
+
+                        <label>
+                            &nbsp;
+                        </label>
+
+
+                        <button
+                            type="button"
+                            id="btnLimpiarFiltros"
+                            class="btn-novedad-secondary"
+                        >
+
+                            <i
+                                class="fas fa-filter-circle-xmark"
+                            ></i>
+
+                            Limpiar
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 TABLA DE NOVEDADES
+                 ================================================= -->
+
+            <div class="novedades-table-wrapper">
+
+                <table class="novedades-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Empleado
+                            </th>
+
+                            <th>
+                                Novedad
+                            </th>
+
+                            <th>
+                                Fecha
+                            </th>
+
+                            <th>
+                                Cantidad
+                            </th>
+
+                            <th>
+                                Estado
+                            </th>
+
+                            <th>
+                                Registro
+                            </th>
+
+                            <th>
+                                Acciones
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="tablaNovedades">
+
+                        <!--
+                            Las novedades serán cargadas
+                            mediante nomina-novedades.js
+                        -->
+
+                    </tbody>
+
+                </table>
+
+
+                <!-- =================================================
+                     ESTADO VACÍO
+                     ================================================= -->
+
+                <div
+                    id="estadoVacio"
+                    class="novedades-empty-state"
+                >
+
+                    <div class="novedades-empty-icon">
+
+                        <i
+                            class="fas fa-file-circle-exclamation"
+                        ></i>
+
+                    </div>
+
+
+                    <h3>
+                        No hay novedades para mostrar
+                    </h3>
+
+
+                    <p>
+                        Las novedades registradas aparecerán aquí.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- =====================================================
+         MODAL HISTORIAL DE NOVEDADES
+         ===================================================== -->
+
+    <div
+        class="modal fade novedad-modal"
+        id="modalHistorialNovedades"
+        tabindex="-1"
+        aria-labelledby="modalHistorialNovedadesLabel"
+        aria-hidden="true"
+    >
+
+        <div
+            class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
+        >
+
+            <div class="modal-content">
+
+
+                <!-- =================================================
+                     CABECERA DEL MODAL
+                     ================================================= -->
+
+                <div class="modal-header">
+
+                    <div>
+
+                        <span class="novedades-panel-overline">
+                            CONSULTA HISTÓRICA
+                        </span>
+
+                        <h2
+                            class="modal-title"
+                            id="modalHistorialNovedadesLabel"
+                        >
+                            Historial / Vencidas
+                        </h2>
+
+                        <p class="novedad-modal-subtitle">
+                            Consulta las novedades que ya no aparecen
+                            en el listado principal.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Cerrar"
+                    ></button>
+
+                </div>
+
+
+                <!-- =================================================
+                     CUERPO DEL MODAL
+                     ================================================= -->
+
+                <div class="modal-body">
+
+                    <div class="historial-modal-content">
+
+                        <div
+                            class="novedades-empty-state historial-empty"
+                        >
+
+                            <div class="novedades-empty-icon">
+
+                                <i
+                                    class="fas fa-clock-rotate-left"
+                                ></i>
+
+                            </div>
+
+
+                            <h3>
+                                Historial de novedades
+                            </h3>
+
+
+                            <p>
+                                Aquí estarán disponibles las
+                                novedades históricas.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         BOOTSTRAP JS
+         ===================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+
+    <!-- =====================================================
+         SIDEBAR GLOBAL
+         ===================================================== -->
+
+    <script src="/js/sidebar.js"></script>
+
+
+    <!-- =====================================================
+         JAVASCRIPT DE NOVEDADES
+         ===================================================== -->
+
+    <script src="/js/nomina-novedades.js"></script>
+
+
+</body>
+
+</html>

@@ -313,7 +313,7 @@ router.get('/api/me', proteger, async (req, res) => {
                 
                 /* 📊 Conteos analíticos globales para las tarjetas del Dashboard */
                 (SELECT COUNT(*) FROM empleados WHERE activo = 'SI') as total_empleados_activos,
-                (SELECT COUNT(*) FROM usuarios) as total_usuarios_sistema,
+                (SELECT COUNT(*) FROM usuarios WHERE bloqueado = 0) as total_usuarios_sistema,
                 (SELECT COUNT(*)
 FROM capacitaciones
 WHERE estado = 'ACTIVO') AS total_capacitaciones,

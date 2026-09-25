@@ -611,63 +611,122 @@ async function toggleBloqueo(id, estado) {
 
     try {
 
-        const res =
+        const accion =
+            estado == 1
+                ? 'bloquear'
+                : 'desbloquear';
 
-            await fetch(
+        const confirmacion = await Swal.fire({
 
-                '/api/usuarios/bloquear',
-
-                {
-
-                    method:'POST',
-
-                    headers:{
-                        'Content-Type':'application/json'
-                    },
-
-                    body:JSON.stringify({
-
-                        id,
-                        bloqueado:estado
-
-                    })
-
-                }
-
-            );
-
-        const data =
-            await res.json();
-
-        if (data.success) {
-
-            mostrarExito(
-
+            title:
                 estado == 1
+                    ? '¿Bloquear usuario?'
+                    : '¿Desbloquear usuario?',
 
-                ? 'Usuario bloqueado'
+            text:
+                estado == 1
+                    ? 'El usuario no podrá iniciar sesión mientras permanezca bloqueado.'
+                    : 'El usuario podrá volver a iniciar sesión.',
 
-                : 'Usuario desbloqueado'
+            icon:
+                estado == 1
+                    ? 'warning'
+                    : 'question',
 
-            );
+            showCancelButton: true,
 
-            cargarUsuarios();
+            confirmButtonText:
+                estado == 1
+                    ? 'Sí, bloquear'
+                    : 'Sí, desbloquear',
 
-        } else {
+            cancelButtonText: 'Cancelar',
 
-            mostrarError(
-                data.message
-            );
+            confirmButtonColor:
+                estado == 1
+                    ? '#dc2626'
+                    : '#16a34a',
+
+            cancelButtonColor: '#6b7280',
+
+            reverseButtons: true
+
+        });
+
+        if (!confirmacion.isConfirmed) {
+            return;
+        }
+
+        const res = await fetch(
+            '/api/usuarios/bloquear',
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify({
+                    id,
+                    bloqueado: estado
+                })
+            }
+        );
+
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+
+            return Swal.fire({
+                icon: 'error',
+                title: 'No fue posible actualizar',
+                text:
+                    data.message ||
+                    `No fue posible ${accion} el usuario.`,
+                confirmButtonColor: '#dc2626'
+            });
 
         }
 
+        await Swal.fire({
+
+            icon: 'success',
+
+            title:
+                estado == 1
+                    ? 'Usuario bloqueado'
+                    : 'Usuario desbloqueado',
+
+            text:
+                estado == 1
+                    ? 'El usuario ha sido bloqueado correctamente.'
+                    : 'El usuario ha sido desbloqueado correctamente.',
+
+            confirmButtonText: 'Aceptar',
+
+            confirmButtonColor: '#16a34a',
+
+            timer: 2500,
+
+            timerProgressBar: true
+
+        });
+
+        await cargarUsuarios();
+
     } catch (error) {
 
-        console.error(error);
-
-        mostrarError(
-            'Error actualizando usuario'
+        console.error(
+            'Error actualizando estado del usuario:',
+            error
         );
+
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No fue posible actualizar el estado del usuario.',
+            confirmButtonColor: '#dc2626'
+        });
 
     }
 
@@ -786,7 +845,7 @@ async function abrirModalReset(id) {
 
         });
 
-        cargarUsuarios();
+        await cargarUsuarios();
 
     }
 
