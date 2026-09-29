@@ -2622,19 +2622,24 @@ document.addEventListener('click', async event => {
            ================================================ */
 
         const detalleEmpleado =
-            document.getElementById(
-                'detalleEmpleado'
-            );
+    document.getElementById(
+        'detalleEmpleado'
+    );
 
-        const detalleDocumento =
-            document.getElementById(
-                'detalleDocumento'
-            );
+const detalleDocumento =
+    document.getElementById(
+        'detalleDocumento'
+    );
 
-        const detalleEstado =
-            document.getElementById(
-                'detalleEstado'
-            );
+const detalleFechaPrestamo =
+    document.getElementById(
+        'detalleFechaPrestamo'
+    );
+
+const detalleEstado =
+    document.getElementById(
+        'detalleEstado'
+    );
 
 
         if (detalleEmpleado) {
@@ -2652,6 +2657,15 @@ document.addEventListener('click', async event => {
                 `${prestamo.tipo_documento || 'CC'} ${prestamo.numero_documento || ''}`;
 
         }
+
+        if (detalleFechaPrestamo) {
+
+    detalleFechaPrestamo.textContent =
+        formatearFechaPrestamo(
+            prestamo.fecha_prestamo
+        );
+
+}
 
 
         if (detalleEstado) {

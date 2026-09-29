@@ -707,34 +707,235 @@
 
                 <div class="modal-body">
 
-                    <div class="historial-modal-content">
+    <!-- =====================================================
+         FILTROS DEL HISTORIAL
+         ===================================================== -->
 
-                        <div
-                            class="novedades-empty-state historial-empty"
-                        >
+    <div class="historial-filtros">
 
-                            <div class="novedades-empty-icon">
+        <div class="historial-filtros-grid">
 
-                                <i
-                                    class="fas fa-clock-rotate-left"
-                                ></i>
+            <!-- BUSCAR -->
+            <div class="novedad-filtro historial-filtro-busqueda">
 
-                            </div>
+                <label for="historialBuscar">
+                    Buscar
+                </label>
+
+                <div class="novedad-input-wrapper">
+
+                    <i class="fas fa-magnifying-glass"></i>
+
+                    <input
+                        type="text"
+                        id="historialBuscar"
+                        class="form-control"
+                        placeholder="Empleado, documento o novedad..."
+                    >
+
+                </div>
+
+            </div>
 
 
-                            <h3>
-                                Historial de novedades
-                            </h3>
+            <!-- TIPO DE NOVEDAD -->
+            <div class="novedad-filtro">
+
+                <label for="historialTipo">
+                    Tipo de novedad
+                </label>
+
+                <select
+                    id="historialTipo"
+                    class="form-control"
+                >
+
+                    <option value="">
+                        Todos los tipos
+                    </option>
+
+                </select>
+
+            </div>
 
 
-                            <p>
-                                Aquí estarán disponibles las
-                                novedades históricas.
-                            </p>
+            <!-- ESTADO -->
+            <div class="novedad-filtro">
 
-                        </div>
+                <label for="historialEstado">
+                    Estado
+                </label>
 
-                    </div>
+                <select
+    id="historialEstado"
+    class="form-control"
+>
+
+    <option value="">
+        Todos
+    </option>
+
+    <option value="APROBADA">
+        Aprobada
+    </option>
+
+    <option value="RECHAZADA">
+        Rechazada
+    </option>
+
+</select>
+
+            </div>
+
+
+            <!-- TIPO DE FECHA -->
+            <div class="novedad-filtro">
+
+                <label for="historialTipoFecha">
+                    Buscar por fecha
+                </label>
+
+                <select
+                    id="historialTipoFecha"
+                    class="form-control"
+                >
+
+                    <option value="">
+                        Sin filtro de fecha
+                    </option>
+
+                    <option value="dia">
+                        Día
+                    </option>
+
+                    <option value="mes">
+                        Mes
+                    </option>
+
+                    <option value="ano">
+                        Año
+                    </option>
+
+                    <option value="rango">
+                        Rango de fechas
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             CONTENEDOR FECHA
+             ================================================= -->
+
+        <div
+            id="historialFechaContainer"
+            class="historial-fecha-container"
+        >
+
+            <!-- DÍA -->
+
+            <div
+                id="historialFechaDia"
+                class="historial-fecha-opcion"
+                style="display:none;"
+            >
+
+                <label for="historialDia">
+                    Seleccionar día
+                </label>
+
+                <input
+                    type="date"
+                    id="historialDia"
+                    class="form-control"
+                >
+
+            </div>
+
+
+            <!-- MES -->
+
+            <div
+                id="historialFechaMes"
+                class="historial-fecha-opcion"
+                style="display:none;"
+            >
+
+                <label for="historialMes">
+                    Seleccionar mes
+                </label>
+
+                <input
+                    type="month"
+                    id="historialMes"
+                    class="form-control"
+                >
+
+            </div>
+
+
+            <!-- AÑO -->
+
+            <div
+                id="historialFechaAno"
+                class="historial-fecha-opcion"
+                style="display:none;"
+            >
+
+                <label for="historialAno">
+                    Seleccionar año
+                </label>
+
+                <input
+                    type="number"
+                    id="historialAno"
+                    class="form-control"
+                    min="2000"
+                    max="2100"
+                    placeholder="Ej. 2026"
+                >
+
+            </div>
+
+
+            <!-- RANGO -->
+
+            <div
+                id="historialFechaRango"
+                class="historial-rango"
+                style="display:none;"
+            >
+
+                <div>
+
+                    <label for="historialDesde">
+                        Desde
+                    </label>
+
+                    <input
+                        type="date"
+                        id="historialDesde"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label for="historialHasta">
+                        Hasta
+                    </label>
+
+                    <input
+                        type="date"
+                        id="historialHasta"
+                        class="form-control"
+                    >
 
                 </div>
 
@@ -742,7 +943,440 @@
 
         </div>
 
+
+        <!-- =================================================
+             BOTONES
+             ================================================= -->
+
+        <div class="historial-filtros-acciones">
+
+            <button
+                type="button"
+                id="btnBuscarHistorial"
+                class="btn-novedad-primary"
+            >
+
+                <i class="fas fa-magnifying-glass"></i>
+
+                Buscar
+
+            </button>
+
+
+            <button
+                type="button"
+                id="btnLimpiarHistorial"
+                class="btn-novedad-secondary"
+            >
+
+                <i class="fas fa-filter-circle-xmark"></i>
+
+                Limpiar filtros
+
+            </button>
+
+        </div>
+
     </div>
+
+
+    <!-- =====================================================
+         RESULTADOS
+         ===================================================== -->
+
+    <div
+        id="historialResultados"
+        class="historial-resultados"
+    >
+
+        <div class="novedades-loading" id="historialCargando">
+
+            <i class="fas fa-spinner fa-spin"></i>
+
+            Cargando historial...
+
+        </div>
+
+
+        <div
+            id="historialEstadoVacio"
+            class="novedades-empty-state historial-empty"
+        >
+
+            <div class="novedades-empty-icon">
+
+                <i class="fas fa-clock-rotate-left"></i>
+
+            </div>
+
+            <h3>
+                Historial de novedades
+            </h3>
+
+            <p>
+                Utiliza los filtros para consultar las novedades históricas.
+            </p>
+
+        </div>
+
+
+        <!-- TABLA HISTORIAL -->
+
+        <div
+            id="historialTablaWrapper"
+            class="novedades-table-wrapper"
+            style="display:none;"
+        >
+
+            <table class="novedades-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Empleado
+                        </th>
+
+                        <th>
+                            Novedad
+                        </th>
+
+                        <th>
+                            Fecha
+                        </th>
+
+                        <th>
+                            Cantidad
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <th>
+                            Registro
+                        </th>
+
+                        <th>
+                            Acciones
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="tablaHistorialNovedades">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ============================================================
+     MODAL REGISTRAR NOVEDAD
+     ============================================================ -->
+
+<div
+    class="modal fade novedad-modal"
+    id="modalRegistrarNovedad"
+    tabindex="-1"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <!-- =================================================
+                 HEADER
+                 ================================================= -->
+
+            <div class="modal-header">
+
+                <div>
+
+                    <div class="novedad-modal-subtitle">
+                        REGISTRO DE NÓMINA
+                    </div>
+
+                    <h5 class="modal-title">
+                        Registrar novedad
+                    </h5>
+
+                    <p class="modal-descripcion">
+                        Registra una novedad asociada a tu empleado.
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Cerrar"
+                ></button>
+
+            </div>
+
+
+            <!-- =================================================
+                 BODY
+                 ================================================= -->
+
+            <div class="modal-body">
+
+                <!-- =============================================
+                     TIPO DE NOVEDAD
+                     ============================================= -->
+
+                <div class="registro-novedad-seccion">
+
+                    <div class="registro-novedad-titulo">
+
+                        <i class="fas fa-file-circle-plus"></i>
+
+                        <div>
+
+                            <h6>
+                                Tipo de novedad
+                            </h6>
+
+                            <span>
+                                Selecciona el tipo que deseas registrar.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="novedad-filtro">
+
+                        <label for="registroTipoNovedad">
+                            Tipo de novedad
+                            <span class="campo-obligatorio">*</span>
+                        </label>
+
+                        <select
+                            id="registroTipoNovedad"
+                            class="form-control"
+                        >
+
+                            <option value="">
+                                Selecciona un tipo de novedad
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- INFORMACIÓN DEL TIPO -->
+
+                    <div
+                        id="informacionTipoNovedad"
+                        class="informacion-tipo-novedad"
+                        style="display:none;"
+                    >
+
+                        <div class="informacion-tipo-item">
+
+                            <i class="fas fa-circle-info"></i>
+
+                            <div>
+
+                                <strong id="registroTipoNombre">
+                                    -
+                                </strong>
+
+                                <span id="registroTipoDescripcion">
+                                    -
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     FORMULARIO DINÁMICO
+                     ============================================= -->
+
+                <div
+                    id="formularioNovedadDinamico"
+                    class="registro-novedad-seccion"
+                    style="display:none;"
+                >
+
+                    <div class="registro-novedad-titulo">
+
+                        <i class="fas fa-list-check"></i>
+
+                        <div>
+
+                            <h6>
+                                Información de la novedad
+                            </h6>
+
+                            <span>
+                                Completa la información solicitada.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="camposNovedad"
+                        class="campos-novedad"
+                    >
+
+                        <!-- Los campos específicos aparecerán aquí -->
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     SOPORTE
+                     ============================================= -->
+
+                <div
+                    id="seccionSoporteNovedad"
+                    class="registro-novedad-seccion"
+                    style="display:none;"
+                >
+
+                    <div class="registro-novedad-titulo">
+
+                        <i class="fas fa-paperclip"></i>
+
+                        <div>
+
+                            <h6>
+                                Soporte
+                            </h6>
+
+                            <span>
+                                Este tipo de novedad requiere un documento de soporte.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="novedad-filtro">
+
+                        <label for="soporteNovedad">
+                            Documento de soporte
+                            <span class="campo-obligatorio">*</span>
+                        </label>
+
+                        <input
+                            type="file"
+                            id="soporteNovedad"
+                            class="form-control"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     AVISO DE APROBACIÓN
+                     ============================================= -->
+
+                <div
+                    id="avisoAprobacionNovedad"
+                    class="aviso-novedad"
+                    style="display:none;"
+                >
+
+                    <i class="fas fa-clock"></i>
+
+                    <div>
+
+                        <strong>
+                            Esta novedad requiere revisión
+                        </strong>
+
+                        <span>
+                            Después de registrarla quedará en estado
+                            <strong>PENDIENTE</strong> hasta que sea revisada.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     ERROR
+                     ============================================= -->
+
+                <div
+                    id="errorRegistroNovedad"
+                    class="alert alert-danger"
+                    style="display:none;"
+                ></div>
+
+            </div>
+
+
+            <!-- =================================================
+                 FOOTER
+                 ================================================= -->
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn-novedad-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                    type="button"
+                    id="btnGuardarNovedad"
+                    class="btn-novedad-primary"
+                    disabled
+                >
+
+                    <i class="fas fa-save"></i>
+
+                    Registrar novedad
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 
     <!-- =====================================================
