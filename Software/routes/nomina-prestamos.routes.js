@@ -4533,6 +4533,131 @@ router.get(
             const empleadoId =
                 Number(req.params.empleadoId);
 
+                /* ====================================================
+   FILTROS DE FECHA
+   ==================================================== */
+
+const {
+    tipo_fecha,
+    fecha,
+    mes,
+    ano,
+    desde,
+    hasta
+} = req.query;
+
+let condicionesFecha = '';
+
+const parametrosPrestamos = [
+    empleadoId
+];
+
+
+/* ====================================================
+   FILTRO POR DÍA
+   ==================================================== */
+
+if (
+    tipo_fecha === 'DIA' &&
+    fecha
+) {
+
+    condicionesFecha += `
+        AND fecha_prestamo = ?
+    `;
+
+    parametrosPrestamos.push(
+        fecha
+    );
+
+}
+
+
+/* ====================================================
+   FILTRO POR MES
+   ==================================================== */
+
+else if (
+    tipo_fecha === 'MES' &&
+    mes
+) {
+
+    condicionesFecha += `
+        AND fecha_prestamo >= STR_TO_DATE(
+            CONCAT(?, '-01'),
+            '%Y-%m-%d'
+        )
+
+        AND fecha_prestamo < DATE_ADD(
+            STR_TO_DATE(
+                CONCAT(?, '-01'),
+                '%Y-%m-%d'
+            ),
+            INTERVAL 1 MONTH
+        )
+    `;
+
+    parametrosPrestamos.push(
+        mes,
+        mes
+    );
+
+}
+
+
+/* ====================================================
+   FILTRO POR AÑO
+   ==================================================== */
+
+else if (
+    tipo_fecha === 'ANO' &&
+    ano
+) {
+
+    condicionesFecha += `
+        AND fecha_prestamo >= STR_TO_DATE(
+            CONCAT(?, '-01-01'),
+            '%Y-%m-%d'
+        )
+
+        AND fecha_prestamo < DATE_ADD(
+            STR_TO_DATE(
+                CONCAT(?, '-01-01'),
+                '%Y-%m-%d'
+            ),
+            INTERVAL 1 YEAR
+        )
+    `;
+
+    parametrosPrestamos.push(
+        ano,
+        ano
+    );
+
+}
+
+
+/* ====================================================
+   FILTRO POR RANGO
+   ==================================================== */
+
+else if (
+    tipo_fecha === 'RANGO' &&
+    desde &&
+    hasta
+) {
+
+    condicionesFecha += `
+        AND fecha_prestamo BETWEEN ? AND ?
+    `;
+
+    parametrosPrestamos.push(
+        desde,
+        hasta
+    );
+
+}
+
 
             /* ====================================================
                VALIDAR EMPLEADO
@@ -4602,27 +4727,26 @@ router.get(
                ==================================================== */
 
             const [prestamos] =
-                await connection.query(
-                    `
-                    SELECT
-                        id,
-                        fecha_prestamo,
-                        valor_prestamo,
-                        valor_interes,
-                        saldo_pendiente,
-                        estado
-                    FROM nomina_prestamos
-                    WHERE empleado_id = ?
-                      AND estado = 'ACTIVO'
-                      AND saldo_pendiente > 0
-                    ORDER BY
-                        fecha_prestamo ASC,
-                        id ASC
-                    `,
-                    [
-                        empleadoId
-                    ]
-                );
+    await connection.query(
+        `
+        SELECT
+            id,
+            fecha_prestamo,
+            valor_prestamo,
+            valor_interes,
+            saldo_pendiente,
+            estado
+        FROM nomina_prestamos
+        WHERE empleado_id = ?
+          AND estado = 'ACTIVO'
+          AND saldo_pendiente > 0
+          ${condicionesFecha}
+        ORDER BY
+            fecha_prestamo ASC,
+            id ASC
+        `,
+        parametrosPrestamos
+    );
 
 
             /* ====================================================
@@ -4731,12 +4855,20 @@ router.post(
                ==================================================== */
 
             const {
-                empleado_id,
-                fecha_descuento,
-                tipo_periodo,
-                valor_descuento,
-                observacion
-            } = req.body;
+    empleado_id,
+    fecha_descuento,
+    tipo_periodo,
+    valor_descuento,
+    observacion,
+
+    // Filtros utilizados en el modal
+    tipo_fecha,
+    fecha,
+    mes,
+    ano,
+    desde,
+    hasta
+} = req.body;
 
 
             /* ====================================================
@@ -4843,27 +4975,122 @@ router.post(
                CONSULTAR PRÉSTAMOS ACTIVOS Y BLOQUEARLOS
                ==================================================== */
 
-            const [prestamos] =
-                await connection.query(
-                    `
-                    SELECT
-                        id,
-                        empleado_id,
-                        saldo_pendiente,
-                        estado
-                    FROM nomina_prestamos
-                    WHERE empleado_id = ?
-                      AND estado = 'ACTIVO'
-                      AND saldo_pendiente > 0
-                    ORDER BY
-                        fecha_prestamo ASC,
-                        id ASC
-                    FOR UPDATE
-                    `,
-                    [
-                        empleadoId
-                    ]
-                );
+            /* ====================================================
+   CONSULTAR PRÉSTAMOS ACTIVOS
+   CON FILTRO DE FECHA
+   ==================================================== */
+
+let condicionesFecha = '';
+
+const parametrosPrestamos = [
+    empleadoId
+];
+
+/* ====================================================
+   APLICAR FILTRO SELECCIONADO EN EL MODAL
+   ==================================================== */
+
+if (
+    tipo_fecha === 'DIA' &&
+    fecha
+) {
+    condicionesFecha += `
+        AND fecha_prestamo = ?
+    `;
+
+    parametrosPrestamos.push(fecha);
+}
+
+else if (
+    tipo_fecha === 'MES' &&
+    mes
+) {
+    condicionesFecha += `
+        AND fecha_prestamo >= STR_TO_DATE(
+            CONCAT(?, '-01'),
+            '%Y-%m-%d'
+        )
+
+        AND fecha_prestamo < DATE_ADD(
+            STR_TO_DATE(
+                CONCAT(?, '-01'),
+                '%Y-%m-%d'
+            ),
+            INTERVAL 1 MONTH
+        )
+    `;
+
+    parametrosPrestamos.push(
+        mes,
+        mes
+    );
+}
+
+else if (
+    tipo_fecha === 'ANO' &&
+    ano
+) {
+    condicionesFecha += `
+        AND fecha_prestamo >= STR_TO_DATE(
+            CONCAT(?, '-01-01'),
+            '%Y-%m-%d'
+        )
+
+        AND fecha_prestamo < DATE_ADD(
+            STR_TO_DATE(
+                CONCAT(?, '-01-01'),
+                '%Y-%m-%d'
+            ),
+            INTERVAL 1 YEAR
+        )
+    `;
+
+    parametrosPrestamos.push(
+        ano,
+        ano
+    );
+}
+
+else if (
+    tipo_fecha === 'RANGO' &&
+    desde &&
+    hasta
+) {
+    condicionesFecha += `
+        AND fecha_prestamo BETWEEN ? AND ?
+    `;
+
+    parametrosPrestamos.push(
+        desde,
+        hasta
+    );
+}
+
+/* ====================================================
+   CONSULTA
+   ==================================================== */
+
+const [prestamos] =
+    await connection.query(
+        `
+        SELECT
+            id,
+            fecha_prestamo,
+            valor_prestamo,
+            valor_interes,
+            saldo_pendiente,
+            estado
+        FROM nomina_prestamos
+        WHERE empleado_id = ?
+          AND estado = 'ACTIVO'
+          AND saldo_pendiente > 0
+          ${condicionesFecha}
+        ORDER BY
+            fecha_prestamo ASC,
+            id ASC
+        `,
+        parametrosPrestamos
+    );
 
 
             /* ====================================================

@@ -1738,3 +1738,212 @@
     }
 
 }
+
+/* ============================================================
+   ALERTAS VISUALES - NOVEDADES
+   ============================================================ */
+
+.alerta-novedades {
+    position: fixed;
+
+    top: 25px;
+    right: 25px;
+
+    min-width: 320px;
+    max-width: 450px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 16px 18px;
+
+    background: #ffffff;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.15);
+
+    z-index: 99999;
+
+    opacity: 0;
+
+    transform:
+        translateX(120%);
+
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+}
+
+
+/* Mostrar */
+
+.alerta-novedades.mostrar {
+
+    opacity: 1;
+
+    transform:
+        translateX(0);
+
+}
+
+
+/* ============================================================
+   ICONO
+   ============================================================ */
+
+.alerta-novedades-icono {
+
+    width: 38px;
+    height: 38px;
+
+    min-width: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-size: 20px;
+    font-weight: bold;
+
+}
+
+
+/* ============================================================
+   CONTENIDO
+   ============================================================ */
+
+.alerta-novedades-contenido {
+
+    flex: 1;
+
+    font-size: 14px;
+
+    line-height: 1.4;
+
+    color: #333333;
+
+}
+
+
+/* ============================================================
+   CERRAR
+   ============================================================ */
+
+.alerta-novedades-cerrar {
+
+    border: none;
+
+    background: transparent;
+
+    font-size: 24px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    color: #777777;
+
+    padding: 2px 5px;
+
+}
+
+
+.alerta-novedades-cerrar:hover {
+
+    color: #222222;
+
+}
+
+
+/* ============================================================
+   SUCCESS
+   ============================================================ */
+
+.alerta-success {
+
+    border-left:
+        5px solid #198754;
+
+}
+
+
+.alerta-success
+.alerta-novedades-icono {
+
+    background: #d1e7dd;
+
+    color: #198754;
+
+}
+
+
+/* ============================================================
+   ERROR
+   ============================================================ */
+
+.alerta-error {
+
+    border-left:
+        5px solid #dc3545;
+
+}
+
+
+.alerta-error
+.alerta-novedades-icono {
+
+    background: #f8d7da;
+
+    color: #dc3545;
+
+}
+
+
+/* ============================================================
+   WARNING
+   ============================================================ */
+
+.alerta-warning {
+
+    border-left:
+        5px solid #ffc107;
+
+}
+
+
+.alerta-warning
+.alerta-novedades-icono {
+
+    background: #fff3cd;
+
+    color: #997404;
+
+}
+
+
+/* ============================================================
+   INFO
+   ============================================================ */
+
+.alerta-info {
+
+    border-left:
+        5px solid #0d6efd;
+
+}
+
+
+.alerta-info
+.alerta-novedades-icono {
+
+    background: #cfe2ff;
+
+    color: #0d6efd;
+
+}

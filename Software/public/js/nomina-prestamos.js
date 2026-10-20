@@ -51,6 +51,70 @@ const listaPrestamosDescuento =
 const valorDescuentoNomina =
     document.getElementById('valorDescuentoNomina');
 
+    /* ============================================================
+   FILTRO DE PRÉSTAMOS POR FECHA
+   ============================================================ */
+
+const contenedorFiltroFechaPrestamo =
+    document.getElementById(
+        'contenedorFiltroFechaPrestamo'
+    );
+
+const filtroFechaPrestamo =
+    document.getElementById(
+        'filtroFechaPrestamo'
+    );
+
+const campoFiltroDiaPrestamo =
+    document.getElementById(
+        'campoFiltroDiaPrestamo'
+    );
+
+const campoFiltroMesPrestamo =
+    document.getElementById(
+        'campoFiltroMesPrestamo'
+    );
+
+const campoFiltroAnoPrestamo =
+    document.getElementById(
+        'campoFiltroAnoPrestamo'
+    );
+
+const campoFiltroDesdePrestamo =
+    document.getElementById(
+        'campoFiltroDesdePrestamo'
+    );
+
+const campoFiltroHastaPrestamo =
+    document.getElementById(
+        'campoFiltroHastaPrestamo'
+    );
+
+const filtroFechaDia =
+    document.getElementById(
+        'filtroFechaDia'
+    );
+
+const filtroFechaMes =
+    document.getElementById(
+        'filtroFechaMes'
+    );
+
+const filtroFechaAno =
+    document.getElementById(
+        'filtroFechaAno'
+    );
+
+const filtroFechaDesde =
+    document.getElementById(
+        'filtroFechaDesde'
+    );
+
+const filtroFechaHasta =
+    document.getElementById(
+        'filtroFechaHasta'
+    );
+
 const descuentoSaldoFinal =
     document.getElementById('descuentoSaldoFinal');
 
@@ -163,6 +227,161 @@ async function cargarEmpleados() {
     }
 
 }
+
+/* ============================================================
+   CAMBIAR FILTRO DE FECHA
+   ============================================================ */
+
+filtroFechaPrestamo?.addEventListener(
+    'change',
+    async () => {
+
+        const tipo =
+            filtroFechaPrestamo.value;
+
+
+        /* ================================================
+           OCULTAR TODOS LOS CAMPOS
+           ================================================ */
+
+        if (campoFiltroDiaPrestamo) {
+            campoFiltroDiaPrestamo.hidden = true;
+        }
+
+        if (campoFiltroMesPrestamo) {
+            campoFiltroMesPrestamo.hidden = true;
+        }
+
+        if (campoFiltroAnoPrestamo) {
+            campoFiltroAnoPrestamo.hidden = true;
+        }
+
+        if (campoFiltroDesdePrestamo) {
+            campoFiltroDesdePrestamo.hidden = true;
+        }
+
+        if (campoFiltroHastaPrestamo) {
+            campoFiltroHastaPrestamo.hidden = true;
+        }
+
+
+        /* ================================================
+           MOSTRAR EL CAMPO CORRESPONDIENTE
+           ================================================ */
+
+        if (tipo === 'DIA') {
+
+            campoFiltroDiaPrestamo.hidden = false;
+
+        }
+
+        else if (tipo === 'MES') {
+
+            campoFiltroMesPrestamo.hidden = false;
+
+        }
+
+        else if (tipo === 'ANO') {
+
+            campoFiltroAnoPrestamo.hidden = false;
+
+        }
+
+        else if (tipo === 'RANGO') {
+
+            campoFiltroDesdePrestamo.hidden = false;
+            campoFiltroHastaPrestamo.hidden = false;
+
+        }
+
+
+        /* ================================================
+           SI HAY EMPLEADO, ACTUALIZAR RESULTADOS
+           ================================================ */
+
+        const empleadoId =
+            descuentoEmpleado?.value;
+
+        if (!empleadoId) {
+            return;
+        }
+
+
+        await cargarConsolidadoPrestamo(
+            empleadoId
+        );
+
+    }
+);
+
+/* ============================================================
+   ACTUALIZAR CONSOLIDADO AL CAMBIAR LA FECHA
+   ============================================================ */
+
+async function actualizarFiltroFechaPrestamo() {
+
+    const empleadoId =
+        descuentoEmpleado?.value;
+
+    if (!empleadoId) {
+        return;
+    }
+
+    await cargarConsolidadoPrestamo(
+        empleadoId
+    );
+
+}
+
+
+/* ============================================================
+   CAMBIO DE DÍA
+   ============================================================ */
+
+filtroFechaDia?.addEventListener(
+    'change',
+    actualizarFiltroFechaPrestamo
+);
+
+
+/* ============================================================
+   CAMBIO DE MES
+   ============================================================ */
+
+filtroFechaMes?.addEventListener(
+    'change',
+    actualizarFiltroFechaPrestamo
+);
+
+
+/* ============================================================
+   CAMBIO DE AÑO
+   ============================================================ */
+
+filtroFechaAno?.addEventListener(
+    'change',
+    actualizarFiltroFechaPrestamo
+);
+
+
+/* ============================================================
+   CAMBIO DE FECHA DESDE
+   ============================================================ */
+
+filtroFechaDesde?.addEventListener(
+    'change',
+    actualizarFiltroFechaPrestamo
+);
+
+
+/* ============================================================
+   CAMBIO DE FECHA HASTA
+   ============================================================ */
+
+filtroFechaHasta?.addEventListener(
+    'change',
+    actualizarFiltroFechaPrestamo
+);
 
 /* ========================================================
    BUSCAR EMPLEADOS
@@ -659,6 +878,38 @@ function seleccionarEmpleadoDescuento(empleado) {
 
     listaEmpleadosDescuento.innerHTML = '';
 
+    /* MOSTRAR FILTRO DE FECHA */
+
+if (contenedorFiltroFechaPrestamo) {
+    contenedorFiltroFechaPrestamo.hidden = false;
+}
+
+/* REINICIAR FILTRO */
+
+if (filtroFechaPrestamo) {
+    filtroFechaPrestamo.value = 'TODOS';
+}
+
+if (campoFiltroDiaPrestamo) {
+    campoFiltroDiaPrestamo.hidden = true;
+}
+
+if (campoFiltroMesPrestamo) {
+    campoFiltroMesPrestamo.hidden = true;
+}
+
+if (campoFiltroAnoPrestamo) {
+    campoFiltroAnoPrestamo.hidden = true;
+}
+
+if (campoFiltroDesdePrestamo) {
+    campoFiltroDesdePrestamo.hidden = true;
+}
+
+if (campoFiltroHastaPrestamo) {
+    campoFiltroHastaPrestamo.hidden = true;
+}
+
     cargarConsolidadoPrestamo(
         empleado.id
     );
@@ -1043,13 +1294,33 @@ if (!resultado.isConfirmed) {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        empleado_id: empleadoId,
-                        fecha_descuento: fechaDescuento,
-                        tipo_periodo: tipoPeriodo,
-                        valor_descuento: valorDescuento,
-                        observacion:
-                            observacionDescuentoNomina.value.trim()
-                    })
+    empleado_id: empleadoId,
+    fecha_descuento: fechaDescuento,
+    tipo_periodo: tipoPeriodo,
+    valor_descuento: valorDescuento,
+
+    // Filtro utilizado en el modal
+    tipo_fecha:
+        filtroFechaPrestamo?.value || 'TODOS',
+
+    fecha:
+        filtroFechaDia?.value || null,
+
+    mes:
+        filtroFechaMes?.value || null,
+
+    ano:
+        filtroFechaAno?.value || null,
+
+    desde:
+        filtroFechaDesde?.value || null,
+
+    hasta:
+        filtroFechaHasta?.value || null,
+
+    observacion:
+        observacionDescuentoNomina.value.trim()
+})
                 }
             );
 
@@ -1071,9 +1342,11 @@ if (!resultado.isConfirmed) {
     allowOutsideClick: false
 });
 
-            await cargarConsolidadoPrestamo(
-                empleadoId
-            );
+await cargarConsolidadoPrestamo(
+    empleadoId
+);
+
+await cargarPrestamos();
 
         } catch (error) {
 
@@ -1135,9 +1408,129 @@ async function cargarConsolidadoPrestamo(
 
     try {
 
+        const params =
+            new URLSearchParams();
+
+
+        const tipo =
+            filtroFechaPrestamo
+                ? filtroFechaPrestamo.value
+                : 'TODOS';
+
+
+        /* ================================================
+           FILTRO POR DÍA
+           ================================================ */
+
+        if (
+            tipo === 'DIA' &&
+            filtroFechaDia?.value
+        ) {
+
+            params.set(
+                'tipo_fecha',
+                'DIA'
+            );
+
+            params.set(
+                'fecha',
+                filtroFechaDia.value
+            );
+
+        }
+
+
+        /* ================================================
+           FILTRO POR MES
+           ================================================ */
+
+        else if (
+            tipo === 'MES' &&
+            filtroFechaMes?.value
+        ) {
+
+            params.set(
+                'tipo_fecha',
+                'MES'
+            );
+
+            params.set(
+                'mes',
+                filtroFechaMes.value
+            );
+
+        }
+
+
+        /* ================================================
+           FILTRO POR AÑO
+           ================================================ */
+
+        else if (
+            tipo === 'ANO' &&
+            filtroFechaAno?.value
+        ) {
+
+            params.set(
+                'tipo_fecha',
+                'ANO'
+            );
+
+            params.set(
+                'ano',
+                filtroFechaAno.value
+            );
+
+        }
+
+
+        /* ================================================
+           FILTRO POR RANGO
+           ================================================ */
+
+        /* ================================================
+   FILTRO POR RANGO
+   ================================================ */
+
+else if (
+    tipo === 'RANGO'
+) {
+
+    params.set(
+        'tipo_fecha',
+        'RANGO'
+    );
+
+
+    if (filtroFechaDesde?.value) {
+
+        params.set(
+            'desde',
+            filtroFechaDesde.value
+        );
+
+    }
+
+
+    if (filtroFechaHasta?.value) {
+
+        params.set(
+            'hasta',
+            filtroFechaHasta.value
+        );
+
+    }
+
+}
+
+        const query =
+            params.toString();
+
+
         const response =
             await fetch(
-                `/nomina/prestamos/empleado/${empleadoId}/consolidado`
+                `/nomina/prestamos/empleado/${empleadoId}/consolidado` +
+                (query ? `?${query}` : '')
             );
 
         const data =
@@ -1853,213 +2246,6 @@ function actualizarIndicadoresPrestamos(prestamos) {
     }
 
 }
-
-/* ========================================================
-   ACTUALIZAR INDICADORES
-   ======================================================== */
-
-async function actualizarIndicadoresPrestamos(prestamos) {
-
-    const totalPrestamosActivos =
-        document.getElementById(
-            'totalPrestamosActivos'
-        );
-
-    const capitalPrestado =
-        document.getElementById(
-            'capitalPrestado'
-        );
-
-    const saldoPendiente =
-        document.getElementById(
-            'saldoPendiente'
-        );
-
-    const cuotasPendientes =
-        document.getElementById(
-            'cuotasPendientes'
-        );
-
-
-    /* ====================================================
-       VALORES ACTUALES
-       ==================================================== */
-
-    const activos =
-        prestamos.filter(
-            prestamo =>
-                prestamo.estado === 'ACTIVO'
-        ).length;
-
-
-    const capital =
-    prestamos.reduce(
-        (total, prestamo) => {
-
-            if (prestamo.estado === 'ANULADO') {
-                return total;
-            }
-
-            return (
-                total +
-                Number(
-                    prestamo.valor_prestamo || 0
-                )
-            );
-
-        },
-        0
-    );
-
-
-    const saldo =
-        prestamos.reduce(
-            (total, prestamo) =>
-                total +
-                Number(
-                    prestamo.saldo_pendiente || 0
-                ),
-            0
-        );
-
-
-    const cuotas =
-        prestamos.reduce(
-            (total, prestamo) =>
-                total +
-                Number(
-                    prestamo.total_cuotas || 0
-                ) -
-                Number(
-                    prestamo.cuotas_pagadas || 0
-                ),
-            0
-        );
-
-
-    /* ====================================================
-       ACTUALIZAR VALORES PRINCIPALES
-       ==================================================== */
-
-    if (totalPrestamosActivos) {
-
-        totalPrestamosActivos.textContent =
-            activos;
-
-    }
-
-
-    if (capitalPrestado) {
-
-        capitalPrestado.textContent =
-            formatearMoneda(capital);
-
-    }
-
-
-    if (saldoPendiente) {
-
-        saldoPendiente.textContent =
-            formatearMoneda(saldo);
-
-    }
-
-
-    if (cuotasPendientes) {
-
-        cuotasPendientes.textContent =
-            cuotas;
-
-    }
-
-
-    /* ====================================================
-       OBTENER COMPARACIÓN CON EL MES ANTERIOR
-       ==================================================== */
-
-    try {
-
-        const respuesta =
-            await fetch(
-                '/nomina/prestamos/indicadores'
-            );
-
-
-        const resultado =
-            await respuesta.json();
-
-
-        if (!respuesta.ok || !resultado.ok) {
-
-            throw new Error(
-                resultado.error ||
-                'No fue posible obtener los indicadores.'
-            );
-
-        }
-
-
-        const indicadores =
-            resultado.indicadores;
-
-            actualizarMiniGraficas(resultado.historico);
-
-
-        /* ================================================
-           PRÉSTAMOS ACTIVOS
-           ================================================ */
-
-        actualizarVariacionKPI(
-            'variacionPrestamosActivos',
-            'porcentajePrestamosActivos',
-            indicadores.prestamos_activos.variacion
-        );
-
-
-        /* ================================================
-           CAPITAL DESEMBOLSADO
-           ================================================ */
-
-        actualizarVariacionKPI(
-            'variacionCapitalDesembolsado',
-            'porcentajeCapitalDesembolsado',
-            indicadores.capital_desembolsado.variacion
-        );
-
-
-        /* ================================================
-           SALDO POR COBRAR
-           ================================================ */
-
-        actualizarVariacionKPI(
-            'variacionSaldoPorCobrar',
-            'porcentajeSaldoPorCobrar',
-            indicadores.saldo_por_cobrar.variacion
-        );
-
-
-        /* ================================================
-           CUOTAS PENDIENTES
-           ================================================ */
-
-        actualizarVariacionKPI(
-            'variacionCuotasPendientes',
-            'porcentajeCuotasPendientes',
-            indicadores.cuotas_pendientes.variacion
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            '❌ Error actualizando variaciones:',
-            error
-        );
-
-    }
-
-}
-
 
 /* ========================================================
    ACTUALIZAR UNA VARIACIÓN KPI

@@ -3782,6 +3782,213 @@
 </div>
 
 
+<!-- ============================================================
+     FILTRO DE PRÉSTAMOS POR FECHA
+     ============================================================ -->
+
+<div
+    id="contenedorFiltroFechaPrestamo"
+    class="mb-4"
+    hidden
+>
+
+    <div class="card border">
+
+        <div class="card-body">
+
+            <div class="d-flex align-items-center mb-3">
+
+                <i class="fas fa-calendar-days me-2 text-success"></i>
+
+                <strong>
+                    Filtrar préstamos registrados
+                </strong>
+
+            </div>
+
+
+            <div class="row g-3">
+
+                <!-- TIPO DE FILTRO -->
+
+                <div class="col-md-4">
+
+                    <label
+                        for="filtroFechaPrestamo"
+                        class="form-label"
+                    >
+                        Período
+                    </label>
+
+                    <select
+                        id="filtroFechaPrestamo"
+                        class="form-select"
+                    >
+
+                        <option value="TODOS">
+                            Todos
+                        </option>
+
+                        <option value="DIA">
+                            Día
+                        </option>
+
+                        <option value="MES">
+                            Mes
+                        </option>
+
+                        <option value="ANO">
+                            Año
+                        </option>
+
+                        <option value="RANGO">
+                            Rango de fechas
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- DÍA -->
+
+                <div
+                    class="col-md-4"
+                    id="campoFiltroDiaPrestamo"
+                    hidden
+                >
+
+                    <label
+                        for="filtroFechaDia"
+                        class="form-label"
+                    >
+                        Fecha
+                    </label>
+
+                    <input
+                        type="date"
+                        id="filtroFechaDia"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <!-- MES -->
+
+                <div
+                    class="col-md-4"
+                    id="campoFiltroMesPrestamo"
+                    hidden
+                >
+
+                    <label
+                        for="filtroFechaMes"
+                        class="form-label"
+                    >
+                        Mes
+                    </label>
+
+                    <input
+                        type="month"
+                        id="filtroFechaMes"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <!-- AÑO -->
+
+                <div
+                    class="col-md-4"
+                    id="campoFiltroAnoPrestamo"
+                    hidden
+                >
+
+                    <label
+                        for="filtroFechaAno"
+                        class="form-label"
+                    >
+                        Año
+                    </label>
+
+                    <input
+                        type="number"
+                        id="filtroFechaAno"
+                        class="form-control"
+                        min="2000"
+                        max="2100"
+                        placeholder="2026"
+                    >
+
+                </div>
+
+
+                <!-- DESDE -->
+
+                <div
+                    class="col-md-4"
+                    id="campoFiltroDesdePrestamo"
+                    hidden
+                >
+
+                    <label
+                        for="filtroFechaDesde"
+                        class="form-label"
+                    >
+                        Desde
+                    </label>
+
+                    <input
+                        type="date"
+                        id="filtroFechaDesde"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <!-- HASTA -->
+
+                <div
+                    class="col-md-4"
+                    id="campoFiltroHastaPrestamo"
+                    hidden
+                >
+
+                    <label
+                        for="filtroFechaHasta"
+                        class="form-label"
+                    >
+                        Hasta
+                    </label>
+
+                    <input
+                        type="date"
+                        id="filtroFechaHasta"
+                        class="form-control"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <small class="text-muted d-block mt-3">
+
+                El filtro utiliza la fecha en la que fue registrado
+                el préstamo.
+
+            </small>
+
+        </div>
+
+    </div>
+
+</div>
+
+
                 <!-- INFORMACIÓN DEL EMPLEADO -->
 
                 <div

@@ -90,20 +90,39 @@ document
 
                 }
 
-                const respuesta =
-                    await fetch(
-                        "/api/cursos",
-                        {
+                
+const respuesta = await fetch("/api/cursos", {
+    method: "POST",
+    body: formData
+});
 
-                            method: "POST",
+const textoRespuesta = await respuesta.text();
 
-                            body: formData
+let data;
 
-                        }
-                    );
+try {
+    data = JSON.parse(textoRespuesta);
+} catch (error) {
+    console.error(
+        "Respuesta no válida del servidor:",
+        respuesta.status,
+        textoRespuesta
+    );
 
-                const data =
-                    await respuesta.json();
+    throw new Error(
+        `El servidor respondió con HTTP ${respuesta.status}, ` +
+        "pero no devolvió JSON válido. Revisa el tamaño de la imagen."
+    );
+}
+
+if (!respuesta.ok) {
+    throw new Error(
+        data.mensaje ||
+        data.message ||
+        `Error HTTP ${respuesta.status}`
+    );
+}
+
 
                 if (data.success) {
 
