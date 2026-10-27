@@ -533,7 +533,7 @@ function verUsuario(usuario) {
 
     ) {
 
-        foto = usuario.foto;
+        foto = `/uploads/fotos/${usuario.foto}`;
 
     }
 
