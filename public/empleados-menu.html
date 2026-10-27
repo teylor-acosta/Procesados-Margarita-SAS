@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+/>
+
+<title>Módulo Empleados</title>
+
+<!-- =========================================
+🔥 GOOGLE FONT
+========================================= -->
+
+<link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap" rel="stylesheet">
+
+<!-- =========================================
+🔥 BOOTSTRAP
+========================================= -->
+
+<link
+rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+/>
+
+<!-- =========================================
+🔥 FONT AWESOME
+========================================= -->
+
+<link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+/>
+
+<!-- =========================================
+🔥 SWEET ALERT
+========================================= -->
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- =========================================
+🔥 CSS
+========================================= -->
+
+<link
+rel="stylesheet"
+href="/css/style1.css"
+/>
+
+<link
+rel="stylesheet"
+href="/css/sidebar.css"
+/>
+
+<link
+rel="stylesheet"
+href="/css/empleados-menu.css"
+/>
+
+<link
+rel="icon"
+href="/img/Logo.png"
+/>
+
+</head>
+
+<body data-pagina="empleados-menu">
+
+    <!-- SIDEBAR -->
+<div id="sidebarContainer"></div>
+
+<!-- OVERLAY -->
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay">
+</div>
+
+<!-- =========================================
+🔥 NAVBAR
+========================================= -->
+
+<!-- NAVBAR -->
+<nav class="navbar-custom">
+
+    <div class="navbar-left">
+
+        <i
+            class="fas fa-bars menu-toggle"
+            id="btnOpenSidebar">
+        </i>
+
+        <span class="section-main-title">
+            Módulo Empleados
+        </span>
+
+    </div>
+
+</nav>
+
+<!-- =========================================
+🔥 CONTENEDOR PRINCIPAL
+========================================= -->
+
+<div class="dashboard-container">
+
+    <!-- =====================================
+    🔥 HEADER
+    ====================================== -->
+
+    <div class="dashboard-header">
+
+        <h1>
+
+            Módulo de Empleados
+
+        </h1>
+
+        <p>
+
+            Gestiona empleados, estructura organizacional
+            y documentación empresarial.
+
+        </p>
+
+    </div>
+
+    <!-- =====================================
+    🔥 MODULOS
+    ====================================== -->
+
+    <div class="modulos-grid">
+
+        <!-- CREAR -->
+
+        <div
+        class="modulo-card"
+        onclick="window.location.href='/crear-empleado'"
+        >
+
+            <div class="icono-modulo azul">
+
+                <i class="fas fa-user-plus"></i>
+
+            </div>
+
+            <h3>
+
+                Crear empleado
+
+            </h3>
+
+            <p>
+
+                Registrar un nuevo empleado
+
+            </p>
+
+        </div>
+
+        <!-- VER -->
+
+        <div
+        class="modulo-card"
+        onclick="window.location.href='/empleados'"
+        >
+
+            <div class="icono-modulo azul">
+
+                <i class="fas fa-users"></i>
+
+            </div>
+
+            <h3>
+
+                Ver empleados
+
+            </h3>
+
+            <p>
+
+                Consultar empleados activos
+
+            </p>
+
+        </div>
+
+        <!-- DESACTIVADOS -->
+
+        <div
+        class="modulo-card"
+        onclick="window.location.href='/empleados-inactivos'"
+        >
+
+            <div class="icono-modulo rojo">
+
+                <i class="fas fa-user-slash"></i>
+
+            </div>
+
+            <h3>
+
+                Desactivados
+
+            </h3>
+
+            <p>
+
+                Ver empleados desactivados
+
+            </p>
+
+        </div>
+
+        <!-- DOCUMENTOS -->
+
+        <div
+        class="modulo-card"
+        onclick="window.location.href='/documentacion-empleados'"
+        >
+
+            <div class="icono-modulo morado">
+
+                <i class="fas fa-folder-open"></i>
+
+            </div>
+
+            <h3>
+
+                Ver documentación
+
+            </h3>
+
+            <p>
+
+                Gestionar documentos del personal
+
+            </p>
+
+        </div>
+
+        <!-- ACTIVIDAD -->
+
+        <div
+        class="modulo-card"
+        onclick="window.location.href='/centro-actividad'"
+        >
+
+            <div class="icono-modulo verde">
+
+                <i class="fas fa-clock-rotate-left"></i>
+
+            </div>
+
+            <h3>
+
+                Centro de actividad
+
+            </h3>
+
+            <p>
+
+                Historial de acciones del sistema
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================
+    🔥 PANEL ERP
+    ====================================== -->
+
+    <div class="panel-erp-grid">
+
+        <!-- AREAS -->
+
+        <div class="erp-card verde-card">
+
+            <div class="erp-top">
+
+                <div class="erp-icon verde-bg">
+
+                    <i class="fas fa-building"></i>
+
+                </div>
+
+                <div>
+
+                    <h2 id="panelAreas">
+
+                        0
+
+                    </h2>
+
+                    <p>
+
+                        Áreas registradas
+
+                    </p>
+
+                    <span id="panelCantidadAreas">
+
+                        0 áreas activas
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <button
+            class="btn-panel verde-btn"
+            onclick="abrirGestion('area')"
+            >
+
+                Gestionar
+
+            </button>
+
+        </div>
+
+        <!-- SEDES -->
+
+        <div class="erp-card azul-card">
+
+            <div class="erp-top">
+
+                <div class="erp-icon azul-bg">
+
+                    <i class="fas fa-map-marker-alt"></i>
+
+                </div>
+
+                <div>
+
+                    <h2 id="panelSedes">
+
+                        0
+
+                    </h2>
+
+                    <p>
+
+                        Sedes registradas
+
+                    </p>
+
+                    <span id="panelCantidadSedes">
+
+                        0 sedes activas
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <button
+            class="btn-panel azul-btn"
+            onclick="abrirGestion('sede')"
+            >
+
+                Gestionar
+
+            </button>
+
+        </div>
+
+        <!-- CARGOS -->
+
+        <div class="erp-card naranja-card">
+
+            <div class="erp-top">
+
+                <div class="erp-icon naranja-bg">
+
+                    <i class="fas fa-briefcase"></i>
+
+                </div>
+
+                <div>
+
+                    <h2 id="panelCargos">
+
+                        0
+
+                    </h2>
+
+                    <p>
+
+                        Cargos registrados
+
+                    </p>
+
+                    <span id="panelCantidadCargos">
+
+                        0 cargos activos
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <button
+            class="btn-panel naranja-btn"
+            onclick="abrirGestion('cargo')"
+            >
+
+                Gestionar
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================
+    🔥 ESTADISTICAS
+    ====================================== -->
+
+    <div class="stats-container">
+
+        <!-- EMPLEADOS -->
+
+        <div class="stat-box">
+
+            <div class="stat-icon verde-bg">
+
+                <i class="fas fa-users"></i>
+
+            </div>
+
+            <div>
+
+                <h2 id="totalEmpleados">
+
+    0
+
+</h2>
+
+                <p>
+
+                    Empleados activos
+
+                </p>
+
+                <span>
+
+                    Sistema ERP
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <!-- DOCUMENTOS -->
+
+        <div class="stat-box">
+
+            <div class="stat-icon morado-bg">
+
+                <i class="fas fa-file-lines"></i>
+
+            </div>
+
+            <div>
+
+                <h2 id="totalDocumentos">
+
+    0
+
+</h2>
+
+                <p>
+
+                    Documentos subidos
+
+                </p>
+
+                <span>
+
+                    Este mes
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <!-- ACTIVIDAD -->
+
+        <div class="stat-box">
+
+            <div class="stat-icon turquesa-bg">
+
+                <i class="fas fa-chart-line"></i>
+
+            </div>
+
+            <div>
+
+                <h2 id="totalAcciones">
+
+    0
+
+</h2>
+
+                <p>
+
+                    Acciones realizadas
+
+                </p>
+
+                <span>
+
+                    Este mes
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <!-- FECHA -->
+
+        <div class="stat-box">
+
+            <div class="stat-icon naranja-bg">
+
+                <i class="fas fa-calendar-days"></i>
+
+            </div>
+
+            <div>
+
+                <h2>
+
+                    26/05/2026
+
+                </h2>
+
+                <p>
+
+                    Última actualización
+
+                </p>
+
+                <span id="ultimaActualizacion">
+
+                    11:32 a.m.
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================
+    🔥 FOOTER
+    ====================================== -->
+
+    <div class="footer-erp">
+
+        <i class="fas fa-circle-info"></i>
+
+        <span>
+
+            Consejo:
+            Mantén actualizada la estructura
+            organizacional para una mejor gestión
+            del talento humano.
+
+        </span>
+
+    </div>
+
+</div>
+
+<!-- =========================================
+🔥 PANEL LATERAL ADMIN
+========================================= -->
+
+<div
+class="panel-lateral"
+id="modalGestion"
+>
+
+    <div class="panel-contenido">
+
+        <!-- HEADER -->
+
+        <div class="panel-header">
+
+            <h2 id="tituloGestion">
+
+                Gestión ERP
+
+            </h2>
+
+            <button
+            class="cerrar-panel"
+            onclick="cerrarGestion()"
+            >
+
+                <i class="fas fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+        <!-- ACCIONES -->
+
+        <div class="acciones-panel">
+
+            <button
+            class="btn-nuevo"
+            onclick="nuevoDesdeGestion()"
+            >
+
+                <i class="fas fa-plus"></i>
+
+                Nueva Área
+
+            </button>
+
+            <div class="buscador-panel">
+
+                <input
+                type="text"
+                id="buscarGestion"
+                placeholder="Buscar..."
+                />
+
+                <i class="fas fa-search"></i>
+
+            </div>
+
+        </div>
+
+        <!-- TABLA -->
+
+        <div class="tabla-panel">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+
+                            Nombre
+
+                        </th>
+
+                        <th>
+
+                            Estado
+
+                        </th>
+
+                        <th>
+
+                            Acciones
+
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="tablaGestion">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <!-- PAGINACION -->
+
+        <div class="footer-tabla">
+
+            <span id="infoPaginacion">
+
+                Mostrando registros
+
+            </span>
+
+            <div id="numerosPaginas">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================================
+🔥 MODAL NUEVO
+========================================= -->
+
+<div
+class="modal-erp"
+id="modalERP"
+>
+
+    <div class="modal-contenido">
+
+        <div class="modal-header">
+
+            <h2 id="tituloModal">
+
+                Nuevo Registro
+
+            </h2>
+
+            <button
+            class="cerrar-panel"
+            onclick="cerrarModal()"
+            >
+
+                <i class="fas fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>
+
+                Nombre
+
+            </label>
+
+            <input
+            type="text"
+            id="nombreRegistro"
+            class="form-control"
+            placeholder="Ingrese nombre"
+            />
+
+        </div>
+
+        <div class="modal-botones">
+
+            <button
+            class="btn-cancelar"
+            onclick="cerrarModal()"
+            >
+
+                Cancelar
+
+            </button>
+
+            <button
+            class="btn-guardar"
+            onclick="guardarRegistro()"
+            >
+
+                Guardar
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================================
+🔥 JS
+========================================= -->
+
+<script src="/js/empleados-menu.js"></script>
+<script src="/js/sidebar.js"></script>
+
+</body>
+</html>

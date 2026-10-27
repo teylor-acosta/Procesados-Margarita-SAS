@@ -1,0 +1,337 @@
+/* ============================================
+   PANEL ERP - PROCESADOS MARGARITA
+============================================ */
+
+:root{
+
+    --verde:#22c55e;
+    --verde-dark:#16a34a;
+
+    --azul:#2563eb;
+    --azul-dark:#1d4ed8;
+
+}
+
+/* ============================================
+   CONTENEDOR PRINCIPAL
+============================================ */
+
+.panel-container{
+
+    margin-left:280px;
+
+    width:calc(100% - 280px);
+
+    min-height:calc(100vh - 85px);
+
+    padding:35px;
+
+}
+
+/* ============================================
+   BIENVENIDA
+============================================ */
+
+.bienvenida-panel{
+
+    text-align:center;
+
+    margin-bottom:40px;
+
+}
+
+.bienvenida-panel h1{
+
+    font-size:56px;
+
+    font-weight:700;
+
+    color:#02412e;
+
+    margin-bottom:10px;
+
+}
+
+.bienvenida-panel p{
+
+    font-size:20px;
+
+    color:#6b7280;
+
+    margin:0;
+
+}
+
+/* ============================================
+   TITULO
+============================================ */
+
+.titulo-panel{
+
+    display:flex;
+
+    justify-content:center;
+
+    margin-bottom:40px;
+
+}
+
+.titulo-panel h2{
+
+    background:rgba(255,255,255,.92);
+
+    backdrop-filter:blur(10px);
+
+    padding:18px 45px;
+
+    border-radius:50px;
+
+    font-size:34px;
+
+    font-weight:700;
+
+    color:#02412e;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.08);
+
+}
+
+/* ============================================
+   CONTENEDOR MODULOS
+============================================ */
+
+.modulos-container{
+
+    display:flex;
+
+    justify-content:center;
+
+    flex-wrap:wrap;
+
+    gap:30px;
+
+    width:100%;
+
+}
+
+/* ============================================
+   TARJETAS
+============================================ */
+
+.modulo-card{
+
+    width:240px;
+
+    height:240px;
+
+    border-radius:24px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    gap:15px;
+
+    cursor:pointer;
+
+    background:white;
+
+    border:1px solid #e2e8f0;
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.08);
+
+    transition:.25s;
+
+}
+
+.modulo-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:
+        0 20px 40px rgba(0,0,0,.15);
+
+}
+
+/* ============================================
+   RECURSOS HUMANOS
+============================================ */
+
+.modulo-card.rh{
+
+    background:
+        linear-gradient(
+            135deg,
+            #16a34a,
+            #22c55e
+        );
+
+    color:white;
+
+}
+
+/* ============================================
+   MODULOS FUTUROS
+============================================ */
+
+.modulo-card.proximamente{
+
+    background:
+        rgba(255,255,255,.75);
+
+    backdrop-filter:blur(10px);
+
+    color:#4b5563;
+
+    cursor:not-allowed;
+
+}
+
+.modulo-card.proximamente:hover{
+
+    transform:none;
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.08);
+
+}
+
+/* ============================================
+   ICONOS
+============================================ */
+
+.icono-modulo{
+
+    font-size:60px;
+
+}
+
+/* ============================================
+   TEXTO TARJETAS
+============================================ */
+
+.modulo-card span{
+
+    font-size:22px;
+
+    font-weight:700;
+
+}
+
+.modulo-card small{
+
+    font-size:14px;
+
+    line-height:1.5;
+
+    padding:0 15px;
+
+}
+
+/* ============================================
+   RESPONSIVE
+============================================ */
+
+@media(max-width:992px){
+
+    .panel-container{
+
+        margin-left:0;
+
+        width:100%;
+
+        padding:25px;
+
+    }
+
+    .bienvenida-panel h1{
+
+        font-size:42px;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .panel-container{
+
+        padding:20px;
+
+    }
+
+    .bienvenida-panel h1{
+
+        font-size:32px;
+
+    }
+
+    .bienvenida-panel p{
+
+        font-size:16px;
+
+    }
+
+    .titulo-panel h2{
+
+        width:100%;
+
+        text-align:center;
+
+        font-size:24px;
+
+    }
+
+    .modulo-card{
+
+        width:180px;
+
+        height:180px;
+
+    }
+
+    .icono-modulo{
+
+        font-size:46px;
+
+    }
+
+    .modulo-card span{
+
+        font-size:18px;
+
+    }
+
+}
+
+@media(max-width:480px){
+
+    .modulo-card{
+
+        width:160px;
+
+        height:160px;
+
+    }
+
+    .icono-modulo{
+
+        font-size:40px;
+
+    }
+
+    .modulo-card small{
+
+        display:none;
+
+    }
+
+}

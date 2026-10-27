@@ -1,0 +1,1345 @@
+/* =========================================
+   CONTENEDOR PRINCIPAL
+========================================= */
+
+.dashboard-container{
+
+    margin-left:280px;
+
+    width:calc(100% - 280px);
+
+    min-height:100vh;
+
+    padding:35px;
+
+    padding-top:120px;
+
+}
+
+.usuarios-container{
+
+    width:100%;
+
+    max-width:1700px;
+
+    margin:0 auto;
+
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.header-usuarios{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:35px;
+
+}
+
+.header-usuarios h1{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    font-size:42px;
+
+    font-weight:700;
+
+    color:#198754;
+
+}
+
+.header-usuarios h1 i{
+
+    width:78px;
+
+    height:78px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    border-radius:22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #22c55e,
+            #16a34a
+        );
+
+    color:#fff;
+
+    box-shadow:
+        0 12px 25px rgba(34,197,94,.25);
+
+}
+
+.header-usuarios p{
+
+    margin-top:12px;
+
+    margin-left:96px;
+
+    color:#64748b;
+
+    font-size:17px;
+
+}
+
+/* =========================================
+   BOTON CREAR
+========================================= */
+
+.btn-crear-usuario{
+
+    border:none;
+
+    background:
+        linear-gradient(
+            135deg,
+            #22c55e,
+            #16a34a
+        );
+
+    color:#fff;
+
+    padding:15px 28px;
+
+    border-radius:18px;
+
+    font-weight:700;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    transition:.30s;
+
+    box-shadow:
+        0 10px 25px rgba(34,197,94,.22);
+
+}
+
+.btn-crear-usuario:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 16px 35px rgba(34,197,94,.30);
+
+}
+
+/* =========================================
+   ESTADÍSTICAS
+========================================= */
+
+.stats-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(260px,1fr));
+
+    gap:24px;
+
+    margin-bottom:35px;
+
+}
+
+.stat-card{
+
+    position:relative;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    padding:24px;
+
+    background:rgba(255,255,255,.96);
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    transition:.30s;
+
+    box-shadow:
+        0 8px 22px rgba(0,0,0,.10);
+
+}
+
+.stat-card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.15);
+
+}
+
+/* =========================================
+   ICONOS
+========================================= */
+
+.icono-stat{
+
+    width:72px;
+
+    height:72px;
+
+    border-radius:20px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:#fff;
+
+    font-size:30px;
+
+    flex-shrink:0;
+
+}
+
+.activos .icono-stat{
+
+    background:
+        linear-gradient(
+            135deg,
+            #22c55e,
+            #16a34a
+        );
+
+}
+
+.bloqueados .icono-stat{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ef4444,
+            #dc2626
+        );
+
+}
+
+.primera-vez .icono-stat{
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+}
+
+.password .icono-stat{
+
+    background:
+        linear-gradient(
+            135deg,
+            #f59e0b,
+            #d97706
+        );
+
+}
+
+/* =========================================
+   BORDE LATERAL
+========================================= */
+
+.stat-card.activos{
+
+    border-left:6px solid #22c55e;
+
+}
+
+.stat-card.bloqueados{
+
+    border-left:6px solid #ef4444;
+
+}
+
+.stat-card.primera-vez{
+
+    border-left:6px solid #2563eb;
+
+}
+
+.stat-card.password{
+
+    border-left:6px solid #f59e0b;
+
+}
+
+/* =========================================
+   TEXTO
+========================================= */
+
+.stat-card h3{
+
+    margin:0;
+
+    font-size:40px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+}
+
+.stat-card span{
+
+    display:block;
+
+    margin-top:5px;
+
+    color:#64748b;
+
+    font-size:15px;
+
+    font-weight:600;
+
+}
+
+/* =========================================
+   EFECTO SUPERIOR
+========================================= */
+
+.stat-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:5px;
+
+}
+
+.stat-card.activos::before{
+
+    background:#22c55e;
+
+}
+
+.stat-card.bloqueados::before{
+
+    background:#ef4444;
+
+}
+
+.stat-card.primera-vez::before{
+
+    background:#2563eb;
+
+}
+
+.stat-card.password::before{
+
+    background:#f59e0b;
+
+}
+
+/* =========================================
+   FILTROS
+========================================= */
+
+.filtros-container{
+
+    margin-bottom:28px;
+
+}
+
+.buscador-box{
+
+    position:relative;
+
+    width:100%;
+
+    max-width:450px;
+
+}
+
+.buscador-box i{
+
+    position:absolute;
+
+    left:20px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:#94a3b8;
+
+    font-size:18px;
+
+}
+
+.buscador-box input{
+
+    width:100%;
+
+    height:56px;
+
+    padding:0 20px 0 55px;
+
+    border:none;
+
+    border-radius:18px;
+
+    background:#fff;
+
+    box-shadow:
+        0 8px 22px rgba(0,0,0,.08);
+
+    transition:.25s;
+
+}
+
+.buscador-box input:focus{
+
+    outline:none;
+
+    box-shadow:
+        0 0 0 4px rgba(34,197,94,.15);
+
+}
+
+/* =========================================
+   TABLA
+========================================= */
+
+.tabla-container{
+
+    background:#fff;
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.08);
+
+}
+
+.tabla-usuarios{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+/* =========================================
+   CABECERA
+========================================= */
+
+.tabla-usuarios thead{
+
+    background:
+        linear-gradient(
+            135deg,
+            #22c55e,
+            #16a34a
+        );
+
+}
+
+.tabla-usuarios thead th{
+
+    color:#fff;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    padding:18px;
+
+    text-align:center;
+
+    border:none;
+
+}
+
+/* =========================================
+   FILAS
+========================================= */
+
+.tabla-usuarios tbody tr{
+
+    transition:.25s;
+
+    border-bottom:1px solid #edf2f7;
+
+}
+
+.tabla-usuarios tbody tr:hover{
+
+    background:#f8fafc;
+
+}
+
+.tabla-usuarios tbody td{
+
+    padding:18px 15px;
+
+    vertical-align:middle;
+
+    text-align:center;
+
+    color:#334155;
+
+}
+
+/* =========================================
+   FOTO
+========================================= */
+
+.foto-usuario{
+
+    width:60px;
+
+    height:60px;
+
+    object-fit:cover;
+
+    border-radius:50%;
+
+    border:3px solid #22c55e;
+
+    box-shadow:
+        0 5px 12px rgba(0,0,0,.10);
+
+}
+
+/* Si el JS usa img directamente */
+
+.tabla-usuarios tbody img{
+
+    width:60px;
+
+    height:60px;
+
+    object-fit:cover;
+
+    border-radius:50%;
+
+    border:3px solid #22c55e;
+
+    box-shadow:
+        0 5px 12px rgba(0,0,0,.10);
+
+}
+
+/* =========================================
+   NOMBRE EMPLEADO
+========================================= */
+
+.nombre-empleado{
+
+    font-weight:700;
+
+    color:#0f172a;
+
+    margin-bottom:4px;
+
+}
+
+.documento-empleado{
+
+    font-size:13px;
+
+    color:#64748b;
+
+}
+
+/* =========================================
+   SCROLL TABLA
+========================================= */
+
+.tabla-container{
+
+    overflow-x:auto;
+
+}
+
+.tabla-container::-webkit-scrollbar{
+
+    height:8px;
+
+}
+
+.tabla-container::-webkit-scrollbar-thumb{
+
+    background:#cbd5e1;
+
+    border-radius:20px;
+
+}
+
+.tabla-container::-webkit-scrollbar-thumb:hover{
+
+    background:#94a3b8;
+
+}
+
+/* =========================================
+   BADGES DE ESTADO
+========================================= */
+
+.badge-estado{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    min-width:130px;
+
+    padding:8px 16px;
+
+    border-radius:30px;
+
+    color:#fff;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    box-shadow:
+        0 5px 12px rgba(0,0,0,.10);
+
+}
+
+.badge-estado i{
+
+    font-size:12px;
+
+}
+
+/* =========================================
+   COLORES
+========================================= */
+
+.badge-activo{
+
+    background:
+        linear-gradient(
+            135deg,
+            #22c55e,
+            #16a34a
+        );
+
+}
+
+.badge-bloqueado{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ef4444,
+            #dc2626
+        );
+
+}
+
+.badge-password{
+
+    background:
+        linear-gradient(
+            135deg,
+            #f59e0b,
+            #d97706
+        );
+
+}
+
+.badge-primera{
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+}
+
+/* =========================================
+   ACCIONES
+========================================= */
+
+.acciones-tabla{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+
+}
+
+/* =========================================
+   BOTONES
+========================================= */
+
+.btn-ver,
+.btn-reset,
+.btn-bloquear,
+.btn-desbloquear{
+
+    width:44px;
+
+    height:44px;
+
+    border:none;
+
+    border-radius:14px;
+
+    color:#fff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    box-shadow:
+        0 8px 18px rgba(0,0,0,.16);
+
+}
+
+.btn-ver{
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+}
+
+.btn-reset{
+
+    background:
+        linear-gradient(
+            135deg,
+            #f59e0b,
+            #d97706
+        );
+
+}
+
+.btn-bloquear{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ef4444,
+            #dc2626
+        );
+
+}
+
+.btn-desbloquear{
+
+    background:
+        linear-gradient(
+            135deg,
+            #22c55e,
+            #16a34a
+        );
+
+}
+
+/* =========================================
+   HOVER
+========================================= */
+
+.btn-ver:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 14px 26px rgba(37,99,235,.30);
+
+}
+
+.btn-reset:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 14px 26px rgba(245,158,11,.30);
+
+}
+
+.btn-bloquear:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 14px 26px rgba(239,68,68,.30);
+
+}
+
+.btn-desbloquear:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 14px 26px rgba(34,197,94,.30);
+
+}
+
+.btn-ver i,
+.btn-reset i,
+.btn-bloquear i,
+.btn-desbloquear i{
+
+    font-size:15px;
+
+}
+
+/* =========================================
+   EFECTO CLICK
+========================================= */
+
+.btn-ver:active,
+.btn-reset:active,
+.btn-bloquear:active,
+.btn-desbloquear:active{
+
+    transform:scale(.95);
+
+}
+
+/* =========================================
+   MODAL USUARIO
+========================================= */
+
+.modal-usuario{
+
+    border:none;
+
+    border-radius:28px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 20px 45px rgba(0,0,0,.18);
+
+}
+
+.modal-usuario .modal-header{
+
+    background:
+        linear-gradient(
+            135deg,
+            #22c55e,
+            #16a34a
+        );
+
+    color:#fff;
+
+    border:none;
+
+    padding:22px 30px;
+
+}
+
+.modal-usuario .modal-header h4{
+
+    margin:0;
+
+    font-size:24px;
+
+    font-weight:700;
+
+}
+
+.modal-usuario .btn-close{
+
+    filter:brightness(0) invert(1);
+
+}
+
+.modal-usuario .modal-body{
+
+    padding:35px;
+
+}
+
+/* =========================================
+   DETALLE USUARIO
+========================================= */
+
+.detalle-grid{
+
+    display:grid;
+
+    grid-template-columns:280px 1fr;
+
+    gap:30px;
+
+}
+
+.detalle-foto{
+
+    text-align:center;
+
+}
+
+.detalle-foto img{
+
+    width:180px;
+
+    height:180px;
+
+    object-fit:cover;
+
+    border-radius:50%;
+
+    border:6px solid #22c55e;
+
+    box-shadow:
+        0 12px 28px rgba(0,0,0,.15);
+
+}
+
+.detalle-foto h3{
+
+    margin-top:18px;
+
+    color:#0f172a;
+
+    font-size:24px;
+
+    font-weight:700;
+
+}
+
+.detalle-foto span{
+
+    display:inline-block;
+
+    margin-top:10px;
+
+    padding:8px 18px;
+
+    border-radius:30px;
+
+    background:#22c55e;
+
+    color:#fff;
+
+    font-weight:700;
+
+}
+
+.detalle-info{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(220px,1fr));
+
+    gap:18px;
+
+}
+
+.info-card{
+
+    background:#f8fafc;
+
+    border-radius:18px;
+
+    padding:20px;
+
+    border-left:5px solid #2563eb;
+
+}
+
+.info-card span{
+
+    color:#64748b;
+
+    font-size:13px;
+
+}
+
+.info-card h5{
+
+    margin-top:8px;
+
+    color:#0f172a;
+
+    font-size:18px;
+
+    font-weight:700;
+
+}
+
+/* =========================================
+   MODAL RESET
+========================================= */
+
+.modal-reset{
+
+    position:fixed;
+
+    inset:0;
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    background:rgba(0,0,0,.45);
+
+    z-index:99999;
+
+}
+
+.modal-reset.active{
+
+    display:flex;
+
+}
+
+.contenido-reset{
+
+    width:430px;
+
+    max-width:92%;
+
+    background:#fff;
+
+    border-radius:28px;
+
+    padding:35px;
+
+    text-align:center;
+
+    box-shadow:
+        0 20px 45px rgba(0,0,0,.20);
+
+}
+
+.icono-reset{
+
+    width:90px;
+
+    height:90px;
+
+    border-radius:24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f59e0b,
+            #d97706
+        );
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:#fff;
+
+    font-size:38px;
+
+    margin:0 auto 20px;
+
+}
+
+.acciones-reset{
+
+    display:flex;
+
+    gap:12px;
+
+    margin-top:25px;
+
+}
+
+.btn-cancelar-reset,
+.btn-confirmar-reset{
+
+    flex:1;
+
+    height:50px;
+
+    border:none;
+
+    border-radius:16px;
+
+    font-weight:700;
+
+    transition:.25s;
+
+}
+
+.btn-cancelar-reset{
+
+    background:#e2e8f0;
+
+}
+
+.btn-confirmar-reset{
+
+    background:#22c55e;
+
+    color:#fff;
+
+}
+
+.btn-confirmar-reset:hover{
+
+    background:#16a34a;
+
+}
+
+/* =========================================
+   ALERTAS
+========================================= */
+
+#mensaje{
+
+    position:fixed;
+
+    top:100px;
+
+    right:25px;
+
+    z-index:999999;
+
+    min-width:330px;
+
+}
+
+.alerta-exito,
+.alerta-error{
+
+    border-radius:18px;
+
+    padding:18px 22px;
+
+    color:#fff;
+
+    font-weight:700;
+
+    box-shadow:
+        0 14px 28px rgba(0,0,0,.18);
+
+    animation:fadeDown .35s ease;
+
+}
+
+.alerta-exito{
+
+    background:
+        linear-gradient(
+            135deg,
+            #22c55e,
+            #16a34a
+        );
+
+}
+
+.alerta-error{
+
+    background:
+        linear-gradient(
+            135deg,
+            #ef4444,
+            #dc2626
+        );
+
+}
+
+/* =========================================
+   ANIMACIONES
+========================================= */
+
+@keyframes fadeDown{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(-25px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:1200px){
+
+    .header-usuarios{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+        gap:20px;
+
+    }
+
+}
+
+@media(max-width:992px){
+
+    .stats-grid{
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+    }
+
+    .detalle-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .header-usuarios h1{
+
+        font-size:30px;
+
+    }
+
+    .header-usuarios h1 i{
+
+        width:60px;
+
+        height:60px;
+
+        font-size:24px;
+
+    }
+
+    .stats-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .acciones-tabla{
+
+        gap:6px;
+
+    }
+
+    .btn-ver,
+    .btn-reset,
+    .btn-bloquear,
+    .btn-desbloquear{
+
+        width:38px;
+
+        height:38px;
+
+    }
+
+    #mensaje{
+
+        left:12px;
+
+        right:12px;
+
+        min-width:auto;
+
+    }
+
+}
+
+@media(max-width:576px){
+
+    .btn-crear-usuario{
+
+        width:100%;
+
+        justify-content:center;
+
+    }
+
+    .acciones-reset{
+
+        flex-direction:column;
+
+    }
+
+    .btn-cancelar-reset,
+    .btn-confirmar-reset{
+
+        width:100%;
+
+    }
+
+    .tabla-container{
+
+        border-radius:18px;
+
+    }
+
+}

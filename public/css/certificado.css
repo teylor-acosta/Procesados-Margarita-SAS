@@ -1,0 +1,266 @@
+/* ==========================================================================
+   CERTIFICADO - PROCESADOS MARGARITA
+   ========================================================================== */
+
+/* =========================================
+   CONTENEDOR PRINCIPAL
+========================================= */
+
+.certificado-main{
+    margin-left:280px;
+    width:calc(100% - 280px);
+    min-height:100vh;
+    padding:40px;
+}
+
+/* =========================================
+   WRAPPER
+========================================= */
+
+.certificado-wrapper{
+    max-width:1400px;
+    margin:0 auto;
+}
+
+/* =========================================
+   TARJETA CERTIFICADO
+========================================= */
+
+.certificado-card{
+    background:#ffffff;
+    border-radius:24px;
+    padding:40px;
+    position:relative;
+    box-shadow:0 15px 40px rgba(0,0,0,.08);
+    border:1px solid rgba(255,255,255,.3);
+}
+
+/* =========================================
+   MARCA DE AGUA
+========================================= */
+
+.marca-agua{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%) rotate(-30deg);
+
+    font-size:80px;
+    font-weight:700;
+
+    color:rgba(0,0,0,.03);
+
+    pointer-events:none;
+    user-select:none;
+    white-space:nowrap;
+}
+
+/* =========================================
+   HEADER CERTIFICADO
+========================================= */
+
+.certificado-header{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:30px;
+    margin-bottom:40px;
+}
+
+.certificado-logo{
+    width:100px;
+    height:100px;
+    object-fit:contain;
+}
+
+.certificado-titulo{
+    text-align:center;
+}
+
+.certificado-titulo h1{
+    font-size:42px;
+    font-weight:700;
+    color:#032b1d;
+    margin-bottom:10px;
+}
+
+.certificado-titulo p{
+    font-size:18px;
+    color:#64748b;
+}
+
+/* =========================================
+   CUERPO
+========================================= */
+
+.certificado-cuerpo{
+    text-align:center;
+    font-size:18px;
+    line-height:1.8;
+    color:#334155;
+}
+
+.certificado-nombre{
+    font-size:38px;
+    font-weight:700;
+    color:#032b1d;
+    margin:25px 0;
+}
+
+#documentoEmpleado{
+    margin-bottom:25px;
+}
+
+#fechaCertificado{
+    margin-top:25px;
+    font-weight:600;
+    color:#475569;
+}
+
+/* =========================================
+   FIRMAS
+========================================= */
+
+.certificado-firma{
+    display:flex;
+    justify-content:space-between;
+    gap:30px;
+    margin-top:70px;
+}
+
+.firma-area{
+    flex:1;
+    text-align:center;
+}
+
+.firma-linea{
+    width:100%;
+    height:2px;
+    background:#1e293b;
+    margin:12px 0;
+}
+
+.firma-img{
+    max-width:140px;
+    max-height:70px;
+    object-fit:contain;
+}
+
+/* =========================================
+   BOTON PDF SIDEBAR
+========================================= */
+
+.sidebar-pdf{
+    width:100%;
+    border:none;
+    margin-top:15px;
+    padding:16px;
+
+    border-radius:18px;
+
+    background:#ffffff;
+
+    display:flex;
+    align-items:center;
+    gap:14px;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.sidebar-pdf:hover{
+    transform:translateY(-2px);
+
+    box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+
+.sidebar-pdf i{
+    width:52px;
+    height:52px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    color:#ffffff;
+
+    font-size:22px;
+
+    background:linear-gradient(
+        135deg,
+        #22c55e,
+        #2563eb
+    );
+}
+
+.pdf-info{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+}
+
+.pdf-info span{
+    font-weight:700;
+    color:#0f172a;
+}
+
+.pdf-info small{
+    color:#64748b;
+}
+
+/* =========================================
+   LOADING
+========================================= */
+
+.loading-spinner{
+    padding:100px 0;
+}
+
+/* =========================================
+   CERTIFICADO PDF
+========================================= */
+
+.certificado-pdf .sidebar,
+.certificado-pdf .navbar-custom{
+    display:none !important;
+}
+
+.certificado-pdf .certificado-main{
+    margin:0 !important;
+    width:100% !important;
+    padding:0 !important;
+}
+
+.certificado-pdf .certificado-card{
+    box-shadow:none !important;
+    border:none !important;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:992px){
+
+    .certificado-main{
+        margin-left:0;
+        width:100%;
+        padding:20px;
+    }
+
+    .certificado-header{
+        flex-direction:column;
+    }
+
+    .certificado-firma{
+        flex-direction:column;
+    }
+
+    .marca-agua{
+        font-size:45px;
+    }
+
+}

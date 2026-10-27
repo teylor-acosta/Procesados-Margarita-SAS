@@ -1,0 +1,242 @@
+/* ==========================================================================
+   FIRMA DIGITAL - PROCESADOS MARGARITA
+   ========================================================================== */
+
+/* CONTENEDOR PRINCIPAL */
+
+.firma-main-content{
+    margin-left: 280px;
+    padding: 130px 40px 40px;
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* TARJETA */
+
+.firma-card-container {
+    background: rgba(255,255,255,0.90);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+
+    border: 1px solid rgba(255,255,255,0.8);
+
+    border-radius: 28px;
+
+    padding: 40px;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.08);
+
+    width: 100%;
+    max-width: 1100px;
+}
+
+/* BADGE */
+
+.firma-badge{
+    display:inline-block;
+
+    background:#d9f99d;
+
+    color:#365314;
+
+    padding:8px 18px;
+
+    border-radius:999px;
+
+    font-size:13px;
+    font-weight:700;
+
+    margin-bottom:20px;
+}
+
+/* TITULO */
+
+.firma-card-container h1{
+    font-size:42px;
+    color:#052e16;
+
+    display:flex;
+    align-items:center;
+    gap:15px;
+
+    margin-bottom:15px;
+}
+
+.firma-card-container h1 i{
+    color:#16a34a;
+}
+
+.firma-subtitle{
+    font-size:18px;
+    color:#334155;
+    margin-bottom:35px;
+}
+
+/* GRID */
+
+.firma-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:30px;
+}
+
+/* TITULOS COLUMNAS */
+
+.firma-grid h3{
+    font-size:28px;
+    color:#052e16;
+    margin-bottom:15px;
+}
+
+/* CAJAS */
+
+.firma-box {
+    background: #ffffff;
+
+    border: 2px dashed #cbd5e1;
+
+    border-radius: 20px;
+
+    height: 280px;
+
+    overflow: hidden;
+}
+
+/* CANVAS */
+
+#canvasFirma{
+    width:100%;
+    height:280px;
+    cursor:crosshair;
+    display:block;
+}
+
+/* PLACEHOLDER */
+
+#placeholderFirma{
+    text-align:center;
+    color:#64748b;
+}
+
+#placeholderFirma i{
+    font-size:60px;
+    margin-bottom:15px;
+    display:block;
+}
+
+#placeholderFirma p{
+    font-size:17px;
+}
+
+/* PREVIEW */
+
+#previewFirma{
+    max-width:100%;
+    max-height:250px;
+    object-fit:contain;
+}
+
+/* BOTON BORRAR */
+
+.btn-borrar-unique{
+    width:100%;
+
+    border:none;
+
+    background:#ffffff;
+
+    color:#dc2626;
+
+    padding:15px;
+
+    border-radius:16px;
+
+    font-size:16px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.btn-borrar-unique:hover{
+    transform:translateY(-2px);
+
+    background:#fee2e2;
+}
+
+/* BOTON FINALIZAR */
+
+.btn-guardar-unique{
+    width:100%;
+
+    border:none;
+
+    background:linear-gradient(
+        135deg,
+        #22c55e,
+        #16a34a
+    );
+
+    color:white;
+
+    padding:15px;
+
+    border-radius:16px;
+
+    font-size:16px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.btn-guardar-unique:hover{
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 8px 25px rgba(34,197,94,.35);
+}
+
+/* MENSAJE EXITO */
+
+.mensaje-exito{
+    margin-top:25px;
+
+    background:#dcfce7;
+
+    color:#166534;
+
+    padding:16px;
+
+    border-radius:14px;
+
+    font-weight:700;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:992px){
+
+    .firma-main-content{
+        margin-left:0;
+        padding:110px 20px 20px;
+    }
+
+    .firma-grid{
+        grid-template-columns:1fr;
+    }
+
+    .firma-card-container h1{
+        font-size:32px;
+    }
+
+    .firma-grid h3{
+        font-size:22px;
+    }
+}

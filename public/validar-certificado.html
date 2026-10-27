@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Validación de Certificado</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="/css/validar-certificado.css"
+    >
+
+</head>
+
+
+<body>
+
+    <main class="contenedor">
+
+        <!-- ==========================================
+             CARGANDO
+        =========================================== -->
+
+        <section
+            id="estadoCargando"
+            class="estado cargando"
+        >
+
+            <div class="spinner"></div>
+
+            <h2>
+                Verificando certificado...
+            </h2>
+
+            <p>
+                Estamos comprobando la autenticidad
+                del certificado.
+            </p>
+
+        </section>
+
+
+        <!-- ==========================================
+             CERTIFICADO VÁLIDO
+        =========================================== -->
+
+        <section
+            id="certificadoValido"
+            class="tarjeta certificado-valido"
+            style="display:none;"
+        >
+
+            <div class="icono-valido">
+                ✓
+            </div>
+
+            <h1>
+                CERTIFICADO VÁLIDO
+            </h1>
+
+            <p class="subtitulo">
+                Este certificado ha sido verificado
+                correctamente.
+            </p>
+
+
+            <div class="separador"></div>
+
+
+            <div class="datos-certificado">
+
+                <div class="dato">
+
+                    <span class="etiqueta">
+                        Colaborador
+                    </span>
+
+                    <strong id="nombreEmpleado">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="dato">
+
+                    <span class="etiqueta">
+                        Capacitación
+                    </span>
+
+                    <strong id="nombreCapacitacion">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="dato">
+
+                    <span class="etiqueta">
+                        Calificación
+                    </span>
+
+                    <strong id="nota">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="dato">
+
+                    <span class="etiqueta">
+                        Fecha de emisión
+                    </span>
+
+                    <strong id="fechaEmision">
+                        -
+                    </strong>
+
+                </div>
+
+
+                <div class="dato dato-codigo">
+
+                    <span class="etiqueta">
+                        Código del certificado
+                    </span>
+
+                    <strong id="codigoCertificado">
+                        -
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="mensaje-validacion">
+
+                <span>✓</span>
+
+                Certificado autenticado
+                correctamente por el sistema.
+
+            </div>
+
+        </section>
+
+
+        <!-- ==========================================
+             CERTIFICADO NO VÁLIDO
+        =========================================== -->
+
+        <section
+            id="certificadoInvalido"
+            class="tarjeta certificado-invalido"
+            style="display:none;"
+        >
+
+            <div class="icono-invalido">
+                ×
+            </div>
+
+            <h1>
+                CERTIFICADO NO VÁLIDO
+            </h1>
+
+            <p id="mensajeError">
+                No fue posible verificar este certificado.
+            </p>
+
+            <div class="mensaje-alerta">
+
+                El certificado consultado no existe
+                o no pudo ser autenticado.
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="/js/validar-certificado.js"></script>
+
+</body>
+
+</html>

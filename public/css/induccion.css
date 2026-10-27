@@ -1,0 +1,456 @@
+/* ==========================================================================
+   🌿 ERP GLOBAL PREMIUM RESPONSIVE - PROCESADOS MARGARITA
+   ========================================================================== */
+
+/* ==========================================================================
+   🔤 FUENTE GLOBAL Y CONFIGURACIÓN BASE
+   ========================================================================== */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Averia Libre', cursive !important;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ==========================================================================
+   🔥 FIX FONT AWESOME
+   ========================================================================== */
+.fas, .far, .fab, .fa {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+}
+
+/* ==========================================================================
+   🎨 VARIABLES INSTITUCIONALES
+   ========================================================================== */
+:root {
+    --azul-margarita: #004085;
+    --verde-margarita: #198754;
+    --verde-oscuro-sidebar: #032c1d;
+    --degradado: linear-gradient(135deg, #28a745, #007bff);
+}
+
+/* ==========================================================================
+   🌎 BODY & FONDO
+   ========================================================================== */
+body {
+    margin: 0;
+    background: url('../img/Fondo.webp') center/cover no-repeat fixed !important;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    position: relative;
+    min-height: 100vh;
+}
+
+/* ==========================================================================
+   🌫️ OVERLAY DE CONTENIDO
+   ========================================================================== */
+.background-overlay {
+    background: rgba(255, 255, 255, 0.76);
+    min-height: 100vh;
+}
+
+
+/* ==========================================================================
+   🔝 NAVBAR PREMIUM (OPTIMIZADA SIN SOLAPAMIENTO)
+   ========================================================================== */
+.navbar-custom {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 280px; /* Inicia exactamente donde termina el sidebar en pantallas grandes */
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 32px;
+    background: rgba(255, 255, 255, .96);
+    backdrop-filter: blur(10px);
+    z-index: 1000; /* Menor que el sidebar para evitar cortes visuales erróneos */
+    box-shadow: 0 4px 18px rgba(0, 0, 0, .08);
+    transition: all 0.3s ease;
+}
+
+/* ==========================================================================
+   🔹 COMPONENTES INTERNOS DE LA NAVBAR
+   ========================================================================== */
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.logo-navbar {
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
+}
+
+.empresa-texto {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.empresa-linea1 {
+    font-size: 15px;
+    color: #374151;
+    font-style: italic;
+}
+
+.empresa-linea2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #16a34a;
+    font-style: italic;
+    letter-spacing: .4px;
+}
+
+.acciones-navbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* 🔘 BOTÓN VOLVER */
+.btn-volver {
+    border: none;
+    background: #f8fafc;
+    color: #111827 !important;
+    text-decoration: none;
+    padding: 11px 22px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    transition: .25s;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, .05);
+}
+
+.btn-volver:hover {
+    background: #e2e8f0;
+    transform: translateY(-2px);
+}
+
+/* 🚪 BOTÓN LOGOUT (MANTENIDO SI SE USA COMO ENLACE ADICIONAL) */
+.btn-logout {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white !important;
+    padding: 11px 22px;
+    border-radius: 18px;
+    text-decoration: none;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: transform .2s ease, opacity .2s ease;
+    box-shadow: 0 10px 20px rgba(220, 53, 69, .22);
+}
+
+.btn-logout:hover {
+    transform: translateY(-2px);
+    opacity: .95;
+    color: white !important;
+}
+
+/* ==========================================================================
+   📦 ESTRUCTURACIÓN DEL CONTENEDOR PRINCIPAL
+   ========================================================================== */
+.dashboard-container{
+    margin-left:280px;
+    min-height:100vh;
+    transition: all 0.3s ease;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    /* El padding superior de 110px empuja las tarjetas abajo evitando que la barra las tape */
+    padding: 110px 20px 30px; 
+}
+
+/* ==========================================================================
+   📄 TARJETAS Y MÓDULOS DE CAPACITACIÓN
+   ========================================================================== */
+.modulo-item {
+    background: white;
+    border-radius: 24px;
+    padding: 24px;
+    margin-bottom: 25px;
+    border: 6px solid transparent;
+    background-image: linear-gradient(white, white), linear-gradient(135deg, var(--verde-margarita), #007bff);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.modulo-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
+}
+
+/* ==========================================================================
+   🏷️ TIPOGRAFÍA DE SECCIONES (GRADIENTES EFFECT)
+   ========================================================================== */
+.titulo-principal {
+    background: linear-gradient(135deg, #28a745, #007bff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    font-weight: 800 !important;
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 2rem;
+    font-style: italic;
+}
+
+.modulo-item h3 {
+    background: linear-gradient(135deg, #28a745, #007bff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    font-weight: 700 !important;
+    margin-bottom: 15px;
+    font-size: 1.4rem;
+    font-style: italic;
+}
+
+.modulo-item h4, .modulo-item .subtitulo {
+    color: #004085;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   📈 COMPONENTES DE PROGRESO Y REPRODUCTORES
+   ========================================================================== */
+.progreso-texto {
+    color: #28a745;
+    font-weight: 600;
+    background: #e8f5e9;
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: .85rem;
+}
+
+.progress-bar-custom {
+    height: 8px;
+    background: linear-gradient(90deg, #28a745, #007bff);
+    border-radius: 4px;
+}
+
+/* ==========================================================================
+   🎥 FILAS DE VIDEOS E INTERACCIONES
+   ========================================================================== */
+.video-fila {
+    background: #f8f9fa;
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #eee;
+    transition: background .2s ease, border-color .2s ease;
+}
+
+.video-fila:hover {
+    background: #f0f7ff;
+    border-color: #007bff;
+}
+
+.video-fila.visto {
+    background: linear-gradient(135deg, #e8f5e9, #e3f2fd);
+    border-left: 6px solid #28a745;
+}
+
+.video-titulo {
+    flex: 1;
+    font-weight: 500;
+}
+
+.stats-card {
+    background: white;
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 20px;
+    border-left: 5px solid #28a745;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* ==========================================================================
+   🔘 BOTONES GENERALES UNIFICADOS
+   ========================================================================== */
+.btn-degradado {
+    background: linear-gradient(135deg, #28a745, #007bff) !important;
+    color: white !important;
+    border-radius: 30px;
+    padding: 10px 24px;
+    font-weight: bold;
+    border: none;
+    transition: transform .2s ease, opacity .2s ease;
+}
+
+.btn-degradado:hover {
+    transform: translateY(-2px);
+    opacity: .95;
+}
+
+.btn-ver-video {
+    background: linear-gradient(135deg, #28a745, #007bff);
+    color: white;
+    border: none;
+    border-radius: 18px;
+    padding: 7px 15px;
+    font-size: .8rem;
+    cursor: pointer;
+    transition: transform .2s ease, opacity .2s ease;
+}
+
+.btn-ver-video:hover {
+    transform: translateY(-1px);
+    opacity: .92;
+}
+
+.btn-confirmar {
+    background: linear-gradient(135deg, #28a745, #007bff);
+    color: white;
+    border: none;
+    border-radius: 22px;
+    padding: 8px 18px;
+    font-weight: 600;
+    transition: transform .2s ease;
+}
+
+.btn-confirmar:hover {
+    transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   📱 RESPONSIVE - TABLETS (MÁXIMO 768PX)
+   ========================================================================== */
+@media(max-width: 768px) {
+    body {
+        background-attachment: scroll !important;
+    }
+
+    .dashboard-container {
+        margin-left: 0; /* Libera el margen lateral en pantallas reducidas */
+    }
+
+    .sidebar.active {
+        left: 0; /* Despliega el menú lateral flotante sobre el contenido */
+    }
+
+    .navbar-custom {
+        left: 0; /* La barra superior toma el ancho completo de forma horizontal */
+        flex-direction: row; /* Evita que los botones colapsen hacia abajo en bloque tosco */
+        align-items: center;
+        justify-content: space-between;
+        gap: 0;
+        padding: 14px 18px;
+        height: 65px;
+    }
+
+    .container {
+        padding: 95px 12px 20px; /* Balancea la distancia del título con la barra compacta */
+    }
+
+    .navbar-left {
+        width: auto;
+    }
+
+    .acciones-navbar {
+        width: auto;
+        justify-content: flex-end;
+    }
+
+    .empresa-linea1 {
+        font-size: .72rem;
+    }
+
+    .empresa-linea2 {
+        font-size: 18px;
+    }
+
+    .btn-logout, .btn-volver {
+        padding: 10px 14px;
+        font-size: .78rem;
+        border-radius: 14px;
+    }
+
+    .modulo-item {
+        padding: 16px;
+        border-width: 4px;
+        border-radius: 18px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .titulo-principal {
+        font-size: 1.5rem;
+    }
+
+    .modulo-item h3 {
+        font-size: 1.15rem;
+    }
+
+    .video-fila {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .btn-ver-video {
+        width: 100%;
+    }
+}
+
+/* ==========================================================================
+   📱 RESPONSIVE - MÓVILES PEQUEÑOS (MÁXIMO 480PX)
+   ========================================================================== */
+@media(max-width: 480px) {
+    .navbar-custom {
+        padding: 12px 14px;
+        height: 60px;
+    }
+
+    .container {
+        padding: 85px 12px 20px;
+    }
+
+    .logo-navbar {
+        width: 42px;
+        height: 42px;
+    }
+
+    .empresa-linea2 {
+        font-size: 16px;
+    }
+
+    .acciones-navbar {
+        flex-direction: row;
+        width: auto;
+    }
+
+    .btn-volver, .btn-logout {
+        width: auto;
+        justify-content: center;
+    }
+
+    .titulo-principal {
+        font-size: 1.3rem;
+    }
+
+    .modulo-item {
+        padding: 14px;
+    }
+
+    .btn-degradado {
+        width: 100%;
+        border-radius: 14px;
+    }
+}

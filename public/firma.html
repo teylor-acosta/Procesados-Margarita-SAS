@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firma Digital - Procesados Margarita</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <link rel="stylesheet" href="css/style1.css">
+    
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/firma.css">
+</head>
+
+<body data-pagina="firma">
+
+    <!-- SIDEBAR DINÁMICO -->
+    <div id="sidebarContainer"></div>
+
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- NAVBAR SUPERIOR -->
+    <nav class="navbar-custom">
+
+        <div class="navbar-left">
+
+            <i class="fas fa-bars menu-toggle d-lg-none" id="btnOpenSidebar"></i>
+
+            <span class="section-main-title">
+                Firma Digital
+            </span>
+
+        </div>
+
+        <div class="acciones-navbar">
+
+            <a href="/induccion" class="btn-light">
+                <i class="fas fa-arrow-left"></i>
+                Volver a inducción
+            </a>
+
+        </div>
+
+    </nav>
+
+    <!-- CONTENIDO -->
+    <main class="firma-main-content">
+
+        <div class="firma-card-container">
+
+            <div class="firma-badge">
+                PASO FINAL DE INDUCCIÓN
+            </div>
+
+            <h1>
+                <i class="fas fa-signature"></i>
+                Asigna tu firma digital
+            </h1>
+
+            <p class="firma-subtitle">
+                Formaliza la finalización de tu capacitación SST.
+            </p>
+
+            <div class="firma-grid">
+
+                <!-- CANVAS -->
+
+                <div>
+
+                    <h3>Dibuja tu firma</h3>
+
+                    <div class="firma-box">
+
+                        <canvas id="canvasFirma"></canvas>
+
+                    </div>
+
+                    <button
+                        id="btnBorrarLienzo"
+                        class="btn-borrar-unique"
+                        type="button">
+
+                        <i class="fas fa-trash"></i>
+                        Borrar lienzo
+
+                    </button>
+
+                </div>
+
+                <!-- PREVIEW -->
+
+                <div>
+
+                    <h3>Vista previa</h3>
+
+                    <div class="firma-box">
+
+                        <div id="placeholderFirma">
+
+                            <i class="fas fa-file-signature"></i>
+
+                            <p>
+                                La firma aparecerá aquí
+                            </p>
+
+                        </div>
+
+                        <img
+                            id="previewFirma"
+                            style="display:none; max-width:100%; max-height:100%;">
+
+                    </div>
+
+                    <button
+                        id="btnFinalizar"
+                        class="btn-guardar-unique"
+                        type="button">
+
+                        <i class="fas fa-check-circle"></i>
+                        Finalizar inducción
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div
+                id="mensajeExito"
+                class="mensaje-exito"
+                style="display:none;">
+
+                ✅ Firma guardada correctamente.
+                Redirigiendo al certificado...
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- SCRIPTS -->
+
+    <script src="/js/sidebar.js"></script>
+
+    <script src="js/firma.js"></script>
+
+</body>
+</html>

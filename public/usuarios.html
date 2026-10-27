@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Módulo Usuarios</title>
+
+<!-- FUENTE -->
+<link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap" rel="stylesheet">
+
+<!-- BOOTSTRAP -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- ICONOS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- ESTILOS -->
+<link rel="stylesheet" href="css/style1.css">
+<link rel="stylesheet" href="css/sidebar.css">
+<link rel="stylesheet" href="css/usuarios.css">
+
+<link rel="icon" href="img/Gemini_Generated_Image_bo9w5fbo9w5fbo9w-removebg-preview.png">
+
+</head>
+
+<body data-pagina="usuarios">
+
+    <!-- SIDEBAR -->
+    <div id="sidebarContainer"></div>
+
+    <!-- OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar-custom">
+
+        <div class="navbar-left">
+
+            <i class="fas fa-bars menu-toggle"
+               id="btnOpenSidebar">
+            </i>
+
+            <span class="section-main-title">
+                Módulo Usuarios
+            </span>
+
+        </div>
+
+    </nav>
+
+    <!-- CONTENIDO -->
+    <main class="dashboard-container">
+
+        <div class="usuarios-container">
+
+            <!-- TITULO -->
+
+            <div class="titulo-usuarios">
+
+                <h2>
+                    Gestión de Usuarios
+                </h2>
+
+            </div>
+
+            <p class="subtitulo-usuarios">
+                Administra usuarios, roles, permisos y accesos al ERP.
+            </p>
+
+            <!-- MODULOS PRINCIPALES -->
+
+            <div class="modulos-usuarios">
+
+                <!-- CREAR USUARIO -->
+
+                <div
+                    class="modulo-card"
+                    onclick="window.location.href='/crear-usuario'"
+                >
+
+                    <div class="icono-box verde">
+
+                        <i class="fas fa-user-plus"></i>
+
+                    </div>
+
+                    <h3>
+                        Crear usuario
+                    </h3>
+
+                    <p>
+                        Registrar un nuevo usuario en el sistema
+                    </p>
+
+                </div>
+
+                <!-- VER USUARIOS -->
+
+                <div
+                    class="modulo-card"
+                    onclick="window.location.href='/usuarios-registrados'"
+                >
+
+                    <div class="icono-box azul">
+
+                        <i class="fas fa-users-cog"></i>
+
+                    </div>
+
+                    <h3>
+                        Ver usuarios
+                    </h3>
+
+                    <p>
+                        Consultar usuarios registrados
+                    </p>
+
+                </div>
+
+                <!-- ROLES -->
+
+                <div
+                    class="modulo-card"
+                    onclick="window.location.href='/roles-accesos'"
+                >
+
+                    <div class="icono-box morado">
+
+                        <i class="fas fa-user-shield"></i>
+
+                    </div>
+
+                    <h3>
+                        Roles y accesos
+                    </h3>
+
+                    <p>
+                        Gestionar roles y asignaciones
+                    </p>
+
+                </div>
+
+                <!-- CENTRO ACTIVIDAD -->
+
+                <div
+                    class="modulo-card"
+                    onclick="window.location.href='/historial-usuarios'"
+                >
+
+                    <div class="icono-box verde">
+
+                        <i class="fas fa-clock-rotate-left"></i>
+
+                    </div>
+
+                    <h3>
+                        Centro de actividad
+                    </h3>
+
+                    <p>
+                        Historial de acciones del sistema
+                    </p>
+
+                </div>
+
+            </div>
+
+            <!-- RESUMEN -->
+
+            <div class="resumen-usuarios">
+
+                <div class="card-resumen">
+
+                    <div class="icono-resumen verde">
+
+                        <i class="fas fa-users"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h2 id="totalUsuarios">0</h2>
+
+                        <h5>
+                            Usuarios registrados
+                        </h5>
+
+                        <span id="usuariosMes">
+                            Cargando...
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="card-resumen">
+
+                    <div class="icono-resumen azul">
+
+                        <i class="fas fa-user-check"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h2 id="usuariosActivos">0</h2>
+
+                        <h5>
+                            Usuarios activos
+                        </h5>
+
+                        <span id="usuariosActivosMes">
+                            Cargando...
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="card-resumen">
+
+                    <div class="icono-resumen morado">
+
+                        <i class="fas fa-user-shield"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h2 id="totalRoles">0</h2>
+
+                        <h5>
+                            Roles configurados
+                        </h5>
+
+                        <span id="rolesMes">
+                            Cargando...
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="card-resumen">
+
+                    <div class="icono-resumen naranja">
+
+                        <i class="fas fa-right-to-bracket"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h2 id="accesosHoy">0</h2>
+
+                        <h5>
+                            Accesos hoy
+                        </h5>
+
+                        <span>
+                            Últimas 24 horas
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- INFORMACIÓN ADICIONAL -->
+
+            <!-- INFORMACIÓN ADICIONAL -->
+
+<div class="info-usuarios">
+
+    <div class="info-card azul">
+
+        <i class="fas fa-user-plus"></i>
+
+        <div>
+
+            <h5>
+                Último usuario creado
+            </h5>
+
+            <p id="ultimoUsuario">
+                Cargando...
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="info-card morado">
+
+        <i class="fas fa-key"></i>
+
+        <div>
+
+            <h5>
+                Permisos asignados
+            </h5>
+
+            <p id="totalPermisos">
+                Cargando...
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="info-card verde">
+
+        <i class="fas fa-clock-rotate-left"></i>
+
+        <div>
+
+            <h5>
+                Última actividad
+            </h5>
+
+            <p id="ultimaActividad">
+                Cargando...
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="info-card naranja">
+
+        <i class="fas fa-clock"></i>
+
+        <div>
+
+            <h5>
+                Último acceso
+            </h5>
+
+            <p id="ultimoAcceso">
+                Cargando...
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+            <!-- CONSEJO ERP -->
+
+            <div class="erp-tip">
+
+                <i class="fas fa-shield-halved"></i>
+
+                <span>
+                    Mantén actualizados los roles y permisos para garantizar la seguridad del sistema.
+                </span>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="/js/sidebar.js"></script>
+    <script src="/js/dashboard-usuarios.js"></script>
+
+</body>
+</html>

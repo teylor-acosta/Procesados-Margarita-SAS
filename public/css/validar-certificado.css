@@ -1,0 +1,413 @@
+/* ==========================================
+   VALIDACIÓN DE CERTIFICADO
+========================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    font-family:
+        "Averia Libre",
+        sans-serif;
+
+    background:
+        url("/img/Fondo.webp")
+        center center /
+        cover
+        no-repeat
+        fixed;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+
+body::before {
+
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(255,255,255,.82);
+
+    backdrop-filter:
+        blur(8px);
+
+    z-index: -1;
+
+}
+
+
+/* ==========================================
+   CONTENEDOR
+========================================== */
+
+.contenedor {
+
+    width: 100%;
+
+    max-width: 700px;
+
+    padding: 25px;
+
+}
+
+
+/* ==========================================
+   TARJETA
+========================================== */
+
+.tarjeta {
+
+    background: white;
+
+    border-radius: 22px;
+
+    padding: 45px;
+
+    text-align: center;
+
+    box-shadow:
+        0 20px 50px
+        rgba(0,0,0,.15);
+
+}
+
+
+/* ==========================================
+   VÁLIDO
+========================================== */
+
+.icono-valido {
+
+    width: 85px;
+
+    height: 85px;
+
+    margin:
+        0 auto 20px;
+
+    border-radius: 50%;
+
+    background:
+        #1EB980;
+
+    color: white;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    font-size: 50px;
+
+    font-weight: bold;
+
+}
+
+
+.certificado-valido h1 {
+
+    margin: 0;
+
+    color:
+        #16324F;
+
+    font-size: 34px;
+
+}
+
+
+.subtitulo {
+
+    color:
+        #6b7280;
+
+    font-size: 17px;
+
+}
+
+
+/* ==========================================
+   SEPARADOR
+========================================== */
+
+.separador {
+
+    width: 100%;
+
+    height: 1px;
+
+    background:
+        #e5e7eb;
+
+    margin:
+        30px 0;
+
+}
+
+
+/* ==========================================
+   DATOS
+========================================== */
+
+.datos-certificado {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 18px;
+
+    text-align: left;
+
+}
+
+
+.dato {
+
+    padding: 15px 18px;
+
+    background:
+        #f8fafc;
+
+    border-radius: 12px;
+
+    border-left:
+        4px solid #1EB980;
+
+}
+
+
+.etiqueta {
+
+    display: block;
+
+    color:
+        #6b7280;
+
+    font-size: 13px;
+
+    margin-bottom: 4px;
+
+}
+
+
+.dato strong {
+
+    display: block;
+
+    color:
+        #16324F;
+
+    font-size: 18px;
+
+}
+
+
+.dato-codigo strong {
+
+    font-size: 14px;
+
+    word-break: break-all;
+
+}
+
+
+/* ==========================================
+   MENSAJE
+========================================== */
+
+.mensaje-validacion {
+
+    margin-top: 30px;
+
+    padding: 15px;
+
+    border-radius: 12px;
+
+    background:
+        #ecfdf5;
+
+    color:
+        #047857;
+
+    font-weight: 700;
+
+}
+
+
+.mensaje-validacion span {
+
+    margin-right: 5px;
+
+}
+
+
+/* ==========================================
+   INVÁLIDO
+========================================== */
+
+.icono-invalido {
+
+    width: 85px;
+
+    height: 85px;
+
+    margin:
+        0 auto 20px;
+
+    border-radius: 50%;
+
+    border:
+        5px solid #ef4444;
+
+    color:
+        #ef4444;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    font-size: 55px;
+
+}
+
+
+.certificado-invalido h1 {
+
+    color:
+        #991b1b;
+
+}
+
+
+.certificado-invalido p {
+
+    color:
+        #4b5563;
+
+}
+
+
+.mensaje-alerta {
+
+    margin-top: 25px;
+
+    padding: 15px;
+
+    background:
+        #fef2f2;
+
+    color:
+        #991b1b;
+
+    border-radius: 10px;
+
+}
+
+
+/* ==========================================
+   CARGANDO
+========================================== */
+
+.estado {
+
+    text-align: center;
+
+}
+
+
+.cargando h2 {
+
+    color:
+        #16324F;
+
+}
+
+
+.cargando p {
+
+    color:
+        #6b7280;
+
+}
+
+
+.spinner {
+
+    width: 50px;
+
+    height: 50px;
+
+    margin:
+        0 auto 20px;
+
+    border:
+        5px solid #d1d5db;
+
+    border-top-color:
+        #1EB980;
+
+    border-radius: 50%;
+
+    animation:
+        girar 1s linear infinite;
+
+}
+
+
+@keyframes girar {
+
+    to {
+
+        transform:
+            rotate(360deg);
+
+    }
+
+}
+
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 600px) {
+
+    .contenedor {
+
+        padding: 15px;
+
+    }
+
+    .tarjeta {
+
+        padding: 30px 20px;
+
+    }
+
+    .certificado-valido h1 {
+
+        font-size: 27px;
+
+    }
+
+}

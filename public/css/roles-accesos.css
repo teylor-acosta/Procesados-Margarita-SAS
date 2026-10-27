@@ -1,0 +1,693 @@
+/* =========================================
+   ROLES Y ACCESOS V2
+========================================= */
+
+.roles-page{
+
+    max-width:1500px;
+
+    margin:90px auto 30px;
+
+    padding:20px;
+
+    background:
+    rgba(255,255,255,.20);
+
+    border-radius:35px;
+
+    backdrop-filter:blur(4px);
+
+}
+
+/* =========================================
+   HERO
+========================================= */
+
+.hero-roles{
+
+    background:#fff;
+
+    border-radius:30px;
+
+    padding:30px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    margin-bottom:30px;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.08);
+
+}
+
+.hero-info{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+.hero-icon{
+
+    width:80px;
+
+    height:80px;
+
+    border-radius:20px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #3b82f6
+    );
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+.hero-icon i{
+
+    color:#fff;
+
+    font-size:35px;
+
+}
+
+.hero-roles h1{
+
+    margin:0;
+
+    font-size:2.3rem;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+}
+
+.hero-roles p{
+
+    margin-top:8px;
+
+    color:#64748b;
+
+}
+
+.btn-nuevo-rol{
+
+    border:none;
+
+    border-radius:14px;
+
+    padding:14px 25px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #22c55e,
+        #16a34a
+    );
+
+    color:white;
+
+    font-weight:700;
+
+    transition:.3s;
+
+}
+
+.btn-nuevo-rol:hover{
+
+    transform:translateY(-3px);
+
+}
+
+/* =========================================
+   ESTADISTICAS
+========================================= */
+
+.estadisticas-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(
+        auto-fit,
+        minmax(250px,1fr)
+    );
+
+    gap:25px;
+
+    margin-bottom:35px;
+
+}
+
+.card-estadistica{
+
+    border-radius:24px;
+
+    padding:25px;
+
+    color:white;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:20px;
+
+    box-shadow:
+    0 12px 25px rgba(0,0,0,.10);
+
+}
+
+.verde{
+
+    background:
+    linear-gradient(
+        135deg,
+        #22c55e,
+        #16a34a
+    );
+
+}
+
+.azul{
+
+    background:
+    linear-gradient(
+        135deg,
+        #3b82f6,
+        #2563eb
+    );
+
+}
+
+.morado{
+
+    background:
+    linear-gradient(
+        135deg,
+        #8b5cf6,
+        #7c3aed
+    );
+
+}
+
+.icono-estadistica{
+
+    width:65px;
+
+    height:65px;
+
+    border-radius:18px;
+
+    background:
+    rgba(255,255,255,.15);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.icono-estadistica i{
+
+    font-size:28px;
+
+}
+
+.card-estadistica h2{
+
+    margin:0;
+
+    font-size:2rem;
+
+    font-weight:700;
+
+}
+
+.card-estadistica span{
+
+    opacity:.95;
+
+}
+
+/* =========================================
+   SECCIONES
+========================================= */
+
+.section-header{
+
+    margin-bottom:20px;
+
+}
+
+.section-header h2{
+
+    font-size:1.8rem;
+
+    color:#0f172a;
+
+    margin-bottom:5px;
+
+}
+
+.section-header p{
+
+    color:#64748b;
+
+}
+
+/* =========================================
+   GRID ROLES
+========================================= */
+
+.roles-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(
+        auto-fit,
+        minmax(380px,1fr)
+    );
+
+    gap:25px;
+
+    margin-bottom:40px;
+
+}
+
+/* =========================================
+   TARJETA PREMIUM
+========================================= */
+
+.rol-card-premium{
+
+    background:
+    linear-gradient(
+        180deg,
+        #ffffff,
+        #f8fafc
+    );
+
+    border-radius:25px;
+
+    padding:25px;
+
+    box-shadow:
+    0 15px 35px rgba(0,0,0,.08);
+
+    transition:.3s;
+
+}
+
+.rol-card-premium:hover{
+
+    transform:translateY(-6px);
+
+}
+
+.rol-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    margin-bottom:20px;
+
+}
+
+.rol-icon-premium{
+
+    width:70px;
+
+    height:70px;
+
+    border-radius:50%;
+
+    background:
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #22c55e
+    );
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.rol-icon-premium i{
+
+    color:white;
+
+    font-size:30px;
+
+}
+
+.rol-header h3{
+
+    margin:0;
+
+    font-size:1.5rem;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+}
+
+.estado-activo{
+
+    margin-left:auto;
+
+    background:#dcfce7;
+
+    color:#15803d;
+
+    padding:6px 14px;
+
+    border-radius:30px;
+
+    font-weight:700;
+
+    font-size:.85rem;
+
+}
+
+.rol-datos{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(2,1fr);
+
+    gap:15px;
+
+    margin-bottom:20px;
+
+}
+
+.dato-rol{
+
+    background:#f8fafc;
+
+    padding:15px;
+
+    border-radius:15px;
+
+}
+
+.dato-rol i{
+
+    color:#2563eb;
+
+    margin-bottom:10px;
+
+}
+
+.dato-rol span{
+
+    display:block;
+
+    color:#64748b;
+
+    font-size:.9rem;
+
+}
+
+.dato-rol strong{
+
+    font-size:1.4rem;
+
+    color:#0f172a;
+
+}
+
+.descripcion-rol-premium{
+
+    background:#f8fafc;
+
+    border-radius:15px;
+
+    padding:15px;
+
+    color:#475569;
+
+    min-height:80px;
+
+    margin-bottom:20px;
+
+}
+
+.acciones-rol{
+
+    display:flex;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+
+}
+
+.acciones-rol button{
+
+    flex:1;
+
+    min-width:160px;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+}
+
+/* =========================================
+   TABLA
+========================================= */
+
+.tabla-card{
+
+    background:white;
+
+    border-radius:25px;
+
+    padding:20px;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.08);
+
+}
+
+.table{
+
+    margin:0;
+
+}
+
+.table thead{
+
+    background:#f8fafc;
+
+}
+
+.table th{
+
+    color:#334155;
+
+    font-weight:700;
+
+}
+
+.table td{
+
+    vertical-align:middle;
+
+}
+
+/* =========================================
+   MODALES
+========================================= */
+
+.modal-content{
+
+    border:none;
+
+    border-radius:25px;
+
+    overflow:hidden;
+
+}
+
+.modal-header{
+
+    background:
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+
+    color:white;
+
+}
+
+.modal-header h5{
+
+    font-weight:700;
+
+}
+
+.modulos-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(
+        auto-fill,
+        minmax(220px,1fr)
+    );
+
+    gap:15px;
+
+}
+
+.modulo-check{
+
+    background:#f8fafc;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:12px;
+
+    padding:15px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.modulo-check:hover{
+
+    border-color:#2563eb;
+
+    background:#eff6ff;
+
+}
+
+.modulo-check input{
+
+    margin-right:8px;
+
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:992px){
+
+    .hero-roles{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+}
+
+@media(max-width:768px){
+
+    .roles-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .rol-datos{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .estadisticas-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+@media(max-width:576px){
+
+    .roles-page{
+
+        padding:10px;
+
+    }
+
+    .hero-roles{
+
+        padding:20px;
+
+    }
+
+    .hero-info{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+
+    }
+
+    .hero-icon{
+
+        width:60px;
+        height:60px;
+
+    }
+
+    .hero-icon i{
+
+        font-size:25px;
+
+    }
+
+    .hero-roles h1{
+
+        font-size:1.7rem;
+
+    }
+
+    .rol-card-premium{
+
+        padding:18px;
+
+    }
+
+}

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procesados Margarita - Mi Perfil</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Averia+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <link rel="stylesheet" href="css/style1.css">
+<link rel="stylesheet" href="css/sidebar.css">
+<link rel="stylesheet" href="css/perfil.css">
+
+</head>
+<body data-pagina="perfil">
+    <!-- SIDEBAR DINÁMICO -->
+<div id="sidebarContainer"></div>
+
+<!-- OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <nav class="navbar-custom">
+        <div class="navbar-left">
+            <i class="fas fa-bars menu-toggle d-lg-none" id="btnOpenSidebar"></i>
+            <span class="section-main-title">
+    Mi Perfil
+</span>
+        </div>
+    </nav>
+
+    <main class="perfil-container-main">
+    <div class="perfil-content">
+            
+            <div class="mb-4">
+    <a href="/dashboard" class="btn btn-light">
+        <i class="fas fa-arrow-left"></i>
+        Volver al inicio
+    </a>
+</div>
+
+            <section class="bienvenida-card mb-4" style="background: linear-gradient(135deg, #02412e 0%, #036245 100%);">
+                <div class="d-flex align-items-center gap-4 p-2 text-white flex-wrap">
+                    <div style="width: 90px; height: 90px; position: relative;" class="d-flex align-items-center justify-content-center bg-white rounded-circle shadow border border-3 border-white overflow-hidden">
+                        
+                        <img id="perfFoto" src="" alt="Foto Perfil" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                        
+                        <i class="fas fa-user text-secondary" id="perfFotoDefault" style="font-size: 2.5rem;"></i>
+                    
+                    </div>
+                    <div>
+                        <h1 class="text-white mb-1" style="font-size: 1.8rem;"><span id="nombreBienvenida">Cargando Nombre...</span></h1>
+                        <p class="mb-0 opacity-75" id="subCargo">Cargando puesto...</p>
+                        <span class="badge bg-white text-success mt-2" id="rolBadgeBienvenida">...</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="row g-3">
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-fingerprint text-success me-1"></i> Código</small>
+                        <span class="fw-semibold" id="perfilCodigo">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-id-card text-success me-1"></i> Tipo Documento</small>
+                        <span class="fw-semibold" id="perfilTipoDoc">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-hashtag text-success me-1"></i> Documento</small>
+                        <span class="fw-semibold" id="perfilDoc">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-tint text-danger me-1"></i> RH</small>
+                        <span class="fw-semibold" id="perfilRh">--</span>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-map-marker-alt text-success me-1"></i> Dirección</small>
+                        <span class="fw-semibold" id="perfilDireccion">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-building text-success me-1"></i> Barrio / Localidad</small>
+                        <span class="fw-semibold" id="perfilBarrio">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-phone text-success me-1"></i> Teléfono</small>
+                        <span class="fw-semibold" id="perfilTelefono">--</span>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-envelope text-success me-1"></i> Email</small>
+                        <span class="fw-semibold text-break" id="perfilEmail">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-calendar-alt text-success me-1"></i> Fecha Nacimiento</small>
+                        <span class="fw-semibold" id="perfilFechaNac">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-map text-success me-1"></i> Lugar Nacimiento</small>
+                        <span class="fw-semibold" id="perfilLugarNac">--</span>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-heart text-success me-1"></i> Estado Civil</small>
+                        <span class="fw-semibold" id="perfilEstadoCivil">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-briefcase text-success me-1"></i> Área</small>
+                        <span class="fw-semibold" id="perfilArea">--</span>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-4">
+                    <div class="card p-3 shadow-sm border-0 rounded-3">
+                        <small class="text-muted fw-bold text-uppercase d-block mb-1" style="font-size: 0.75rem;"><i class="fas fa-warehouse text-success me-1"></i> Sede Asignada</small>
+                        <span class="fw-semibold" id="perfilSede">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap mt-4">
+
+    <button
+        id="btnCambiarFoto"
+        class="btn btn-success d-flex align-items-center gap-2 px-3 shadow-sm">
+
+        <i class="fas fa-camera"></i>
+        Cambiar Foto
+
+    </button>
+
+    <button
+        id="btnDescargarPDF"
+        class="btn btn-primary d-flex align-items-center gap-2 px-3 shadow-sm">
+
+        <i class="fas fa-file-pdf"></i>
+        Descargar PDF
+
+    </button>
+
+    <button
+    id="btnActualizarFirma"
+    class="btn btn-info d-flex align-items-center gap-2 px-3 shadow-sm">
+
+    <i class="fas fa-signature"></i>
+    Actualizar Firma
+
+</button>
+
+    <button
+        id="btnCambiarPassword"
+        class="btn btn-warning text-dark d-flex align-items-center gap-2 px-3 shadow-sm fw-semibold">
+
+        <i class="fas fa-key"></i>
+        Cambiar Contraseña
+
+    </button>
+
+</div>
+
+        </div>
+    </main>
+<!-- MODAL ACTUALIZAR FIRMA -->
+
+<div
+    class="modal fade"
+    id="modalFirmaPerfil"
+    tabindex="-1">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Actualizar Firma Digital
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <h6>
+                    Firma actual
+                </h6>
+
+                <img
+                    id="firmaActualPerfil"
+                    class="img-fluid border rounded mb-4"
+                    style="max-height:150px;">
+
+                <hr>
+
+                <h6>
+                    Nueva firma
+                </h6>
+
+                <canvas
+    id="canvasNuevaFirma"
+                    width="700"
+                    height="250"
+                    style="
+                        width:100%;
+                        border:2px solid #dee2e6;
+                        border-radius:10px;
+                        background:white;
+                    ">
+                </canvas>
+
+                <div class="mt-3">
+
+                    <button
+                        type="button"
+                        id="btnLimpiarNuevaFirma"
+                        class="btn btn-secondary">
+
+                        Limpiar
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Cancelar
+
+                </button>
+
+                <button
+                    type="button"
+                    id="btnGuardarNuevaFirma"
+                    class="btn btn-success">
+
+                    Guardar Firma
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<!-- ==========================================
+MODAL CAMBIAR CONTRASEÑA
+========================================== -->
+
+<div
+    class="modal fade"
+    id="modalCambiarPassword"
+    tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Cambiar Contraseña
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Contraseña Actual
+                    </label>
+
+                    <input
+                        type="password"
+                        id="passwordActual"
+                        class="form-control">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Nueva Contraseña
+                    </label>
+
+                    <input
+                        type="password"
+                        id="passwordNueva"
+                        class="form-control">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Confirmar Contraseña
+                    </label>
+
+                    <input
+                        type="password"
+                        id="passwordConfirmar"
+                        class="form-control">
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Cancelar
+
+                </button>
+
+                <button
+                    id="btnGuardarPassword"
+                    class="btn btn-success">
+
+                    Guardar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<input
+    type="file"
+    id="inputFotoPerfil"
+    accept="image/*"
+    style="display:none;">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/js/sidebar.js"></script>
+    <script src="js/perfil.js"></script>
+
+</body>
+</html>

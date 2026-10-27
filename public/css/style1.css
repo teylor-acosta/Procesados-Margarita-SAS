@@ -1,0 +1,244 @@
+/* ==========================================================================
+   PROCESADOS MARGARITA ERP - ESTILOS GENERALES Y BASE (NAVBAR INTERSECTADA)
+   ========================================================================== */
+
+/* =========================================
+   RESET
+========================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* =========================================
+   VARIABLES GLOBALES
+========================================= */
+:root {
+    --verde: #22c55e;
+    --verde-dark: #16a34a;
+    --azul: #2563eb;
+    --azul-dark: #1d4ed8;
+    --rojo: #ef4444;
+    --rojo-dark: #dc2626;
+    --gris: #f4f7f6;
+    
+    /* Variables institucionales de la imagen */
+    --sidebar-bg: #032b1d; 
+    --sidebar-hover: #04432c;
+    --sidebar-active: #055337;
+    --texto-principal: #0f172a;
+    --texto-mutated: #64748b;
+}
+
+/* =========================================
+   BODY Y FONDO CONFIGURACIÓN
+========================================= */
+body {
+    font-family: 'Averia Libre', sans-serif;
+    background: var(--gris);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    /* Dejamos el espacio superior para la barra alta */
+    padding-top: 105px; 
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    color: var(--texto-principal);
+}
+
+/* Fondo global con desenfoque (Blur) */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: url('../img/Fondo.webp') center/cover no-repeat;
+    filter: blur(4px);
+    transform: scale(1.02);
+    z-index: -1;
+}
+
+/* =========================================
+   NAVBAR GLOBAL (CORTADA POR EL SIDEBAR)
+========================================= */
+.navbar-custom {
+    position: fixed;
+    top: 0;
+    /* Se desplaza 280px a la derecha para dejarle su espacio al Sidebar continuo */
+    left: 280px; 
+    width: calc(100% - 280px);
+    height: 85px;
+    background: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 35px;
+    z-index: 999; /* Por debajo del sidebar que es el bloque maestro */
+    box-shadow: 0 4px 15px rgba(0,0,0,.04);
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Desaparecemos el duplicado si llega a estar en el HTML de la barra superior */
+.navbar-custom .logo-navbar, 
+.navbar-custom .empresa-nombre {
+    display: none; 
+}
+
+.acciones-navbar {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Botón Volver / Luz del Navbar */
+.acciones-navbar .btn-light {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #111827;
+    padding: 12px 24px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: .25s;
+    text-decoration: none;
+}
+
+.acciones-navbar .btn-light:hover {
+    background: #e2e8f0;
+    transform: translateY(-2px);
+}
+
+.menu-toggle{
+
+    font-size:32px;
+
+    cursor:pointer;
+
+    color:#1e293b;
+
+}
+
+/* =========================================
+   TITULO SECCION NAVBAR
+========================================= */
+
+.section-main-title{
+
+    font-size:32px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+    line-height:1;
+
+    margin:0;
+
+}
+
+/* =========================================
+   ELEMENTOS DE FORMULARIO COMUNES
+========================================= */
+.form-control {
+    border-radius: 12px;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    min-height: 46px;
+    font-size: 15px;
+}
+
+/* =========================================
+   VALORES CORPORATIVOS CLASES UNIFICADAS
+========================================= */
+.tag-val, .valor-tag {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* =========================================
+   RESPONSIVE GENERAL
+========================================= */
+@media (max-width: 992px) {
+    .navbar-custom {
+        left: 0;
+        width: 100%;
+        z-index:900;
+    }
+    .navbar-custom .logo-navbar {
+        display: block;
+    }
+}
+
+/* ==========================================================================
+   🔥 FIX MAESTRO: SOBREESCRITURA DE FUENTE SOBRE BOOTSTRAP Y JS DINÁMICO
+   ========================================================================== */
+body,  
+h1, h2, h3, h4, h5, h6,  
+.h1, .h2, .h3, .h4, .h5, .h6, 
+p, span, a, button, input, select, textarea, 
+.btn, .badge, .card, .menu-item, .acceso-card, .stat-card { 
+    font-family: 'Averia Libre', sans-serif !important; 
+}
+
+/* Regla ultra específica para asegurar el HTML inyectado desde JavaScript */
+#acciones, 
+#acciones *, 
+#acciones .btn, 
+#acciones h6, 
+#acciones p,
+.activity-item,
+.activity-info,
+.activity-title {
+    font-family: 'Averia Libre', cursive !important;
+}
+/* ==========================================================================
+   TITULO NAVBAR
+   ========================================================================== */
+
+.navbar-custom .empresa-nombre{
+    display:block !important;
+    font-size:24px;
+    font-weight:700;
+    color:#0f172a;
+}
+
+.navbar-custom .logo-navbar{
+    display:none !important;
+}
+
+/* =========================================
+   FIX FONT AWESOME
+========================================= */
+
+i.fa,
+i.fas,
+i.far,
+i.fab,
+i.fa-solid,
+i.fa-regular,
+i.fa-brands{
+    font-family:"Font Awesome 6 Free" !important;
+    font-weight:900 !important;
+}
+
+.bi{
+    font-family:"bootstrap-icons" !important;
+}

@@ -1,0 +1,371 @@
+/* =========================================
+   RECURSOS HUMANOS
+========================================= */
+
+.rh-dashboard{
+
+    margin-left:280px;
+
+    min-height:100vh;
+
+    padding:130px 40px 40px;
+
+}
+
+/* =========================================
+   CABECERA
+========================================= */
+
+.cabecera-rh{
+
+    text-align:center;
+
+    margin-bottom:60px;
+
+}
+
+.cabecera-rh h1{
+
+    font-size:3.2rem;
+
+    font-weight:700;
+
+    color:#1e293b;
+
+    margin-bottom:15px;
+
+}
+
+.cabecera-rh h1 i{
+
+    color:#16a34a;
+
+    margin-right:12px;
+
+}
+
+.cabecera-rh p{
+
+    font-size:1.1rem;
+
+    color:#64748b;
+
+    max-width:850px;
+
+    margin:auto;
+
+}
+
+/* =========================================
+   GRID MODULOS
+========================================= */
+
+.modulos-grid{
+
+    max-width:1400px;
+
+    margin:0 auto;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(360px,1fr)
+        );
+
+    gap:35px;
+
+}
+
+/* =========================================
+   TARJETAS
+========================================= */
+
+.card-rh{
+
+    position:relative;
+
+    border-radius:30px;
+
+    padding:35px;
+
+    min-height:320px;
+
+    color:white;
+
+    cursor:pointer;
+
+    overflow:hidden;
+
+    transition:.35s;
+
+    box-shadow:
+        0 20px 40px rgba(0,0,0,.15);
+
+}
+
+.card-rh:hover{
+
+    transform:translateY(-10px);
+
+}
+
+/* =========================================
+   ICONO
+========================================= */
+
+.icono-card{
+
+    width:90px;
+
+    height:90px;
+
+    border-radius:25px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    margin-bottom:25px;
+
+    background:rgba(255,255,255,.20);
+
+    backdrop-filter:blur(10px);
+
+}
+
+.icono-card i{
+
+    font-size:40px;
+
+}
+
+/* =========================================
+   TITULO
+========================================= */
+
+.card-rh h3{
+
+    font-size:2rem;
+
+    font-weight:700;
+
+    margin-bottom:15px;
+
+}
+
+/* =========================================
+   DESCRIPCION
+========================================= */
+
+.card-rh p{
+
+    font-size:1rem;
+
+    line-height:1.6;
+
+    opacity:.95;
+
+    margin-bottom:50px;
+
+}
+
+/* =========================================
+   BOTON
+========================================= */
+
+.btn-card{
+
+    position:absolute;
+
+    bottom:30px;
+
+    left:35px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-size:1rem;
+
+    font-weight:700;
+
+}
+
+.btn-card i{
+
+    transition:.3s;
+
+}
+
+.card-rh:hover .btn-card i{
+
+    transform:translateX(6px);
+
+}
+
+/* =========================================
+   EMPLEADOS
+========================================= */
+
+.card-empleados{
+
+    background:
+        linear-gradient(
+            135deg,
+            #16a34a,
+            #22c55e
+        );
+
+}
+
+.card-empleados:hover{
+
+    box-shadow:
+        0 25px 50px
+        rgba(34,197,94,.35);
+
+}
+
+/* =========================================
+   USUARIOS
+========================================= */
+
+.card-usuarios{
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #3b82f6
+        );
+
+}
+
+.card-usuarios:hover{
+
+    box-shadow:
+        0 25px 50px
+        rgba(59,130,246,.35);
+
+}
+
+/* =========================================
+   NÓMINA
+========================================= */
+
+.card-nomina {
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #a855f7
+        );
+}
+
+.card-nomina:hover {
+    box-shadow:
+        0 25px 50px
+        rgba(168,85,247,.35);
+}
+
+/* =========================================
+   RESPONSIVE TABLET
+========================================= */
+
+@media(max-width:992px){
+
+    .rh-dashboard{
+
+        margin-left:0;
+
+        padding:120px 25px 25px;
+
+    }
+
+    .cabecera-rh h1{
+
+        font-size:2.5rem;
+
+    }
+
+    .modulos-grid{
+
+        grid-template-columns:1fr;
+
+        max-width:700px;
+
+    }
+
+    .card-rh{
+
+        min-height:280px;
+
+        padding:28px;
+
+    }
+
+}
+
+/* =========================================
+   RESPONSIVE MOVIL
+========================================= */
+
+@media(max-width:768px){
+
+    .rh-dashboard{
+
+        padding:110px 15px 20px;
+
+    }
+
+    .cabecera-rh{
+
+        margin-bottom:35px;
+
+    }
+
+    .cabecera-rh h1{
+
+        font-size:2rem;
+
+    }
+
+    .cabecera-rh p{
+
+        font-size:.95rem;
+
+    }
+
+    .card-rh{
+
+        min-height:260px;
+
+    }
+
+    .icono-card{
+
+        width:75px;
+
+        height:75px;
+
+    }
+
+    .icono-card i{
+
+        font-size:32px;
+
+    }
+
+    .card-rh h3{
+
+        font-size:1.7rem;
+
+    }
+
+}

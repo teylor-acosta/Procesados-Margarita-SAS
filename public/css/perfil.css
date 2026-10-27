@@ -1,0 +1,491 @@
+/* ==========================================================================
+   HOJA DE ESTILOS UNIFICADA - VISTA MI PERFIL
+   PROCESADOS MARGARITA ERP
+   ========================================================================== */
+
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+/* ==========================================================================
+   GENERAL
+   ========================================================================== */
+
+body{
+    background-color:#f4f6f9;
+    font-family:'Averia Libre',sans-serif;
+    margin:0;
+    padding:0;
+    padding-top:105px;
+}
+
+/* ==========================================================================
+   CONTENEDOR PRINCIPAL
+   ========================================================================== */
+
+.perfil-container-main{
+
+    margin-left:280px;
+
+    width:calc(100% - 280px);
+
+    min-height:100vh;
+
+    padding:40px;
+
+    position:relative;
+
+    transition:.3s;
+}
+
+/* ==========================================================================
+   BANNER
+   ========================================================================== */
+
+.perfil-banner{
+
+    background:linear-gradient(
+        135deg,
+        #00b894 0%,
+        #0984e3 60%,
+        #0652dd 100%
+    );
+
+    border-radius:16px;
+
+    padding:35px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+.banner-left-content{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:25px;
+}
+
+/* ==========================================================================
+   FOTO PERFIL
+   ========================================================================== */
+
+.avatar-container-profile{
+
+    position:relative;
+
+    width:140px;
+    height:140px;
+
+    border-radius:50%;
+
+    border:4px solid rgba(255,255,255,.9);
+
+    background:#fff;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+
+    flex-shrink:0;
+
+    overflow:hidden;
+}
+
+.avatar-container-profile img{
+
+    width:100% !important;
+    height:100% !important;
+
+    object-fit:cover !important;
+
+    border-radius:50%;
+
+    display:block;
+}
+
+.btn-change-photo{
+
+    position:absolute;
+
+    bottom:4px;
+    right:4px;
+
+    width:34px;
+    height:34px;
+
+    border-radius:50%;
+
+    background:#00b894;
+
+    color:white;
+
+    border:2px solid white;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+
+    z-index:10;
+
+    transition:.2s;
+}
+
+.btn-change-photo:hover{
+
+    transform:scale(1.1);
+}
+
+/* ==========================================================================
+   DATOS EMPLEADO
+   ========================================================================== */
+
+.empleado-identity h1{
+
+    font-size:28px;
+
+    font-weight:700;
+
+    color:white;
+
+    margin:0 0 6px;
+}
+
+.empleado-identity p{
+
+    font-size:16px;
+
+    color:white;
+
+    opacity:.95;
+
+    margin:0 0 12px;
+}
+
+.status-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:7px;
+
+    background:rgba(255,255,255,.2);
+
+    color:white;
+
+    padding:5px 14px;
+
+    border-radius:20px;
+
+    font-size:12px;
+
+    font-weight:bold;
+}
+
+.status-badge .dot{
+
+    width:9px;
+    height:9px;
+
+    border-radius:50%;
+
+    background:#2ecc71;
+}
+
+/* ==========================================================================
+   GRID INFORMACIÓN
+   ========================================================================== */
+
+.perfil-info-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fill,minmax(260px,1fr));
+
+    gap:16px;
+
+    margin-top:25px;
+}
+
+.info-card-item{
+
+    background:white;
+
+    border-radius:12px;
+
+    padding:16px 20px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    border:1px solid #edf1f7;
+
+    box-shadow:
+        0 2px 5px rgba(0,0,0,.01);
+}
+
+/* ==========================================================================
+   ICONOS
+   ========================================================================== */
+
+.icon-box-wrapper{
+
+    width:44px;
+    height:44px;
+
+    border-radius:10px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:18px;
+
+    flex-shrink:0;
+}
+
+.icon-box-wrapper.green{
+    background:#e8f8f5;
+    color:#00b894;
+}
+
+.icon-box-wrapper.purple{
+    background:#f3eafb;
+    color:#9b59b6;
+}
+
+.icon-box-wrapper.blue{
+    background:#e8f4fd;
+    color:#2980b9;
+}
+
+.icon-box-wrapper.orange{
+    background:#fef5e7;
+    color:#e67e22;
+}
+
+.icon-box-wrapper i{
+
+    font-family:
+        "Font Awesome 6 Free",
+        "Font Awesome 5 Free",
+        sans-serif !important;
+
+    font-weight:900 !important;
+}
+
+/* ==========================================================================
+   TEXTO TARJETAS
+   ========================================================================== */
+
+.info-card-texts{
+
+    display:flex;
+
+    flex-direction:column;
+}
+
+.info-card-texts label{
+
+    font-size:11px;
+
+    color:#7f8c8d;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+
+    letter-spacing:.5px;
+
+    margin-bottom:2px;
+}
+
+.info-card-texts span{
+
+    font-size:14px;
+
+    color:#2c3e50;
+
+    font-weight:600;
+
+    word-break:break-word;
+}
+
+/* ==========================================================================
+   BOTONES
+   ========================================================================== */
+
+.perfil-action-buttons-container{
+
+    display:flex;
+
+    gap:15px;
+
+    margin-top:25px;
+
+    flex-wrap:wrap;
+}
+
+.btn-perfil-action{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:12px 22px;
+
+    border:none;
+
+    border-radius:10px;
+
+    text-decoration:none;
+
+    cursor:pointer;
+
+    color:white;
+
+    font-size:14px;
+
+    font-weight:700;
+
+    transition:.2s;
+}
+
+.btn-perfil-action.green{
+
+    background:#218c74;
+}
+
+.btn-perfil-action.green:hover{
+
+    background:#1b745f;
+}
+
+.btn-perfil-action.blue{
+
+    background:#0652dd;
+}
+
+.btn-perfil-action.blue:hover{
+
+    background:#0442b3;
+}
+
+.btn-perfil-action.orange{
+
+    background:#ff9f43;
+
+    color:#2c3e50;
+}
+
+.btn-perfil-action.orange:hover{
+
+    background:#f0932b;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media(max-width:992px){
+
+    .perfil-container-main{
+
+        margin-left:0;
+
+        width:100%;
+
+        padding:24px 16px;
+    }
+}
+
+@media(max-width:576px){
+
+    .perfil-banner{
+
+        flex-direction:column;
+
+        text-align:center;
+
+        padding:30px 15px;
+    }
+
+    .banner-left-content{
+
+        flex-direction:column;
+
+        gap:15px;
+    }
+
+    .empleado-identity{
+
+        display:flex;
+
+        flex-direction:column;
+
+        align-items:center;
+    }
+
+    .empleado-identity h1{
+
+        font-size:22px;
+    }
+
+    .perfil-info-grid{
+
+        grid-template-columns:1fr;
+    }
+
+    .perfil-action-buttons-container{
+
+        flex-direction:column;
+
+        width:100%;
+    }
+
+    .btn-perfil-action{
+
+        width:100%;
+
+        justify-content:center;
+    }
+}
+
+.perfil-content{
+    width:100%;
+}
+
+.perfil-content .card{
+    background:rgba(255,255,255,.92);
+
+    backdrop-filter:blur(10px);
+
+    border:1px solid rgba(255,255,255,.6);
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.08);
+}
+
+.bienvenida-card{
+    border:none;
+    border-radius:24px;
+    overflow:hidden;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.12);
+}

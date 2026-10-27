@@ -1,0 +1,419 @@
+/* ==========================================================================
+   DASHBOARD ERP - PROCESADOS MARGARITA (VISTA PRINCIPAL / MAQUETA CORRIDA)
+   ========================================================================== */
+
+/* Contenedor maestro desplazado para respetar el menú lateral fijo */
+.dashboard-container {
+    display: flex;
+    padding: 0 35px 35px 35px;
+    /* Margen izquierdo idéntico al ancho del sidebar fijo */
+    margin-left: 280px; 
+    width: calc(100% - 280px);
+    gap: 30px;
+}
+
+
+/* =========================================
+   ÁREA DE CONTENIDO PRINCIPAL
+========================================= */
+.content {
+    flex: 1;
+    min-width: 0;
+}
+
+/* TARJETA DE BIENVENIDA CON EL MUNDO ECOLÓGICO DE FONDO */
+.bienvenida-card {
+    background-color: #ffffff;
+    background-image: linear-gradient(90deg, #ffffff 40%, rgba(255, 255, 255, 0.1) 75%), url('../img/Bienvenida.png');
+    background-position: right center;
+    background-size: cover;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+.bienvenida-info h1 {
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin: 0;
+}
+
+.rol-texto {
+    font-size: 17px;
+    color: var(--texto-mutated);
+    margin-top: 12px;
+    margin-bottom: 0;
+}
+
+.badge-rol {
+    background-color: #dcfce7;
+    color: #166534;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 14px;
+    display: inline-block;
+    margin-left: 8px;
+}
+
+/* =========================================
+   KPIs (TARJETAS ESTADÍSTICAS)
+========================================= */
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    margin-bottom: 35px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 22px;
+    padding: 26px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.stat-card-main {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.stat-card h3 {
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin: 0;
+}
+
+.stat-card span {
+    font-size: 17px;
+    font-weight: 700;
+    color: #334155;
+    display: block;
+}
+
+.stat-subtext {
+    font-size: 14px;
+    color: var(--texto-mutated);
+}
+
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+.icon-empleados { background: #e8f5e9; color: #22c55e; }
+.icon-usuarios { background: #eff6ff; color: #2563eb; }
+.icon-capacitaciones { background: #faf5ff; color: #a855f7; }
+.icon-certificados { background: #fff7ed; color: #f97316; }
+
+/* Gráficos incrustados */
+.stat-chart-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.trend-badge {
+    font-size: 13px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 8px;
+}
+.trend-badge.positive { background: #dcfce7; color: #15803d; }
+
+.mini-chart {
+    width: 95px;
+    height: 32px;
+    opacity: 0.9;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.green-trend { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30" fill="none" stroke="%2322c55e" stroke-width="3"><path d="M0,25 Q20,10 40,20 T80,5 T100,12"/></svg>'); }
+.blue-trend { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30" fill="none" stroke="%232563eb" stroke-width="3"><path d="M0,20 Q25,25 50,10 T100,5"/></svg>'); }
+.purple-trend { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30" fill="none" stroke="%23a855f7" stroke-width="3"><path d="M0,28 Q30,25 60,12 T100,2"/></svg>'); }
+.orange-trend { background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 30" fill="none" stroke="%23f97316" stroke-width="3"><path d="M0,22 Q20,20 40,25 T80,8 T100,15"/></svg>'); }
+
+/* TÍTULOS DE BLOQUES */
+.section-title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 35px 0 20px 0;
+}
+.section-main-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--texto-principal);
+}
+.view-all-link {
+    font-size: 15px;
+    color: var(--azul);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* =========================================
+   ACCESOS RÁPIDOS
+========================================= */
+.accesos-rapidos {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+    margin-bottom: 40px;
+}
+
+.acceso-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+.acceso-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
+}
+
+.acceso-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+.ico-emp { background: #eafaf1; color: #22c55e; }
+.ico-usr { background: #ebf3fe; color: #2563eb; }
+.ico-cap { background: #f7f1fe; color: #a855f7; }
+.ico-prf { background: #fffaf0; color: #f59e0b; }
+
+.acceso-text .title {
+    color: var(--texto-principal);
+    font-weight: 700;
+    font-size: 16px;
+    display: block;
+}
+.acceso-text .desc {
+    color: var(--texto-mutated);
+    font-size: 14px;
+}
+
+/* =========================================
+   REJILLA DE DOS COLUMNAS (EMPRESA + ACTIVIDAD)
+========================================= */
+.content-layout {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 30px;
+    align-items: start;
+    margin-bottom: 35px;
+}
+
+.block-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--texto-principal);
+    margin-bottom: 22px;
+}
+
+/* Tarjeta de Información de Empresa */
+.empresa-section-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 30px;
+}
+
+.empresa-header-inline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+.empresa-header-inline h5 {
+    font-weight: 700;
+    font-size: 19px;
+    margin: 0;
+}
+.empresa-desc {
+    font-size: 16px;
+    color: #475569;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.mision-vision-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin: 30px 0;
+}
+.mv-box h6 {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.mv-box p {
+    font-size: 15px;
+    color: #475569;
+    line-height: 1.6;
+}
+
+.sub-block-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #334155;
+    margin: 30px 0 15px 0;
+}
+.valores-inline-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+/* Corregidos selectores cruzados de tags */
+.tag-val, .valor-tag {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Tarjeta de Actividades Recientes */
+.actividad-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 30px;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-bottom: 25px;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Adaptadas clases del CSS a las reales en tu HTML */
+.activity-icon-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    background: #eff6ff; 
+    color: #2563eb;
+}
+
+.activity-info { flex: 1; }
+.activity-title { font-size: 15px; font-weight: 700; color: var(--texto-principal); margin-bottom: 3px; display: block;}
+.activity-desc { font-size: 14px; color: var(--texto-mutated); margin: 0; display: block;}
+.activity-time { font-size: 13px; color: var(--texto-mutated); white-space: nowrap; }
+
+.btn-view-activity {
+    width: 100%;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-view-activity:hover { background: #f1f5f9; }
+
+/* =========================================
+   RESPONSIVE DESIGN INTERNO
+========================================= */
+@media(max-width: 1200px) {
+    .dashboard-stats, .accesos-rapidos { grid-template-columns: repeat(2, 1fr); }
+    .content-layout { grid-template-columns: 1fr; }
+}
+
+@media(max-width: 992px) {
+    .dashboard-container {
+        margin-left: 0;
+        width: 100%;
+        padding: 20px;
+    }
+    .sidebar {
+        position: fixed;
+        left: -100%;
+        transition: .3s;
+    }
+    .sidebar.active { left: 0; }
+    .bienvenida-card { flex-direction: column; text-align: center; padding: 30px; }
+    .bienvenida-info h1 { font-size: 28px; }
+    .dashboard-stats, .accesos-rapidos, .mision-vision-container { grid-template-columns: 1fr; }
+}
+
+/* ==========================================================================
+   🔥 FORCE FIX: ENFORZAR FUENTE AVERIA LIBRE EN COMPONENTES DEL DASHBOARD
+   ========================================================================== */
+.dashboard-container,
+.sidebar,
+.bienvenida-card,
+.stat-card,
+.acceso-card,
+.empresa-section-card,
+.actividad-card,
+#acciones,
+#acciones h6,
+#acciones p,
+#acciones a,
+#acciones span {
+    font-family: 'Averia Libre', cursive !important;
+}
+
+/* Mantener Font Awesome para iconos */
+#acciones i,
+.fas,
+.fa,
+.fa-solid,
+.far,
+.fab {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+}
