@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#12345a">
+    <meta name="description" content="Confirma tu pedido en Procesados Margarita S.A.S. Revisa productos, ajusta cantidades y genera tu comprobante digital.">
+
+    <title>Confirmar Pedido · Procesados Margarita S.A.S.</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="css/carrito.css">
+
+    <!-- Librerías para generar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" defer></script>
+
+    <!-- 🆕 EmailJS (para enviar el correo al dueño y al comprador) -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <!-- Lógica del carrito -->
+    <script src="js/carrito.js" defer></script>
+</head>
+
+<body class="cart-body">
+
+    <!-- ============================================================
+         NAVEGACIÓN SUPERIOR
+         ============================================================ -->
+    <header class="cart-topbar">
+        <div class="cart-shell">
+
+            <a href="tienda.html" class="cart-brand">
+                <span class="cart-brand-icon">
+                    <img src="img/logo.png" alt="Logo Procesados Margarita" class="cart-brand-img">
+                </span>
+                <span class="cart-brand-text">
+                    <strong>PROCESADOS MARGARITA</strong>
+                    <small>S.A.S. · Confirmar pedido</small>
+                </span>
+            </a>
+
+            <a href="tienda.html" class="cart-back">
+                <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                <span>Volver a la tienda</span>
+            </a>
+
+        </div>
+    </header>
+
+
+    <!-- ============================================================
+         CONTENIDO
+         ============================================================ -->
+    <main class="cart-shell cart-main">
+
+        <!-- Encabezado -->
+        <div class="cart-intro">
+            <span class="cart-eyebrow">
+                <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+                Confirmación
+            </span>
+            <h1>Revisa y confirma tu pedido</h1>
+            <p>Verifica los productos y cantidades antes de generar tu comprobante.</p>
+        </div>
+
+
+        <!-- Layout de 2 columnas -->
+        <div class="cart-layout">
+
+            <!-- ============================================
+                 COLUMNA IZQUIERDA
+                 ============================================ -->
+            <section class="cart-items" aria-label="Productos del carrito">
+
+                <div class="cart-items-header">
+                    <div>
+                        <h2>Productos</h2>
+                        <p id="cantidad-productos">0 artículos en tu carrito</p>
+                    </div>
+                    <button type="button" class="cart-btn-empty" id="btn-limpiar">
+                        <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                        <span>Vaciar</span>
+                    </button>
+                </div>
+
+                <!-- Estado vacío -->
+                <div class="cart-empty" id="carrito-vacio">
+                    <div class="cart-empty-icon">
+                        <i class="fa-solid fa-basket-shopping" aria-hidden="true"></i>
+                    </div>
+                    <h3>Tu carrito está vacío</h3>
+                    <p>Visita la tienda y agrega los productos que necesites.</p>
+                    <a href="tienda.html" class="cart-btn-primary">
+                        <i class="fa-solid fa-store" aria-hidden="true"></i>
+                        Ir a la tienda
+                    </a>
+                </div>
+
+                <!-- Lista dinámica -->
+                <div class="cart-list" id="lista-carrito" hidden></div>
+
+            </section>
+
+
+            <!-- ============================================
+                 COLUMNA DERECHA
+                 ============================================ -->
+            <aside class="cart-summary" aria-label="Resumen del pedido">
+
+                <div class="cart-summary-head">
+                    <span class="cart-summary-eyebrow">Resumen</span>
+                    <h2>Tu pedido</h2>
+                </div>
+
+                <div class="cart-summary-body">
+                    <div class="cart-summary-line">
+                        <span>Subtotal</span>
+                        <strong id="subtotal-productos">$ 0</strong>
+                    </div>
+                    <div class="cart-summary-line">
+                        <span>Artículos</span>
+                        <strong id="total-articulos">0</strong>
+                    </div>
+                    <div class="cart-summary-line">
+                        <span>Envío</span>
+                        <strong id="costo-envio">Por confirmar</strong>
+                    </div>
+                    <div class="cart-summary-line cart-summary-total">
+                        <span>Total</span>
+                        <strong id="total-carrito">$ 0</strong>
+                    </div>
+                </div>
+
+                <div class="cart-summary-note">
+                    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                    <p>Los valores y el envío serán confirmados por la empresa.</p>
+                </div>
+
+                <button type="button" class="cart-btn-checkout" id="btn-confirmar" disabled>
+                    <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>
+                    <span>Confirmar pedido</span>
+                </button>
+
+                <a href="tienda.html" class="cart-btn-secondary">
+                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                    <span>Seguir comprando</span>
+                </a>
+
+                <p class="cart-summary-foot">
+                    <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                    Podrás generar un comprobante digital.
+                </p>
+
+            </aside>
+
+        </div>
+
+    </main>
+
+
+    <!-- ============================================================
+         MODAL DE PEDIDO
+         ============================================================ -->
+    <div
+        class="cart-modal"
+        id="modal-pedido"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-titulo"
+        hidden
+    >
+        <div class="cart-modal-card">
+
+            <button type="button" class="cart-modal-close" id="btn-cerrar-modal" aria-label="Cerrar ventana">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+
+            <!-- PASO 1: FORMULARIO -->
+            <div id="formulario-pedido">
+
+                <div class="cart-modal-icon">
+                    <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>
+                </div>
+
+                <h2 id="modal-titulo">Completa tus datos</h2>
+                <p class="cart-modal-desc">Ingresa la información para preparar tu comprobante digital.</p>
+
+                <form id="form-confirmar" class="cart-form">
+                    <div class="cart-field">
+                        <label for="nombre-cliente">Nombre completo</label>
+                        <input type="text" id="nombre-cliente" name="nombre" placeholder="Escribe tu nombre" autocomplete="name" maxlength="120" required>
+                    </div>
+
+                    <div class="cart-field">
+                        <label for="correo-cliente">Correo electrónico</label>
+                        <input type="email" id="correo-cliente" name="correo" placeholder="nombre@correo.com" autocomplete="email" maxlength="150" required>
+                    </div>
+
+                    <!-- 🆕 CAMPO: TELÉFONO -->
+                    <div class="cart-field">
+                        <label for="telefono-cliente">Teléfono de contacto</label>
+                        <input type="tel" id="telefono-cliente" name="telefono" placeholder="Ej: 300 123 4567" autocomplete="tel" maxlength="20" required>
+                    </div>
+
+                    <!-- 🆕 CAMPO: DIRECCIÓN -->
+                    <div class="cart-field">
+                        <label for="direccion-cliente">Dirección de entrega</label>
+                        <input type="text" id="direccion-cliente" name="direccion" placeholder="Ej: Calle 123 # 45-67, Barrio, Ciudad" autocomplete="street-address" maxlength="200" required>
+                    </div>
+
+                    <div class="cart-field">
+                        <label for="observaciones">Observaciones <span>(opcional)</span></label>
+                        <textarea id="observaciones" name="observaciones" rows="4" maxlength="1000" placeholder="Indicaciones para el pedido"></textarea>
+                    </div>
+
+                    <div class="cart-form-note">
+                        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                        <p>Este proceso genera un comprobante informativo. No representa una compra confirmada.</p>
+                    </div>
+
+                    <button type="submit" class="cart-btn-primary">
+                        <i class="fa-solid fa-file-circle-check" aria-hidden="true"></i>
+                        Generar recibo digital
+                    </button>
+                </form>
+            </div>
+
+
+            <!-- PASO 2: RECIBO -->
+            <section class="cart-receipt" id="comprobante" aria-label="Comprobante digital" hidden>
+
+                <div class="cart-receipt-head">
+                    <div class="cart-receipt-brand">
+                        <i class="fa-solid fa-basket-shopping" aria-hidden="true"></i>
+                        <span>PROCESADOS MARGARITA S.A.S.</span>
+                    </div>
+                    <h2>Comprobante de pedido</h2>
+                    <span class="cart-receipt-badge">Generado</span>
+                </div>
+
+                <div class="cart-receipt-meta">
+                    <div class="cart-receipt-meta-item">
+                        <small>Número</small>
+                        <strong id="recibo-numero">Pendiente</strong>
+                    </div>
+                    <div class="cart-receipt-meta-item">
+                        <small>Fecha</small>
+                        <strong id="recibo-fecha">Pendiente</strong>
+                    </div>
+                    <div class="cart-receipt-meta-item">
+                        <small>Cliente</small>
+                        <strong id="recibo-cliente">Pendiente</strong>
+                    </div>
+                    <div class="cart-receipt-meta-item">
+                        <small>Correo</small>
+                        <strong id="recibo-correo">Pendiente</strong>
+                    </div>
+                    <div class="cart-receipt-meta-item">
+                        <small>Teléfono</small>
+                        <strong id="recibo-telefono">Pendiente</strong>
+                    </div>
+                    <div class="cart-receipt-meta-item">
+                        <small>Dirección de entrega</small>
+                        <strong id="recibo-direccion">Pendiente</strong>
+                    </div>
+                </div>
+
+                <div class="cart-receipt-table-wrap">
+                    <table class="cart-receipt-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Producto</th>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Precio</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recibo-lista-productos"></tbody>
+                    </table>
+                </div>
+
+                <div class="cart-receipt-totals">
+                    <div class="cart-receipt-line">
+                        <span>Subtotal</span>
+                        <strong id="recibo-subtotal">$ 0</strong>
+                    </div>
+                    <div class="cart-receipt-line">
+                        <span>Envío</span>
+                        <strong id="recibo-envio">Por confirmar</strong>
+                    </div>
+                    <div class="cart-receipt-line cart-receipt-line-total">
+                        <span>Total</span>
+                        <strong id="recibo-total">$ 0</strong>
+                    </div>
+                </div>
+
+                <div class="cart-receipt-obs" id="recibo-observaciones-contenedor" hidden>
+                    <h3>Observaciones</h3>
+                    <p id="recibo-observaciones"></p>
+                </div>
+
+                <footer class="cart-receipt-foot">
+                    <p>Gracias por tu pedido.</p>
+                    <p>Este comprobante es informativo y no sustituye una factura electrónica.</p>
+                    <!-- 🆕 DATOS DE CONTACTO DE LA EMPRESA -->
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #e2e8f0; font-size: 12px; color: #64748b;">
+                        <p style="margin-bottom: 5px;"><strong>Contacto:</strong> Procesados Margarita S.A.S. - Bogotá</p>
+                        <p style="margin-bottom: 5px;"><strong>Teléfono:</strong> [Ingresar número aquí]</p>
+                    </div>
+                </footer>
+            </section>
+
+
+            <!-- ACCIONES DEL RECIBO -->
+            <div class="cart-receipt-actions" id="recibo-acciones" hidden>
+
+                <button type="button" class="cart-btn-action cart-btn-pdf" id="btn-descargar-pdf">
+                    <i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
+                    <span>Descargar PDF</span>
+                </button>
+
+                <button type="button" class="cart-btn-action cart-btn-mail" id="btn-enviar-correo">
+                    <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                    <span>Enviar por correo</span>
+                </button>
+
+                <button type="button" class="cart-btn-action cart-btn-print" id="btn-imprimir-recibo">
+                    <i class="fa-solid fa-print" aria-hidden="true"></i>
+                    <span>Imprimir</span>
+                </button>
+
+            </div>
+
+            <button type="button" class="cart-btn-return" id="btn-volver-tienda" hidden>
+                <i class="fa-solid fa-store" aria-hidden="true"></i>
+                <span>Volver a la tienda</span>
+            </button>
+
+            <!-- 🆕 BOTÓN DE CANCELAR PEDIDO -->
+            <button type="button" class="cart-btn-cancel" id="btn-cancelar-pedido" hidden>
+                <i class="fa-solid fa-ban" aria-hidden="true"></i>
+                <span>Cancelar pedido</span>
+            </button>
+
+        </div>
+    </div>
+
+
+    <!-- ============================================================
+         NOTIFICACIONES
+         ============================================================ -->
+    <div class="cart-toast" id="notificacion-carrito" role="status" aria-live="polite" style="display: none;"></div>
+
+
+    <!-- ============================================================
+         PIE DE PÁGINA
+         ============================================================ -->
+    <footer class="cart-footer">
+        <div class="cart-shell cart-footer-inner">
+            <div>
+                <strong>PROCESADOS MARGARITA S.A.S.</strong>
+                <p>Organización y control de pedidos.</p>
+            </div>
+            <p>© <span id="anio-actual"></span> Procesados Margarita. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById("anio-actual").textContent = new Date().getFullYear();
+    </script>
+
+</body>
+
+</html>

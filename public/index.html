@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="icon" href="img/Logo-removebg-preview.png">
 
-<!-- 🔥 SOLO ESTE CSS -->
+<!-- SOLO ESTE CSS -->
 <link rel="stylesheet" href="css/index.css">
 </head>
 
@@ -39,8 +39,6 @@
 
                 <li><a href="#empresa">Empresa</a></li>
 
-                <li><a href="#erp">ERP</a></li>
-
                 <li><a href="#contacto">Contacto</a></li>
 
             </ul>
@@ -55,35 +53,41 @@
 
 
     <!-- ================= HERO ================= -->
+<section class="hero">
 
-    <section class="hero">
+    <div class="overlay"></div>
 
-        <div class="overlay"></div>
+    <div class="hero-content">
 
-        <div class="hero-content">
+        <img
+            src="/img/Logo-removebg-preview.png"
+            class="hero-logo"
+            alt="Logo de Procesados Margarita"
+        >
 
-            <img src="/img/Logo-removebg-preview.png" class="hero-logo">
+        <h1>
+            Cada material tiene una nueva historia por contar
+        </h1>
 
-            <h1>
-                Cada material tiene una nueva historia por contar
-            </h1>
+        <div class="hero-buttons">
 
-            <div class="hero-buttons">
+            <a href="/login" class="btn-primary">
+                Ingresar al ERP
+            </a>
 
-                <a href="/login" class="btn-primary">
-                    Ingresar al ERP
-                </a>
+            <a href="#empresa" class="btn-secondary">
+                Conocer más
+            </a>
 
-                <a href="#empresa" class="btn-secondary">
-                    Conocer más
-                </a>
-
-            </div>
+            <a href="/tienda.html" class="btn-secondary">
+                Nuestros productos
+            </a>
 
         </div>
 
-    </section>
+    </div>
 
+</section>
     <!-- ===========================================
      NUESTRA EMPRESA
 =========================================== -->
@@ -248,7 +252,7 @@ Nos distinguiremos por la excelencia de nuestro Sistema Integrado de Gestión, l
 
         <div class="porque-imagen">
 
-            <img src="/img/empresa.jpg"
+            <img src="/img/empresa/bodega.png"
                  alt="Procesados Margarita">
 
         </div>
@@ -410,7 +414,7 @@ Nos distinguiremos por la excelencia de nuestro Sistema Integrado de Gestión, l
 
         <div class="foto">
 
-    <img src="/img/empresa/reciclaje.jpg" alt="Reciclaje">
+    <img src="/img/sostenibilidad.jpg" alt="Reciclaje">
 
     <div class="foto-info">
 
@@ -470,184 +474,6 @@ Nos distinguiremos por la excelencia de nuestro Sistema Integrado de Gestión, l
     </div>
 
 </div>
-
-    </div>
-
-</section>
-
-<!-- ===========================================
-     ¿QUÉ HACEMOS?
-=========================================== -->
-
-<section class="servicios">
-
-    <div class="titulo-seccion">
-
-        <span>Nuestros Servicios</span>
-
-        <h2>¿Qué hacemos?</h2>
-
-        <p>
-            Procesados Margarita integra procesos ambientales,
-            operativos y administrativos mediante un ERP diseñado
-            para optimizar la productividad y la gestión empresarial.
-        </p>
-
-    </div>
-
-    <div class="servicios-grid">
-
-        <div class="servicio-card">
-
-            <i class="fas fa-recycle"></i>
-
-            <h3>Reciclaje</h3>
-
-            <p>
-                Recuperación, clasificación y transformación de materiales
-                reciclables con enfoque sostenible.
-            </p>
-
-        </div>
-
-        <div class="servicio-card">
-
-            <i class="fas fa-hard-hat"></i>
-
-            <h3>Seguridad y Salud</h3>
-
-            <p>
-                Gestión de SST, inspecciones, pausas activas,
-                capacitaciones y seguimiento al personal.
-            </p>
-
-        </div>
-
-        <div class="servicio-card">
-
-            <i class="fas fa-folder-open"></i>
-
-            <h3>Gestión Documental</h3>
-
-            <p>
-                Administración digital de documentos con control
-                de vigencias y trazabilidad.
-            </p>
-
-        </div>
-
-        <div class="servicio-card">
-
-            <i class="fas fa-graduation-cap"></i>
-
-            <h3>Capacitaciones</h3>
-
-            <p>
-                Inducciones, evaluaciones,
-                certificados y seguimiento del aprendizaje.
-            </p>
-
-        </div>
-
-        <div class="servicio-card">
-
-            <i class="fas fa-laptop-code"></i>
-
-            <h3>ERP Corporativo</h3>
-
-            <p>
-                Plataforma centralizada para administrar procesos,
-                usuarios, roles y recursos humanos.
-            </p>
-
-        </div>
-
-        <div class="servicio-card">
-
-            <i class="fas fa-chart-line"></i>
-
-            <h3>Indicadores</h3>
-
-            <p>
-                Reportes e indicadores en tiempo real
-                para apoyar la toma de decisiones.
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-<!-- ===========================================
-     NUESTRO ERP
-=========================================== -->
-
-<section id="erp" class="erp">
-
-    <div class="titulo-seccion">
-
-        <span>Sistema ERP</span>
-
-        <h2>Nuestros Módulos</h2>
-
-        <p>
-            Un sistema diseñado para centralizar la administración de
-            Procesados Margarita SAS, optimizando los procesos operativos,
-            administrativos y de Seguridad y Salud en el Trabajo.
-        </p>
-
-    </div>
-
-    <div class="erp-grid">
-
-        <div class="erp-card">
-            <i class="fas fa-users"></i>
-            <h3>Recursos Humanos</h3>
-            <p>Administración integral de empleados, cargos, áreas, sedes y hojas de vida.</p>
-        </div>
-
-        <div class="erp-card">
-            <i class="fas fa-user-shield"></i>
-            <h3>Usuarios y Roles</h3>
-            <p>Control de accesos, permisos y perfiles para cada colaborador.</p>
-        </div>
-
-        <div class="erp-card">
-            <i class="fas fa-folder-tree"></i>
-            <h3>Gestión Documental</h3>
-            <p>Control documental con vigencias, estados y almacenamiento digital.</p>
-        </div>
-
-        <div class="erp-card">
-            <i class="fas fa-graduation-cap"></i>
-            <h3>Centro de Capacitaciones</h3>
-            <p>Creación de cursos, videos, evaluaciones y seguimiento del aprendizaje.</p>
-        </div>
-
-        <div class="erp-card">
-            <i class="fas fa-file-signature"></i>
-            <h3>Firmas Digitales</h3>
-            <p>Registro de firmas electrónicas para documentos y certificaciones.</p>
-        </div>
-
-        <div class="erp-card">
-            <i class="fas fa-award"></i>
-            <h3>Certificados</h3>
-            <p>Generación automática de certificados personalizados en formato PDF.</p>
-        </div>
-
-        <div class="erp-card">
-            <i class="fas fa-chart-column"></i>
-            <h3>Indicadores</h3>
-            <p>Reportes estadísticos y paneles para apoyar la toma de decisiones.</p>
-        </div>
-
-        <div class="erp-card">
-            <i class="fas fa-clipboard-check"></i>
-            <h3>Evaluaciones</h3>
-            <p>Evaluaciones automáticas con calificación y seguimiento del desempeño.</p>
-        </div>
 
     </div>
 
@@ -717,91 +543,6 @@ Nos distinguiremos por la excelencia de nuestro Sistema Integrado de Gestión, l
 
 </section>
 
-<!-- ===========================================
-     PROCESO ERP
-=========================================== -->
-
-<section class="proceso">
-
-    <div class="titulo-seccion">
-
-        <span>Nuestro Proceso</span>
-
-        <h2>¿Cómo funciona el ERP?</h2>
-
-        <p>
-            Desde el ingreso de un colaborador hasta la certificación de sus
-            procesos, el ERP integra todas las actividades en una sola plataforma.
-        </p>
-
-    </div>
-
-    <div class="timeline">
-
-        <div class="timeline-item">
-
-            <div class="timeline-icon">
-                <i class="fas fa-user-plus"></i>
-            </div>
-
-            <h3>Registro</h3>
-
-            <p>
-                Se registra el colaborador junto con su información personal,
-                cargo, sede y documentación.
-            </p>
-
-        </div>
-
-        <div class="timeline-item">
-
-            <div class="timeline-icon">
-                <i class="fas fa-folder-open"></i>
-            </div>
-
-            <h3>Documentación</h3>
-
-            <p>
-                El sistema administra documentos,
-                vigencias y seguimiento documental.
-            </p>
-
-        </div>
-
-        <div class="timeline-item">
-
-            <div class="timeline-icon">
-                <i class="fas fa-graduation-cap"></i>
-            </div>
-
-            <h3>Capacitación</h3>
-
-            <p>
-                El colaborador realiza cursos,
-                inducciones y evaluaciones dentro del ERP.
-            </p>
-
-        </div>
-
-        <div class="timeline-item">
-
-            <div class="timeline-icon">
-                <i class="fas fa-award"></i>
-            </div>
-
-            <h3>Certificación</h3>
-
-            <p>
-                Se generan certificados, reportes
-                y seguimiento continuo del proceso.
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
 <!--=========================================
         CALL TO ACTION
 ==========================================-->
@@ -813,7 +554,7 @@ Nos distinguiremos por la excelencia de nuestro Sistema Integrado de Gestión, l
         <span>Procesados Margarita SAS</span>
 
         <h2>
-            ¿Listo para ingresar al ERP?
+            ¿Listo para ingresar?
         </h2>
 
         <p>
@@ -867,29 +608,7 @@ Nos distinguiremos por la excelencia de nuestro Sistema Integrado de Gestión, l
 
                 <li><a href="#empresa">Nuestra Empresa</a></li>
 
-                <li><a href="#erp">ERP</a></li>
-
                 <li><a href="#">Inicio</a></li>
-
-            </ul>
-
-        </div>
-
-        <div class="footer-column">
-
-            <h4>Módulos</h4>
-
-            <ul>
-
-                <li>Recursos Humanos</li>
-
-                <li>Capacitaciones</li>
-
-                <li>Documentación</li>
-
-                <li>Firmas Digitales</li>
-
-                <li>Certificados</li>
 
             </ul>
 

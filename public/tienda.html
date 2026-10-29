@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#12345a">
+    <meta name="description" content="Catálogo de productos de Procesados Margarita S.A.S. Consulta los productos disponibles y organiza tu pedido.">
+
+    <title>Catálogo de Compras | Procesados Margarita S.A.S.</title>
+
+    <!-- Fuente principal -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/tienda.css">
+    
+    <!-- Funcionalidad -->
+    <script src="js/tienda.js" defer></script>
+</head>
+
+<body class="pagina-tienda">
+
+    <!-- ============================================
+         ENCABEZADO
+         ============================================ -->
+    <header class="encabezado" id="inicio">
+        <div class="contenedor encabezado-contenido">
+
+            <a href="#inicio" class="marca" aria-label="Inicio del catálogo">
+                <img
+                    src="img/logo.png"
+                    alt="Logo de Procesados Margarita"
+                    class="marca-logo"
+                >
+                <div class="marca-texto">
+                    <strong>PROCESADOS MARGARITA</strong>
+                    <span>S.A.S. · CATÁLOGO EMPRESARIAL</span>
+                </div>
+            </a>
+
+            <nav class="navegacion" aria-label="Navegación principal">
+                <a href="#inicio" class="enlace-nav">Inicio</a>
+                <a href="#productos" class="enlace-nav">Productos</a>
+            </nav>
+
+            <!-- Grupo de botones a la derecha -->
+            <div style="display: flex; gap: 12px; align-items: center;">
+                
+                <!-- Botón 1: Mi carrito (Abre el modal) -->
+                <button
+                    type="button"
+                    class="boton-carrito"
+                    id="abrir-carrito"
+                    aria-label="Abrir carrito de compras"
+                    aria-haspopup="dialog"
+                    aria-controls="ventana-carrito"
+                >
+                    <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+                    <span>Mi carrito</span>
+                    <span
+                        class="contador-carrito"
+                        id="contador-carrito"
+                        aria-live="polite"
+                        aria-atomic="true"
+                    >0</span>
+                </button>
+
+                <!-- Botón 2: Revisar pedido (Redirige a carrito.html) -->
+                <a href="carrito.html" class="boton-carrito" id="btn-ir-carrito" style="background: var(--verde-oscuro); text-decoration: none;">
+                    <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>
+                    <span>Revisar pedido</span>
+                </a>
+
+            </div>
+
+        </div>
+    </header>
+
+
+    <main>
+
+        <!-- ============================================
+             PORTADA
+             ============================================ -->
+        <section class="portada">
+            <div class="contenedor portada-contenido">
+
+                <div class="portada-texto">
+
+                    <span class="etiqueta-portada">
+                        <i class="fa-solid fa-building" aria-hidden="true"></i>
+                        PROCESADOS MARGARITA S.A.S.
+                    </span>
+
+                    <h1>
+                        Encuentra lo que necesitas
+                        <span>en un solo lugar.</span>
+                    </h1>
+
+                    <p>
+                        Explora nuestro catálogo de productos, consulta sus
+                        características y agrega los artículos que necesites
+                        a tu carrito para organizar tu pedido fácilmente.
+                    </p>
+
+                    <a href="#productos" class="boton-principal">
+                        Explorar productos
+                        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                    </a>
+
+                    <div class="portada-datos">
+                        <div>
+                            <i class="fa-solid fa-box-open" aria-hidden="true"></i>
+                            <span>Catálogo organizado</span>
+                        </div>
+                        <div>
+                            <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+                            <span>Carrito de compras</span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="portada-decoracion" aria-hidden="true">
+
+                    <div class="portada-circulo"></div>
+
+                    <div class="portada-tarjeta portada-tarjeta-principal">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                        <span>Catálogo empresarial</span>
+                        <strong>Todo más organizado</strong>
+                    </div>
+
+                    <div class="portada-tarjeta portada-tarjeta-secundaria">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <div>
+                            <strong>Tu pedido</strong><br>
+                            <span>Organiza tus productos</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ============================================
+             CATÁLOGO DE PRODUCTOS
+             ============================================ -->
+        <section
+            class="seccion-productos"
+            id="productos"
+            aria-labelledby="titulo-productos"
+        >
+            <div class="contenedor">
+
+                <div class="titulo-seccion">
+                    <div>
+                        <span class="subtitulo">NUESTRO CATÁLOGO</span>
+                        <h2 id="titulo-productos">Productos disponibles</h2>
+                        <p>Busca, consulta y agrega los productos que necesites.</p>
+                    </div>
+
+                    <div class="indicador-catalogo">
+                        <span class="indicador-punto"></span>
+                        <span>Explora el catálogo</span>
+                    </div>
+                </div>
+
+
+                <!-- Buscador (sin filtro de categorías) -->
+                <div class="herramientas">
+
+                    <label class="buscador">
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                        <span class="sr-only">Buscar productos</span>
+                        <input
+                            type="search"
+                            id="buscar-producto"
+                            placeholder="Buscar por nombre o descripción..."
+                            autocomplete="off"
+                        >
+                        <kbd>Buscar</kbd>
+                    </label>
+
+                </div>
+
+
+                <p
+                    class="resultado-busqueda"
+                    id="texto-resultados"
+                    aria-live="polite"
+                >
+                    Cargando productos...
+                </p>
+
+
+                <div
+                    class="productos-grid"
+                    id="lista-productos"
+                    aria-live="polite"
+                    aria-busy="true"
+                >
+                    <!-- Producto 1 -->
+                    <article class="tarjeta-producto" data-id="1">
+                        <div class="producto-imagen">
+                            <img
+                                src="img/productos_ejemplos/operarios_1.png"
+                                alt="nombre del producto"
+                                loading="lazy"
+                            >
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">nombre del producto</h3>
+                            <p class="producto-descripcion">
+                                descripcion del producto.
+                            </p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 28.500</strong>
+                                </div>
+                                <button
+                                    type="button"
+                                    class="boton-agregar"
+                                    data-id="1"
+                                    aria-label="Agregar nombre del producto al carrito"
+                                >
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
+                                    Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Producto 2 -->
+                    <article class="tarjeta-producto" data-id="2">
+                        <div class="producto-imagen">
+                            <img
+                                src="img/productos_ejemplos/camion_1.png"
+                                alt="nombre del producto"
+                                loading="lazy"
+                            >
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">nombre del producto</h3>
+                            <p class="producto-descripcion">
+                                descripcion del producto.
+                            </p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 9.500</strong>
+                                </div>
+                                <button
+                                    type="button"
+                                    class="boton-agregar"
+                                    data-id="2"
+                                    aria-label="Agregar nombre del producto al carrito"
+                                >
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
+                                    Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Producto 3 -->
+                    <article class="tarjeta-producto" data-id="3">
+                        <div class="producto-imagen">
+                            <img
+                                src="img/productos_ejemplos/bodega_1.png"
+                                alt="nombre del producto"
+                                loading="lazy"
+                            >
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">nombre del producto</h3>
+                            <p class="producto-descripcion">
+                                Chocolate tradicional con aroma y sabor intenso, ideal para bebidas calientes.
+                            </p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 17.800</strong>
+                                </div>
+                                <button
+                                    type="button"
+                                    class="boton-agregar"
+                                    data-id="3"
+                                    aria-label="Agregar nombre del producto al carrito"
+                                >
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
+                                    Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Producto 4 -->
+                    <article class="tarjeta-producto" data-id="4">
+                        <div class="producto-imagen">
+                            <img
+                                src="img/productos_ejemplos/planta_1.png"
+                                alt="nombre del producto"
+                                loading="lazy"
+                            >
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">nombre del producto</h3>
+                            <p class="producto-descripcion">
+                                descripcion del producto.
+                            </p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 42.000</strong>
+                                </div>
+                                <button
+                                    type="button"
+                                    class="boton-agregar"
+                                    data-id="4"
+                                    aria-label="Agregar nombre del producto al carrito"
+                                >
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
+                                    Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Producto 5 -->
+                    <article class="tarjeta-producto" data-id="5">
+                        <div class="producto-imagen">
+                            <img
+                                src="img/productos_ejemplos/operarios_1.png"
+                                alt="nombre del producto"
+                                loading="lazy"
+                            >
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">nombre del producto</h3>
+                            <p class="producto-descripcion">
+                                descripcion del producto.
+                            </p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 32.000</strong>
+                                </div>
+                                <button
+                                    type="button"
+                                    class="boton-agregar"
+                                    data-id="5"
+                                    aria-label="Agregar nombre del producto al carrito"
+                                >
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
+                                    Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Producto 6 -->
+                    <article class="tarjeta-producto" data-id="6">
+                        <div class="producto-imagen">
+                            <img
+                                src="img/productos_ejemplos/camion_1.png"
+                                alt="nombre del producto"
+                                loading="lazy"
+                            >
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">nombre del producto</h3>
+                            <p class="producto-descripcion">
+                                descripcion del producto.
+                            </p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 6.800</strong>
+                                </div>
+                                <button
+                                    type="button"
+                                    class="boton-agregar"
+                                    data-id="6"
+                                    aria-label="Agregar nombre del producto al carrito"
+                                >
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
+                                    Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ============================================
+         PIE DE PÁGINA
+         ============================================ -->
+    <footer class="pie">
+        <div class="contenedor pie-contenido">
+
+            <a href="#inicio" class="marca marca-pie">
+                <img
+                    src="img/logo.png"
+                    alt=""
+                    class="marca-logo"
+                >
+                <div class="marca-texto">
+                    <strong>PROCESADOS MARGARITA</strong>
+                    <span>S.A.S. · CATÁLOGO EMPRESARIAL</span>
+                </div>
+            </a>
+
+            <p>Catálogo de productos de Procesados Margarita S.A.S.</p>
+
+            <p class="pie-copyright">
+                &copy; <span id="anio-actual"></span> Procesados Margarita S.A.S.
+                
+            </p>
+
+        </div>
+    </footer>
+
+
+    <!-- ============================================
+         MODAL DE DETALLE DEL PRODUCTO (ÚNICO)
+         ============================================ -->
+    <dialog
+        class="ventana ventana-producto"
+        id="ventana-producto"
+        aria-labelledby="titulo-producto-modal"
+    >
+        <div class="ventana-contenido">
+
+            <div class="ventana-encabezado">
+                <div>
+                    <span class="subtitulo">DETALLE DEL PRODUCTO</span>
+                    <h2 id="titulo-producto-modal">Producto</h2>
+                </div>
+                <button
+                    type="button"
+                    class="boton-cerrar"
+                    id="cerrar-producto"
+                    aria-label="Cerrar detalle"
+                >
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <div class="modal-producto-cuerpo">
+
+                <div class="modal-producto-imagen">
+                    <img id="modal-imagen" src="" alt="">
+                </div>
+
+                <div class="modal-producto-info">
+
+                    <p class="modal-descripcion" id="modal-descripcion"></p>
+
+                    <div class="modal-detalles-grid">
+                        <div>
+                            <span>Precio unitario</span>
+                            <strong id="modal-precio-unitario">$ 0</strong>
+                        </div>
+                        <div>
+                            <span>Disponibilidad</span>
+                            <strong class="stock-disponible">
+                                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                                Disponible
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div class="modal-cantidad">
+                        <label for="modal-cantidad">Cantidad</label>
+                        <div class="selector-cantidad">
+                            <button
+                                type="button"
+                                class="boton-cantidad"
+                                id="modal-menos"
+                                aria-label="Disminuir cantidad"
+                            >
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                            <input
+                                type="number"
+                                id="modal-cantidad"
+                                value="1"
+                                min="1"
+                                max="99"
+                                aria-label="Cantidad"
+                            >
+                            <button
+                                type="button"
+                                class="boton-cantidad"
+                                id="modal-mas"
+                                aria-label="Aumentar cantidad"
+                            >
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="modal-total">
+                        <span>Total del pedido</span>
+                        <strong id="modal-total">$ 0</strong>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="boton-confirmar modal-btn-agregar"
+                        id="modal-agregar"
+                    >
+                        <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
+                        Agregar al carrito
+                    </button>
+
+                </div>
+            </div>
+
+        </div>
+    </dialog>
+
+
+    <!-- ============================================
+         VENTANA DEL CARRITO
+         ============================================ -->
+    <dialog
+        class="ventana"
+        id="ventana-carrito"
+        aria-labelledby="titulo-carrito"
+    >
+        <div class="ventana-contenido">
+
+            <div class="ventana-encabezado">
+                <div>
+                    <span class="subtitulo">TU SELECCIÓN</span>
+                    <h2 id="titulo-carrito">Mi carrito</h2>
+                </div>
+                <button
+                    type="button"
+                    class="boton-cerrar"
+                    id="cerrar-carrito"
+                    aria-label="Cerrar carrito"
+                >
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <div
+                class="contenido-carrito"
+                id="contenido-carrito"
+                aria-live="polite"
+            >
+                <div class="carrito-vacio">
+                    <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+                    <h3>Tu carrito está vacío</h3>
+                    <p>
+                        Agrega productos del catálogo para comenzar a organizar
+                        tu pedido.
+                    </p>
+                </div>
+            </div>
+
+            <div class="resumen-carrito">
+                <div class="resumen-fila">
+                    <span>Subtotal</span>
+                    <strong id="subtotal-carrito">$ 0</strong>
+                </div>
+                <div class="resumen-fila">
+                    <span>IVA estimado (19%)</span>
+                    <strong id="iva-carrito">$ 0</strong>
+                </div>
+                <div class="resumen-fila resumen-total">
+                    <span>Total estimado</span>
+                    <strong id="total-carrito">$ 0</strong>
+                </div>
+            </div>
+
+            <p class="aviso-carrito">
+                Los valores mostrados son orientativos hasta que se confirmen
+                los precios, las cantidades y las condiciones del pedido.
+            </p>
+
+            <div class="acciones-carrito">
+                <button
+                    type="button"
+                    class="boton-volver"
+                    id="seguir-comprando"
+                >
+                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                    Seguir comprando
+                </button>
+                <button
+                    type="button"
+                    class="boton-confirmar"
+                    id="confirmar-compra"
+                >
+                    <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>
+                    Revisar pedido
+                </button>
+            </div>
+
+            <div
+                class="resultado-compra"
+                id="resultado-compra"
+                role="status"
+                aria-live="polite"
+            ></div>
+
+        </div>
+    </dialog>
+
+
+    <!-- ============================================
+         NOTIFICACIONES TOAST
+         ============================================ -->
+    <div
+        class="notificacion-tienda"
+        id="notificacion-tienda"
+        role="status"
+        aria-live="polite"
+    ></div>
+
+
+    <!-- Año automático -->
+    <script>
+        document.getElementById("anio-actual").textContent = new Date().getFullYear();
+    </script>
+
+</body>
+
+</html>
