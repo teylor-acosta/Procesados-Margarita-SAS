@@ -9,18 +9,20 @@
 
     <title>Catálogo de Compras | Procesados Margarita S.A.S.</title>
 
-    <!-- Fuente principal -->
+    <!-- Fuentes -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700;800&display=swap" rel="stylesheet">
 
     <!-- Iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
-    <!-- Estilos -->
     <link rel="stylesheet" href="css/tienda.css">
-    
-    <!-- Funcionalidad -->
+        <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/style1.css">
+
+
+
     <script src="js/tienda.js" defer></script>
 </head>
 
@@ -32,12 +34,8 @@
     <header class="encabezado" id="inicio">
         <div class="contenedor encabezado-contenido">
 
-            <a href="#inicio" class="marca" aria-label="Inicio del catálogo">
-                <img
-                    src="img/logo.png"
-                    alt="Logo de Procesados Margarita"
-                    class="marca-logo"
-                >
+            <a href="index.html" class="marca" aria-label="Inicio del catálogo">
+                <img src="img/logo.png" alt="Logo de Procesados Margarita" class="marca-logo">
                 <div class="marca-texto">
                     <strong>PROCESADOS MARGARITA</strong>
                     <span>S.A.S. · CATÁLOGO EMPRESARIAL</span>
@@ -45,14 +43,12 @@
             </a>
 
             <nav class="navegacion" aria-label="Navegación principal">
-                <a href="#inicio" class="enlace-nav">Inicio</a>
-                <a href="#productos" class="enlace-nav">Productos</a>
+                <a href="index.html" class="enlace-nav">Página principal</a>
+                <a href="#productos" class="enlace-nav">Productos y Materiales</a>
             </nav>
 
-            <!-- Grupo de botones a la derecha -->
             <div style="display: flex; gap: 12px; align-items: center;">
-                
-                <!-- Botón 1: Mi carrito (Abre el modal) -->
+
                 <button
                     type="button"
                     class="boton-carrito"
@@ -63,15 +59,9 @@
                 >
                     <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
                     <span>Mi carrito</span>
-                    <span
-                        class="contador-carrito"
-                        id="contador-carrito"
-                        aria-live="polite"
-                        aria-atomic="true"
-                    >0</span>
+                    <span class="contador-carrito" id="contador-carrito" aria-live="polite" aria-atomic="true">0</span>
                 </button>
 
-                <!-- Botón 2: Revisar pedido (Redirige a carrito.html) -->
                 <a href="carrito.html" class="boton-carrito" id="btn-ir-carrito" style="background: var(--verde-oscuro); text-decoration: none;">
                     <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>
                     <span>Revisar pedido</span>
@@ -104,13 +94,13 @@
                     </h1>
 
                     <p>
-                        Explora nuestro catálogo de productos, consulta sus
+                        Explora nuestro catálogo de productos y materiales, consulta sus
                         características y agrega los artículos que necesites
                         a tu carrito para organizar tu pedido fácilmente.
                     </p>
 
                     <a href="#productos" class="boton-principal">
-                        Explorar productos
+                        Explorar catálogo
                         <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                     </a>
 
@@ -155,18 +145,14 @@
         <!-- ============================================
              CATÁLOGO DE PRODUCTOS
              ============================================ -->
-        <section
-            class="seccion-productos"
-            id="productos"
-            aria-labelledby="titulo-productos"
-        >
+        <section class="seccion-productos" id="productos" aria-labelledby="titulo-productos">
             <div class="contenedor">
 
                 <div class="titulo-seccion">
                     <div>
                         <span class="subtitulo">NUESTRO CATÁLOGO</span>
-                        <h2 id="titulo-productos">Productos disponibles</h2>
-                        <p>Busca, consulta y agrega los productos que necesites.</p>
+                        <h2 id="titulo-productos">Productos y Materiales</h2>
+                        <p>Busca, consulta y agrega los productos o materiales que necesites.</p>
                     </div>
 
                     <div class="indicador-catalogo">
@@ -176,10 +162,12 @@
                 </div>
 
 
-                <!-- Buscador (sin filtro de categorías) -->
-                <div class="herramientas">
+                <!-- ============================================
+                     BUSCADOR Y FILTROS
+                     ============================================ -->
+                <div class="herramientas" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
 
-                    <label class="buscador">
+                    <label class="buscador" style="flex: 1; min-width: 250px;">
                         <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                         <span class="sr-only">Buscar productos</span>
                         <input
@@ -188,266 +176,835 @@
                             placeholder="Buscar por nombre o descripción..."
                             autocomplete="off"
                         >
-                        <kbd>Buscar</kbd>
                     </label>
+
+                    <div class="filtros-categoria" style="display: flex; gap: 8px;">
+                        <button type="button" class="btn-filtro activo" data-filtro="todos">
+                            <i class="fa-solid fa-list"></i> Todos
+                        </button>
+                        <button type="button" class="btn-filtro" data-filtro="producto">
+                            <i class="fa-solid fa-box"></i> Productos
+                        </button>
+                        <button type="button" class="btn-filtro" data-filtro="material">
+                            <i class="fa-solid fa-boxes-stacked"></i> Materiales
+                        </button>
+                    </div>
 
                 </div>
 
 
-                <p
-                    class="resultado-busqueda"
-                    id="texto-resultados"
-                    aria-live="polite"
-                >
+                <p class="resultado-busqueda" id="texto-resultados" aria-live="polite">
                     Cargando productos...
                 </p>
 
 
-                <div
-                    class="productos-grid"
-                    id="lista-productos"
-                    aria-live="polite"
-                    aria-busy="true"
-                >
-                    <!-- Producto 1 -->
-                    <article class="tarjeta-producto" data-id="1">
+                <div class="productos-grid" id="lista-productos" aria-live="polite" aria-busy="true">
+
+                    <!-- ====================================================
+                         PRODUCTOS REALES
+                         (data-precio-mayor = PRECIO TOTAL DEL LOTE)
+                    ==================================================== -->
+
+                    <!-- PRODUCTO 1: GANCHO NEGRO -->
+                    <article class="tarjeta-producto" data-id="1" data-tipo="producto">
                         <div class="producto-imagen">
-                            <img
-                                src="img/productos_ejemplos/operarios_1.png"
-                                alt="nombre del producto"
-                                loading="lazy"
-                            >
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Gancho Negro" loading="lazy">
                         </div>
                         <div class="producto-info">
-                            <h3 class="producto-nombre">nombre del producto</h3>
-                            <p class="producto-descripcion">
-                                descripcion del producto.
-                            </p>
+                            <h3 class="producto-nombre">Gancho Negro</h3>
+                            <p class="producto-descripcion">Gancho negro resistente para exhibición y organización.</p>
                             <div class="producto-pie">
                                 <div class="producto-precio-contenedor">
                                     <span class="producto-precio-etiqueta">Precio</span>
-                                    <strong class="producto-precio">$ 28.500</strong>
-                                    <!-- 🆕 AVISO DE MAYOREO -->
+                                    <strong class="producto-precio">$ 200</strong>
                                     <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
-                                        ¡Lleva 5 o más y paga $25.650 c/u!
+                                        Lleva 200 uds o más y paga $ 40.000 por lote.
                                     </small>
                                 </div>
-                                <button
-                                    type="button"
-                                    class="boton-agregar"
-                                    data-id="1"
-                                    data-precio="28500"
-                                    data-precio-mayor="25650"
-                                    data-cantidad-mayor="5"
-                                    aria-label="Agregar nombre del producto al carrito"
-                                >
-                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
-                                    Agregar
+                                <button type="button" class="boton-agregar" data-id="1" data-precio="200" data-precio-mayor="40000" data-cantidad-mayor="200" aria-label="Agregar Gancho Negro al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
                                 </button>
                             </div>
                         </div>
                     </article>
 
-                    <!-- Producto 2 -->
-                    <article class="tarjeta-producto" data-id="2">
+                    <!-- PRODUCTO 2: GANCHO DE COLOR -->
+                    <article class="tarjeta-producto" data-id="2" data-tipo="producto">
                         <div class="producto-imagen">
-                            <img
-                                src="img/productos_ejemplos/camion_1.png"
-                                alt="nombre del producto"
-                                loading="lazy"
-                            >
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Gancho de Color" loading="lazy">
                         </div>
                         <div class="producto-info">
-                            <h3 class="producto-nombre">nombre del producto</h3>
-                            <p class="producto-descripcion">
-                                descripcion del producto.
-                            </p>
+                            <h3 class="producto-nombre">Gancho de Color</h3>
+                            <p class="producto-descripcion">Gancho de color disponible en varias tonalidades.</p>
                             <div class="producto-pie">
                                 <div class="producto-precio-contenedor">
                                     <span class="producto-precio-etiqueta">Precio</span>
-                                    <strong class="producto-precio">$ 9.500</strong>
-                                    <!-- 🆕 AVISO DE MAYOREO -->
+                                    <strong class="producto-precio">$ 390</strong>
                                     <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
-                                        ¡Lleva 5 o más y paga $8.550 c/u!
+                                        Lleva 200 uds o más y paga $ 76.000 por lote.
                                     </small>
                                 </div>
-                                <button
-                                    type="button"
-                                    class="boton-agregar"
-                                    data-id="2"
-                                    data-precio="9500"
-                                    data-precio-mayor="8550"
-                                    data-cantidad-mayor="5"
-                                    aria-label="Agregar nombre del producto al carrito"
-                                >
-                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
-                                    Agregar
+                                <button type="button" class="boton-agregar" data-id="2" data-precio="390" data-precio-mayor="76000" data-cantidad-mayor="200" aria-label="Agregar Gancho de Color al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
                                 </button>
                             </div>
                         </div>
                     </article>
 
-                    <!-- Producto 3 -->
-                    <article class="tarjeta-producto" data-id="3">
+                    <!-- PRODUCTO 3: COMEDERO DE PERRO -->
+                    <article class="tarjeta-producto" data-id="3" data-tipo="producto">
                         <div class="producto-imagen">
-                            <img
-                                src="img/productos_ejemplos/bodega_1.png"
-                                alt="nombre del producto"
-                                loading="lazy"
-                            >
+                            <img src="img/productos_ejemplos/bodega_1.png" alt="Comedero de Perro" loading="lazy">
                         </div>
                         <div class="producto-info">
-                            <h3 class="producto-nombre">nombre del producto</h3>
-                            <p class="producto-descripcion">
-                                Chocolate tradicional con aroma y sabor intenso, ideal para bebidas calientes.
-                            </p>
+                            <h3 class="producto-nombre">Comedero de Perro</h3>
+                            <p class="producto-descripcion">Comedero práctico y resistente para mascotas.</p>
                             <div class="producto-pie">
                                 <div class="producto-precio-contenedor">
                                     <span class="producto-precio-etiqueta">Precio</span>
-                                    <strong class="producto-precio">$ 17.800</strong>
-                                    <!-- 🆕 AVISO DE MAYOREO -->
+                                    <strong class="producto-precio">$ 3.500</strong>
                                     <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
-                                        ¡Lleva 5 o más y paga $16.020 c/u!
+                                        Lleva 100 uds o más y paga $ 250.000 por lote.
                                     </small>
                                 </div>
-                                <button
-                                    type="button"
-                                    class="boton-agregar"
-                                    data-id="3"
-                                    data-precio="17800"
-                                    data-precio-mayor="16020"
-                                    data-cantidad-mayor="5"
-                                    aria-label="Agregar nombre del producto al carrito"
-                                >
-                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
-                                    Agregar
+                                <button type="button" class="boton-agregar" data-id="3" data-precio="3500" data-precio-mayor="250000" data-cantidad-mayor="100" aria-label="Agregar Comedero de Perro al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
                                 </button>
                             </div>
                         </div>
                     </article>
 
-                    <!-- Producto 4 -->
-                    <article class="tarjeta-producto" data-id="4">
+                    <!-- PRODUCTO 4: FICHAS DE PARQUÉS 4 JUGADORES -->
+                    <article class="tarjeta-producto" data-id="4" data-tipo="producto">
                         <div class="producto-imagen">
-                            <img
-                                src="img/productos_ejemplos/planta_1.png"
-                                alt="nombre del producto"
-                                loading="lazy"
-                            >
+                            <img src="img/productos_ejemplos/planta_1.png" alt="Fichas de Parqués 4 Jugadores" loading="lazy">
                         </div>
                         <div class="producto-info">
-                            <h3 class="producto-nombre">nombre del producto</h3>
-                            <p class="producto-descripcion">
-                                descripcion del producto.
-                            </p>
+                            <h3 class="producto-nombre">Fichas de Parqués 4 Jugadores</h3>
+                            <p class="producto-descripcion">Set de fichas para parqués de 4 jugadores.</p>
                             <div class="producto-pie">
                                 <div class="producto-precio-contenedor">
                                     <span class="producto-precio-etiqueta">Precio</span>
-                                    <strong class="producto-precio">$ 42.000</strong>
-                                    <!-- 🆕 AVISO DE MAYOREO -->
+                                    <strong class="producto-precio">$ 1.200</strong>
                                     <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
-                                        ¡Lleva 5 o más y paga $37.800 c/u!
+                                        Lleva 30 uds o más y paga $ 25.500 por lote.
                                     </small>
                                 </div>
-                                <button
-                                    type="button"
-                                    class="boton-agregar"
-                                    data-id="4"
-                                    data-precio="42000"
-                                    data-precio-mayor="37800"
-                                    data-cantidad-mayor="5"
-                                    aria-label="Agregar nombre del producto al carrito"
-                                >
-                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
-                                    Agregar
+                                <button type="button" class="boton-agregar" data-id="4" data-precio="1200" data-precio-mayor="25500" data-cantidad-mayor="30" aria-label="Agregar Fichas de Parqués 4 Jugadores al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
                                 </button>
                             </div>
                         </div>
                     </article>
 
-                    <!-- Producto 5 -->
-                    <article class="tarjeta-producto" data-id="5">
+                    <!-- PRODUCTO 5: FICHAS DE PARQUÉS 6 JUGADORES -->
+                    <article class="tarjeta-producto" data-id="5" data-tipo="producto">
                         <div class="producto-imagen">
-                            <img
-                                src="img/productos_ejemplos/operarios_1.png"
-                                alt="nombre del producto"
-                                loading="lazy"
-                            >
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Fichas de Parqués 6 Jugadores" loading="lazy">
                         </div>
                         <div class="producto-info">
-                            <h3 class="producto-nombre">nombre del producto</h3>
-                            <p class="producto-descripcion">
-                                descripcion del producto.
-                            </p>
+                            <h3 class="producto-nombre">Fichas de Parqués 6 Jugadores</h3>
+                            <p class="producto-descripcion">Set de fichas para parqués de 6 jugadores.</p>
                             <div class="producto-pie">
                                 <div class="producto-precio-contenedor">
                                     <span class="producto-precio-etiqueta">Precio</span>
-                                    <strong class="producto-precio">$ 32.000</strong>
-                                    <!-- 🆕 AVISO DE MAYOREO -->
+                                    <strong class="producto-precio">$ 1.400</strong>
                                     <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
-                                        ¡Lleva 5 o más y paga $28.800 c/u!
+                                        Lleva 30 uds o más y paga $ 28.500 por lote.
                                     </small>
                                 </div>
-                                <button
-                                    type="button"
-                                    class="boton-agregar"
-                                    data-id="5"
-                                    data-precio="32000"
-                                    data-precio-mayor="28800"
-                                    data-cantidad-mayor="5"
-                                    aria-label="Agregar nombre del producto al carrito"
-                                >
-                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
-                                    Agregar
+                                <button type="button" class="boton-agregar" data-id="5" data-precio="1400" data-precio-mayor="28500" data-cantidad-mayor="30" aria-label="Agregar Fichas de Parqués 6 Jugadores al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
                                 </button>
                             </div>
                         </div>
                     </article>
+                                        <!-- ====================================================
+                         PRODUCTOS 6, 7 y 8 (PLACEHOLDERS)
+                         Reemplazar por productos reales después.
+                         Se dejan con mayoreo por si luego lo necesitan.
+                    ==================================================== -->
 
-                    <!-- Producto 6 -->
-                    <article class="tarjeta-producto" data-id="6">
+                    <!-- PRODUCTO 6 -->
+                    <article class="tarjeta-producto" data-id="6" data-tipo="producto">
                         <div class="producto-imagen">
-                            <img
-                                src="img/productos_ejemplos/camion_1.png"
-                                alt="nombre del producto"
-                                loading="lazy"
-                            >
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Producto Ejemplo 6" loading="lazy">
                         </div>
                         <div class="producto-info">
-                            <h3 class="producto-nombre">nombre del producto</h3>
-                            <p class="producto-descripcion">
-                                descripcion del producto.
-                            </p>
+                            <h3 class="producto-nombre">Producto Ejemplo 6</h3>
+                            <p class="producto-descripcion">Espacio reservado para un producto real.</p>
                             <div class="producto-pie">
                                 <div class="producto-precio-contenedor">
                                     <span class="producto-precio-etiqueta">Precio</span>
                                     <strong class="producto-precio">$ 6.800</strong>
-                                    <!-- 🆕 AVISO DE MAYOREO -->
                                     <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
-                                        ¡Lleva 5 o más y paga $6.120 c/u!
+                                        Lleva 10 uds o más y paga $ 6.120 c/u.
                                     </small>
                                 </div>
-                                <button
-                                    type="button"
-                                    class="boton-agregar"
-                                    data-id="6"
-                                    data-precio="6800"
-                                    data-precio-mayor="6120"
-                                    data-cantidad-mayor="5"
-                                    aria-label="Agregar nombre del producto al carrito"
-                                >
-                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
-                                    Agregar
+                                <button type="button" class="boton-agregar" data-id="6" data-precio="6800" data-precio-mayor="6120" data-cantidad-mayor="10" aria-label="Agregar Producto Ejemplo 6 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
                                 </button>
                             </div>
                         </div>
                     </article>
-                </div>
 
-            </div>
-        </section>
+                    <!-- PRODUCTO 7 -->
+                    <article class="tarjeta-producto" data-id="7" data-tipo="producto">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/planta_1.png" alt="Producto Ejemplo 7" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Producto Ejemplo 7</h3>
+                            <p class="producto-descripcion">Espacio reservado para un producto real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 15.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Lleva 5 uds o más y paga $ 13.500 c/u.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="7" data-precio="15000" data-precio-mayor="13500" data-cantidad-mayor="5" aria-label="Agregar Producto Ejemplo 7 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
 
-    </main>
+                    <!-- PRODUCTO 8 -->
+                    <article class="tarjeta-producto" data-id="8" data-tipo="producto">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/bodega_1.png" alt="Producto Ejemplo 8" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Producto Ejemplo 8</h3>
+                            <p class="producto-descripcion">Espacio reservado para un producto real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 22.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Lleva 5 uds o más y paga $ 19.800 c/u.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="8" data-precio="22000" data-precio-mayor="19800" data-cantidad-mayor="5" aria-label="Agregar Producto Ejemplo 8 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+
+                    <!-- ====================================================
+                         MATERIALES 1 a 13 (PLACEHOLDERS)
+                         ⚠️ SOLO PRECIO POR KILO / UNITARIO — SIN MAYOREO.
+                         Aquí se actualizarán los precios reales más adelante.
+                         Los botones NO llevan data-precio-mayor ni
+                         data-cantidad-mayor.
+                    ==================================================== -->
+
+                    <!-- MATERIAL 1 -->
+                    <article class="tarjeta-producto" data-id="101" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Material 1" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 1</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 12.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="101" data-precio="12000" aria-label="Agregar Material 1 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 2 -->
+                    <article class="tarjeta-producto" data-id="102" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Material 2" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 2</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 8.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="102" data-precio="8000" aria-label="Agregar Material 2 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 3 -->
+                    <article class="tarjeta-producto" data-id="103" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/planta_1.png" alt="Material 3" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 3</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 25.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="103" data-precio="25000" aria-label="Agregar Material 3 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 4 -->
+                    <article class="tarjeta-producto" data-id="104" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/bodega_1.png" alt="Material 4" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 4</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 5.500</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="104" data-precio="5500" aria-label="Agregar Material 4 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 5 -->
+                    <article class="tarjeta-producto" data-id="105" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Material 5" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 5</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 18.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="105" data-precio="18000" aria-label="Agregar Material 5 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 6 -->
+                    <article class="tarjeta-producto" data-id="106" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Material 6" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 6</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 35.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="106" data-precio="35000" aria-label="Agregar Material 6 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 7 -->
+                    <article class="tarjeta-producto" data-id="107" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/planta_1.png" alt="Material 7" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 7</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 7.500</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="107" data-precio="7500" aria-label="Agregar Material 7 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 8 -->
+                    <article class="tarjeta-producto" data-id="108" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/bodega_1.png" alt="Material 8" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 8</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 14.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="108" data-precio="14000" aria-label="Agregar Material 8 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 9 -->
+                    <article class="tarjeta-producto" data-id="109" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Material 9" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 9</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 9.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="109" data-precio="9000" aria-label="Agregar Material 9 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 10 -->
+                    <article class="tarjeta-producto" data-id="110" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Material 10" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 10</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 45.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="110" data-precio="45000" aria-label="Agregar Material 10 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 11 -->
+                    <article class="tarjeta-producto" data-id="111" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/planta_1.png" alt="Material 11" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 11</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 11.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="111" data-precio="11000" aria-label="Agregar Material 11 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 12 -->
+                    <article class="tarjeta-producto" data-id="112" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/bodega_1.png" alt="Material 12" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 12</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 30.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="112" data-precio="30000" aria-label="Agregar Material 12 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 13 -->
+                    <article class="tarjeta-producto" data-id="113" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Material 13" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 13</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 4.500</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="113" data-precio="4500" aria-label="Agregar Material 13 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                                        <!-- MATERIAL 14 -->
+                    <article class="tarjeta-producto" data-id="114" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Material 14" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 14</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 22.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="114" data-precio="22000" aria-label="Agregar Material 14 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 15 -->
+                    <article class="tarjeta-producto" data-id="115" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/planta_1.png" alt="Material 15" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 15</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 16.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="115" data-precio="16000" aria-label="Agregar Material 15 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 16 -->
+                    <article class="tarjeta-producto" data-id="116" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/bodega_1.png" alt="Material 16" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 16</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 38.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="116" data-precio="38000" aria-label="Agregar Material 16 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 17 -->
+                    <article class="tarjeta-producto" data-id="117" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Material 17" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 17</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 10.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="117" data-precio="10000" aria-label="Agregar Material 17 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 18 -->
+                    <article class="tarjeta-producto" data-id="118" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Material 18" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 18</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 27.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="118" data-precio="27000" aria-label="Agregar Material 18 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 19 -->
+                    <article class="tarjeta-producto" data-id="119" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/planta_1.png" alt="Material 19" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 19</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 6.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="119" data-precio="6000" aria-label="Agregar Material 19 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 20 -->
+                    <article class="tarjeta-producto" data-id="120" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/bodega_1.png" alt="Material 20" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 20</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 50.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="120" data-precio="50000" aria-label="Agregar Material 20 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 21 -->
+                    <article class="tarjeta-producto" data-id="121" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Material 21" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 21</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 13.500</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="121" data-precio="13500" aria-label="Agregar Material 21 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 22 -->
+                    <article class="tarjeta-producto" data-id="122" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Material 22" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 22</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 21.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="122" data-precio="21000" aria-label="Agregar Material 22 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 23 -->
+                    <article class="tarjeta-producto" data-id="123" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/planta_1.png" alt="Material 23" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 23</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 8.500</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="123" data-precio="8500" aria-label="Agregar Material 23 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 24 -->
+                    <article class="tarjeta-producto" data-id="124" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/bodega_1.png" alt="Material 24" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 24</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 19.500</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="124" data-precio="19500" aria-label="Agregar Material 24 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 25 -->
+                    <article class="tarjeta-producto" data-id="125" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Material 25" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 25</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 3.500</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="125" data-precio="3500" aria-label="Agregar Material 25 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 26 -->
+                    <article class="tarjeta-producto" data-id="126" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Material 26" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 26</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 40.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Precio por kilo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="126" data-precio="40000" aria-label="Agregar Material 26 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                </div> <!-- Cierre de productos-grid -->
+            </div> <!-- Cierre de contenedor -->
+        </section> <!-- Cierre de seccion-productos -->
+
+    </main> <!-- Cierre de main -->
 
 
     <!-- ============================================
@@ -457,11 +1014,7 @@
         <div class="contenedor pie-contenido">
 
             <a href="#inicio" class="marca marca-pie">
-                <img
-                    src="img/logo.png"
-                    alt=""
-                    class="marca-logo"
-                >
+                <img src="img/logo.png" alt="" class="marca-logo">
                 <div class="marca-texto">
                     <strong>PROCESADOS MARGARITA</strong>
                     <span>S.A.S. · CATÁLOGO EMPRESARIAL</span>
@@ -472,15 +1025,12 @@
 
             <p class="pie-copyright">
                 &copy; <span id="anio-actual"></span> Procesados Margarita S.A.S.
-                
             </p>
 
         </div>
     </footer>
-
-
-    <!-- ============================================
-         MODAL DE DETALLE DEL PRODUCTO (ÚNICO)
+        <!-- ============================================
+         MODAL DE DETALLE DEL PRODUCTO
          ============================================ -->
     <dialog
         class="ventana ventana-producto"
@@ -514,27 +1064,35 @@
 
                     <p class="modal-descripcion" id="modal-descripcion"></p>
 
-                    <div class="modal-detalles-grid">
-                        <div>
+                    <!-- INFORMACIÓN DETALLADA DEL PRECIO -->
+                    <div class="modal-detalles-grid" style="grid-template-columns: 1fr; gap: 12px;">
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;">
                             <span>Precio unitario</span>
-                            <strong id="modal-precio-unitario">$ 0</strong>
+                            <strong id="modal-precio-unitario" style="font-size: 18px;">$ 0</strong>
                         </div>
-                        <div>
-                            <span>Disponibilidad</span>
-                            <strong class="stock-disponible">
-                                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
-                                Disponible
-                            </strong>
+
+                        <!-- Contenedor que se activa si el producto tiene precio al por mayor -->
+                        <div id="contenedor-precio-mayoreo" style="display: none; justify-content: space-between; align-items: center; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;">
+                            <span>Precio al por mayor</span>
+                            <strong id="modal-precio-mayor" style="font-size: 18px; color: var(--verde-oscuro);">$ 0</strong>
                         </div>
+
+                        <!-- Contenedor que se activa si el producto tiene precio al por mayor -->
+                        <div id="contenedor-cantidad-mayor" style="display: none; justify-content: space-between; align-items: center;">
+                            <span>A partir de</span>
+                            <strong id="modal-cantidad-mayor-texto" style="font-size: 16px;">0 unidades</strong>
+                        </div>
+
                     </div>
 
-                    <!-- 🆕 AVISO DE MAYOREO EN EL MODAL -->
-                    <div id="modal-aviso-mayoreo" style="display: none; background: var(--verde-suave); color: var(--verde-oscuro); padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; border: 1px solid rgba(18, 199, 106, 0.3);">
-                        <i class="fa-solid fa-tags"></i> ¡Descuento por volumen aplicado!
+                    <!-- AVISO DE MAYOREO EN EL MODAL -->
+                    <div id="modal-aviso-mayoreo" style="display: none; background: var(--verde-suave); color: var(--verde-oscuro); padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 700; border: 1px solid rgba(18, 199, 106, 0.3); text-align: center;">
+                        <i class="fa-solid fa-tags"></i> ¡Descuento por mayoreo aplicado!
                     </div>
 
                     <div class="modal-cantidad">
-                        <label for="modal-cantidad">Cantidad</label>
+                        <label for="modal-cantidad">Cantidad (Disponible: Infinita)</label>
                         <div class="selector-cantidad">
                             <button
                                 type="button"
@@ -544,14 +1102,17 @@
                             >
                                 <i class="fa-solid fa-minus"></i>
                             </button>
+
                             <input
                                 type="number"
                                 id="modal-cantidad"
                                 value="1"
                                 min="1"
-                                max="99"
+                                max="999999"
                                 aria-label="Cantidad"
+                                style="width: 80px; font-size: 16px;"
                             >
+
                             <button
                                 type="button"
                                 class="boton-cantidad"
@@ -624,6 +1185,7 @@
                 </div>
             </div>
 
+            <!-- RESUMEN DEL CARRITO -->
             <div class="resumen-carrito">
                 <div class="resumen-fila">
                     <span>Subtotal</span>
@@ -637,6 +1199,9 @@
                     <span>Total estimado</span>
                     <strong id="total-carrito">$ 0</strong>
                 </div>
+
+                <!-- Ahorro por mayoreo (se muestra si aplica) -->
+                <div class="resumen-fila" id="ahorro-carrito" style="color: var(--verde-oscuro); font-weight: 700; font-size: 13px;"></div>
             </div>
 
             <p class="aviso-carrito">
@@ -644,6 +1209,7 @@
                 los precios, las cantidades y las condiciones del pedido.
             </p>
 
+            <!-- BOTONES DEL CARRITO -->
             <div class="acciones-carrito">
                 <button
                     type="button"
@@ -685,7 +1251,9 @@
     ></div>
 
 
-    <!-- Año automático -->
+    <!-- ============================================
+         SCRIPT PARA EL AÑO AUTOMÁTICO
+         ============================================ -->
     <script>
         document.getElementById("anio-actual").textContent = new Date().getFullYear();
     </script>

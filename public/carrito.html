@@ -9,12 +9,16 @@
 
     <title>Confirmar Pedido · Procesados Margarita S.A.S.</title>
 
+    <!-- Fuentes y Estilos -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
+    <!-- ✅ SOLO ESTE CSS PARA MANTENER EL DISEÑO PREMIUM -->
     <link rel="stylesheet" href="css/carrito.css">
+          <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/style1.css">
 
     <!-- Librerías para generar PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
@@ -55,11 +59,11 @@
 
 
     <!-- ============================================================
-         CONTENIDO
+         CONTENIDO PRINCIPAL
          ============================================================ -->
     <main class="cart-shell cart-main">
 
-        <!-- Encabezado -->
+        <!-- Encabezado de la página -->
         <div class="cart-intro">
             <span class="cart-eyebrow">
                 <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
@@ -70,11 +74,11 @@
         </div>
 
 
-        <!-- Layout de 2 columnas -->
+        <!-- Layout de 2 columnas (Productos / Resumen) -->
         <div class="cart-layout">
 
             <!-- ============================================
-                 COLUMNA IZQUIERDA
+                 COLUMNA IZQUIERDA: PRODUCTOS
                  ============================================ -->
             <section class="cart-items" aria-label="Productos del carrito">
 
@@ -89,7 +93,7 @@
                     </button>
                 </div>
 
-                <!-- Estado vacío -->
+                <!-- Estado vacío del carrito -->
                 <div class="cart-empty" id="carrito-vacio">
                     <div class="cart-empty-icon">
                         <i class="fa-solid fa-basket-shopping" aria-hidden="true"></i>
@@ -102,14 +106,12 @@
                     </a>
                 </div>
 
-                <!-- Lista dinámica -->
+                <!-- Lista dinámica (El JS inyecta los productos aquí) -->
                 <div class="cart-list" id="lista-carrito" hidden></div>
 
             </section>
-
-
-            <!-- ============================================
-                 COLUMNA DERECHA
+                        <!-- ============================================
+                 COLUMNA DERECHA: RESUMEN DEL PEDIDO
                  ============================================ -->
             <aside class="cart-summary" aria-label="Resumen del pedido">
 
@@ -123,14 +125,15 @@
                         <span>Subtotal</span>
                         <strong id="subtotal-productos">$ 0</strong>
                     </div>
+                    
                     <div class="cart-summary-line">
                         <span>Artículos</span>
                         <strong id="total-articulos">0</strong>
                     </div>
                     
-                    <!-- 🆕 FILA DE AHORRO (Oculta por defecto) -->
-                    <div class="cart-summary-line" id="fila-ahorro" style="display: none; color: var(--verde-oscuro); font-weight: 700;">
-                        <span>Ahorro por mayoreo</span>
+                    <!-- Fila de Ahorro (Oculta por defecto, el JS la activa si aplica) -->
+                    <div class="cart-summary-line" id="fila-ahorro" style="display: none;">
+                        <span><i class="fa-solid fa-tags"></i> Ahorro mayoreo</span>
                         <strong id="ahorro-productos">-$ 0</strong>
                     </div>
 
@@ -138,7 +141,9 @@
                         <span>Envío</span>
                         <strong id="costo-envio">Por confirmar</strong>
                     </div>
-                    <div class="cart-summary-line cart-summary-total">
+
+                    <!-- Línea de Total -->
+                    <div class="cart-summary-total">
                         <span>Total</span>
                         <strong id="total-carrito">$ 0</strong>
                     </div>
@@ -167,12 +172,11 @@
             </aside>
 
         </div>
-
     </main>
 
 
     <!-- ============================================================
-         MODAL DE PEDIDO
+         MODAL DE PEDIDO (Formulario y Recibo)
          ============================================================ -->
     <div
         class="cart-modal"
@@ -188,7 +192,9 @@
                 <i class="fa-solid fa-xmark" aria-hidden="true"></i>
             </button>
 
-            <!-- PASO 1: FORMULARIO -->
+            <!-- ============================================
+                 PASO 1: FORMULARIO DE DATOS
+                 ============================================ -->
             <div id="formulario-pedido">
 
                 <div class="cart-modal-icon">
@@ -199,6 +205,7 @@
                 <p class="cart-modal-desc">Ingresa la información para preparar tu comprobante digital.</p>
 
                 <form id="form-confirmar" class="cart-form">
+                    
                     <div class="cart-field">
                         <label for="nombre-cliente">Nombre completo</label>
                         <input type="text" id="nombre-cliente" name="nombre" placeholder="Escribe tu nombre" autocomplete="name" maxlength="120" required>
@@ -209,16 +216,9 @@
                         <input type="email" id="correo-cliente" name="correo" placeholder="nombre@correo.com" autocomplete="email" maxlength="150" required>
                     </div>
 
-                    <!-- CAMPO: TELÉFONO -->
                     <div class="cart-field">
                         <label for="telefono-cliente">Teléfono de contacto</label>
                         <input type="tel" id="telefono-cliente" name="telefono" placeholder="Ej: 300 123 4567" autocomplete="tel" maxlength="20" required>
-                    </div>
-
-                    <!-- CAMPO: DIRECCIÓN -->
-                    <div class="cart-field">
-                        <label for="direccion-cliente">Dirección de entrega</label>
-                        <input type="text" id="direccion-cliente" name="direccion" placeholder="Ej: Calle 123 # 45-67, Barrio, Ciudad" autocomplete="street-address" maxlength="200" required>
                     </div>
 
                     <div class="cart-field">
@@ -235,11 +235,12 @@
                         <i class="fa-solid fa-file-circle-check" aria-hidden="true"></i>
                         Generar recibo digital
                     </button>
+
                 </form>
             </div>
-
-
-            <!-- PASO 2: RECIBO -->
+                        <!-- ============================================
+                 PASO 2: RECIBO DIGITAL (COMPROBANTE)
+                 ============================================ -->
             <section class="cart-receipt" id="comprobante" aria-label="Comprobante digital" hidden>
 
                 <div class="cart-receipt-head">
@@ -251,6 +252,7 @@
                     <span class="cart-receipt-badge">Generado</span>
                 </div>
 
+                <!-- Datos del cliente -->
                 <div class="cart-receipt-meta">
                     <div class="cart-receipt-meta-item">
                         <small>Número</small>
@@ -272,12 +274,9 @@
                         <small>Teléfono</small>
                         <strong id="recibo-telefono">Pendiente</strong>
                     </div>
-                    <div class="cart-receipt-meta-item">
-                        <small>Dirección de entrega</small>
-                        <strong id="recibo-direccion">Pendiente</strong>
-                    </div>
                 </div>
 
+                <!-- Tabla de productos -->
                 <div class="cart-receipt-table-wrap">
                     <table class="cart-receipt-table">
                         <thead>
@@ -288,18 +287,21 @@
                                 <th scope="col">Total</th>
                             </tr>
                         </thead>
-                        <tbody id="recibo-lista-productos"></tbody>
+                        <tbody id="recibo-lista-productos">
+                            <!-- El JS inyecta las filas de productos aquí -->
+                        </tbody>
                     </table>
                 </div>
 
+                <!-- Totales del recibo -->
                 <div class="cart-receipt-totals">
                     <div class="cart-receipt-line">
                         <span>Subtotal</span>
                         <strong id="recibo-subtotal">$ 0</strong>
                     </div>
                     
-                    <!-- 🆕 FILA DE AHORRO EN EL RECIBO (Oculta por defecto) -->
-                    <div class="cart-receipt-line" id="recibo-fila-ahorro" style="display: none; color: var(--verde-oscuro); font-weight: 700;">
+                    <!-- Fila de ahorro (Oculta por defecto, el JS la muestra si aplica) -->
+                    <div class="cart-receipt-line" id="recibo-fila-ahorro" style="display: none;">
                         <span>Ahorro por mayoreo</span>
                         <strong id="recibo-ahorro">-$ 0</strong>
                     </div>
@@ -308,40 +310,45 @@
                         <span>Envío</span>
                         <strong id="recibo-envio">Por confirmar</strong>
                     </div>
+                    
                     <div class="cart-receipt-line cart-receipt-line-total">
                         <span>Total</span>
                         <strong id="recibo-total">$ 0</strong>
                     </div>
                 </div>
 
+                <!-- Observaciones -->
                 <div class="cart-receipt-obs" id="recibo-observaciones-contenedor" hidden>
                     <h3>Observaciones</h3>
                     <p id="recibo-observaciones"></p>
                 </div>
 
+                <!-- Footer del recibo -->
                 <footer class="cart-receipt-foot">
                     <p>Gracias por tu pedido.</p>
                     <p>Este comprobante es informativo y no sustituye una factura electrónica.</p>
-                    <!-- DATOS DE CONTACTO DE LA EMPRESA -->
-                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #e2e8f0; font-size: 12px; color: #64748b;">
-                        <p style="margin-bottom: 5px;"><strong>Contacto:</strong> Procesados Margarita S.A.S. - Bogotá</p>
-                        <p style="margin-bottom: 5px;"><strong>Teléfono:</strong> [Ingresar número aquí]</p>
+                    
+                    <div class="cart-receipt-contact">
+                        <p><strong>Contacto:</strong> Procesados Margarita S.A.S. - Bogotá</p>
+                        <p><strong>Teléfono:</strong> [Ingresar número aquí]</p>
                     </div>
                 </footer>
             </section>
 
 
-            <!-- ACCIONES DEL RECIBO -->
+            <!-- ============================================
+                 ACCIONES DEL RECIBO (PDF, Correo, Imprimir)
+                 ============================================ -->
             <div class="cart-receipt-actions" id="recibo-acciones" hidden>
 
                 <button type="button" class="cart-btn-action cart-btn-pdf" id="btn-descargar-pdf">
                     <i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
-                    <span>Descargar PDF</span>
+                    <span>Descargar</span>
                 </button>
 
                 <button type="button" class="cart-btn-action cart-btn-mail" id="btn-enviar-correo">
                     <i class="fa-solid fa-envelope" aria-hidden="true"></i>
-                    <span>Enviar por correo</span>
+                    <span>Correo</span>
                 </button>
 
                 <button type="button" class="cart-btn-action cart-btn-print" id="btn-imprimir-recibo">
@@ -351,23 +358,22 @@
 
             </div>
 
+            <!-- BOTÓN VOLVER A LA TIENDA (Post-recibo) -->
             <button type="button" class="cart-btn-return" id="btn-volver-tienda" hidden>
                 <i class="fa-solid fa-store" aria-hidden="true"></i>
                 <span>Volver a la tienda</span>
             </button>
 
-            <!-- BOTÓN DE CANCELAR PEDIDO -->
+            <!-- BOTÓN CANCELAR PEDIDO -->
             <button type="button" class="cart-btn-cancel" id="btn-cancelar-pedido" hidden>
                 <i class="fa-solid fa-ban" aria-hidden="true"></i>
                 <span>Cancelar pedido</span>
             </button>
 
-        </div>
-    </div>
-
-
-    <!-- ============================================================
-         NOTIFICACIONES
+        </div> <!-- Cierre de .cart-modal-card -->
+    </div> <!-- Cierre de .cart-modal -->
+        <!-- ============================================================
+         NOTIFICACIONES (TOAST)
          ============================================================ -->
     <div class="cart-toast" id="notificacion-carrito" role="status" aria-live="polite" style="display: none;"></div>
 
@@ -385,10 +391,10 @@
         </div>
     </footer>
 
+    <!-- SCRIPT PARA EL AÑO AUTOMÁTICO -->
     <script>
         document.getElementById("anio-actual").textContent = new Date().getFullYear();
     </script>
 
 </body>
-
 </html>

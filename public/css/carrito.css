@@ -1,7 +1,3 @@
-/* =========================================================
-   PROCESADOS MARGARITA S.A.S.
-   Carrito — Diseño Premium (Cristal Casi Nulo)
-========================================================= */
 
 /* =========================================================
    1. RESET Y VARIABLES
@@ -26,7 +22,7 @@ input, textarea { font: inherit; }
 
 :root {
     /* Paleta principal */
-    --azul-profundo: #0b2345;
+    --azul-profundo: #071a33;
     --azul-medio: #155eef;
     --azul-vibrante: #2878ff;
     --verde-principal: #12c76a;
@@ -37,31 +33,31 @@ input, textarea { font: inherit; }
     --azul-suave: #e5efff;
     --verde-suave: #dcfce9;
     --blanco: #ffffff;
-    --texto: #0f172a;
-    --texto-secundario: #64748b;
-    --borde: #e2e8f0;
+    --texto: #071a33;
+    --texto-secundario: #334155;
+    --texto-terciario: #64748b;
+    --borde: #cbd5e1;
     --rojo: #dc2626;
     --rojo-suave: #fee2e2;
     --naranja-suave: #fffbeb;
     --naranja-texto: #b45309;
 
-    /* Efecto Cristal CASI NULO (8% de blanco) */
-    --fondo-cristal: rgba(255, 255, 255, 0.08);
-    --fondo-cristal-hover: rgba(255, 255, 255, 0.15);
-    /* El borde se mantiene un poco más visible para delimitar */
-    --borde-cristal: rgba(255, 255, 255, 0.25); 
+    /* Efecto Cristal Mejorado (Más sólido para legibilidad) */
+    --fondo-cristal: rgba(255, 255, 255, 0.7);
+    --fondo-cristal-hover: rgba(255, 255, 255, 0.9);
+    --borde-cristal: rgba(255, 255, 255, 0.9); 
     
     /* Degradado Global */
-    --degradado-global: linear-gradient(135deg, #d4f7e3 0%, #eef4ff 50%, #dce8ff 100%);
+    --degradado-global: linear-gradient(135deg, #f0fdf4 0%, #eef4ff 50%, #e0f2fe 100%);
 
     /* Estructuras */
-    --radio-sm: 10px;
-    --radio-md: 16px;
-    --radio-lg: 24px;
+    --radio-sm: 12px;
+    --radio-md: 18px;
+    --radio-lg: 28px;
 
-    --sombra-suave: 0 4px 15px rgba(11, 35, 69, 0.06);
-    --sombra-media: 0 10px 30px rgba(11, 35, 69, 0.12);
-    --sombra-fuerte: 0 25px 60px rgba(11, 35, 69, 0.2);
+    --sombra-suave: 0 8px 25px -5px rgba(11, 35, 69, 0.06);
+    --sombra-media: 0 15px 35px -5px rgba(11, 35, 69, 0.12);
+    --sombra-fuerte: 0 25px 60px -10px rgba(11, 35, 69, 0.25);
 
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -71,8 +67,8 @@ input, textarea { font: inherit; }
 ========================================================= */
 .cart-body {
     font-family: 'Averia Libre', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size: 15px;
-    line-height: 1.55;
+    font-size: 16px;
+    line-height: 1.6;
     color: var(--texto);
     background: var(--degradado-global);
     background-attachment: fixed;
@@ -80,25 +76,27 @@ input, textarea { font: inherit; }
     display: flex;
     flex-direction: column;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .cart-shell {
-    width: min(1140px, 92%);
+    width: min(1200px, 92%);
     margin-inline: auto;
 }
 
 /* =========================================================
-   3. BARRA SUPERIOR (NAVBAR)
+   3. BARRA SUPERIOR (NAVBAR PREMIUM)
 ========================================================= */
 .cart-topbar {
-    background: var(--fondo-cristal);
-    border-bottom: 1px solid var(--borde-cristal);
+    background: rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid rgba(21, 94, 239, 0.1);
     position: sticky;
     top: 0;
     z-index: 50;
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    box-shadow: 0 4px 20px rgba(11, 35, 69, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 4px 30px rgba(11, 35, 69, 0.05);
+    transition: all 0.3s ease;
 }
 
 .cart-topbar .cart-shell {
@@ -106,29 +104,29 @@ input, textarea { font: inherit; }
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    padding-block: 16px;
+    padding-block: 18px;
 }
 
 .cart-brand {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     min-width: 0;
     transition: transform var(--ease);
 }
 
-.cart-brand:hover { transform: translateY(-1px); }
+.cart-brand:hover { transform: translateY(-2px); }
 
 .cart-brand-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
     background: linear-gradient(135deg, var(--azul-profundo), var(--azul-medio));
     display: grid;
     place-items: center;
     overflow: hidden;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(21, 94, 239, 0.2);
+    box-shadow: 0 6px 15px rgba(21, 94, 239, 0.25);
 }
 
 .cart-brand-img {
@@ -146,14 +144,14 @@ input, textarea { font: inherit; }
 
 .cart-brand-text strong {
     color: var(--azul-profundo);
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 800;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.5px;
 }
 
 .cart-brand-text small {
-    color: var(--texto-secundario);
-    font-size: 10px;
+    color: var(--texto-terciario);
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -164,17 +162,16 @@ input, textarea { font: inherit; }
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 18px;
+    padding: 12px 20px;
     color: var(--texto-secundario);
-    background: var(--fondo-cristal);
-    border: 1px solid var(--borde-cristal);
+    background: var(--blanco);
+    border: 1.5px solid rgba(21, 94, 239, 0.15);
     border-radius: 50px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     transition: all var(--ease);
     flex-shrink: 0;
-    box-shadow: var(--sombra-suave);
-    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
 }
 
 .cart-back:hover {
@@ -182,6 +179,7 @@ input, textarea { font: inherit; }
     background: var(--azul-profundo);
     border-color: var(--azul-profundo);
     transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(11, 35, 69, 0.2);
 }
 
 /* =========================================================
@@ -189,12 +187,12 @@ input, textarea { font: inherit; }
 ========================================================= */
 .cart-main {
     flex: 1;
-    padding-block: 48px 72px;
+    padding-block: 60px 80px;
 }
 
 .cart-intro {
-    margin-bottom: 40px;
-    max-width: 640px;
+    margin-bottom: 50px;
+    max-width: 700px;
 }
 
 .cart-eyebrow {
@@ -203,53 +201,54 @@ input, textarea { font: inherit; }
     gap: 8px;
     color: var(--azul-medio);
     background: var(--fondo-cristal);
-    padding: 8px 16px;
+    padding: 10px 18px;
     border-radius: 100px;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 800;
-    letter-spacing: 1.4px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
-    margin-bottom: 18px;
-    border: 1px solid var(--borde-cristal);
+    margin-bottom: 20px;
+    border: 1px solid rgba(21, 94, 239, 0.2);
     backdrop-filter: blur(10px);
+    box-shadow: 0 4px 10px rgba(21, 94, 239, 0.05);
 }
 
 .cart-intro h1 {
     color: var(--azul-profundo);
-    font-size: clamp(32px, 4vw, 46px);
+    font-size: clamp(34px, 4.5vw, 48px);
     font-weight: 800;
     line-height: 1.1;
-    letter-spacing: -1.3px;
-    margin-bottom: 12px;
+    letter-spacing: -1.5px;
+    margin-bottom: 14px;
 }
 
 .cart-intro p {
     color: var(--texto-secundario);
-    font-size: 16px;
-    line-height: 1.65;
+    font-size: 17px;
+    line-height: 1.7;
+    font-weight: 500;
 }
 
 /* =========================================================
-   5. LAYOUT PRINCIPAL
+   5. LAYOUT PRINCIPAL (GRID)
 ========================================================= */
 .cart-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 380px;
-    gap: 28px;
+    grid-template-columns: minmax(0, 1fr) 400px;
+    gap: 32px;
     align-items: start;
 }
 
 /* =========================================================
    6. PANEL DE PRODUCTOS
 ========================================================= */
-/* 🆕 Fondo más sólido para mejorar legibilidad del contenido interno */
 .cart-items {
     background: rgba(255, 255, 255, 0.85); 
-    border: 1px solid rgba(21, 94, 239, 0.15);
+    border: 1px solid rgba(21, 94, 239, 0.12);
     border-radius: var(--radio-lg);
     box-shadow: var(--sombra-media);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     overflow: hidden;
 }
 
@@ -258,38 +257,39 @@ input, textarea { font: inherit; }
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    padding: 26px 28px;
-    border-bottom: 1px solid rgba(21, 94, 239, 0.1);
-    background: rgba(255, 255, 255, 0.4);
+    padding: 28px 32px;
+    border-bottom: 1px solid rgba(21, 94, 239, 0.08);
+    background: rgba(255, 255, 255, 0.5);
 }
 
 .cart-items-header h2 {
     color: var(--azul-profundo);
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 800;
-    letter-spacing: -0.3px;
+    letter-spacing: -0.4px;
 }
 
 .cart-items-header p {
     margin-top: 6px;
-    color: var(--texto-secundario);
-    font-size: 13px;
-    font-weight: 500;
+    color: var(--texto-terciario);
+    font-size: 14px;
+    font-weight: 600;
 }
 
 .cart-btn-empty {
     display: inline-flex;
     align-items: center;
-    gap: 7px;
-    padding: 10px 16px;
+    gap: 8px;
+    padding: 10px 18px;
     color: var(--rojo);
     background: var(--blanco);
-    border: 1px solid rgba(220, 38, 38, 0.3);
+    border: 1.5px solid rgba(220, 38, 38, 0.2);
     border-radius: 10px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     transition: all var(--ease);
     flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.05);
 }
 
 .cart-btn-empty:hover:not(:disabled) {
@@ -297,42 +297,50 @@ input, textarea { font: inherit; }
     color: var(--blanco);
     border-color: var(--rojo);
     transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(220, 38, 38, 0.25);
 }
 
-.cart-btn-empty:disabled { opacity: 0.45; cursor: not-allowed; }
+.cart-btn-empty:disabled { 
+    opacity: 0.5; 
+    cursor: not-allowed; 
+}
 
 /* =========================================================
    7. ESTADO VACÍO
 ========================================================= */
 .cart-empty {
-    padding: 72px 32px;
+    padding: 80px 32px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .cart-empty-icon {
-    width: 96px;
-    height: 96px;
-    margin: 0 auto 24px;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 24px;
     display: grid;
     place-items: center;
     color: var(--azul-medio);
     background: var(--azul-suave);
-    border-radius: 28px;
-    font-size: 36px;
-    box-shadow: 0 10px 20px rgba(21, 94, 239, 0.1);
+    border-radius: 30px;
+    font-size: 40px;
+    box-shadow: inset 0 0 20px rgba(21, 94, 239, 0.1), 0 10px 25px rgba(21, 94, 239, 0.15);
 }
 
 .cart-empty h3 {
     color: var(--azul-profundo);
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 800;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .cart-empty p {
-    color: var(--texto-secundario);
-    font-size: 14px;
-    margin-bottom: 24px;
+    color: var(--texto-terciario);
+    font-size: 15px;
+    margin-bottom: 28px;
+    max-width: 320px;
 }
 
 /* =========================================================
@@ -346,18 +354,18 @@ input, textarea { font: inherit; }
 .cart-list > article,
 .cart-list .producto-carrito {
     display: grid;
-    grid-template-columns: 130px minmax(0, 1fr) auto;
-    gap: 22px;
+    grid-template-columns: 140px minmax(0, 1fr) auto;
+    gap: 24px;
     align-items: center;
-    padding: 26px 28px;
-    border-bottom: 1px solid rgba(21, 94, 239, 0.1);
+    padding: 28px 32px;
+    border-bottom: 1px solid rgba(21, 94, 239, 0.08);
     animation: fadeUp 0.4s var(--ease) both;
     transition: background var(--ease);
 }
 
 .cart-list > article:hover,
 .cart-list .producto-carrito:hover {
-    background: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.6);
 }
 
 .cart-list > article:last-child,
@@ -367,15 +375,20 @@ input, textarea { font: inherit; }
 
 .cart-list img,
 .producto-imagen {
-    width: 130px;
-    height: 130px;
+    width: 140px;
+    height: 140px;
     border-radius: var(--radio-md);
     object-fit: contain;
     background: var(--blanco);
-    border: 1px solid var(--borde);
-    padding: 10px;
+    border: 1px solid rgba(21, 94, 239, 0.1);
+    padding: 12px;
     flex-shrink: 0;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.04);
+    transition: transform 0.3s ease;
+}
+
+.cart-list > article:hover .producto-imagen {
+    transform: scale(1.03);
 }
 
 .producto-datos {
@@ -384,7 +397,7 @@ input, textarea { font: inherit; }
 
 .producto-datos h3 {
     color: var(--azul-profundo);
-    font-size: 18px;
+    font-size: 19px;
     font-weight: 800;
     line-height: 1.3;
     margin-bottom: 8px;
@@ -392,21 +405,25 @@ input, textarea { font: inherit; }
 }
 
 .producto-descripcion {
-    color: var(--texto-secundario);
-    font-size: 13px;
+    color: var(--texto-terciario);
+    font-size: 14px;
     line-height: 1.6;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     display: -webkit-box;
-    line-clamp: 3;
-    -webkit-line-clamp: 3;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
 .producto-precio {
     color: var(--verde-oscuro);
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 800;
+    background: var(--verde-suave);
+    padding: 4px 10px;
+    border-radius: 6px;
+    display: inline-block;
 }
 
 .producto-precio-movil { display: none; }
@@ -416,39 +433,39 @@ input, textarea { font: inherit; }
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 14px;
-    min-width: 140px;
+    gap: 16px;
+    min-width: 160px;
 }
 
 .producto-total {
     color: var(--azul-profundo);
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 800;
-    letter-spacing: -0.4px;
+    letter-spacing: -0.5px;
     white-space: nowrap;
 }
 
-/* 🆕 Fondo blanco sólido para los controles */
 .control-cantidad {
     display: inline-flex;
     align-items: center;
     background: var(--blanco);
-    border: 1px solid rgba(21, 94, 239, 0.2);
+    border: 1.5px solid rgba(21, 94, 239, 0.15);
     border-radius: 12px;
-    padding: 5px;
+    padding: 6px;
     gap: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
 }
 
 .control-cantidad button {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     display: grid;
     place-items: center;
-    color: var(--azul-profundo);
-    background: var(--azul-suave);
+    color: var(--azul-medio);
+    background: #f8fafc;
     border: 1px solid transparent;
     border-radius: 8px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     transition: all var(--ease);
 }
@@ -456,13 +473,14 @@ input, textarea { font: inherit; }
 .control-cantidad button:hover:not(:disabled) {
     background: var(--azul-medio);
     color: var(--blanco);
-    border-color: var(--azul-medio);
+    box-shadow: 0 4px 10px rgba(21, 94, 239, 0.25);
+    transform: translateY(-1px);
 }
 
 .control-cantidad input {
-    width: 36px;
+    width: 44px;
     text-align: center;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 800;
     color: var(--azul-profundo);
     background: transparent;
@@ -483,74 +501,80 @@ input, textarea { font: inherit; }
     align-items: center;
     gap: 6px;
     color: #b91c1c;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
-    padding: 4px;
+    padding: 6px 10px;
+    border-radius: 6px;
     transition: all var(--ease);
+    background: transparent;
 }
 
 .producto-eliminar:hover {
-    color: #7f1d1d;
-    text-decoration: underline;
-    transform: scale(1.05);
+    color: var(--rojo);
+    background: var(--rojo-suave);
+    text-decoration: none;
+    transform: scale(1.02);
 }
 
 /* =========================================================
    9. PANEL RESUMEN (STICKY)
 ========================================================= */
-/* 🆕 Fondo más sólido para los totales */
 .cart-summary {
     position: sticky;
-    top: 96px;
-    background: rgba(255, 255, 255, 0.85); 
+    top: 100px;
+    background: rgba(255, 255, 255, 0.9); 
     border: 1px solid rgba(21, 94, 239, 0.15);
     border-radius: var(--radio-lg);
     box-shadow: var(--sombra-media);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     overflow: hidden;
 }
 
 .cart-summary-head {
-    padding: 26px 26px 22px;
+    padding: 28px 30px 24px;
     background: linear-gradient(135deg, var(--azul-profundo) 0%, var(--azul-medio) 100%);
     color: var(--blanco);
-    border-bottom: 4px solid var(--verde-principal);
+    border-bottom: 5px solid var(--verde-principal);
 }
 
 .cart-summary-eyebrow {
     display: block;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 800;
     letter-spacing: 2px;
     text-transform: uppercase;
-    opacity: 0.8;
+    opacity: 0.85;
     margin-bottom: 8px;
 }
 
 .cart-summary-head h2 {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 800;
-    letter-spacing: -0.4px;
+    letter-spacing: -0.5px;
 }
 
 .cart-summary-body {
-    padding: 22px 26px 6px;
+    padding: 24px 30px 10px;
 }
 
-/* 🆕 Textos de las líneas más oscuros y gruesos */
 .cart-summary-line {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-block: 12px;
-    color: #1e293b;
+    padding-block: 14px;
+    color: var(--texto-secundario);
     font-size: 15px;
     font-weight: 600;
+    border-bottom: 1px dashed rgba(21, 94, 239, 0.1);
+}
+
+.cart-summary-line:last-of-type {
+    border-bottom: none;
 }
 
 .cart-summary-line strong {
-    color: #0f172a;
+    color: var(--azul-profundo);
     font-size: 16px;
     font-weight: 800;
 }
@@ -558,90 +582,97 @@ input, textarea { font: inherit; }
 .cart-summary-total {
     margin-top: 10px;
     padding-top: 20px;
-    border-top: 1.5px dashed rgba(21, 94, 239, 0.3);
+    border-top: 2px solid rgba(21, 94, 239, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .cart-summary-total span {
-    color: #0f172a;
-    font-size: 16px;
+    color: var(--azul-profundo);
+    font-size: 18px;
     font-weight: 800;
 }
 
-/* 🆕 Total más grande y con verde oscuro */
 .cart-summary-total strong {
     color: var(--verde-oscuro);
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 800;
-    letter-spacing: -0.6px;
-    text-shadow: 0 1px 2px rgba(7, 148, 85, 0.1);
+    letter-spacing: -0.8px;
+    text-shadow: 0 2px 5px rgba(7, 148, 85, 0.15);
 }
 
 .cart-summary-note {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
-    margin: 16px 26px 20px;
-    padding: 14px;
-    background: rgba(255, 251, 235, 0.6);
-    border-left: 3px solid var(--naranja-texto);
-    border-radius: 0 10px 10px 0;
+    gap: 12px;
+    margin: 16px 30px 24px;
+    padding: 16px;
+    background: rgba(255, 251, 235, 0.7);
+    border-left: 4px solid var(--naranja-texto);
+    border-radius: 0 12px 12px 0;
     color: var(--naranja-texto);
 }
 
 .cart-summary-note i {
     margin-top: 2px;
     flex-shrink: 0;
+    font-size: 16px;
 }
 
 .cart-summary-note p {
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.5;
     font-weight: 600;
 }
 
+/* =========================================================
+   10. BOTONES DEL RESUMEN
+========================================================= */
 .cart-btn-checkout {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    width: calc(100% - 52px);
-    margin: 0 26px;
-    padding: 18px 20px;
+    gap: 12px;
+    width: calc(100% - 60px);
+    margin: 0 30px;
+    padding: 20px 24px;
     color: var(--blanco);
     background: linear-gradient(135deg, var(--verde-principal) 0%, var(--verde-oscuro) 100%);
-    border-radius: 12px;
-    font-size: 15px;
+    border-radius: 14px;
+    font-size: 16px;
     font-weight: 800;
     letter-spacing: 0.3px;
-    box-shadow: 0 8px 25px rgba(18, 199, 106, 0.3);
+    box-shadow: 0 10px 25px rgba(18, 199, 106, 0.35);
     transition: all var(--ease);
 }
 
 .cart-btn-checkout:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 30px rgba(18, 199, 106, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(18, 199, 106, 0.45);
 }
 
 .cart-btn-checkout:disabled {
-    opacity: 0.45;
+    opacity: 0.5;
     cursor: not-allowed;
     box-shadow: none;
+    transform: none;
 }
 
 .cart-btn-secondary {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    width: calc(100% - 52px);
-    margin: 12px 26px 0;
-    padding: 14px 20px;
+    gap: 10px;
+    width: calc(100% - 60px);
+    margin: 14px 30px 0;
+    padding: 16px 24px;
     color: var(--azul-profundo);
     background: var(--blanco);
-    border: 1px solid rgba(21, 94, 239, 0.2);
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 700;
+    border: 1.5px solid rgba(21, 94, 239, 0.2);
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 800;
     transition: all var(--ease);
 }
 
@@ -649,24 +680,29 @@ input, textarea { font: inherit; }
     color: var(--blanco);
     background: var(--azul-profundo);
     border-color: var(--azul-profundo);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(11, 35, 69, 0.15);
 }
 
 .cart-summary-foot {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
-    padding: 20px 26px 24px;
-    color: var(--texto-secundario);
-    font-size: 12px;
+    gap: 8px;
+    padding: 24px 30px 28px;
+    color: var(--texto-terciario);
+    font-size: 13px;
     font-weight: 500;
     text-align: center;
 }
 
-.cart-summary-foot i { color: var(--verde-intenso); }
+.cart-summary-foot i { 
+    color: var(--verde-intenso); 
+    font-size: 15px;
+}
 
 /* =========================================================
-   10. MODAL EMERGENTE
+   11. MODAL EMERGENTE (FONDO Y BASE)
 ========================================================= */
 body.modal-carrito-abierto { overflow: hidden; }
 
@@ -678,192 +714,208 @@ body.modal-carrito-abierto { overflow: hidden; }
     align-items: center;
     justify-content: center;
     padding: 24px;
-    background: rgba(11, 35, 69, 0.6);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(11, 35, 69, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     overflow-y: auto;
     animation: fadeIn 0.3s var(--ease) both;
 }
 
-/* 🆕 Fondo del modal más sólido para el formulario */
 .cart-modal-card {
     position: relative;
-    width: min(100%, 680px);
+    width: min(100%, 720px);
     max-height: calc(100vh - 48px);
     margin: auto;
-    padding: 38px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 24px;
+    padding: 42px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 28px;
     box-shadow: var(--sombra-fuerte);
     overflow-y: auto;
     animation: popIn 0.4s var(--ease) both;
-    border-top: 5px solid var(--azul-medio);
-    border-left: 1px solid var(--borde-cristal);
-    border-right: 1px solid var(--borde-cristal);
-    border-bottom: 1px solid var(--borde-cristal);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    border-top: 6px solid var(--azul-medio);
+    border-left: 1px solid rgba(255, 255, 255, 0.8);
+    border-right: 1px solid rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
 }
 
 .cart-modal-close {
     position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
+    top: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
     display: grid;
     place-items: center;
     color: var(--texto-secundario);
-    background: var(--blanco);
-    border: 1px solid var(--borde);
+    background: #f1f5f9;
+    border: 1px solid rgba(21, 94, 239, 0.1);
     border-radius: 50%;
-    font-size: 16px;
+    font-size: 18px;
     transition: all var(--ease);
     z-index: 2;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
 .cart-modal-close:hover {
     background: var(--rojo);
     color: var(--blanco);
     border-color: var(--rojo);
-    transform: rotate(90deg);
+    transform: rotate(90deg) scale(1.05);
 }
 
 .cart-modal-icon {
-    width: 64px;
-    height: 64px;
+    width: 72px;
+    height: 72px;
     display: grid;
     place-items: center;
-    margin-bottom: 22px;
+    margin-bottom: 24px;
     color: var(--blanco);
     background: linear-gradient(135deg, var(--azul-profundo), var(--azul-medio));
-    border-radius: 18px;
-    font-size: 26px;
-    box-shadow: 0 10px 26px rgba(21, 94, 239, 0.3);
+    border-radius: 20px;
+    font-size: 30px;
+    box-shadow: 0 12px 28px rgba(21, 94, 239, 0.35);
 }
 
 .cart-modal h2 {
     color: var(--azul-profundo);
-    font-size: clamp(24px, 4vw, 32px);
+    font-size: clamp(26px, 4vw, 34px);
     font-weight: 800;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.6px;
     line-height: 1.2;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .cart-modal-desc {
     color: var(--texto-secundario);
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1.6;
-    margin-bottom: 26px;
+    margin-bottom: 30px;
 }
 
 /* =========================================================
-   11. FORMULARIO
+   12. FORMULARIO (COMPLETA TUS DATOS)
 ========================================================= */
 .cart-form {
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 22px;
 }
 
 .cart-field {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
 }
 
 .cart-field label {
     color: var(--azul-profundo);
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .cart-field label span {
-    color: var(--texto-secundario);
+    color: var(--texto-terciario);
     font-weight: 500;
 }
 
-/* 🆕 Inputs con fondo más sólido */
 .cart-field input,
 .cart-field textarea {
     width: 100%;
-    min-height: 50px;
-    padding: 14px 16px;
+    min-height: 54px;
+    padding: 16px 18px;
     color: var(--texto);
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(21, 94, 239, 0.2);
+    background: #f8fafc;
+    border: 1.5px solid rgba(21, 94, 239, 0.15);
     border-radius: 12px;
-    font-size: 14px;
+    font-size: 15px;
+    font-weight: 500;
     transition: all var(--ease);
 }
 
 .cart-field textarea {
-    min-height: 100px;
+    min-height: 120px;
     resize: vertical;
     line-height: 1.6;
+}
+
+.cart-field input::placeholder,
+.cart-field textarea::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
 }
 
 .cart-field input:focus,
 .cart-field textarea:focus {
     background: var(--blanco);
     border-color: var(--azul-medio);
-    box-shadow: 0 0 0 4px rgba(21, 94, 239, 0.1);
+    box-shadow: 0 0 0 5px rgba(21, 94, 239, 0.1);
     outline: none;
 }
 
 .cart-form-note {
     display: flex;
     align-items: flex-start;
-    gap: 10px;
-    padding: 14px;
+    gap: 12px;
+    padding: 16px;
     color: var(--naranja-texto);
     background: var(--naranja-suave);
-    border-radius: 10px;
+    border-radius: 12px;
     border: 1px solid #fde68a;
+    margin-top: 8px;
 }
 
-.cart-form-note i { margin-top: 2px; flex-shrink: 0; }
+.cart-form-note i { 
+    margin-top: 2px; 
+    flex-shrink: 0; 
+    font-size: 16px;
+}
 
 .cart-form-note p {
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.5;
     font-weight: 600;
 }
 
 /* =========================================================
-   12. BOTONES PRIMARIOS Y RECIBO
+   13. BOTONES DEL FORMULARIO
 ========================================================= */
 .cart-btn-primary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
     width: 100%;
-    padding: 16px 24px;
+    padding: 18px 28px;
     color: var(--blanco);
     background: linear-gradient(115deg, var(--azul-medio) 0%, var(--azul-profundo) 100%);
-    border-radius: 12px;
-    font-size: 15px;
+    border-radius: 14px;
+    font-size: 16px;
     font-weight: 800;
-    letter-spacing: 0.2px;
-    box-shadow: 0 6px 20px rgba(21, 94, 239, 0.25);
+    letter-spacing: 0.3px;
+    box-shadow: 0 8px 25px rgba(21, 94, 239, 0.3);
     transition: all var(--ease);
+    margin-top: 10px;
 }
 
 .cart-btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(21, 94, 239, 0.35);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(21, 94, 239, 0.4);
 }
 
-/* 🆕 Fondo del recibo más sólido */
+/* =========================================================
+   14. COMPROBANTE (RECIBO DIGITAL)
+========================================================= */
 .cart-receipt {
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.95);
     border: 1px solid rgba(21, 94, 239, 0.15);
-    border-top: 5px solid var(--verde-principal);
+    border-top: 6px solid var(--verde-principal);
     border-radius: var(--radio-lg);
-    padding: 30px;
+    padding: 36px;
     animation: fadeUp 0.4s var(--ease) both;
     box-shadow: var(--sombra-media);
     backdrop-filter: blur(10px);
@@ -871,8 +923,8 @@ body.modal-carrito-abierto { overflow: hidden; }
 }
 
 .cart-receipt-head {
-    padding-bottom: 24px;
-    border-bottom: 1.5px dashed rgba(21, 94, 239, 0.2);
+    padding-bottom: 28px;
+    border-bottom: 2px dashed rgba(21, 94, 239, 0.15);
     text-align: center;
 }
 
@@ -880,60 +932,412 @@ body.modal-carrito-abierto { overflow: hidden; }
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 18px;
+    padding: 12px 22px;
     color: var(--blanco);
     background: linear-gradient(135deg, var(--azul-profundo), var(--azul-medio));
-    border-radius: 10px;
-    font-size: 12px;
+    border-radius: 12px;
+    font-size: 13px;
     font-weight: 800;
-    letter-spacing: 0.6px;
-    margin-bottom: 16px;
+    letter-spacing: 0.8px;
+    margin-bottom: 20px;
+    box-shadow: 0 6px 15px rgba(11, 35, 69, 0.2);
 }
 
-.cart-receipt-brand i { color: #fbc02d; }
+.cart-receipt-brand i { 
+    color: #fbc02d; 
+    font-size: 16px;
+}
 
 .cart-receipt-head h2 {
     color: var(--azul-profundo);
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 800;
-    letter-spacing: -0.3px;
-    margin-bottom: 10px;
+    letter-spacing: -0.4px;
+    margin-bottom: 12px;
 }
 
 .cart-receipt-badge {
     display: inline-block;
-    padding: 6px 14px;
+    padding: 8px 18px;
     color: var(--verde-oscuro);
     background: var(--verde-suave);
-    border: 1px solid rgba(18, 199, 106, 0.4);
+    border: 1.5px solid rgba(18, 199, 106, 0.4);
     border-radius: 100px;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.2px;
+    box-shadow: 0 2px 8px rgba(18, 199, 106, 0.1);
 }
 
+/* =========================================================
+   10. BOTONES DEL RESUMEN
+========================================================= */
+.cart-btn-checkout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: calc(100% - 60px);
+    margin: 0 30px;
+    padding: 20px 24px;
+    color: var(--blanco);
+    background: linear-gradient(135deg, var(--verde-principal) 0%, var(--verde-oscuro) 100%);
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    box-shadow: 0 10px 25px rgba(18, 199, 106, 0.35);
+    transition: all var(--ease);
+}
+
+.cart-btn-checkout:hover:not(:disabled) {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(18, 199, 106, 0.45);
+}
+
+.cart-btn-checkout:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+.cart-btn-secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: calc(100% - 60px);
+    margin: 14px 30px 0;
+    padding: 16px 24px;
+    color: var(--azul-profundo);
+    background: var(--blanco);
+    border: 1.5px solid rgba(21, 94, 239, 0.2);
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 800;
+    transition: all var(--ease);
+}
+
+.cart-btn-secondary:hover {
+    color: var(--blanco);
+    background: var(--azul-profundo);
+    border-color: var(--azul-profundo);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(11, 35, 69, 0.15);
+}
+
+.cart-summary-foot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 24px 30px 28px;
+    color: var(--texto-terciario);
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.cart-summary-foot i { 
+    color: var(--verde-intenso); 
+    font-size: 15px;
+}
+
+/* =========================================================
+   11. MODAL EMERGENTE (FONDO Y BASE)
+========================================================= */
+body.modal-carrito-abierto { overflow: hidden; }
+
+.cart-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(11, 35, 69, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    overflow-y: auto;
+    animation: fadeIn 0.3s var(--ease) both;
+}
+
+.cart-modal-card {
+    position: relative;
+    width: min(100%, 720px);
+    max-height: calc(100vh - 48px);
+    margin: auto;
+    padding: 42px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 28px;
+    box-shadow: var(--sombra-fuerte);
+    overflow-y: auto;
+    animation: popIn 0.4s var(--ease) both;
+    border-top: 6px solid var(--azul-medio);
+    border-left: 1px solid rgba(255, 255, 255, 0.8);
+    border-right: 1px solid rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+}
+
+.cart-modal-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    color: var(--texto-secundario);
+    background: #f1f5f9;
+    border: 1px solid rgba(21, 94, 239, 0.1);
+    border-radius: 50%;
+    font-size: 18px;
+    transition: all var(--ease);
+    z-index: 2;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.cart-modal-close:hover {
+    background: var(--rojo);
+    color: var(--blanco);
+    border-color: var(--rojo);
+    transform: rotate(90deg) scale(1.05);
+}
+
+.cart-modal-icon {
+    width: 72px;
+    height: 72px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 24px;
+    color: var(--blanco);
+    background: linear-gradient(135deg, var(--azul-profundo), var(--azul-medio));
+    border-radius: 20px;
+    font-size: 30px;
+    box-shadow: 0 12px 28px rgba(21, 94, 239, 0.35);
+}
+
+.cart-modal h2 {
+    color: var(--azul-profundo);
+    font-size: clamp(26px, 4vw, 34px);
+    font-weight: 800;
+    letter-spacing: -0.6px;
+    line-height: 1.2;
+    margin-bottom: 12px;
+}
+
+.cart-modal-desc {
+    color: var(--texto-secundario);
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+/* =========================================================
+   12. FORMULARIO (COMPLETA TUS DATOS)
+========================================================= */
+.cart-form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.cart-field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cart-field label {
+    color: var(--azul-profundo);
+    font-size: 14px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.cart-field label span {
+    color: var(--texto-terciario);
+    font-weight: 500;
+}
+
+.cart-field input,
+.cart-field textarea {
+    width: 100%;
+    min-height: 54px;
+    padding: 16px 18px;
+    color: var(--texto);
+    background: #f8fafc;
+    border: 1.5px solid rgba(21, 94, 239, 0.15);
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all var(--ease);
+}
+
+.cart-field textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.cart-field input::placeholder,
+.cart-field textarea::placeholder {
+    color: #94a3b8;
+    font-weight: 400;
+}
+
+.cart-field input:focus,
+.cart-field textarea:focus {
+    background: var(--blanco);
+    border-color: var(--azul-medio);
+    box-shadow: 0 0 0 5px rgba(21, 94, 239, 0.1);
+    outline: none;
+}
+
+.cart-form-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    color: var(--naranja-texto);
+    background: var(--naranja-suave);
+    border-radius: 12px;
+    border: 1px solid #fde68a;
+    margin-top: 8px;
+}
+
+.cart-form-note i { 
+    margin-top: 2px; 
+    flex-shrink: 0; 
+    font-size: 16px;
+}
+
+.cart-form-note p {
+    font-size: 13px;
+    line-height: 1.5;
+    font-weight: 600;
+}
+
+/* =========================================================
+   13. BOTONES DEL FORMULARIO
+========================================================= */
+.cart-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 18px 28px;
+    color: var(--blanco);
+    background: linear-gradient(115deg, var(--azul-medio) 0%, var(--azul-profundo) 100%);
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    box-shadow: 0 8px 25px rgba(21, 94, 239, 0.3);
+    transition: all var(--ease);
+    margin-top: 10px;
+}
+
+.cart-btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(21, 94, 239, 0.4);
+}
+
+/* =========================================================
+   14. COMPROBANTE (RECIBO DIGITAL)
+========================================================= */
+.cart-receipt {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(21, 94, 239, 0.15);
+    border-top: 6px solid var(--verde-principal);
+    border-radius: var(--radio-lg);
+    padding: 36px;
+    animation: fadeUp 0.4s var(--ease) both;
+    box-shadow: var(--sombra-media);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.cart-receipt-head {
+    padding-bottom: 28px;
+    border-bottom: 2px dashed rgba(21, 94, 239, 0.15);
+    text-align: center;
+}
+
+.cart-receipt-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 22px;
+    color: var(--blanco);
+    background: linear-gradient(135deg, var(--azul-profundo), var(--azul-medio));
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    margin-bottom: 20px;
+    box-shadow: 0 6px 15px rgba(11, 35, 69, 0.2);
+}
+
+.cart-receipt-brand i { 
+    color: #fbc02d; 
+    font-size: 16px;
+}
+
+.cart-receipt-head h2 {
+    color: var(--azul-profundo);
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+    margin-bottom: 12px;
+}
+
+.cart-receipt-badge {
+    display: inline-block;
+    padding: 8px 18px;
+    color: var(--verde-oscuro);
+    background: var(--verde-suave);
+    border: 1.5px solid rgba(18, 199, 106, 0.4);
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    box-shadow: 0 2px 8px rgba(18, 199, 106, 0.1);
+}
+
+/* =========================================================
+   15. CUERPO DEL RECIBO (METADATOS Y TABLA)
+========================================================= */
 .cart-receipt-meta {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
-    padding: 24px 0;
+    gap: 20px;
+    padding: 28px 0;
 }
 
 .cart-receipt-meta-item small {
     display: block;
-    color: var(--texto-secundario);
-    font-size: 10px;
+    color: var(--texto-terciario);
+    font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 5px;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
 }
 
 .cart-receipt-meta-item strong {
     display: block;
     color: var(--azul-profundo);
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
     line-height: 1.4;
     overflow-wrap: anywhere;
@@ -942,37 +1346,39 @@ body.modal-carrito-abierto { overflow: hidden; }
 /* Tabla del recibo */
 .cart-receipt-table-wrap {
     overflow-x: auto;
-    border-radius: 12px;
-    margin-bottom: 24px;
+    border-radius: 14px;
+    margin-bottom: 28px;
     border: 1px solid rgba(21, 94, 239, 0.15);
     background: var(--blanco);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
 }
 
 .cart-receipt-table {
     width: 100%;
-    min-width: 400px;
+    min-width: 420px;
     border-collapse: collapse;
-    font-size: 13px;
+    font-size: 14px;
 }
 
 .cart-receipt-table th {
-    padding: 14px 12px;
+    padding: 16px 14px;
     text-align: left;
     color: var(--azul-profundo);
-    background: rgba(21, 94, 239, 0.05);
-    font-size: 10px;
+    background: #f8fafc;
+    font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.7px;
-    border-bottom: 1px solid rgba(21, 94, 239, 0.1);
+    letter-spacing: 0.8px;
+    border-bottom: 1.5px solid rgba(21, 94, 239, 0.1);
 }
 
 .cart-receipt-table td {
-    padding: 14px 12px;
-    color: var(--texto);
-    border-bottom: 1px solid rgba(21, 94, 239, 0.1);
+    padding: 16px 14px;
+    color: var(--texto-secundario);
+    border-bottom: 1px solid rgba(21, 94, 239, 0.08);
     line-height: 1.5;
     overflow-wrap: anywhere;
+    font-weight: 600;
 }
 
 .cart-receipt-table th:last-child,
@@ -981,140 +1387,152 @@ body.modal-carrito-abierto { overflow: hidden; }
 .cart-receipt-table td:nth-child(2) { text-align: center; }
 
 .cart-receipt-table tbody tr:last-child td { border-bottom: none; }
+.cart-receipt-table tbody tr:hover td { background: rgba(21, 94, 239, 0.02); }
 
+/* Totales del recibo */
 .cart-receipt-totals {
-    padding-top: 18px;
-    border-top: 1.5px dashed rgba(21, 94, 239, 0.2);
+    padding-top: 20px;
+    border-top: 2px dashed rgba(21, 94, 239, 0.2);
 }
 
 .cart-receipt-line {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-block: 10px;
-    color: #1e293b;
-    font-size: 14px;
+    padding-block: 12px;
+    color: var(--texto-secundario);
+    font-size: 15px;
     font-weight: 600;
 }
 
 .cart-receipt-line strong {
-    color: #0f172a;
-    font-size: 15px;
+    color: var(--azul-profundo);
+    font-size: 16px;
     font-weight: 800;
 }
 
 .cart-receipt-line-total {
     margin-top: 10px;
-    padding-top: 18px;
-    border-top: 1px solid rgba(21, 94, 239, 0.2);
+    padding-top: 20px;
+    border-top: 1px solid rgba(21, 94, 239, 0.15);
 }
 
 .cart-receipt-line-total span {
-    color: #0f172a;
-    font-size: 16px;
+    color: var(--azul-profundo);
+    font-size: 18px;
     font-weight: 800;
 }
 
 .cart-receipt-line-total strong {
     color: var(--verde-oscuro);
-    font-size: 26px;
+    font-size: 30px;
     font-weight: 800;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.6px;
 }
 
 .cart-receipt-obs {
-    margin-top: 20px;
-    padding: 18px;
-    background: var(--blanco);
-    border-radius: 12px;
-    border: 1px solid rgba(21, 94, 239, 0.15);
+    margin-top: 24px;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 14px;
+    border: 1px solid rgba(21, 94, 239, 0.1);
 }
 
 .cart-receipt-obs h3 {
     color: var(--azul-profundo);
     font-size: 12px;
     font-weight: 800;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     text-transform: uppercase;
-    letter-spacing: 0.7px;
+    letter-spacing: 0.8px;
 }
 
 .cart-receipt-obs p {
     color: var(--texto-secundario);
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.6;
     overflow-wrap: anywhere;
 }
 
 .cart-receipt-foot {
-    margin-top: 24px;
-    padding-top: 20px;
+    margin-top: 28px;
+    padding-top: 24px;
     border-top: 1px solid rgba(21, 94, 239, 0.15);
     text-align: center;
-    color: var(--texto-secundario);
-    font-size: 12px;
+    color: var(--texto-terciario);
+    font-size: 13px;
     line-height: 1.7;
 }
 
-.cart-receipt-foot p { margin-bottom: 4px; }
+.cart-receipt-foot p { margin-bottom: 6px; }
 .cart-receipt-foot p:last-child { margin-bottom: 0; }
 
 /* =========================================================
-   13. ACCIONES DEL RECIBO
+   16. ACCIONES DEL RECIBO (BOTONES)
 ========================================================= */
 .cart-receipt-actions {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
-    margin-top: 24px;
+    gap: 14px;
+    margin-top: 28px;
 }
 
 .cart-btn-action {
     display: inline-flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 9px;
+    gap: 8px;
     padding: 16px 12px;
     color: var(--blanco);
-    border-radius: 12px;
-    font-size: 13px;
+    border-radius: 14px;
+    font-size: 14px;
     font-weight: 800;
     letter-spacing: 0.2px;
     transition: all var(--ease);
+    text-align: center;
 }
 
-.cart-btn-action:hover { transform: translateY(-3px); filter: brightness(1.1); }
+.cart-btn-action i {
+    font-size: 20px;
+}
+
+.cart-btn-action:hover { 
+    transform: translateY(-4px); 
+    filter: brightness(1.1); 
+}
 
 .cart-btn-pdf {
-    background: linear-gradient(135deg, var(--verde-principal), var(--verde-oscuro));
-    box-shadow: 0 8px 20px rgba(18, 199, 106, 0.25);
-}
-
-.cart-btn-mail {
     background: linear-gradient(135deg, #ef4444, #b91c1c);
     box-shadow: 0 8px 20px rgba(220, 38, 38, 0.25);
 }
 
-.cart-btn-print {
+.cart-btn-mail {
     background: linear-gradient(135deg, var(--azul-medio), var(--azul-profundo));
     box-shadow: 0 8px 20px rgba(21, 94, 239, 0.25);
+}
+
+.cart-btn-print {
+    background: linear-gradient(135deg, #64748b, #334155);
+    box-shadow: 0 8px 20px rgba(51, 65, 85, 0.25);
 }
 
 .cart-btn-return {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 9px;
+    gap: 10px;
     width: 100%;
-    margin-top: 14px;
-    padding: 15px;
+    margin-top: 16px;
+    padding: 16px;
     color: var(--azul-profundo);
     background: var(--blanco);
-    border: 1px solid rgba(21, 94, 239, 0.2);
-    border-radius: 12px;
-    font-size: 14px;
+    border: 1.5px solid rgba(21, 94, 239, 0.2);
+    border-radius: 14px;
+    font-size: 15px;
     font-weight: 800;
     transition: all var(--ease);
+    cursor: pointer;
 }
 
 .cart-btn-return:hover {
@@ -1122,6 +1540,7 @@ body.modal-carrito-abierto { overflow: hidden; }
     color: var(--blanco);
     border-color: var(--azul-profundo);
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(11, 35, 69, 0.2);
 }
 
 .cart-btn-cancel {
@@ -1131,11 +1550,11 @@ body.modal-carrito-abierto { overflow: hidden; }
     gap: 8px;
     width: 100%;
     margin-top: 12px;
-    padding: 15px;
-    background: var(--blanco);
+    padding: 16px;
+    background: transparent;
     color: var(--rojo);
-    border: 1px solid rgba(220, 38, 38, 0.3);
-    border-radius: 12px;
+    border: 1.5px solid rgba(220, 38, 38, 0.3);
+    border-radius: 14px;
     font-size: 14px;
     font-weight: 800;
     cursor: pointer;
@@ -1147,6 +1566,7 @@ body.modal-carrito-abierto { overflow: hidden; }
     color: var(--blanco);
     border-color: var(--rojo);
     transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(220, 38, 38, 0.2);
 }
 
 .cart-btn-cancel:disabled {
@@ -1155,43 +1575,45 @@ body.modal-carrito-abierto { overflow: hidden; }
 }
 
 /* =========================================================
-   14. TOASTS Y NOTIFICACIONES
+   17. TOASTS Y NOTIFICACIONES
 ========================================================= */
 .cart-toast {
     position: fixed;
     top: 24px;
     right: 24px;
     z-index: 10000;
-    max-width: min(380px, calc(100vw - 48px));
-    padding: 16px 22px;
+    max-width: min(400px, calc(100vw - 48px));
+    padding: 18px 24px;
     color: var(--blanco);
     background: var(--azul-profundo);
-    border-radius: 12px;
-    border-left: 4px solid var(--verde-principal);
-    font-size: 14px;
+    border-radius: 14px;
+    border-left: 6px solid var(--verde-principal);
+    font-size: 15px;
     font-weight: 600;
     line-height: 1.55;
-    box-shadow: 0 15px 40px rgba(11, 35, 69, 0.3);
+    box-shadow: 0 20px 50px rgba(11, 35, 69, 0.4);
+    animation: slideInRight 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 /* =========================================================
-   15. FOOTER
+   18. FOOTER
 ========================================================= */
 .cart-footer {
     background: var(--azul-profundo);
-    border-top: 4px solid var(--verde-principal);
+    border-top: 5px solid var(--verde-principal);
     color: #94a3b8;
-    font-size: 12px;
-    border-top-left-radius: 30px;
-    border-top-right-radius: 30px;
+    font-size: 13px;
+    border-top-left-radius: 40px;
+    border-top-right-radius: 40px;
+    margin-top: 60px;
 }
 
 .cart-footer-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 20px;
-    padding-block: 24px;
+    gap: 24px;
+    padding-block: 32px;
     flex-wrap: wrap;
 }
 
@@ -1199,12 +1621,12 @@ body.modal-carrito-abierto { overflow: hidden; }
     display: block;
     color: var(--blanco);
     font-weight: 800;
-    margin-bottom: 3px;
-    font-size: 13px;
+    margin-bottom: 4px;
+    font-size: 14px;
 }
 
 /* =========================================================
-   16. ANIMACIONES
+   19. ANIMACIONES
 ========================================================= */
 @keyframes fadeUp {
     from { opacity: 0; transform: translateY(15px); }
@@ -1221,13 +1643,18 @@ body.modal-carrito-abierto { overflow: hidden; }
     to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
 /* =========================================================
-   17. RESPONSIVE
+   20. RESPONSIVE (MEDIA QUERIES)
 ========================================================= */
-@media (max-width: 980px) {
+@media (max-width: 1024px) {
     .cart-layout {
         grid-template-columns: minmax(0, 1fr);
-        gap: 24px;
+        gap: 28px;
     }
 
     .cart-summary {
@@ -1235,23 +1662,23 @@ body.modal-carrito-abierto { overflow: hidden; }
     }
 }
 
-@media (max-width: 720px) {
-    .cart-main { padding-block: 32px 48px; }
+@media (max-width: 768px) {
+    .cart-main { padding-block: 40px 60px; }
 
     .cart-topbar .cart-shell { padding-block: 14px; }
 
     .cart-back span { display: none; }
-    .cart-back { padding: 10px 14px; }
+    .cart-back { padding: 12px 14px; }
 
-    .cart-intro h1 { font-size: 28px; }
+    .cart-intro h1 { font-size: 30px; }
 
-    .cart-items-header { padding: 20px 20px; }
+    .cart-items-header { padding: 22px 20px; }
 
     .cart-list > article,
     .cart-list .producto-carrito {
         grid-template-columns: 100px minmax(0, 1fr);
-        gap: 16px;
-        padding: 20px;
+        gap: 18px;
+        padding: 22px 20px;
     }
 
     .cart-list img,
@@ -1268,69 +1695,72 @@ body.modal-carrito-abierto { overflow: hidden; }
         align-items: center;
         min-width: 0;
         width: 100%;
-        gap: 12px;
+        gap: 14px;
         flex-wrap: wrap;
     }
 
-    .producto-total { font-size: 18px; }
+    .producto-total { font-size: 20px; }
 
     .cart-modal { padding: 16px; }
-    .cart-modal-card { padding: 26px 22px; }
+    .cart-modal-card { padding: 32px 24px; }
+    .cart-modal-icon { width: 60px; height: 60px; font-size: 24px; }
 
-    .cart-receipt { padding: 22px; }
-
+    .cart-receipt { padding: 24px; }
+    .cart-receipt-meta { grid-template-columns: 1fr; gap: 16px; }
     .cart-receipt-actions { grid-template-columns: 1fr; }
-
-    .cart-receipt-meta { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {
-    .cart-brand-text strong { font-size: 12px; }
-    .cart-brand-text small { font-size: 9px; letter-spacing: 0.8px; }
-    .cart-brand-icon { width: 38px; height: 38px; }
+    .cart-brand-text strong { font-size: 13px; }
+    .cart-brand-text small { font-size: 10px; letter-spacing: 0.8px; }
+    .cart-brand-icon { width: 42px; height: 42px; }
 
-    .cart-intro h1 { font-size: 24px; }
-    .cart-intro p { font-size: 14px; }
+    .cart-intro h1 { font-size: 26px; }
+    .cart-intro p { font-size: 15px; }
 
-    .cart-items-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .cart-items-header { flex-direction: column; align-items: flex-start; gap: 14px; }
 
     .cart-list > article,
     .cart-list .producto-carrito {
         grid-template-columns: 1fr;
-        gap: 14px;
-        padding: 18px;
+        gap: 16px;
+        padding: 20px;
     }
 
     .cart-list img,
     .producto-imagen {
         width: 100%;
-        height: 180px;
-        padding: 16px;
+        height: 200px;
+        padding: 20px;
     }
 
     .producto-controles {
         grid-column: 1;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
     }
 
-    .cart-modal { padding: 10px; }
-    .cart-modal-card { padding: 22px 16px; border-radius: 18px; }
-    .cart-modal-icon { width: 52px; height: 52px; font-size: 22px; }
+    .control-cantidad { width: 100%; justify-content: space-between; }
 
-    .cart-receipt { padding: 18px; }
+    .cart-modal { padding: 12px; }
+    .cart-modal-card { padding: 26px 20px; border-radius: 20px; }
+    .cart-modal h2 { font-size: 24px; }
 
-    .cart-receipt-line-total strong { font-size: 20px; }
+    .cart-receipt { padding: 20px; }
+    .cart-receipt-line-total strong { font-size: 24px; }
 
-    .cart-footer-inner { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .cart-footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; text-align: left; }
 }
 
 @media (max-width: 360px) {
-    .cart-shell { width: 94%; }
-    .control-cantidad button { width: 28px; height: 28px; }
-    .control-cantidad input { width: 32px; }
+    .cart-shell { width: 95%; }
+    .control-cantidad button { width: 32px; height: 32px; }
+    .control-cantidad input { width: 36px; }
 }
 
 /* =========================================================
-   18. ACCESIBILIDAD
+   21. ACCESIBILIDAD (REDUCIR MOVIMIENTO)
 ========================================================= */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {

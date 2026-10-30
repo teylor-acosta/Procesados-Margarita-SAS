@@ -1,7 +1,4 @@
-/* =========================================================
-   PROCESADOS MARGARITA S.A.S.
-   Carrito de compras — Lógica principal con EmailJS y Mayoreo
-========================================================= */
+
 
 "use strict";
 
@@ -30,11 +27,9 @@ const CONFIG = {
     clavesAlternativas: ["carrito", "carritoCompras", "cart"],
     idioma: "es-CO",
     moneda: "COP",
-    maxCantidad: 99,
+    maxCantidad: 999999, // ✅ Aumentado para soportar pedidos grandes
     imagenDefecto: "img/productos_ejemplos/operarios_1.png",
-    
-    // 🆕 NÚMERO DE WHATSAPP (Déjalo vacío para elegir contacto manualmente)
-    numeroWhatsapp: "" 
+    numeroWhatsapp: "" // 🆕 NÚMERO DE WHATSAPP (Opcional)
 };
 
 /* Formateadores */
@@ -76,7 +71,7 @@ const DOM = {
     envio: $("costo-envio"),
     total: $("total-carrito"),
     
-    // 🆕 Referencias al ahorro en resumen
+    // Referencias al ahorro en resumen
     filaAhorro: $("fila-ahorro"),
     ahorroProductos: $("ahorro-productos"),
 
@@ -106,7 +101,7 @@ const DOM = {
     envioRecibo: $("recibo-envio"),
     totalRecibo: $("recibo-total"),
     
-    // 🆕 Referencias al ahorro en el recibo
+    // Referencias al ahorro en el recibo
     reciboFilaAhorro: $("recibo-fila-ahorro"),
     reciboAhorro: $("recibo-ahorro"),
 
@@ -188,41 +183,42 @@ function obtenerIdentificador(producto) {
     return obtenerNombre(producto).trim().toLowerCase();
 }
 
-// 🆕 Función clave para determinar el precio unitario que aplica
-function obtenerPrecioReal(producto) {
-    const precioNormal = obtenerPrecio(producto);
-    const precioMayor = obtenerPrecioMayor(producto);
-    const cantMinima = obtenerCantidadMayor(producto);
+/* =========================================================
+   ✅ CÁLCULO DE MAYOREO POR BLOQUES
+   -----------------------------------------------------
+   Retorna el total a pagar por el producto según su cantidad
+   y aplica la lógica de lotes (igual que en tienda.js).
+========================================================= */
+function calcularPrecioItem(precioUnitario, precioMayor, cantidadMayor, cantidad) {
+    const unitario = Number(precioUnitario) || 0;
+    const mayor = Number(precioMayor) || 0;
+    const umbral = Number(cantidadMayor) || 0;
+    const cant = Math.max(0, Math.floor(Number(cantidad) || 0));
 
-    if (precioMayor && cantMinima && producto.cantidad >= cantMinima) {
-        return precioMayor;
+    // Sin datos válidos de mayoreo → precio normal
+    if (mayor <= 0 || umbral <= 0 || cant < umbral) {
+        return {
+            total: unitario * cant,
+            aplicaMayoreo: false,
+            precioUnitarioEfectivo: unitario,
+            ahorro: 0
+        };
     }
-    return precioNormal;
-}
 
-function animar(elemento, fotogramas, duracion = 300) {
-    if (!elemento || typeof elemento.animate !== "function") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    elemento.animate(fotogramas, { duration: duracion, easing: "cubic-bezier(0.22, 1, 0.36, 1)" });
-}
+    // Cálculo por lotes
+    const bloques = Math.floor(cant / umbral);
+    const sobrante = cant % umbral;
+    const total = bloques * mayor + sobrante * unitario;
 
-function notificar(mensaje, tipo = "exito") {
-    if (!DOM.notificacion) return;
-    DOM.notificacion.textContent = mensaje;
-    DOM.notificacion.style.background =
-        tipo === "error" ? "#c62828" : tipo === "aviso" ? "#d48806" : "#0f9d63";
-    DOM.notificacion.style.display = "block";
+    // Ahorro real vs. pagar todo a precio unitario
+    const ahorro = unitario * cant - total;
 
-    if (DOM.notificacion._temporizador) clearTimeout(DOM.notificacion._temporizador);
-
-    animar(DOM.notificacion, [
-        { opacity: 0, transform: "translateY(-10px)" },
-        { opacity: 1, transform: "translateY(0)" }
-    ], 220);
-
-    DOM.notificacion._temporizador = setTimeout(() => {
-        DOM.notificacion.style.display = "none";
-    }, 5000);
+    return {
+        total,
+        aplicaMayoreo: true,
+        precioUnitarioEfectivo: total / cant,
+        ahorro: ahorro > 0 ? ahorro : 0
+    };
 }
 
 /* =========================================================
@@ -267,8 +263,8 @@ function normalizarProductos(lista) {
         producto.id = id;
         producto.nombre = obtenerNombre(producto);
         producto.precio = obtenerPrecio(producto);
-        producto.precioMayor = obtenerPrecioMayor(producto); // 🆕 Conservar mayoreo
-        producto.cantidadMayor = obtenerCantidadMayor(producto); // 🆕 Conservar mayoreo
+        producto.precioMayor = obtenerPrecioMayor(producto); 
+        producto.cantidadMayor = obtenerCantidadMayor(producto); 
         producto.cantidad = obtenerCantidad(producto);
         producto.imagen = obtenerImagen(producto);
         producto.descripcion = obtenerDescripcion(producto);
@@ -283,23 +279,23 @@ function normalizarProductos(lista) {
     }
     return resultado;
 }
-
 /* =========================================================
-   6. CÁLCULOS (CON LÓGICA DE MAYOREO)
+   6. CÁLCULOS DE TOTALES
 ========================================================= */
 function calcularTotales() {
     let subtotal = 0;
     let ahorroTotal = 0;
 
     productos.forEach(p => {
-        const precioNormal = obtenerPrecio(p);
-        const precioUnitario = obtenerPrecioReal(p);
+        const r = calcularPrecioItem(
+            p.precio,
+            p.precioMayor,
+            p.cantidadMayor,
+            p.cantidad
+        );
         
-        subtotal += precioUnitario * p.cantidad;
-
-        if (precioUnitario < precioNormal) {
-            ahorroTotal += (precioNormal - precioUnitario) * p.cantidad;
-        }
+        subtotal += r.total;
+        ahorroTotal += r.ahorro;
     });
 
     return { subtotal, ahorroTotal };
@@ -318,7 +314,7 @@ function actualizarResumen() {
     if (DOM.envio) DOM.envio.textContent = "Por confirmar";
     if (DOM.total) DOM.total.textContent = dinero(subtotal);
 
-    // 🆕 Mostrar u ocultar el ahorro por mayoreo
+    // ✅ Mostrar u ocultar el ahorro por mayoreo en el resumen
     if (DOM.filaAhorro && DOM.ahorroProductos) {
         if (ahorroTotal > 0) {
             DOM.filaAhorro.style.display = "flex";
@@ -340,7 +336,7 @@ function actualizarResumen() {
 }
 
 /* =========================================================
-   7. RENDERIZADO
+   7. RENDERIZADO DE LA LISTA DE PRODUCTOS
 ========================================================= */
 function renderizarProductos() {
     if (!DOM.lista) return;
@@ -357,17 +353,15 @@ function renderizarProductos() {
         const imagen = escaparHTML(p.imagen);
         const descripcion = escaparHTML(p.descripcion);
         
-        const precioNormal = obtenerPrecio(p);
-        const precioReal = obtenerPrecioReal(p);
-        const total = precioReal * p.cantidad;
-        const tieneDescuento = precioReal < precioNormal;
-
-        // 🆕 HTML del precio (tachado si tiene descuento)
-        const htmlPrecio = tieneDescuento 
-            ? `<span style="text-decoration: line-through; color: #94a3b8; font-size: 11px; margin-right: 6px;">${dinero(precioNormal)}</span> 
-               <strong style="color: var(--verde-oscuro);">${dinero(precioReal)}</strong> <span>/ unidad</span>
+        // ✅ Usamos la nueva función para calcular el precio y el total exacto
+        const r = calcularPrecioItem(p.precio, p.precioMayor, p.cantidadMayor, p.cantidad);
+        
+        // HTML del precio (tachado si tiene descuento)
+        const htmlPrecio = r.aplicaMayoreo 
+            ? `<span style="text-decoration: line-through; color: #94a3b8; font-size: 11px; margin-right: 6px;">${dinero(p.precio)}</span> 
+               <strong style="color: var(--verde-oscuro);">${dinero(r.precioUnitarioEfectivo)}</strong> <span>/ unidad</span>
                <br><small style="color: var(--verde-oscuro); font-weight: bold;">¡Descuento por mayoreo aplicado!</small>`
-            : `${dinero(precioReal)} <span>/ unidad</span>`;
+            : `${dinero(r.precioUnitarioEfectivo)} <span>/ unidad</span>`;
 
         return `
             <article class="producto-carrito" data-id="${id}">
@@ -378,7 +372,7 @@ function renderizarProductos() {
                     <p class="producto-precio">${htmlPrecio}</p>
                 </div>
                 <div class="producto-controles">
-                    <span class="producto-total">${dinero(total)}</span>
+                    <span class="producto-total">${dinero(r.total)}</span>
                     <div class="control-cantidad">
                         <button type="button" data-accion="restar" data-id="${id}" ${p.cantidad <= 1 ? "disabled" : ""}><i class="fa-solid fa-minus"></i></button>
                         <input type="number" min="1" max="${CONFIG.maxCantidad}" value="${p.cantidad}" data-accion="cantidad" data-id="${id}">
@@ -394,7 +388,7 @@ function renderizarProductos() {
 }
 
 /* =========================================================
-   8. CANTIDADES
+   8. CONTROL DE CANTIDADES
 ========================================================= */
 function buscarProducto(id) {
     return productos.find((p) => String(p.id) === String(id));
@@ -403,8 +397,10 @@ function buscarProducto(id) {
 function modificarCantidad(id, cambio) {
     const p = buscarProducto(id);
     if (!p) return;
+    
     const nueva = p.cantidad + cambio;
     if (nueva < 1 || nueva > CONFIG.maxCantidad) return;
+    
     p.cantidad = nueva;
     guardarAlmacenamiento();
     renderizarProductos();
@@ -413,11 +409,13 @@ function modificarCantidad(id, cambio) {
 function establecerCantidad(id, valor) {
     const p = buscarProducto(id);
     if (!p) return;
+    
     const val = Number(valor);
     if (!Number.isFinite(val) || val < 1) {
         renderizarProductos();
         return;
     }
+    
     p.cantidad = Math.min(CONFIG.maxCantidad, Math.floor(val));
     guardarAlmacenamiento();
     renderizarProductos();
@@ -432,6 +430,7 @@ function eliminarProducto(id) {
 function vaciarCarrito() {
     if (productos.length === 0) return;
     if (!confirm("¿Eliminar todos los productos?")) return;
+    
     productos = [];
     guardarAlmacenamiento();
     renderizarProductos();
@@ -442,21 +441,23 @@ function vaciarCarrito() {
 ========================================================= */
 function configurarEventosProductos() {
     if (!DOM.lista) return;
+    
     DOM.lista.addEventListener("click", (e) => {
         const btn = e.target.closest("[data-accion]");
         if (!btn) return;
         const accion = btn.dataset.accion;
         const id = btn.dataset.id;
+        
         if (accion === "sumar") modificarCantidad(id, 1);
         if (accion === "restar") modificarCantidad(id, -1);
         if (accion === "eliminar") eliminarProducto(id);
     });
+    
     DOM.lista.addEventListener("change", (e) => {
         const input = e.target.closest('input[data-accion="cantidad"]');
         if (input) establecerCantidad(input.dataset.id, input.value);
     });
 }
-
 /* =========================================================
    10. MODAL
 ========================================================= */
@@ -511,13 +512,13 @@ function generarReciboDigital(e) {
     const { subtotal, ahorroTotal } = calcularTotales();
 
     const detalle = productos.map((p) => {
-        const precioUnitario = obtenerPrecioReal(p);
+        const r = calcularPrecioItem(p.precio, p.precioMayor, p.cantidadMayor, p.cantidad);
         return {
             nombre: p.nombre,
             cantidad: p.cantidad,
-            precio: precioUnitario,
-            total: precioUnitario * p.cantidad,
-            tieneDescuento: precioUnitario < obtenerPrecio(p) // 🆕 Flag para PDF/Correo
+            precio: r.precioUnitarioEfectivo,
+            total: r.total,
+            tieneDescuento: r.aplicaMayoreo
         };
     });
 
@@ -527,12 +528,12 @@ function generarReciboDigital(e) {
         cliente: DOM.nombre?.value.trim(),
         correo: DOM.correo?.value.trim(),
         telefono: DOM.telefono?.value.trim(),
-        direccion: DOM.direccion?.value.trim(),
+        direccion: DOM.direccion?.value.trim() || "No especificada",
         observaciones: DOM.observaciones?.value.trim(),
         productos: detalle,
         subtotal: subtotal,
         ahorro: ahorroTotal,
-        total: subtotal // En este caso el total es igual al subtotal porque el envío está por confirmar
+        total: subtotal
     };
 
     mostrarDatosRecibo(ultimoRecibo);
@@ -542,7 +543,7 @@ function generarReciboDigital(e) {
     DOM.volverTienda.hidden = false;
     if (DOM.cancelarPedido) DOM.cancelarPedido.hidden = false;
 
-    // 🆕 DISPARAR EL CORREO AUTOMÁTICAMENTE
+    // 🆕 DISPARAR EL CORREO AUTOMÁTICAMENTE al generar el recibo
     enviarPedidoPorCorreo();
 }
 
@@ -554,7 +555,7 @@ function mostrarDatosRecibo(r) {
     if (DOM.telefonoRecibo) DOM.telefonoRecibo.textContent = r.telefono;
     if (DOM.direccionRecibo) DOM.direccionRecibo.textContent = r.direccion;
     
-    // 🆕 Mostrar ahorro en el recibo si existe
+    // ✅ Mostrar ahorro en el recibo si existe
     if (DOM.reciboFilaAhorro && DOM.reciboAhorro) {
         if (r.ahorro > 0) {
             DOM.reciboFilaAhorro.style.display = "flex";
@@ -583,7 +584,7 @@ function mostrarDatosRecibo(r) {
 }
 
 /* =========================================================
-   12. ENVIAR CORREO (EmailJS) - Manual al cliente
+   12. ENVIAR CORREO (EmailJS)
 ========================================================= */
 async function enviarPedidoPorCorreo() {
     if (!ultimoRecibo) return notificar("Genera el recibo primero.", "aviso");
@@ -626,7 +627,7 @@ async function enviarPedidoPorCorreo() {
             direccion_cliente: ultimoRecibo.direccion,
             productos: lineasProductos, 
             subtotal: dinero(ultimoRecibo.subtotal),
-            ahorro: ultimoRecibo.ahorro > 0 ? `-${dinero(ultimoRecibo.ahorro)}` : "N/A", // 🆕 Enviar ahorro al correo
+            ahorro: ultimoRecibo.ahorro > 0 ? `-${dinero(ultimoRecibo.ahorro)}` : "N/A",
             envio: "Por confirmar",
             total: dinero(ultimoRecibo.total),
             observaciones: ultimoRecibo.observaciones || "Ninguna",
@@ -634,7 +635,6 @@ async function enviarPedidoPorCorreo() {
         };
 
         await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, parametros);
-
         notificar("✅ Copia enviada al correo del cliente.", "exito");
     } catch (error) {
         console.error("Error EmailJS:", error);
@@ -716,9 +716,7 @@ async function cancelarPedido() {
         ultimoRecibo = null;
         cerrarModal();
         
-        setTimeout(() => {
-            regresarTienda();
-        }, 2000);
+        setTimeout(() => { regresarTienda(); }, 2000);
 
     } catch (error) {
         console.error("Error al cancelar pedido:", error);
@@ -763,7 +761,7 @@ function descargarPDF() {
         pdf.text(`Dirección: ${ultimoRecibo.direccion}`, 14, 80);
 
         const filas = ultimoRecibo.productos.map(p => [
-            p.nombre + (p.tieneDescuento ? " (Mayoreo)" : ""), // 🆕 Indicador en PDF
+            p.nombre + (p.tieneDescuento ? " (Mayoreo)" : ""),
             p.cantidad, 
             dinero(p.precio), 
             dinero(p.total)
@@ -781,12 +779,11 @@ function descargarPDF() {
         pdf.setFontSize(11);
         pdf.text(`Subtotal: ${dinero(ultimoRecibo.subtotal)}`, 140, y);
         
-        // 🆕 Mostrar ahorro en PDF
         if (ultimoRecibo.ahorro > 0) {
             y += 7;
-            pdf.setTextColor(5, 96, 58); // Verde oscuro
+            pdf.setTextColor(5, 96, 58);
             pdf.text(`Ahorro por mayoreo: -${dinero(ultimoRecibo.ahorro)}`, 140, y);
-            pdf.setTextColor(0, 0, 0); // Volver a negro
+            pdf.setTextColor(0, 0, 0);
         }
         
         y += 8;
@@ -809,7 +806,7 @@ function descargarPDF() {
 }
 
 /* =========================================================
-   14. IMPRIMIR
+   14. IMPRIMIR RECIBO
 ========================================================= */
 function imprimirRecibo() {
     if (!DOM.comprobante || DOM.comprobante.hidden) return;
@@ -833,7 +830,7 @@ function imprimirRecibo() {
 }
 
 /* =========================================================
-   15. VOLVER
+   15. VOLVER A LA TIENDA
 ========================================================= */
 function regresarTienda() {
     window.location.href = "tienda.html";
