@@ -227,11 +227,18 @@
                                 <div class="producto-precio-contenedor">
                                     <span class="producto-precio-etiqueta">Precio</span>
                                     <strong class="producto-precio">$ 28.500</strong>
+                                    <!-- 🆕 AVISO DE MAYOREO -->
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        ¡Lleva 5 o más y paga $25.650 c/u!
+                                    </small>
                                 </div>
                                 <button
                                     type="button"
                                     class="boton-agregar"
                                     data-id="1"
+                                    data-precio="28500"
+                                    data-precio-mayor="25650"
+                                    data-cantidad-mayor="5"
                                     aria-label="Agregar nombre del producto al carrito"
                                 >
                                     <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
@@ -259,11 +266,18 @@
                                 <div class="producto-precio-contenedor">
                                     <span class="producto-precio-etiqueta">Precio</span>
                                     <strong class="producto-precio">$ 9.500</strong>
+                                    <!-- 🆕 AVISO DE MAYOREO -->
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        ¡Lleva 5 o más y paga $8.550 c/u!
+                                    </small>
                                 </div>
                                 <button
                                     type="button"
                                     class="boton-agregar"
                                     data-id="2"
+                                    data-precio="9500"
+                                    data-precio-mayor="8550"
+                                    data-cantidad-mayor="5"
                                     aria-label="Agregar nombre del producto al carrito"
                                 >
                                     <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
@@ -291,11 +305,18 @@
                                 <div class="producto-precio-contenedor">
                                     <span class="producto-precio-etiqueta">Precio</span>
                                     <strong class="producto-precio">$ 17.800</strong>
+                                    <!-- 🆕 AVISO DE MAYOREO -->
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        ¡Lleva 5 o más y paga $16.020 c/u!
+                                    </small>
                                 </div>
                                 <button
                                     type="button"
                                     class="boton-agregar"
                                     data-id="3"
+                                    data-precio="17800"
+                                    data-precio-mayor="16020"
+                                    data-cantidad-mayor="5"
                                     aria-label="Agregar nombre del producto al carrito"
                                 >
                                     <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
@@ -323,11 +344,18 @@
                                 <div class="producto-precio-contenedor">
                                     <span class="producto-precio-etiqueta">Precio</span>
                                     <strong class="producto-precio">$ 42.000</strong>
+                                    <!-- 🆕 AVISO DE MAYOREO -->
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        ¡Lleva 5 o más y paga $37.800 c/u!
+                                    </small>
                                 </div>
                                 <button
                                     type="button"
                                     class="boton-agregar"
                                     data-id="4"
+                                    data-precio="42000"
+                                    data-precio-mayor="37800"
+                                    data-cantidad-mayor="5"
                                     aria-label="Agregar nombre del producto al carrito"
                                 >
                                     <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
@@ -355,11 +383,18 @@
                                 <div class="producto-precio-contenedor">
                                     <span class="producto-precio-etiqueta">Precio</span>
                                     <strong class="producto-precio">$ 32.000</strong>
+                                    <!-- 🆕 AVISO DE MAYOREO -->
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        ¡Lleva 5 o más y paga $28.800 c/u!
+                                    </small>
                                 </div>
                                 <button
                                     type="button"
                                     class="boton-agregar"
                                     data-id="5"
+                                    data-precio="32000"
+                                    data-precio-mayor="28800"
+                                    data-cantidad-mayor="5"
                                     aria-label="Agregar nombre del producto al carrito"
                                 >
                                     <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
@@ -387,11 +422,18 @@
                                 <div class="producto-precio-contenedor">
                                     <span class="producto-precio-etiqueta">Precio</span>
                                     <strong class="producto-precio">$ 6.800</strong>
+                                    <!-- 🆕 AVISO DE MAYOREO -->
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        ¡Lleva 5 o más y paga $6.120 c/u!
+                                    </small>
                                 </div>
                                 <button
                                     type="button"
                                     class="boton-agregar"
                                     data-id="6"
+                                    data-precio="6800"
+                                    data-precio-mayor="6120"
+                                    data-cantidad-mayor="5"
                                     aria-label="Agregar nombre del producto al carrito"
                                 >
                                     <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
@@ -484,6 +526,11 @@
                                 Disponible
                             </strong>
                         </div>
+                    </div>
+
+                    <!-- 🆕 AVISO DE MAYOREO EN EL MODAL -->
+                    <div id="modal-aviso-mayoreo" style="display: none; background: var(--verde-suave); color: var(--verde-oscuro); padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; border: 1px solid rgba(18, 199, 106, 0.3);">
+                        <i class="fa-solid fa-tags"></i> ¡Descuento por volumen aplicado!
                     </div>
 
                     <div class="modal-cantidad">

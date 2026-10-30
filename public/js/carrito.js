@@ -1,6 +1,6 @@
 /* =========================================================
    PROCESADOS MARGARITA S.A.S.
-   Carrito de compras — Lógica principal con EmailJS
+   Carrito de compras — Lógica principal con EmailJS y Mayoreo
 ========================================================= */
 
 "use strict";
@@ -14,7 +14,7 @@ const EMAILJS_SERVICE_ID = "service_r6101od";
 // Plantilla para pedidos normales
 const EMAILJS_TEMPLATE_ID = "template_2if3lv7"; 
 
-// ✅ Plantilla para cancelaciones (YA CONFIGURADA)
+// ✅ Plantilla para cancelaciones
 const EMAILJS_TEMPLATE_CANCEL = "template_fe3ztse"; 
 
 // Inicializar EmailJS
@@ -75,6 +75,10 @@ const DOM = {
     totalArticulos: $("total-articulos"),
     envio: $("costo-envio"),
     total: $("total-carrito"),
+    
+    // 🆕 Referencias al ahorro en resumen
+    filaAhorro: $("fila-ahorro"),
+    ahorroProductos: $("ahorro-productos"),
 
     limpiar: $("btn-limpiar"),
     confirmar: $("btn-confirmar"),
@@ -101,6 +105,10 @@ const DOM = {
     subtotalRecibo: $("recibo-subtotal"),
     envioRecibo: $("recibo-envio"),
     totalRecibo: $("recibo-total"),
+    
+    // 🆕 Referencias al ahorro en el recibo
+    reciboFilaAhorro: $("recibo-fila-ahorro"),
+    reciboAhorro: $("recibo-ahorro"),
 
     observacionesContenedor: $("recibo-observaciones-contenedor"),
     observacionesRecibo: $("recibo-observaciones"),
@@ -146,6 +154,16 @@ function obtenerPrecio(producto) {
     return Number.isFinite(precio) && precio >= 0 ? precio : 0;
 }
 
+function obtenerPrecioMayor(producto) {
+    const precio = Number(producto.precioMayor ?? 0);
+    return Number.isFinite(precio) && precio > 0 ? precio : null;
+}
+
+function obtenerCantidadMayor(producto) {
+    const cantidad = Number(producto.cantidadMayor ?? 0);
+    return Number.isFinite(cantidad) && cantidad > 0 ? cantidad : null;
+}
+
 function obtenerNombre(producto) {
     return String(producto.nombre ?? producto.name ?? "Producto sin nombre");
 }
@@ -168,6 +186,18 @@ function obtenerIdentificador(producto) {
     const id = producto.id ?? producto.id_producto ?? producto.codigo;
     if (id !== undefined && id !== null && String(id) !== "") return String(id);
     return obtenerNombre(producto).trim().toLowerCase();
+}
+
+// 🆕 Función clave para determinar el precio unitario que aplica
+function obtenerPrecioReal(producto) {
+    const precioNormal = obtenerPrecio(producto);
+    const precioMayor = obtenerPrecioMayor(producto);
+    const cantMinima = obtenerCantidadMayor(producto);
+
+    if (precioMayor && cantMinima && producto.cantidad >= cantMinima) {
+        return precioMayor;
+    }
+    return precioNormal;
 }
 
 function animar(elemento, fotogramas, duracion = 300) {
@@ -237,6 +267,8 @@ function normalizarProductos(lista) {
         producto.id = id;
         producto.nombre = obtenerNombre(producto);
         producto.precio = obtenerPrecio(producto);
+        producto.precioMayor = obtenerPrecioMayor(producto); // 🆕 Conservar mayoreo
+        producto.cantidadMayor = obtenerCantidadMayor(producto); // 🆕 Conservar mayoreo
         producto.cantidad = obtenerCantidad(producto);
         producto.imagen = obtenerImagen(producto);
         producto.descripcion = obtenerDescripcion(producto);
@@ -253,10 +285,24 @@ function normalizarProductos(lista) {
 }
 
 /* =========================================================
-   6. CÁLCULOS
+   6. CÁLCULOS (CON LÓGICA DE MAYOREO)
 ========================================================= */
-function calcularSubtotal() {
-    return productos.reduce((suma, p) => suma + obtenerPrecio(p) * p.cantidad, 0);
+function calcularTotales() {
+    let subtotal = 0;
+    let ahorroTotal = 0;
+
+    productos.forEach(p => {
+        const precioNormal = obtenerPrecio(p);
+        const precioUnitario = obtenerPrecioReal(p);
+        
+        subtotal += precioUnitario * p.cantidad;
+
+        if (precioUnitario < precioNormal) {
+            ahorroTotal += (precioNormal - precioUnitario) * p.cantidad;
+        }
+    });
+
+    return { subtotal, ahorroTotal };
 }
 
 function calcularCantidadArticulos() {
@@ -264,13 +310,23 @@ function calcularCantidadArticulos() {
 }
 
 function actualizarResumen() {
-    const subtotal = calcularSubtotal();
+    const { subtotal, ahorroTotal } = calcularTotales();
     const cantidad = calcularCantidadArticulos();
 
     if (DOM.subtotal) DOM.subtotal.textContent = dinero(subtotal);
     if (DOM.totalArticulos) DOM.totalArticulos.textContent = cantidad;
     if (DOM.envio) DOM.envio.textContent = "Por confirmar";
     if (DOM.total) DOM.total.textContent = dinero(subtotal);
+
+    // 🆕 Mostrar u ocultar el ahorro por mayoreo
+    if (DOM.filaAhorro && DOM.ahorroProductos) {
+        if (ahorroTotal > 0) {
+            DOM.filaAhorro.style.display = "flex";
+            DOM.ahorroProductos.textContent = `-${dinero(ahorroTotal)}`;
+        } else {
+            DOM.filaAhorro.style.display = "none";
+        }
+    }
 
     if (DOM.cantidadProductos) {
         DOM.cantidadProductos.textContent = `${cantidad} ${cantidad === 1 ? "artículo" : "artículos"} en tu carrito`;
@@ -300,8 +356,18 @@ function renderizarProductos() {
         const nombre = escaparHTML(p.nombre);
         const imagen = escaparHTML(p.imagen);
         const descripcion = escaparHTML(p.descripcion);
-        const precio = obtenerPrecio(p);
-        const total = precio * p.cantidad;
+        
+        const precioNormal = obtenerPrecio(p);
+        const precioReal = obtenerPrecioReal(p);
+        const total = precioReal * p.cantidad;
+        const tieneDescuento = precioReal < precioNormal;
+
+        // 🆕 HTML del precio (tachado si tiene descuento)
+        const htmlPrecio = tieneDescuento 
+            ? `<span style="text-decoration: line-through; color: #94a3b8; font-size: 11px; margin-right: 6px;">${dinero(precioNormal)}</span> 
+               <strong style="color: var(--verde-oscuro);">${dinero(precioReal)}</strong> <span>/ unidad</span>
+               <br><small style="color: var(--verde-oscuro); font-weight: bold;">¡Descuento por mayoreo aplicado!</small>`
+            : `${dinero(precioReal)} <span>/ unidad</span>`;
 
         return `
             <article class="producto-carrito" data-id="${id}">
@@ -309,7 +375,7 @@ function renderizarProductos() {
                 <div class="producto-datos">
                     <h3>${nombre}</h3>
                     <p class="producto-descripcion">${descripcion}</p>
-                    <p class="producto-precio">${dinero(precio)} <span>/ unidad</span></p>
+                    <p class="producto-precio">${htmlPrecio}</p>
                 </div>
                 <div class="producto-controles">
                     <span class="producto-total">${dinero(total)}</span>
@@ -442,13 +508,18 @@ function generarReciboDigital(e) {
     e.preventDefault();
     if (!DOM.formConfirmar?.reportValidity()) return;
 
-    const detalle = productos.map((p) => ({
-        nombre: p.nombre,
-        cantidad: p.cantidad,
-        precio: obtenerPrecio(p),
-        total: obtenerPrecio(p) * p.cantidad
-    }));
-    const subtotal = detalle.reduce((s, p) => s + p.total, 0);
+    const { subtotal, ahorroTotal } = calcularTotales();
+
+    const detalle = productos.map((p) => {
+        const precioUnitario = obtenerPrecioReal(p);
+        return {
+            nombre: p.nombre,
+            cantidad: p.cantidad,
+            precio: precioUnitario,
+            total: precioUnitario * p.cantidad,
+            tieneDescuento: precioUnitario < obtenerPrecio(p) // 🆕 Flag para PDF/Correo
+        };
+    });
 
     ultimoRecibo = {
         numero: `PM-${Date.now().toString().slice(-6)}`,
@@ -460,7 +531,8 @@ function generarReciboDigital(e) {
         observaciones: DOM.observaciones?.value.trim(),
         productos: detalle,
         subtotal: subtotal,
-        total: subtotal
+        ahorro: ahorroTotal,
+        total: subtotal // En este caso el total es igual al subtotal porque el envío está por confirmar
     };
 
     mostrarDatosRecibo(ultimoRecibo);
@@ -481,12 +553,23 @@ function mostrarDatosRecibo(r) {
     DOM.correoRecibo.textContent = r.correo;
     if (DOM.telefonoRecibo) DOM.telefonoRecibo.textContent = r.telefono;
     if (DOM.direccionRecibo) DOM.direccionRecibo.textContent = r.direccion;
+    
+    // 🆕 Mostrar ahorro en el recibo si existe
+    if (DOM.reciboFilaAhorro && DOM.reciboAhorro) {
+        if (r.ahorro > 0) {
+            DOM.reciboFilaAhorro.style.display = "flex";
+            DOM.reciboAhorro.textContent = `-${dinero(r.ahorro)}`;
+        } else {
+            DOM.reciboFilaAhorro.style.display = "none";
+        }
+    }
+
     DOM.subtotalRecibo.textContent = dinero(r.subtotal);
     DOM.totalRecibo.textContent = dinero(r.total);
 
     DOM.listaRecibo.innerHTML = r.productos.map((p) => `
         <tr>
-            <td>${escaparHTML(p.nombre)}</td>
+            <td>${escaparHTML(p.nombre)} ${p.tieneDescuento ? '<br><small style="color: var(--verde-oscuro);">(Precio mayoreo)</small>' : ''}</td>
             <td>${p.cantidad}</td>
             <td>${dinero(p.precio)}</td>
             <td>${dinero(p.total)}</td>
@@ -520,7 +603,9 @@ async function enviarPedidoPorCorreo() {
                     ${ultimoRecibo.productos.map((p, i) => `
                         <tr>
                             <td style="padding: 10px 0; border-bottom: 1px dashed #e2e8f0;">
-                                <strong style="color: #0b2345;">${i + 1}. ${p.nombre}</strong><br>
+                                <strong style="color: #0b2345;">${i + 1}. ${p.nombre}</strong>
+                                ${p.tieneDescuento ? '<span style="background: #dcfce9; color: #05603a; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">Mayoreo</span>' : ''}
+                                <br>
                                 <span style="color: #64748b; font-size: 12px;">Cant: ${p.cantidad} × ${dinero(p.precio)}</span>
                             </td>
                             <td style="padding: 10px 0; border-bottom: 1px dashed #e2e8f0; text-align: right; color: #079455; font-weight: bold;">
@@ -541,6 +626,7 @@ async function enviarPedidoPorCorreo() {
             direccion_cliente: ultimoRecibo.direccion,
             productos: lineasProductos, 
             subtotal: dinero(ultimoRecibo.subtotal),
+            ahorro: ultimoRecibo.ahorro > 0 ? `-${dinero(ultimoRecibo.ahorro)}` : "N/A", // 🆕 Enviar ahorro al correo
             envio: "Por confirmar",
             total: dinero(ultimoRecibo.total),
             observaciones: ultimoRecibo.observaciones || "Ninguna",
@@ -579,7 +665,6 @@ async function cancelarPedido() {
     }
 
     try {
-        // 🆕 Armamos la tabla de productos para el correo de cancelación
         const lineasProductos = `
             <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
                 <tbody>
@@ -598,23 +683,21 @@ async function cancelarPedido() {
             </table>
         `;
 
-        // 1. Enviar correo de cancelación con la nueva plantilla
         const parametros = {
             numero_pedido: ultimoRecibo.numero,
             fecha: formatoFecha.format(new Date()),
             cliente: ultimoRecibo.cliente,
             correo_cliente: ultimoRecibo.correo,
             telefono_cliente: ultimoRecibo.telefono,
-            direccion_cliente: ultimoRecibo.direccion, // 🆕 Enviamos dirección
-            productos: lineasProductos,                 // 🆕 Enviamos la tabla
+            direccion_cliente: ultimoRecibo.direccion,
+            productos: lineasProductos,
             total: dinero(ultimoRecibo.total),
             motivo: "El cliente solicitó la cancelación desde la página web.",
-            telefono_empresa: "[Ingresar número aquí]" // 🆕 Enviamos el contacto
+            telefono_empresa: "[Ingresar número aquí]"
         };
 
         await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_CANCEL, parametros);
 
-        // 2. Abrir WhatsApp con mensaje
         const mensajeWa = encodeURIComponent(
             `Hola, te informamos que el pedido #${ultimoRecibo.numero} del cliente ${ultimoRecibo.cliente} ha sido CANCELADO.`
         );
@@ -627,7 +710,6 @@ async function cancelarPedido() {
 
         notificar("El pedido ha sido cancelado y notificado.", "exito");
 
-        // 3. Limpiar carrito y volver
         productos = [];
         guardarAlmacenamiento();
         renderizarProductos();
@@ -680,7 +762,12 @@ function descargarPDF() {
         pdf.text(`Teléfono: ${ultimoRecibo.telefono}`, 14, 73);
         pdf.text(`Dirección: ${ultimoRecibo.direccion}`, 14, 80);
 
-        const filas = ultimoRecibo.productos.map(p => [p.nombre, p.cantidad, dinero(p.precio), dinero(p.total)]);
+        const filas = ultimoRecibo.productos.map(p => [
+            p.nombre + (p.tieneDescuento ? " (Mayoreo)" : ""), // 🆕 Indicador en PDF
+            p.cantidad, 
+            dinero(p.precio), 
+            dinero(p.total)
+        ]);
         
         pdf.autoTable({
             startY: 88,
@@ -693,6 +780,15 @@ function descargarPDF() {
         let y = pdf.lastAutoTable.finalY + 15;
         pdf.setFontSize(11);
         pdf.text(`Subtotal: ${dinero(ultimoRecibo.subtotal)}`, 140, y);
+        
+        // 🆕 Mostrar ahorro en PDF
+        if (ultimoRecibo.ahorro > 0) {
+            y += 7;
+            pdf.setTextColor(5, 96, 58); // Verde oscuro
+            pdf.text(`Ahorro por mayoreo: -${dinero(ultimoRecibo.ahorro)}`, 140, y);
+            pdf.setTextColor(0, 0, 0); // Volver a negro
+        }
+        
         y += 8;
         pdf.setFont("helvetica", "bold");
         pdf.setFontSize(14);

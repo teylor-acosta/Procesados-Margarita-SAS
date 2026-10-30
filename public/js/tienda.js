@@ -1,6 +1,6 @@
 /* =====================================================
    PROCESADOS MARGARITA S.A.S.
-   Módulo de compras - Lógica principal (SIN CATEGORÍAS)
+   Módulo de compras - Lógica principal (CON MAYOREO)
 ===================================================== */
 
 "use strict";
@@ -16,6 +16,8 @@ const PRODUCTOS = [
         descripcion:
             "Café molido premium de origen colombiano, cuidadosamente tostado para conservar su aroma y sabor. Presentación de 500 g en empaque sellado al vacío que garantiza frescura por más tiempo. Ideal para preparar en prensa francesa, greca o cafetera de goteo.",
         precio: 28500,
+        precioMayor: 25650, // 🆕 Precio con descuento
+        cantidadMayor: 5,   // 🆕 Cantidad mínima para el descuento
         imagen: "img/productos_ejemplos/operarios_1.png"
     },
     {
@@ -25,6 +27,8 @@ const PRODUCTOS = [
         descripcion:
             "Panela pulverizada 100% natural, obtenida de la caña de azúcar sin aditivos ni conservantes. Presentación de 1 kg. Excelente para endulzar bebidas, preparar aguapanela y postres tradicionales.",
         precio: 9500,
+        precioMayor: 8550,
+        cantidadMayor: 5,
         imagen: "img/productos_ejemplos/camion_1.png"
     },
     {
@@ -34,6 +38,8 @@ const PRODUCTOS = [
         descripcion:
             "Chocolate de mesa tradicional elaborado con cacao seleccionado. Presentación de 500 g. Perfecto para preparar chocolate caliente con leche o agua, conservando el auténtico sabor colombiano.",
         precio: 17800,
+        precioMayor: 16020,
+        cantidadMayor: 5,
         imagen: "img/productos_ejemplos/bodega_1.png"
     },
     {
@@ -43,6 +49,8 @@ const PRODUCTOS = [
         descripcion:
             "Aceite de oliva extra virgen de primera extracción en frío. Botella de 750 ml. Ideal para ensaladas, aderezos y preparaciones frías. Conserva todas sus propiedades nutricionales y su sabor afrutado característico.",
         precio: 42000,
+        precioMayor: 37800,
+        cantidadMayor: 5,
         imagen: "img/productos_ejemplos/planta_1.png"
     },
     {
@@ -52,6 +60,8 @@ const PRODUCTOS = [
         descripcion:
             "Miel pura de abejas 100% natural, sin pasteurizar ni procesar. Frasco de 500 g. Recolectada de colmenas colombianas en zonas de bosque nativo. Contiene propiedades antibacterianas y antioxidantes naturales.",
         precio: 32000,
+        precioMayor: 28800,
+        cantidadMayor: 5,
         imagen: "img/productos_ejemplos/operarios_1.png"
     },
     {
@@ -61,6 +71,8 @@ const PRODUCTOS = [
         descripcion:
             "Sal marina fina 100% natural, obtenida por evaporación solar. Bolsa de 1 kg. Conserva minerales esenciales como magnesio, calcio y potasio. Ideal para sazonar todo tipo de preparaciones.",
         precio: 6800,
+        precioMayor: 6120,
+        cantidadMayor: 5,
         imagen: "img/productos_ejemplos/camion_1.png"
     }
 ];
@@ -97,6 +109,7 @@ const modalMenos = $("#modal-menos");
 const modalMas = $("#modal-mas");
 const modalTotal = $("#modal-total");
 const modalAgregar = $("#modal-agregar");
+const modalAvisoMayoreo = $("#modal-aviso-mayoreo"); // 🆕 Referencia al aviso
 
 const notificacion = $("#notificacion-tienda");
 
@@ -237,11 +250,19 @@ function renderProductos(lista) {
                     <div class="producto-precio-contenedor">
                         <span class="producto-precio-etiqueta">Precio</span>
                         <strong class="producto-precio">${formatoMoneda(p.precio)}</strong>
+                        ${p.precioMayor ? `
+                            <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                ¡Lleva ${p.cantidadMayor} o más y paga ${formatoMoneda(p.precioMayor)} c/u!
+                            </small>
+                        ` : ""}
                     </div>
                     <button
                         type="button"
                         class="boton-agregar"
                         data-id="${p.id}"
+                        data-precio="${p.precio}"
+                        ${p.precioMayor ? `data-precio-mayor="${p.precioMayor}"` : ''}
+                        ${p.cantidadMayor ? `data-cantidad-mayor="${p.cantidadMayor}"` : ''}
                         aria-label="Agregar ${escaparHTML(p.nombre)} al carrito"
                     >
                         <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
@@ -321,10 +342,26 @@ function abrirModalProducto(id) {
     }
 }
 
+// 🆕 Lógica de cálculo del total en el modal
 function actualizarTotalModal() {
     if (!productoActual || !modalTotal) return;
+    
     const cantidad = obtenerCantidadValida(modalCantidad);
-    modalTotal.textContent = formatoMoneda(productoActual.precio * cantidad);
+    let precioAplicado = productoActual.precio;
+    let aplicaMayoreo = false;
+
+    // Verificamos si aplica precio de mayoreo
+    if (productoActual.precioMayor && cantidad >= productoActual.cantidadMayor) {
+        precioAplicado = productoActual.precioMayor;
+        aplicaMayoreo = true;
+    }
+
+    // Mostramos u ocultamos el aviso
+    if (modalAvisoMayoreo) {
+        modalAvisoMayoreo.style.display = aplicaMayoreo ? "block" : "none";
+    }
+
+    modalTotal.textContent = formatoMoneda(precioAplicado * cantidad);
 }
 
 function obtenerCantidadValida(input) {
@@ -342,7 +379,7 @@ function cerrarModalProducto() {
 }
 
 /* =====================================================
-   10. CARRITO (guarda descripción e info completa)
+   10. CARRITO (con lógica de mayoreo)
 ===================================================== */
 function agregarAlCarrito(id, cantidad = 1) {
     const producto = PRODUCTOS.find((p) => p.id === id);
@@ -353,13 +390,15 @@ function agregarAlCarrito(id, cantidad = 1) {
     if (existente) {
         existente.cantidad = Math.min(99, existente.cantidad + cantidad);
     } else {
-        // 🆕 Guardamos TODA la info para que el carrito la muestre
+        // Guardamos TODA la info, incluyendo la de mayoreo
         carrito.push({
             id: producto.id,
             nombre: producto.nombre,
             descripcion: producto.descripcion,
             descripcionCorta: producto.descripcionCorta,
             precio: producto.precio,
+            precioMayor: producto.precioMayor || null, // 🆕
+            cantidadMayor: producto.cantidadMayor || null, // 🆕
             imagen: producto.imagen,
             cantidad
         });
@@ -403,14 +442,28 @@ function quitarDelCarrito(id) {
     }
 }
 
+// 🆕 Función de totales con validación de precios
 function calcularTotales() {
-    const subtotal = carrito.reduce(
-        (acc, item) => acc + item.precio * item.cantidad,
-        0
-    );
+    let subtotal = 0;
+    let ahorroTotal = 0;
+
+    carrito.forEach(item => {
+        let precioUnitario = item.precio;
+        
+        // Verificamos si aplica el precio al por mayor
+        if (item.precioMayor && item.cantidad >= item.cantidadMayor) {
+            precioUnitario = item.precioMayor;
+            // Calculamos el ahorro
+            ahorroTotal += (item.precio - item.precioMayor) * item.cantidad;
+        }
+
+        subtotal += precioUnitario * item.cantidad;
+    });
+
     const iva = Math.round(subtotal * IVA_PORCENTAJE);
     const total = subtotal + iva;
-    return { subtotal, iva, total };
+    
+    return { subtotal, iva, total, ahorroTotal };
 }
 
 function actualizarCarrito() {
@@ -432,7 +485,19 @@ function actualizarCarrito() {
     } else {
         contenidoCarrito.innerHTML = carrito
             .map(
-                (item) => `
+                (item) => {
+                    // 🆕 Lógica para mostrar el precio correcto en cada ítem
+                    let precioMostrar = item.precio;
+                    let etiquetaMayoreo = "";
+                    
+                    if (item.precioMayor && item.cantidad >= item.cantidadMayor) {
+                        precioMostrar = item.precioMayor;
+                        etiquetaMayoreo = `<span style="text-decoration: line-through; color: #94a3b8; font-size: 10px; margin-right: 5px;">${formatoMoneda(item.precio)}</span>`;
+                    }
+
+                    const subtotalItem = precioMostrar * item.cantidad;
+
+                    return `
             <div class="item-carrito" data-id="${item.id}">
                 <div class="item-carrito-imagen">
                     <img src="${escaparHTML(item.imagen)}" alt="${escaparHTML(item.nombre)}"
@@ -440,7 +505,7 @@ function actualizarCarrito() {
                 </div>
                 <div class="item-carrito-info">
                     <h3>${escaparHTML(item.nombre)}</h3>
-                    <p>${formatoMoneda(item.precio)} c/u</p>
+                    <p>${etiquetaMayoreo} ${formatoMoneda(precioMostrar)} c/u</p>
                     <div class="controles-cantidad">
                         <button type="button" class="boton-cantidad" data-action="restar" data-id="${item.id}" aria-label="Disminuir cantidad">
                             <i class="fa-solid fa-minus"></i>
@@ -452,15 +517,14 @@ function actualizarCarrito() {
                     </div>
                 </div>
                 <div class="item-carrito-derecha">
-                    <strong class="item-carrito-subtotal">${formatoMoneda(
-                        item.precio * item.cantidad
-                    )}</strong>
+                    <strong class="item-carrito-subtotal">${formatoMoneda(subtotalItem)}</strong>
                     <button type="button" class="boton-quitar" data-action="quitar" data-id="${item.id}" aria-label="Quitar producto">
                         <i class="fa-solid fa-trash-can"></i> Quitar
                     </button>
                 </div>
             </div>
-        `
+        `;
+                }
             )
             .join("");
 

@@ -20,7 +20,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" defer></script>
 
-    <!-- 🆕 EmailJS (para enviar el correo al dueño y al comprador) -->
+    <!-- EmailJS (para enviar el correo al dueño y al comprador) -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
     <!-- Lógica del carrito -->
@@ -127,6 +127,13 @@
                         <span>Artículos</span>
                         <strong id="total-articulos">0</strong>
                     </div>
+                    
+                    <!-- 🆕 FILA DE AHORRO (Oculta por defecto) -->
+                    <div class="cart-summary-line" id="fila-ahorro" style="display: none; color: var(--verde-oscuro); font-weight: 700;">
+                        <span>Ahorro por mayoreo</span>
+                        <strong id="ahorro-productos">-$ 0</strong>
+                    </div>
+
                     <div class="cart-summary-line">
                         <span>Envío</span>
                         <strong id="costo-envio">Por confirmar</strong>
@@ -202,13 +209,13 @@
                         <input type="email" id="correo-cliente" name="correo" placeholder="nombre@correo.com" autocomplete="email" maxlength="150" required>
                     </div>
 
-                    <!-- 🆕 CAMPO: TELÉFONO -->
+                    <!-- CAMPO: TELÉFONO -->
                     <div class="cart-field">
                         <label for="telefono-cliente">Teléfono de contacto</label>
                         <input type="tel" id="telefono-cliente" name="telefono" placeholder="Ej: 300 123 4567" autocomplete="tel" maxlength="20" required>
                     </div>
 
-                    <!-- 🆕 CAMPO: DIRECCIÓN -->
+                    <!-- CAMPO: DIRECCIÓN -->
                     <div class="cart-field">
                         <label for="direccion-cliente">Dirección de entrega</label>
                         <input type="text" id="direccion-cliente" name="direccion" placeholder="Ej: Calle 123 # 45-67, Barrio, Ciudad" autocomplete="street-address" maxlength="200" required>
@@ -290,6 +297,13 @@
                         <span>Subtotal</span>
                         <strong id="recibo-subtotal">$ 0</strong>
                     </div>
+                    
+                    <!-- 🆕 FILA DE AHORRO EN EL RECIBO (Oculta por defecto) -->
+                    <div class="cart-receipt-line" id="recibo-fila-ahorro" style="display: none; color: var(--verde-oscuro); font-weight: 700;">
+                        <span>Ahorro por mayoreo</span>
+                        <strong id="recibo-ahorro">-$ 0</strong>
+                    </div>
+
                     <div class="cart-receipt-line">
                         <span>Envío</span>
                         <strong id="recibo-envio">Por confirmar</strong>
@@ -308,7 +322,7 @@
                 <footer class="cart-receipt-foot">
                     <p>Gracias por tu pedido.</p>
                     <p>Este comprobante es informativo y no sustituye una factura electrónica.</p>
-                    <!-- 🆕 DATOS DE CONTACTO DE LA EMPRESA -->
+                    <!-- DATOS DE CONTACTO DE LA EMPRESA -->
                     <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #e2e8f0; font-size: 12px; color: #64748b;">
                         <p style="margin-bottom: 5px;"><strong>Contacto:</strong> Procesados Margarita S.A.S. - Bogotá</p>
                         <p style="margin-bottom: 5px;"><strong>Teléfono:</strong> [Ingresar número aquí]</p>
@@ -342,7 +356,7 @@
                 <span>Volver a la tienda</span>
             </button>
 
-            <!-- 🆕 BOTÓN DE CANCELAR PEDIDO -->
+            <!-- BOTÓN DE CANCELAR PEDIDO -->
             <button type="button" class="cart-btn-cancel" id="btn-cancelar-pedido" hidden>
                 <i class="fa-solid fa-ban" aria-hidden="true"></i>
                 <span>Cancelar pedido</span>
