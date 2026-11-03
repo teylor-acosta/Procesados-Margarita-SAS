@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido Confirmado</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f0f6ff;">
+    <div style="font-family: 'Averia Libre', Arial, sans-serif; background: linear-gradient(135deg, #f0f6ff 0%, #eafaf1 100%); padding: 40px 20px; color: #1f2937; line-height: 1.6;">
+        
+        <div style="max-width: 650px; margin: 0 auto; background: #ffffff; border-radius: 22px; overflow: hidden; box-shadow: 0 12px 35px rgba(15, 23, 42, 0.08); border: 1px solid rgba(37, 99, 235, 0.15);">
+            
+            <div style="background: linear-gradient(115deg, #12c76a 0%, #079455 100%); padding: 35px 20px; text-align: center;">
+                <img src="https://i.imgur.com/2czvO0D.png" style="max-height: 80px; margin-bottom: 15px; display: block; margin-left: auto; margin-right: auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));" alt="Logo">
+                <h1 style="color: #ffffff; margin: 0; font-size: 26px; font-weight: 700; letter-spacing: 0.5px;">✅ Pedido Confirmado</h1>
+                <p style="color: #dcfce9; margin: 8px 0 0 0; font-size: 15px;">Procesados Margarita S.A.S.</p>
+            </div>
+
+            <div style="padding: 35px 30px;">
+                <p style="font-size: 16px; color: #079455; margin-top: 0; font-weight: bold;">¡Hola {{cliente}}!</p>
+                <p style="margin-bottom: 30px; color: #64748b;">Nos alegra informarte que tu pedido <strong>#{{numero_pedido}}</strong> ha sido confirmado y está siendo procesado por nuestro equipo.</p>
+
+                <div style="background: #dcfce9; border: 1px solid #bbf7d0; border-radius: 16px; padding: 20px; margin-bottom: 25px; border-top: 4px solid #079455;">
+                    <h3 style="color: #064e3b; font-size: 16px; margin: 0 0 10px 0;">📦 ¿Qué sigue ahora?</h3>
+                    <p style="color: #064e3b; font-size: 14px; margin: 0;">
+                        Nuestro equipo preparará tu pedido. Si incluiste materiales que requieren cotización, un asesor se comunicará contigo al número <strong>{{telefono_cliente}}</strong> o por correo para acordar el precio final antes del envío.
+                    </p>
+                </div>
+
+                <!-- Sección Productos -->
+                <h3 style="color: #0b2345; font-size: 18px; margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">🛍️ Resumen de Productos</h3>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; margin-bottom: 30px;">
+                    <div style="font-size: 15px; color: #1f2937; margin: 0; line-height: 1.8;">
+                        {{productos}}
+                    </div>
+                </div>
+
+                <p style="font-size: 14px; color: #64748b; text-align: center; margin-top: 30px;">
+                    Gracias por confiar en <strong>Procesados Margarita S.A.S.</strong>
+                </p>
+            </div>
+
+            <div style="background: #f8fafc; text-align: center; padding: 25px 20px; border-top: 1px solid #e2e8f0;">
+                <div style="margin-bottom: 20px;">
+                    <p style="margin: 0 0 5px 0; color: #0b2345; font-size: 14px; font-weight: bold;">Información de Contacto</p>
+                    <p style="margin: 0 0 5px 0; color: #64748b; font-size: 13px;">📍 Bogotá, Colombia</p>
+                    <p style="margin: 0 0 10px 0; color: #64748b; font-size: 13px;">📞 {{telefono_empresa}}</p>
+                </div>
+                <div style="border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                    <p style="margin: 0; color: #94a3b8; font-size: 12px;">© Procesados Margarita S.A.S. · Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

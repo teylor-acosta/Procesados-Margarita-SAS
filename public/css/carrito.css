@@ -1770,3 +1770,82 @@ body.modal-carrito-abierto { overflow: hidden; }
         scroll-behavior: auto !important;
     }
 }
+
+/* =========================================
+   FIX DE EMERGENCIA PARA EL RESUMEN DEL CARRITO
+========================================= */
+
+.cart-summary-line {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    padding: 12px 0 !important;
+    border-bottom: 1px dashed rgba(21, 94, 239, 0.1) !important;
+}
+
+.cart-summary-line span {
+    color: #334155 !important;
+    font-size: 15px !important;
+}
+
+.cart-summary-line strong {
+    color: #071a33 !important;
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    text-align: right !important;
+}
+
+.cart-summary-total {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    margin-top: 10px !important;
+    padding-top: 15px !important;
+    border-top: 2px solid rgba(21, 94, 239, 0.15) !important;
+}
+
+.cart-summary-total span {
+    font-size: 18px !important;
+    font-weight: 800 !important;
+    color: #071a33 !important;
+}
+
+.cart-summary-total strong {
+    font-size: 28px !important;
+    font-weight: 800 !important;
+    color: #05603a !important; /* Verde oscuro */
+}
+
+/* Arreglar el aviso azul de materiales */
+#aviso-materiales-carrito {
+    display: flex !important;
+    background: #e5efff !important;
+    color: #155eef !important;
+    padding: 10px !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    align-items: flex-start !important;
+    margin: 10px 0 !important;
+    border: 1px solid rgba(21, 94, 239, 0.2) !important;
+}
+/* =========================================
+   FIX PARA QUITAR LA FRANJA SUPERIOR (FONDO)
+========================================= */
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden;
+}
+
+/* Forzar que la barra superior esté totalmente arriba */
+.cart-topbar, .encabezado {
+    top: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* Asegurar que el fondo no sobresalga */
+body::before {
+    top: 0 !important;
+}

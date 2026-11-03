@@ -1,6 +1,9 @@
-
-
 "use strict";
+
+/* =====================================================
+   PROCESADOS MARGARITA S.A.S.
+   Lógica de Tienda (Con soporte para Cotización de Materiales)
+===================================================== */
 
 /* =====================================================
    1. REFERENCIAS DEL DOM
@@ -20,7 +23,8 @@ const contenidoCarrito = $("#contenido-carrito");
 const subtotalCarrito = $("#subtotal-carrito");
 const ivaCarrito = $("#iva-carrito");
 const totalCarrito = $("#total-carrito");
-const ahorroCarrito = $("#ahorro-carrito"); // ✅ opcional
+const ahorroCarrito = $("#ahorro-carrito");
+const avisoMaterialesCarrito = $("#aviso-materiales-carrito");
 const seguirComprando = $("#seguir-comprando");
 const confirmarCompra = $("#confirmar-compra");
 
@@ -29,7 +33,13 @@ const cerrarProducto = $("#cerrar-producto");
 const modalImagen = $("#modal-imagen");
 const tituloProductoModal = $("#titulo-producto-modal");
 const modalDescripcion = $("#modal-descripcion");
+
+// Elementos del modal de producto
 const modalPrecioUnitario = $("#modal-precio-unitario");
+const modalPrecioContenedor = $("#modal-precio-contenedor");
+const modalTotalContenedor = $("#modal-total-contenedor");
+const modalAvisoCotizacion = $("#modal-aviso-cotizacion");
+
 const modalCantidad = $("#modal-cantidad");
 const modalMenos = $("#modal-menos");
 const modalMas = $("#modal-mas");
@@ -109,7 +119,6 @@ function calcularPrecioItem(precioUnitario, precioMayor, cantidadMayor, cantidad
     const umbral = Number(cantidadMayor) || 0;
     const cant = Math.max(0, Math.floor(Number(cantidad) || 0));
 
-    // Sin datos válidos de mayoreo → precio normal (Materiales)
     if (mayor <= 0 || umbral <= 0 || cant < umbral) {
         return {
             total: unitario * cant,
@@ -119,12 +128,9 @@ function calcularPrecioItem(precioUnitario, precioMayor, cantidadMayor, cantidad
         };
     }
 
-    // Cálculo por lotes (Productos)
     const bloques = Math.floor(cant / umbral);
     const sobrante = cant % umbral;
     const total = bloques * mayor + sobrante * unitario;
-
-    // Ahorro real vs. pagar todo a precio unitario
     const ahorro = unitario * cant - total;
 
     return {
@@ -140,8 +146,11 @@ function calcularPrecioItem(precioUnitario, precioMayor, cantidadMayor, cantidad
 ===================================================== */
 function guardarCarrito() {
     try {
+        // Guardamos el carrito completo sin filtrar, para evitar perder datos
         localStorage.setItem(STORAGE_KEY, JSON.stringify(carrito));
-    } catch (e) {}
+    } catch (e) {
+        console.error("Error al guardar el carrito:", e);
+    }
 }
 
 function cargarCarrito() {
@@ -149,16 +158,16 @@ function cargarCarrito() {
         const data = localStorage.getItem(STORAGE_KEY);
         if (!data) return;
         const parsed = JSON.parse(data);
+        
+        // ✅ Validamos de forma más flexible
         if (Array.isArray(parsed)) {
-            carrito = parsed.filter(
-                (item) => item && typeof item.id === "number" && item.cantidad > 0
-            );
+            carrito = parsed.filter(item => item && item.id !== undefined && item.cantidad > 0);
         }
     } catch (e) {
+        console.error("Error al cargar el carrito:", e);
         carrito = [];
     }
 }
-
 /* =====================================================
    6. EVENTOS DEL CATÁLOGO Y FILTROS
 ===================================================== */
@@ -169,20 +178,42 @@ function registrarEventosCatalogo() {
         const boton = e.target.closest(".boton-agregar");
         if (!boton) return;
 
+        // ✅ Extraemos el ID forzando a Número
         const id = Number(boton.dataset.id);
         const card = boton.closest(".tarjeta-producto");
         if (Number.isNaN(id) || !card) return;
 
+        // ✅ Extraemos el tipo directamente del HTML
+        const tipo = card.dataset.tipo || "producto";
         const nombre = card.querySelector(".producto-nombre").textContent.trim();
         const descripcionCorta = card.querySelector(".producto-descripcion").textContent.trim();
         const imagen = card.querySelector(".producto-imagen img")?.getAttribute("src") || "";
 
+        // ✅ LÓGICA PARA MATERIALES (Sin precio)
+        if (tipo === "material") {
+            const producto = {
+                id,
+                tipo: "material",
+                nombre,
+                descripcionCorta,
+                descripcion: descripcionCorta,
+                imagen,
+                precio: 0,
+                precioMayor: null,
+                cantidadMayor: null
+            };
+            abrirModalProducto(producto);
+            return;
+        }
+
+        // ✅ LÓGICA PARA PRODUCTOS (Con precio y mayoreo)
         const precio = Number(boton.dataset.precio) || 0;
         const precioMayor = boton.dataset.precioMayor ? Number(boton.dataset.precioMayor) : null;
         const cantidadMayor = boton.dataset.cantidadMayor ? Number(boton.dataset.cantidadMayor) : null;
 
         const producto = {
             id,
+            tipo: "producto",
             nombre,
             descripcionCorta,
             descripcion: descripcionCorta,
@@ -245,27 +276,52 @@ function abrirModalProducto(producto) {
     if (!ventanaProducto) return;
     productoActual = producto;
 
+    // Datos generales
     tituloProductoModal.textContent = producto.nombre;
     modalDescripcion.textContent = producto.descripcion;
-    modalPrecioUnitario.textContent = formatoMoneda(producto.precio);
     modalImagen.src = producto.imagen;
     modalImagen.alt = producto.nombre;
     modalCantidad.value = 1;
 
-    // ✅ Mostrar info de mayoreo como LOTE (precio total por bloque)
-    if (producto.precioMayor && producto.cantidadMayor) {
-        if (contenedorPrecioMayoreo) contenedorPrecioMayoreo.style.display = "flex";
-        if (modalPrecioMayor) {
-            modalPrecioMayor.textContent =
-                `${formatoMoneda(producto.precioMayor)} (lote de ${producto.cantidadMayor} uds)`;
+    // ✅ SI ES UN MATERIAL
+    if (producto.tipo === "material") {
+        if (modalPrecioContenedor) modalPrecioContenedor.style.display = "none";
+        if (modalTotalContenedor) modalTotalContenedor.style.display = "none";
+        if (modalAvisoCotizacion) modalAvisoCotizacion.style.display = "block";
+
+        if (modalAgregar) {
+            modalAgregar.innerHTML = `<i class="fa-solid fa-file-invoice-dollar"></i> Solicitar cotización`;
         }
-        if (contenedorCantidadMayor) contenedorCantidadMayor.style.display = "flex";
-        if (modalCantidadMayorTexto) {
-            modalCantidadMayorTexto.textContent = `${producto.cantidadMayor} unidades`;
-        }
-    } else {
+
         if (contenedorPrecioMayoreo) contenedorPrecioMayoreo.style.display = "none";
         if (contenedorCantidadMayor) contenedorCantidadMayor.style.display = "none";
+        if (modalAvisoMayoreo) modalAvisoMayoreo.style.display = "none";
+    } 
+    // ✅ SI ES UN PRODUCTO
+    else {
+        if (modalPrecioContenedor) modalPrecioContenedor.style.display = "grid";
+        if (modalTotalContenedor) modalTotalContenedor.style.display = "flex";
+        if (modalAvisoCotizacion) modalAvisoCotizacion.style.display = "none";
+
+        if (modalAgregar) {
+            modalAgregar.innerHTML = `<i class="fa-solid fa-cart-plus"></i> Agregar al carrito`;
+        }
+
+        if (modalPrecioUnitario) modalPrecioUnitario.textContent = formatoMoneda(producto.precio);
+
+        if (producto.precioMayor && producto.cantidadMayor) {
+            if (contenedorPrecioMayoreo) contenedorPrecioMayoreo.style.display = "flex";
+            if (modalPrecioMayor) {
+                modalPrecioMayor.textContent = `${formatoMoneda(producto.precioMayor)} (lote de ${producto.cantidadMayor} uds)`;
+            }
+            if (contenedorCantidadMayor) contenedorCantidadMayor.style.display = "flex";
+            if (modalCantidadMayorTexto) {
+                modalCantidadMayorTexto.textContent = `${producto.cantidadMayor} unidades`;
+            }
+        } else {
+            if (contenedorPrecioMayoreo) contenedorPrecioMayoreo.style.display = "none";
+            if (contenedorCantidadMayor) contenedorCantidadMayor.style.display = "none";
+        }
     }
 
     actualizarTotalModal();
@@ -278,8 +334,12 @@ function abrirModalProducto(producto) {
 function actualizarTotalModal() {
     if (!productoActual || !modalTotal) return;
 
-    const cantidad = obtenerCantidadValida(modalCantidad);
+    if (productoActual.tipo === "material") {
+        if (modalTotal) modalTotal.textContent = "$ 0";
+        return;
+    }
 
+    const cantidad = obtenerCantidadValida(modalCantidad);
     const { total, aplicaMayoreo } = calcularPrecioItem(
         productoActual.precio,
         productoActual.precioMayor,
@@ -315,17 +375,22 @@ function agregarAlCarrito(cantidad = 1) {
     if (!productoActual) return;
 
     const id = productoActual.id;
-    const existente = carrito.find((item) => item.id === id);
+    // Buscamos si ya existe (usando == para evitar conflictos de string vs number)
+    const existente = carrito.find((item) => item.id == id);
 
     if (existente) {
         existente.cantidad = Math.min(MAX_CANTIDAD, existente.cantidad + cantidad);
+        // Aseguramos que el tipo se mantenga
+        existente.tipo = productoActual.tipo || "producto";
     } else {
+        // ✅ GUARDAR EL PRODUCTO O MATERIAL CON SU TIPO
         carrito.push({
             id: productoActual.id,
+            tipo: productoActual.tipo || "producto",
             nombre: productoActual.nombre,
             descripcion: productoActual.descripcion,
             descripcionCorta: productoActual.descripcionCorta,
-            precio: productoActual.precio,
+            precio: productoActual.precio || 0,
             precioMayor: productoActual.precioMayor || null,
             cantidadMayor: productoActual.cantidadMayor || null,
             imagen: productoActual.imagen,
@@ -336,17 +401,23 @@ function agregarAlCarrito(cantidad = 1) {
     guardarCarrito();
     actualizarCarrito();
     animarContador();
-    mostrarNotificacion(`✅ ${productoActual.nombre} agregado (${cantidad})`, "exito");
+    
+    if (productoActual.tipo === "material") {
+        mostrarNotificacion(`✅ ${productoActual.nombre} agregado a cotización`, "exito");
+    } else {
+        mostrarNotificacion(`✅ ${productoActual.nombre} agregado (${cantidad})`, "exito");
+    }
 }
 
 function cambiarCantidad(id, delta) {
-    const item = carrito.find((i) => i.id === id);
+    // Usamos == para que no importe si el id es string o number
+    const item = carrito.find((i) => i.id == id);
     if (!item) return;
 
     item.cantidad += delta;
 
     if (item.cantidad <= 0) {
-        carrito = carrito.filter((i) => i.id !== id);
+        carrito = carrito.filter((i) => i.id != id);
     } else if (item.cantidad > MAX_CANTIDAD) {
         item.cantidad = MAX_CANTIDAD;
     }
@@ -356,12 +427,11 @@ function cambiarCantidad(id, delta) {
 }
 
 function quitarDelCarrito(id) {
-    carrito = carrito.filter((i) => i.id !== id);
+    carrito = carrito.filter((i) => i.id != id);
     guardarCarrito();
     actualizarCarrito();
     mostrarNotificacion("🗑️ Producto eliminado del carrito");
 }
-
 /* =====================================================
    9. TOTALES Y RENDERIZADO DEL CARRITO
 ===================================================== */
@@ -370,6 +440,9 @@ function calcularTotales() {
     let ahorroTotal = 0;
 
     carrito.forEach(item => {
+        // ✅ Si es un material, NO suma al total (se cotiza aparte)
+        if (item.tipo === "material") return;
+
         const r = calcularPrecioItem(
             item.precio,
             item.precioMayor,
@@ -404,6 +477,40 @@ function actualizarCarrito() {
         `;
     } else {
         contenidoCarrito.innerHTML = carrito.map((item) => {
+            // ✅ Si es material, mostramos aviso de cotización
+            if (item.tipo === "material") {
+                return `
+                <div class="item-carrito" data-id="${item.id}">
+                    <div class="item-carrito-imagen">
+                        <img src="${escaparHTML(item.imagen)}" alt="${escaparHTML(item.nombre)}"
+                            onerror="this.outerHTML='<i class=\\'fa-solid fa-box\\'></i>'">
+                    </div>
+                    <div class="item-carrito-info">
+                        <h3>${escaparHTML(item.nombre)}</h3>
+                        <p style="color: var(--azul-medio); font-weight: 700;">
+                            <i class="fa-solid fa-file-invoice-dollar"></i> Requiere cotización
+                        </p>
+                        <div class="controles-cantidad">
+                            <button type="button" class="boton-cantidad" data-action="restar" data-id="${item.id}">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                            <span class="cantidad-producto">${item.cantidad}</span>
+                            <button type="button" class="boton-cantidad" data-action="sumar" data-id="${item.id}">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="item-carrito-derecha">
+                        <strong class="item-carrito-subtotal" style="color: var(--azul-medio);">Por cotizar</strong>
+                        <button type="button" class="boton-quitar" data-action="quitar" data-id="${item.id}">
+                            <i class="fa-solid fa-trash-can"></i> Quitar
+                        </button>
+                    </div>
+                </div>
+                `;
+            }
+
+            // Si es un producto normal, se calcula normal
             const r = calcularPrecioItem(
                 item.precio,
                 item.precioMayor,
@@ -411,7 +518,6 @@ function actualizarCarrito() {
                 item.cantidad
             );
 
-            // ✅ Mostrar precio unitario efectivo y, si aplica, tachar el precio normal
             const precioMostrar = r.aplicaMayoreo
                 ? r.precioUnitarioEfectivo
                 : item.precio;
@@ -459,6 +565,7 @@ function actualizarCarrito() {
             `;
         }).join("");
 
+        // Eventos de los botones de cantidad y quitar
         contenidoCarrito.querySelectorAll(".boton-cantidad, .boton-quitar").forEach((btn) => {
             btn.addEventListener("click", () => {
                 const id = Number(btn.dataset.id);
@@ -475,11 +582,16 @@ function actualizarCarrito() {
     if (ivaCarrito) ivaCarrito.textContent = formatoMoneda(iva);
     if (totalCarrito) totalCarrito.textContent = formatoMoneda(total);
 
-    // ✅ Mostrar el ahorro si existe el contenedor
     if (ahorroCarrito) {
         ahorroCarrito.textContent = ahorroTotal > 0
             ? `Ahorro por mayoreo: ${formatoMoneda(ahorroTotal)}`
             : "";
+    }
+
+    // ✅ Mostrar u ocultar el aviso de materiales en el carrito
+    if (avisoMaterialesCarrito) {
+        const tieneMateriales = carrito.some(item => item.tipo === "material");
+        avisoMaterialesCarrito.style.display = tieneMateriales ? "flex" : "none";
     }
 
     if (confirmarCompra) confirmarCompra.disabled = carrito.length === 0;
@@ -503,22 +615,23 @@ function revisarPedido() {
     guardarCarrito();
     window.location.href = "carrito.html";
 }
+
 /* =====================================================
    10. REGISTRO DE EVENTOS GENERALES
 ===================================================== */
 function registrarEventos() {
-    // 🔍 Buscador
+    // Buscador
     if (buscarProducto) {
         buscarProducto.addEventListener("input", aplicarFiltros);
     }
 
-    // 🛒 Eventos del Carrito
+    // Carrito
     if (botonAbrirCarrito) botonAbrirCarrito.addEventListener("click", abrirCarrito);
     if (cerrarCarrito) cerrarCarrito.addEventListener("click", cerrarVentanaCarrito);
     if (seguirComprando) seguirComprando.addEventListener("click", cerrarVentanaCarrito);
     if (confirmarCompra) confirmarCompra.addEventListener("click", revisarPedido);
 
-    // 🪟 Modal Producto
+    // Modal Producto
     if (cerrarProducto) cerrarProducto.addEventListener("click", cerrarModalProducto);
 
     if (modalMenos) {
@@ -538,17 +651,10 @@ function registrarEventos() {
     }
 
     if (modalCantidad) {
-        // Se ejecuta cada vez que el usuario escribe o usa las flechas
         modalCantidad.addEventListener("input", actualizarTotalModal);
-        
-        // ✅ SOLUCIÓN AL PROBLEMA DEL "1" PEGADO:
-        // Al hacer clic o tocar el input (en celular o PC), selecciona todo el número
-        // para que al escribir "133" reemplace el "1" viejo automáticamente.
         modalCantidad.addEventListener("focus", () => {
             modalCantidad.select();
         });
-
-        // Al salir del input, valida que sea un número correcto
         modalCantidad.addEventListener("blur", () => {
             obtenerCantidadValida(modalCantidad);
             actualizarTotalModal();
@@ -577,17 +683,14 @@ function registrarEventos() {
 function init() {
     console.log("🚀 Iniciando tienda estática...");
 
-    // Cargar carrito guardado en el navegador
     cargarCarrito();
     actualizarCarrito();
 
-    // Mostrar el conteo inicial de productos en el catálogo
     const totalInicial = document.querySelectorAll(".tarjeta-producto").length;
     if (textoResultados) {
         textoResultados.textContent = `Mostrando ${totalInicial} elementos.`;
     }
 
-    // Activar todos los eventos
     registrarEventosCatalogo();
     registrarFiltrosCategoria();
     registrarEventos();

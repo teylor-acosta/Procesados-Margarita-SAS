@@ -1644,3 +1644,22 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
     max-width: 850px !important;
     width: calc(100% - 40px) !important;
 }
+/* =========================================
+   FIX PARA QUITAR LA FRANJA SUPERIOR (FONDO)
+========================================= */
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden;
+}
+
+/* Forzar que la barra superior esté totalmente arriba */
+.cart-topbar, .encabezado {
+    top: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* Asegurar que el fondo no sobresalga */
+body::before {
+    top: 0 !important;
+}

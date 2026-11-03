@@ -17,7 +17,7 @@
 
     <!-- ✅ SOLO ESTE CSS PARA MANTENER EL DISEÑO PREMIUM -->
     <link rel="stylesheet" href="css/carrito.css">
-          <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" href="css/style1.css">
 
     <!-- Librerías para generar PDF -->
@@ -122,13 +122,19 @@
 
                 <div class="cart-summary-body">
                     <div class="cart-summary-line">
-                        <span>Subtotal</span>
+                        <span>Subtotal (Productos)</span>
                         <strong id="subtotal-productos">$ 0</strong>
                     </div>
                     
                     <div class="cart-summary-line">
                         <span>Artículos</span>
                         <strong id="total-articulos">0</strong>
+                    </div>
+
+                    <!-- Aviso si hay materiales -->
+                    <div class="cart-summary-line" id="aviso-materiales-carrito" style="display: none; background: #e5efff; color: #155eef; border-radius: 8px; padding: 10px; font-size: 13px; align-items: flex-start; margin-bottom: 10px; border: 1px solid rgba(21, 94, 239, 0.2);">
+                        <i class="fa-solid fa-file-invoice-dollar" style="margin-top: 2px;"></i>
+                        <span style="margin-left: 8px; font-weight: 600;">Tienes materiales que requieren cotización. Un asesor te contactará.</span>
                     </div>
                     
                     <!-- Fila de Ahorro (Oculta por defecto, el JS la activa si aplica) -->
@@ -276,6 +282,12 @@
                     </div>
                 </div>
 
+                <!-- Aviso de materiales en el recibo -->
+                <div id="recibo-aviso-materiales" style="display: none; background: #e5efff; color: #155eef; padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-bottom: 16px; border: 1px solid rgba(21, 94, 239, 0.2); align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-file-invoice-dollar" style="font-size: 18px;"></i>
+                    <span>Este pedido incluye materiales que serán cotizados. Un asesor se contactará contigo.</span>
+                </div>
+
                 <!-- Tabla de productos -->
                 <div class="cart-receipt-table-wrap">
                     <table class="cart-receipt-table">
@@ -395,6 +407,12 @@
     <script>
         document.getElementById("anio-actual").textContent = new Date().getFullYear();
     </script>
+
+    <!-- Enlaces del Chatbot -->
+    <link rel="stylesheet" href="css/chatbot.css">
+    
+        <script src="js/chatbot.js"></script>
+        <script src="js/chatbot-formularios.js"></script> 
 
 </body>
 </html>

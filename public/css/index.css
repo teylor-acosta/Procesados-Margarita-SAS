@@ -1,6 +1,6 @@
 /* ==========================================================
    PROCESADOS MARGARITA
-   PÁGINA PRINCIPAL — DISEÑO CORPORATIVO PREMIUM
+   PÁGINA PRINCIPAL 
 ========================================================== */
 
 /* ==========================================================
@@ -372,7 +372,7 @@ nav a:hover::after {
 }
 
 .navbar.scrolled .logo-text span {
-    color: #64748b;
+    color: #8b6464;
 }
 
 .navbar.scrolled .btn-login {
@@ -2526,10 +2526,7 @@ nav a:hover::after {
         transition-duration: 0.01ms !important;
     }
 }
-/* =========================================
-   MEJORA DE COLOR INTENSO Y ELEGANTE
-   PROCESADOS MARGARITA
-========================================= */
+
 
 :root {
     --azul-profundo: #0b2345;
@@ -2564,9 +2561,9 @@ nav a:hover::after {
         ),
         linear-gradient(
             135deg,
-            #ffffff 0%,
+            #a9f3ad 0%,
             #f0f6ff 48%,
-            #eafaf1 100%
+            #9fc6f3 100%
         );
 }
 
@@ -2614,9 +2611,9 @@ nav a:hover::after {
         ),
         linear-gradient(
             145deg,
-            #ffffff 0%,
+            #d4f7da 0%,
             #f0f6ff 65%,
-            #e7faef 100%
+            #c1dcff 100%
         );
 
     border: 1px solid rgba(21, 94, 239, 0.19);
@@ -2684,35 +2681,72 @@ nav a:hover::after {
     filter: drop-shadow(0 4px 8px rgba(18, 199, 106, 0.25));
 }
 
-/* BOTONES MÁS INTENSOS */
+/* ==========================================================
+   BOTONES MÁS INTENSOS
+   - Transición SOLO azul → verde
+   - Margen blanco alrededor
+   - Letras blancas
+========================================================== */
 
 .btn-primary,
+.btn-secondary,
 .btn-login {
-    color: #ffffff;
+    color: #ffffff !important;
+
     background: linear-gradient(
-        115deg,
+        90deg,
         #155eef 0%,
         #1765d8 45%,
-        #079455 100%
+        #12c76a 100%
     );
-    background-size: 180% 180%;
+    background-size: 200% 100%;
+    background-position: 0% 50%;
+
+    /* Margen blanco alrededor del botón */
+    border: 2px solid #ffffff;
+    outline: 2px solid rgba(255, 255, 255, 0.35);
+    outline-offset: 2px;
+
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+
     box-shadow: 0 6px 18px rgba(21, 94, 239, 0.23);
+
     transition:
-        background-position 0.4s ease,
+        background-position 0.6s ease,
         transform 0.3s ease,
-        box-shadow 0.3s ease;
+        box-shadow 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease,
+        outline-color 0.3s ease;
 }
 
 .btn-primary:hover,
+.btn-secondary:hover,
 .btn-login:hover {
+    color: #ffffff !important;
+
     background-position: 100% 50%;
+
+    border-color: #ffffff;
+    outline-color: rgba(255, 255, 255, 0.6);
+
     box-shadow:
-        0 10px 25px rgba(21, 94, 239, 0.27),
-        0 4px 14px rgba(18, 199, 106, 0.2);
+        0 10px 25px rgba(21, 94, 239, 0.3),
+        0 4px 14px rgba(18, 199, 106, 0.25);
+
     transform: translateY(-3px);
 }
 
-/* PROCESO Y ELEMENTOS CIRCULARES */
+.btn-primary:active,
+.btn-secondary:active,
+.btn-login:active {
+    color: #ffffff !important;
+    transform: scale(0.97);
+}
+
+/* ==========================================================
+   PROCESO Y ELEMENTOS CIRCULARES
+========================================================== */
 
 .timeline-icon {
     background: linear-gradient(
@@ -2727,7 +2761,9 @@ nav a:hover::after {
         0 3px 10px rgba(18, 199, 106, 0.15);
 }
 
-/* GALERÍA CON MÁS PROFUNDIDAD */
+/* ==========================================================
+   GALERÍA CON MÁS PROFUNDIDAD
+========================================================== */
 
 .foto {
     border: 1px solid rgba(21, 94, 239, 0.15);
@@ -2750,7 +2786,9 @@ nav a:hover::after {
     color: #ffffff;
 }
 
-/* LLAMADO A LA ACCIÓN */
+/* ==========================================================
+   LLAMADO A LA ACCIÓN
+========================================================== */
 
 .cta {
     background:
@@ -2779,23 +2817,19 @@ nav a:hover::after {
     color: #ffffff;
 }
 
-/* ENLACES Y DETALLES */
+/* ==========================================================
+   ENLACES Y DETALLES
+========================================================== */
 
-.navbar a:hover {
+/* Comentado para no pisar el degradado del menú.
+   Si quieres el menú en verde sólido al hover, descomenta: */
+/* .navbar a:hover {
     color: #12c76a;
-}
+} */
 
-.btn-secondary:hover {
-    border-color: #12c76a;
-    color: #05603a;
-    background: linear-gradient(
-        120deg,
-        #edf5ff,
-        #dcfce9
-    );
-}
-
-/* ENFOQUE VISIBLE */
+/* ==========================================================
+   ENFOQUE VISIBLE
+========================================================== */
 
 a:focus-visible,
 button:focus-visible {
