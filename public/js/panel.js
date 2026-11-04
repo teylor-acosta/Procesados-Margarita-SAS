@@ -68,6 +68,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 </div>
 
+                <!-- [AGREGADO] Botón de Novedades para Admin -->
+                <div
+                    class="modulo-card novedades"
+                    onclick="irNovedades()">
+
+                    <i class="fas fa-bell icono-modulo"></i>
+
+                    <span>Novedades</span>
+
+                    <small>
+                        Pagos y nómina
+                    </small>
+
+                </div>
+
                 <div class="modulo-card proximamente">
 
                     <i class="fas fa-boxes-stacked icono-modulo"></i>
@@ -121,7 +136,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         // ============================================
-        // AUXILIAR
+        // AUXILIAR (Usuario Normal)
         // ============================================
 
         else if (rol.includes("auxiliar")) {
@@ -152,6 +167,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                     <small>
                         Cursos, evaluaciones y certificados
+                    </small>
+
+                </div>
+
+                <!-- [AGREGADO] Botón de Novedades para Usuario Normal -->
+                <div
+                    class="modulo-card mis-novedades"
+                    onclick="irmisNovedades()">
+
+                    <i class="fas fa-bell icono-modulo"></i>
+
+                    <span>Novedades</span>
+
+                    <small>
+                        Consulta tus pagos y nómina
                     </small>
 
                 </div>
@@ -228,5 +258,21 @@ function irEmpleados() {
 function irCapacitaciones() {
 
     window.location.href = "/centro-capacitaciones";
+
+}
+
+// [MODIFICADO] Función para ir a la ventana de novedades de ADMIN
+function irNovedades() {
+
+    // Los administradores van a la vista con todos los permisos
+    window.location.href = "/nomina/novedades"; 
+
+}
+
+// [MODIFICADO] Función para ir a la ventana de novedades del USUARIO NORMAL
+function irmisNovedades() {
+
+    // Ahora apunta a la misma ruta del backend, y el backend decide qué HTML mostrar
+    window.location.href = "/nomina/novedades";
 
 }

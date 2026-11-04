@@ -13,6 +13,7 @@ const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
 const path = require('path');
+const fs = require('fs'); // [AGREGADO] Para leer las plantillas HTML
 const multer = require('multer'); // 🔥 AGREGADO: Para que funcione 'upload'
 const nodemailer = require('nodemailer'); // 🔥 AGREGADO: Por si se usa 'transporter' en contacto
 
@@ -304,15 +305,44 @@ const {
 } = require('./public/servicios/correo');
 
 /* =========================================================
-   CONFIGURACIÓN DE NODEMAILER PARA CONTACTO (GMAIL)
+   CONFIGURACIÓN DE NODEMAILER PARA CONTACTO (HOSTINGER)
    ========================================================= */
+// [MODIFICADO] Configuración apuntando a Hostinger
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: "smtp.hostinger.com",
+    port: 465,
+    secure: true, // SSL
     auth: {
         user: process.env.EMAIL_USER, 
         pass: process.env.EMAIL_PASS  
+    },
+    tls: {
+        rejectUnauthorized: false
     }
 });
+
+/* =========================================================
+   FUNCIÓN PARA LEER Y REEMPLAZAR VARIABLES EN PLANTILLAS
+   ========================================================= */
+// [AGREGADO] Función auxiliar para cargar las plantillas HTML
+function cargarPlantillaChatbot(nombreArchivo, variables) {
+    // Busca en la misma carpeta que ya usas para la tienda
+    const ruta = path.join(__dirname, 'public', 'servicios', 'plantillas', nombreArchivo);
+    
+    if (!fs.existsSync(ruta)) {
+        throw new Error(`La plantilla del chatbot no existe en: ${ruta}`);
+    }
+
+    let html = fs.readFileSync(ruta, 'utf8');
+    
+    // Reemplazar todas las llaves {{VARIABLE}} por su valor real
+    for (const [llave, valor] of Object.entries(variables)) {
+        html = html.replace(new RegExp(`{{${llave}}}`, 'g'), valor !== undefined && valor !== null ? valor : '');
+    }
+    return html;
+}
+
+
 /* =========================================================
    RUTAS DE LA API
    ========================================================= */
@@ -340,9 +370,6 @@ app.post('/api/pedidos', async (req, res) => {
         const correoEnviado = await notificarPedidoPropietario(pedido);
 
         if (correoEnviado) {
-            // Aquí también podrías guardar el pedido en tu base de datos (DB.js)
-            // await DB.guardarPedido(pedido);
-
             return res.status(200).json({
                 ok: true,
                 mensaje: 'Pedido registrado y correo enviado al propietario.',
@@ -411,36 +438,105 @@ app.post('/api/pedidos/:numero/rechazar', async (req, res) => {
 app.post('/api/contacto', upload.single('archivo'), async (req, res) => {
     try {
         const tipo = req.body.tipo || "solicitud";
-        
         const destino = req.body.correoDestino || process.env.CORREO_SOLICITUDES;
-        
         const asunto = req.body.asunto || `Nueva solicitud: ${tipo}`;
         const datosStr = req.body.datos || "{}";
         const datos = JSON.parse(datosStr);
 
-        // Cuerpo básico del correo (puedes mejorarlo a tu gusto)
-        let htmlCuerpo = `<h2>Nueva solicitud: ${tipo}</h2>`;
-        htmlCuerpo += `<p><strong>Datos recibidos:</strong></p><pre>${JSON.stringify(datos, null, 2)}</pre>`;
+        // [AGREGADO] Detectar dinámicamente el correo, nombre y teléfono del cliente
+        let emailCliente = "";
+        let nombreCliente = "Cliente";
+        let telefonoCliente = "No registrado";
 
-        const mailOptions = {
-            from: `"${process.env.NOMBRE_REMITENTE}" <${process.env.GMAIL_USER}>`,
+        if (tipo === "producto") {
+            emailCliente = datos["pro-correo"]; nombreCliente = datos["pro-nombre"]; telefonoCliente = datos["pro-telefono"];
+        } else if (tipo === "material") {
+            emailCliente = datos["mat-correo"]; nombreCliente = datos["mat-nombre"]; telefonoCliente = datos["mat-telefono"];
+        } else if (tipo === "soporte") {
+            emailCliente = datos["sop-correo"]; nombreCliente = datos["sop-nombre"]; telefonoCliente = datos["sop-telefono"];
+        } else if (tipo === "empleo") {
+            emailCliente = datos["emp-correo"]; nombreCliente = datos["emp-nombre"]; telefonoCliente = datos["emp-telefono"];
+        } else if (tipo === "acta") {
+            emailCliente = datos["act-correo"]; nombreCliente = datos["act-solicitante"]; telefonoCliente = "No registrado";
+        } else if (tipo === "retencion") {
+            emailCliente = datos["ret-correo"]; nombreCliente = datos["ret-solicitante"]; telefonoCliente = "No registrado";
+        } else {
+            emailCliente = datos["correo"] || datos["rec-correo"] || datos["cal-correo"] || "";
+            nombreCliente = datos["nombre"] || datos["rec-nombre"] || datos["cal-nombre"] || "Cliente";
+            telefonoCliente = datos["rec-telefono"] || datos["cal-telefono"] || "No registrado";
+        }
+
+        const fecha = new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' });
+        const tipoSolicitud = tipo.charAt(0).toUpperCase() + tipo.slice(1);
+
+        // [AGREGADO] Formatear los datos en una tabla HTML legible
+        let tablaDatos = "";
+        for (const [key, value] of Object.entries(datos)) {
+            if (value) {
+                const nombreCampo = key.replace(/^(pro-|mat-|sop-|emp-|rec-|cal-|act-|ret-)/, "").toUpperCase();
+                tablaDatos += `
+                  <tr>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: #0b2345; background-color: #f8fafc; width: 35%; font-size: 14px;">${nombreCampo}</td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid #e2e8f0; color: #334155; font-size: 14px;">${value}</td>
+                  </tr>
+                `;
+            }
+        }
+
+        // [AGREGADO] Elegir la plantilla adecuada para el asesor
+        const plantillaAsesor = req.file ? 'chatbot-adjunto.html' : 'chatbot-asesor.html';
+        
+        const htmlAsesor = cargarPlantillaChatbot(plantillaAsesor, {
+            'TIPO_SOLICITUD': tipoSolicitud,
+            'FECHA': fecha,
+            'NOMBRE_CLIENTE': nombreCliente,
+            'EMAIL_CLIENTE': emailCliente || 'No proporcionado',
+            'TELEFONO_CLIENTE': telefonoCliente,
+            'TABLA_DATOS': tablaDatos,
+            'ANIO': new Date().getFullYear()
+        });
+
+        const mailAsesor = {
+            from: `"${process.env.NOMBRE_REMITENTE || 'Procesados Margarita'}" <${process.env.EMAIL_USER}>`,
             to: destino,
-            bcc: process.env.CORREO_PROPIETARIO, 
+            replyTo: emailCliente || undefined,
+            bcc: process.env.CORREO_PROPIETARIO,
             subject: asunto,
-            html: htmlCuerpo,
+            html: htmlAsesor,
             attachments: []
         };
 
-        // Si se adjuntó un archivo, lo agregamos al correo
         if (req.file) {
-            mailOptions.attachments.push({
+            mailAsesor.attachments.push({
                 filename: req.file.originalname,
                 path: req.file.path
             });
         }
 
-        await transporter.sendMail(mailOptions);
-        console.log(`✅ Correo de ${tipo} enviado a ${destino}`);
+        await transporter.sendMail(mailAsesor);
+        console.log(`✅ Correo 1 (Asesor) enviado a ${destino}`);
+
+        // [AGREGADO] Correo 2: Confirmación al cliente usando la nueva plantilla
+        if (emailCliente && emailCliente.includes("@")) {
+            const htmlCliente = cargarPlantillaChatbot('chatbot-cliente.html', {
+                'NOMBRE_CLIENTE': nombreCliente,
+                'TIPO_SOLICITUD': tipoSolicitud,
+                'TELEFONO_EMPRESA': process.env.EMPRESA_TELEFONO || '+57 (Tu número aquí)',
+                'EMAIL_EMPRESA': process.env.CORREO_SOLICITUDES || 'solicitudes@procesadosmargaritasas.com',
+                'ANIO': new Date().getFullYear()
+            });
+
+            await transporter.sendMail({
+                from: `"${process.env.NOMBRE_REMITENTE}" <${process.env.EMAIL_USER}>`,
+                to: emailCliente,
+                subject: "Hemos recibido tu solicitud - Procesados Margarita",
+                html: htmlCliente
+            });
+            console.log(`✅ Correo 2 (Confirmación) enviado a ${emailCliente}`);
+        } else {
+            console.log(`⚠️ No se envió confirmación: el cliente no proporcionó un correo válido.`);
+        }
+
         res.status(200).json({ ok: true, mensaje: "Solicitud enviada correctamente." });
 
     } catch (error) {
@@ -460,5 +556,5 @@ app.post('/api/contacto', upload.single('archivo'), async (req, res) => {
 // Debe ir al final para que todas las rutas estén cargadas antes de encender.
 app.listen(PORT, () => {
     console.log(`🚀 Servidor ejecutándose en http://localhost:${PORT}`);
-    console.log(`📧 Correos configurados desde: ${process.env.GMAIL_USER}`);
+    console.log(`📧 Correos configurados desde: ${process.env.EMAIL_USER}`);
 });

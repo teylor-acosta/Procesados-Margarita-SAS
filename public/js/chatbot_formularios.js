@@ -1,5 +1,3 @@
-
-
 (function () {
   "use strict";
 
@@ -106,6 +104,12 @@
           <input type="text" id="rec-nombre" placeholder="Tu nombre" required>
         </div>
 
+        <!-- [AGREGADO] Campo de correo para poder enviar la confirmación al cliente -->
+        <div class="chat-form-group">
+          <label>Correo electrónico *</label>
+          <input type="email" id="rec-correo" placeholder="tucorreo@ejemplo.com" required>
+        </div>
+
         <div class="chat-form-group">
           <label>Teléfono *</label>
           <input type="tel" id="rec-telefono" placeholder="Ej: 300 123 4567" required>
@@ -184,6 +188,12 @@
         <div class="chat-form-group">
           <label>Tu nombre (opcional)</label>
           <input type="text" id="cal-nombre" placeholder="Tu nombre">
+        </div>
+
+        <!-- [AGREGADO] Campo de correo para enviar la confirmación -->
+        <div class="chat-form-group">
+          <label>Tu correo electrónico (opcional, para confirmación)</label>
+          <input type="email" id="cal-correo" placeholder="tucorreo@ejemplo.com">
         </div>
 
         <button type="button" class="chat-form-submit" onclick="enviarFormularioChat('calificacion')">
@@ -270,6 +280,75 @@
           Solicitar retención
         </button>
       </div>
+    `,
+
+    /* =========================================
+       [AGREGADO] 7) ASESOR DE PRODUCTOS
+       Formulario del flujo "Asistencia en compras → Producto".
+       Reutiliza la misma estructura y el mismo enviarFormularioChat.
+       ========================================= */
+    producto: `
+      <div class="chat-form-container" id="form-producto">
+        <h4>🛍️ Solicitud al asesor de productos</h4>
+
+        <div class="chat-form-group">
+          <label>Nombre completo *</label>
+          <input type="text" id="pro-nombre" placeholder="Ej: Juan Pérez" required>
+        </div>
+
+        <div class="chat-form-group">
+          <label>Correo electrónico *</label>
+          <input type="email" id="pro-correo" placeholder="tucorreo@ejemplo.com" required>
+        </div>
+
+        <div class="chat-form-group">
+          <label>Número de contacto *</label>
+          <input type="tel" id="pro-telefono" placeholder="Ej: 300 123 4567" required>
+        </div>
+
+        <div class="chat-form-group">
+          <label>¿Qué producto necesitas? *</label>
+          <textarea id="pro-mensaje" rows="3" placeholder="Cuéntanos qué producto o referencia te interesa..." required></textarea>
+        </div>
+
+        <button type="button" class="chat-form-submit" onclick="enviarFormularioChat('producto')">
+          Enviar solicitud
+        </button>
+      </div>
+    `,
+
+    /* =========================================
+       [AGREGADO] 8) ASESOR DE MATERIALES
+       Formulario del flujo "Asistencia en compras → Material".
+       ========================================= */
+    material: `
+      <div class="chat-form-container" id="form-material">
+        <h4>📦 Solicitud al asesor de materiales</h4>
+
+        <div class="chat-form-group">
+          <label>Nombre completo *</label>
+          <input type="text" id="mat-nombre" placeholder="Ej: Juan Pérez" required>
+        </div>
+
+        <div class="chat-form-group">
+          <label>Correo electrónico *</label>
+          <input type="email" id="mat-correo" placeholder="tucorreo@ejemplo.com" required>
+        </div>
+
+        <div class="chat-form-group">
+          <label>Número de contacto *</label>
+          <input type="tel" id="mat-telefono" placeholder="Ej: 300 123 4567" required>
+        </div>
+
+        <div class="chat-form-group">
+          <label>¿Qué material necesitas? *</label>
+          <textarea id="mat-mensaje" rows="3" placeholder="Cuéntanos qué material o referencia te interesa..." required></textarea>
+        </div>
+
+        <button type="button" class="chat-form-submit" onclick="enviarFormularioChat('material')">
+          Enviar solicitud
+        </button>
+      </div>
     `
   };
 
@@ -309,7 +388,10 @@
     recoleccion:  CORREOS.logistica,
     calificacion: CORREOS.solicitudes,
     acta:         CORREOS.solicitudes,
-    retencion:    CORREOS.solicitudes
+    retencion:    CORREOS.solicitudes,
+    // [AGREGADO] nuevos destinos para el flujo de compras
+    producto:     CORREOS.asesorProducto,
+    material:     CORREOS.asesorMaterial
   };
 
   const ASUNTO_POR_TIPO = {
@@ -318,7 +400,10 @@
     recoleccion:  "🚚 Solicitud de recolección",
     calificacion: "⭐ Opinión del servicio",
     acta:         "📄 Solicitud de acta de aprovechamiento",
-    retencion:    "🧾 Solicitud de retención"
+    retencion:    "🧾 Solicitud de retención",
+    // [AGREGADO] nuevos asuntos
+    producto:     "🛍️ Nueva solicitud – Asesor de productos",
+    material:     "📦 Nueva solicitud – Asesor de materiales"
   };
 
   /* =========================================
@@ -513,7 +598,11 @@
       // Botón para abrir mailto
       const wrap = document.createElement("div");
       wrap.innerHTML = `<button class="back-btn" id="mailto-${tipoFormulario}">✉️ Abrir correo con los datos</button>`;
-      MotorChat.DOM.body.appendChild(wrap);
+      
+      // [CORREGIDO] Cambiamos MotorChat.DOM.body por document.getElementById para evitar el error
+      const chatBody = document.getElementById("chat-body");
+      if (chatBody) chatBody.appendChild(wrap);
+
       wrap.querySelector(`#mailto-${tipoFormulario}`).addEventListener("click", () => {
         fallbackMailto(tipoFormulario, datos);
       });
@@ -774,6 +863,6 @@
   console.log("📝 Módulo de formularios del chatbot cargado correctamente (Parte 3/3).");
   console.log("   ✔ Estilos aplicados");
   console.log("   ✔ Autofocus activo");
-  console.log("   ✔ Autolimpieza segura activa");
+  console.log("   ✔ Autolimpieza activa");
 
 })();

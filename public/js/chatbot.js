@@ -78,6 +78,8 @@
         id: 4,
         titulo: "📊 Indicadores de productividad",
         tipo: "proximamente",
+        // [AGREGADO] Keywords para que el buscador encuentre esta opción sin importar los emojis
+        keywords: ["indicadores", "productividad", "indicador"],
         resp: "Estamos terminando los indicadores de productividad 📊. Pronto estarán disponibles aquí mismo. Si necesitas un reporte urgente, escríbenos a <b>solicitudes@procesadosmargaritasas.com</b>."
       },
       { id: 5, titulo: "📁 Documentación interna",        tipo: "documentos" },
@@ -85,7 +87,13 @@
       { id: 7, titulo: "⭐ Opiniones del servicio",       tipo: "formulario_opiniones" },
       { id: 8, titulo: "📄 Actas de aprovechamiento",     tipo: "formulario_actas" },
       { id: 9, titulo: "🧾 Solicitudes de retenciones",   tipo: "formulario_retenciones" }
-    ]
+    ],
+
+    // [AGREGADO] Configuración de integración con backend de correos
+    backend: {
+      endpointContacto: "/api/contacto",   // ruta que expondrá Express en Parte 3
+      timeoutMs: 20000                     // timeout de red
+    }
   };
 
   /* =========================================
@@ -631,6 +639,28 @@ OjosRobot.init();
       color: #334155;
       line-height: 1.7;
     }
+
+    /* ---------- [AGREGADO] BOTÓN "ENVIANDO" ---------- */
+    .btn-primary.is-loading {
+      pointer-events: none;
+      opacity: 0.85;
+      background: linear-gradient(135deg, #6b8cff, #4cb583);
+    }
+    .btn-primary.is-loading::after {
+      content: "";
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-left: 8px;
+      border: 2px solid rgba(255,255,255,0.45);
+      border-top-color: #fff;
+      border-radius: 50%;
+      vertical-align: -1px;
+      animation: girarSpinner 0.7s linear infinite;
+    }
+    @keyframes girarSpinner {
+      to { transform: rotate(360deg); }
+    }
   `;
   document.head.appendChild(styleExtra);
 
@@ -864,6 +894,7 @@ OjosRobot.init();
       DOM.body.dataset.chipsListener = "true";
     },
 
+
     comprasSeleccion(tipo) {
       const etiqueta = tipo === "producto" ? "Producto" : "Material";
       MotorChat.agregarMensaje(etiqueta, "user");
@@ -875,11 +906,48 @@ OjosRobot.init();
       this.botResponde(`
         Perfecto 👌. Te pongo en contacto con el asesor de <b>${tipo}</b>.<br>
         📧 <b>${correo}</b><br>
-        En un momento se comunicará contigo.
+        Completa tus datos y él se comunicará contigo.
       `, "confirmacion");
 
-      this.notificar(correo, "Nueva solicitud de compra", { tipo });
-      this.volverAlMenu();
+      // Inserta la plantilla HTML existente ("producto" | "material")
+      // El botón ya trae onclick="enviarFormularioChat('producto')"
+      // y lo maneja chatbot_formularios.js tal cual.
+      setTimeout(() => {
+        const plantillas = window.PlantillasFormularios || {};
+        const html = plantillas[tipo];
+
+        if (!html) {
+          // Fallback: si chatbot_formularios.js aún no cargó
+          this.botResponde(
+            "⚠️ No se pudo cargar el formulario. Escríbenos directamente a <b>" +
+            correo + "</b>.",
+            "error"
+          );
+          this.volverAlMenu();
+          return;
+        }
+
+        MotorChat.agregarMensaje(html, "bot");
+
+        // [AGREGADO] Delegación: cuando el form se envíe con éxito,
+        // escuchamos el estado "display:none" para ofrecer volver al menú
+        // sin tocar la lógica interna de enviarFormularioChat.
+        const formId = `form-${tipo}`;
+        const esperarEnvio = setInterval(() => {
+          const form = document.getElementById(formId);
+          if (!form) { clearInterval(esperarEnvio); return; }
+
+          // chatbot_formularios.js oculta el form con display:none al enviarse
+          if (form.style.display === "none") {
+            clearInterval(esperarEnvio);
+            // El módulo ya agrega su propio botón "Volver al menú",
+            // así que aquí no duplicamos nada.
+          }
+        }, 500);
+
+        // Seguridad: detener el polling tras 5 minutos
+        setTimeout(() => clearInterval(esperarEnvio), 5 * 60 * 1000);
+      }, 1000);
     },
 
     /* =========================================
@@ -1248,16 +1316,16 @@ OjosRobot.init();
     },
 
     /* =========================================
-       NLP DE TEXTO LIBRE
+       NLP DE TEXTO LIBRE [CORREGIDO]
        ========================================= */
     procesarTextoEntrada(textoOriginal) {
       if (!textoOriginal) return;
 
+      // Normalizamos: minúsculas, sin acentos y sin emojis para búsqueda
       const texto = textoOriginal.toLowerCase().trim()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
       if (!texto) return;
 
-      // ✅ Mensaje del usuario cuando escribe
       MotorChat.agregarMensaje(textoOriginal, "user");
       if (DOM.input) DOM.input.value = "";
 
@@ -1267,7 +1335,6 @@ OjosRobot.init();
         const opcion = CONFIG.opciones.find(op => op.id === numero);
         if (opcion) {
           this.reaccionarClick();
-          // NO se vuelve a agregar la burbuja del usuario
           this._ejecutarFlujoPorTipo(opcion);
         }
         return;
@@ -1296,11 +1363,17 @@ OjosRobot.init();
         return;
       }
 
-      // 3) Coincidencia por palabras del título
+      // 3) Coincidencia por palabras del título o keywords [CORREGIDO]
       const opcionEncontrada = CONFIG.opciones.find(op => {
+        // Revisar si coincide con las keywords (si existen)
+        if (op.keywords && op.keywords.some(k => texto.includes(k))) return true;
+
+        // Limpiar título: quitar emojis y caracteres especiales para buscar
         const palabras = op.titulo.toLowerCase()
           .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-          .replace(/[^\w\s]/g, "").split(" ").filter(p => p.length > 3);
+          .replace(/[^\w\s]/g, "") // quita emojis y signos
+          .split(" ").filter(p => p.length > 3);
+          
         return palabras.some(p => texto.includes(p));
       });
 
@@ -1334,26 +1407,20 @@ OjosRobot.init();
     timeoutEscribir: null,
     _inicializado: false,
 
-    /* =========================================
-       1) INICIALIZACIÓN
-       ========================================= */
     init() {
       if (this._inicializado) return;
       this._inicializado = true;
 
       console.log("🤖 Iniciando Chatbot Margarita...");
 
-      // ✅ Saludo automático (solo primera vez)
       setTimeout(() => {
         if (!UI.window.classList.contains("open") && !MotorChat.saludoRealizado) {
           MotorChat.ejecutarSaludo();
         }
       }, 1500);
 
-      // --- Abrir/cerrar con el robot ---
       UI.robot.addEventListener("click", () => this.toggleChat());
 
-      // --- Accesibilidad: abrir con Enter/Espacio cuando el robot tiene foco ---
       UI.robot.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
@@ -1361,28 +1428,29 @@ OjosRobot.init();
         }
       });
 
-      // --- Abrir/cerrar con la burbuja ---
       UI.bubble.addEventListener("click", () => this.toggleChat());
 
-      // --- Hover del robot (mostrar burbuja) ---
       UI.robot.addEventListener("mouseenter", () => {
         if (!UI.window.classList.contains("open") && !MotorChat.saludoRealizado) {
           UI.bubble.classList.add("visible");
         }
       });
+      
       UI.robot.addEventListener("mouseleave", () => {
         if (!this.chatIniciado && !MotorChat.saludoRealizado) {
           UI.bubble.classList.remove("visible");
         }
       });
 
-      // --- Botón cerrar (X) ---
       DOM.closeBtn.addEventListener("click", () => this.toggleChat());
 
-      // --- Botón enviar ---
-      DOM.sendBtn.addEventListener("click", () => this.enviarMensaje());
+      // [CORREGIDO] Se agregó e.preventDefault() para evitar conflictos
+      DOM.sendBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        this.enviarMensaje();
+      });
 
-      // --- Enter en el input ---
+      // [CORREGIDO] Se agregó e.preventDefault()
       DOM.input.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.keyCode === 13) {
           e.preventDefault();
@@ -1390,7 +1458,6 @@ OjosRobot.init();
         }
       });
 
-      // --- Reacción visual al escribir ---
       DOM.input.addEventListener("input", () => {
         if (DOM.input.value.length > 0) {
           clearTimeout(this.timeoutEscribir);
@@ -1398,14 +1465,20 @@ OjosRobot.init();
         }
       });
 
-      // --- Autofocus al abrir la ventana ---
+      // [AGREGADO] Parche de seguridad: si el input se queda bloqueado, 
+      // al hacer clic en él se desbloquea automáticamente.
+      DOM.input.addEventListener("focus", () => {
+        if (DOM.input.disabled) {
+          MotorChat.bloquearInput(false);
+        }
+      });
+
       UI.window.addEventListener("transitionend", (e) => {
         if (e.propertyName === "transform" && UI.window.classList.contains("open")) {
           DOM.input.focus();
         }
       });
 
-      // --- Accesibilidad: ESC cierra el chat ---
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape" && UI.window.classList.contains("open")) {
           this.toggleChat();
@@ -1413,27 +1486,21 @@ OjosRobot.init();
       });
     },
 
-    /* =========================================
-       2) ABRIR / CERRAR LA VENTANA
-       ========================================= */
     toggleChat() {
       UI.bubble.classList.remove("visible");
       const abierto = UI.window.classList.contains("open");
 
       if (abierto) {
-        // --- CERRAR ---
         UI.window.classList.remove("open");
         this.chatIniciado = false;
         UI.robot.classList.remove("saludando");
         UI.robot.setAttribute("aria-expanded", "false");
       } else {
-        // --- ABRIR ---
         UI.window.classList.add("open");
         this.chatIniciado = true;
         UI.robot.classList.remove("saludando");
         UI.robot.setAttribute("aria-expanded", "true");
 
-        // Primera vez: mensaje de bienvenida + menú
         if (DOM.body.children.length === 0) {
           setTimeout(() => {
             MotorChat.agregarMensaje(
@@ -1443,39 +1510,34 @@ OjosRobot.init();
             setTimeout(() => FlujoChat.mostrarMenu(), 1500);
           }, 500);
         } else {
-          // Si ya hay mensajes, solo enfocamos el input al abrir
           setTimeout(() => DOM.input.focus(), 300);
         }
       }
     },
 
-    /* =========================================
-       3) ENVIAR MENSAJE
-       ========================================= */
+    // [CORREGIDO] Se repara el nombre del método (reaccionarEnviar) para que 
+    // no rompa la ejecución al hacer clic en el botón.
     enviarMensaje() {
       const texto = DOM.input.value.trim();
 
-      // Evitar enviar si está vacío o si el input está bloqueado
       if (!texto) return;
-      if (DOM.input.disabled) return;
+      
+      // [AGREGADO] Si por alguna razón quedó bloqueado, lo desbloquea aquí también.
+      if (DOM.input.disabled) {
+        MotorChat.bloquearInput(false);
+      }
 
-      this.reaccionEnviar();
+      this.reaccionarEnviar(); // <-- AQUÍ ESTABA EL ERROR. Decía reaccionEnviar()
       FlujoChat.procesarTextoEntrada(texto);
     },
 
-    /* =========================================
-       4) ANIMACIÓN AL ENVIAR
-       ========================================= */
-    reaccionEnviar() {
+    reaccionarEnviar() {
       if (!UI.robot) return;
       UI.robot.classList.add("reaccion-click");
       setTimeout(() => UI.robot.classList.remove("reaccion-click"), 300);
     }
   };
 
-  /* =========================================
-     ARRANCAR EL MOTOR
-     ========================================= */
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", () => AppChat.init());
   } else {

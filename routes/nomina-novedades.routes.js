@@ -93,7 +93,14 @@ const generarCSV = (filas, columnas) => {
    ============================================================ */
 
 router.get('/nomina/novedades', proteger, (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/nomina-novedades.html'));
+    // Convertimos el rol a minúsculas para evitar errores
+    const rol = (req.session.rol || '').toLowerCase().trim();
+    
+    if (rol === 'auxiliar') {
+        res.sendFile(path.join(__dirname, '../public/mis-novedades.html'));
+    } else {
+        res.sendFile(path.join(__dirname, '../public/nomina-novedades.html'));
+    }
 });
 
 /* ============================================================
