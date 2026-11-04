@@ -14,3484 +14,1108 @@ const router = express.Router();
    CONFIGURACIÓN DE SOPORTES DE NOVEDADES
    ============================================================ */
 
-const carpetaSoportesNovedades =
-    path.join(
-        __dirname,
-        '../public/uploads/nomina/novedades/soportes'
-    );
+const carpetaSoportesNovedades = path.join(__dirname, '../public/uploads/nomina/novedades/soportes');
 
 if (!fs.existsSync(carpetaSoportesNovedades)) {
-    fs.mkdirSync(
-        carpetaSoportesNovedades,
-        { recursive: true }
-    );
+    fs.mkdirSync(carpetaSoportesNovedades, { recursive: true });
 }
-
 
 /* ============================================================
    MULTER
    ============================================================ */
 
-const storageSoportes =
-    multer.diskStorage({
+const storageSoportes = multer.diskStorage({
+    destination(req, file, cb) {
+        cb(null, carpetaSoportesNovedades);
+    },
+    filename(req, file, cb) {
+        const extension = path.extname(file.originalname).toLowerCase();
+        const nombreArchivo = `soporte_${Date.now()}_${Math.round(Math.random() * 100000)}${extension}`;
+        cb(null, nombreArchivo);
+    }
+});
 
-        destination(req, file, cb) {
-
-            cb(
-                null,
-                carpetaSoportesNovedades
-            );
-
-        },
-
-        filename(req, file, cb) {
-
-            const extension =
-                path.extname(
-                    file.originalname
-                ).toLowerCase();
-
-            const nombreArchivo =
-                `incapacidad_${Date.now()}_${Math.round(
-                    Math.random() * 100000
-                )}${extension}`;
-
-            cb(
-                null,
-                nombreArchivo
-            );
-
+const uploadSoporte = multer({
+    storage: storageSoportes,
+    limits: { fileSize: 10 * 1024 * 1024 },
+    fileFilter(req, file, cb) {
+        const tiposPermitidos = ['application/pdf', 'image/jpeg', 'image/png'];
+        if (tiposPermitidos.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('El soporte debe ser PDF, JPG o PNG.'));
         }
+    }
+});
 
-    });
-
-
-const uploadSoporte =
-    multer({
-
-        storage: storageSoportes,
-
-        limits: {
-            fileSize: 10 * 1024 * 1024
-        },
-
-        fileFilter(req, file, cb) {
-
-            const tiposPermitidos = [
-                'application/pdf',
-                'image/jpeg',
-                'image/png'
-            ];
-
-            if (
-                tiposPermitidos.includes(
-                    file.mimetype
-                )
-            ) {
-
-                cb(null, true);
-
-            } else {
-
-                cb(
-                    new Error(
-                        'El soporte debe ser PDF, JPG o PNG.'
-                    )
-                );
-
-            }
-
-        }
-
-    });
-
-const {
-    proteger,
-    soloRol
-} = require('../middlewares/auth');
-
+const { proteger } = require('../middlewares/auth');
 
 /* ============================================================
-   PÁGINA PRINCIPAL DE NOVEDADES
+   HELPERS DE RESPUESTA
    ============================================================ */
 
-router.get(
-    '/nomina/novedades',
-    proteger,
-    (req, res) => {
+const responderOk = (res, data = {}, status = 200) => res.status(status).json({ success: true, ...data });
+const responderError = (res, message, status = 500, extra = {}) => res.status(status).json({ success: false, message, ...extra });
 
-        res.sendFile(
-            path.join(
-                __dirname,
-                '../public/nomina-novedades.html'
-            )
+/* ============================================================
+   HELPER: REGISTRAR AUDITORÍA
+   ============================================================ */
+
+async function registrarHistorial(connection, { novedadId, estadoAnterior, estadoNuevo, usuarioId, comentario }) {
+    try {
+        await connection.query(
+            `INSERT INTO nomina_novedades_historial (novedad_id, estado_anterior, estado_nuevo, usuario_id, comentario, fecha_cambio) 
+             VALUES (?, ?, ?, ?, ?, NOW())`,
+            [novedadId, estadoAnterior || null, estadoNuevo, usuarioId || null, comentario || null]
         );
-
+    } catch (error) {
+        console.error('⚠️ No se pudo registrar historial:', error.message);
     }
-);
-
+}
 
 /* ============================================================
-   LISTAR NOVEDADES ACTIVAS
+   HELPER: GENERAR CSV
    ============================================================ */
 
-router.get(
-    '/api/nomina/novedades',
-    proteger,
-    async (req, res) => {
+const escapeCsv = (valor) => {
+    if (valor === null || valor === undefined) return '';
+    return `"${String(valor).replace(/"/g, '""')}"`;
+};
 
-        try {
-
-            const db = req.app.get('db');
-
-            const rol = req.session.rol;
-            const empleadoID = req.session.empleadoID;
-
-            let sql = `
-                SELECT
-                    n.id,
-                    n.empleado_id,
-
-                    e.nombre AS empleado_nombre,
-                    e.numero_documento,
-
-                    n.tipo_novedad_id,
-
-                    t.nombre AS tipo_novedad,
-                    t.codigo AS codigo_novedad,
-                    t.categoria,
-
-                    n.fecha_inicio,
-                    n.fecha_fin,
-                    n.hora_inicio,
-                    n.hora_fin,
-
-                    n.cantidad_dias,
-                    n.cantidad_horas,
-
-                    n.motivo,
-                    n.observacion,
-
-                    n.estado,
-                    n.observacion_rechazo,
-
-                    n.usuario_creacion,
-                    n.usuario_revision,
-
-                    n.fecha_creacion,
-                    n.fecha_revision
-
-                FROM nomina_novedades n
-
-                INNER JOIN empleados e
-                    ON e.id = n.empleado_id
-
-                INNER JOIN nomina_novedades_tipos t
-                    ON t.id = n.tipo_novedad_id
-
-                WHERE
-                    (
-                        n.estado = 'PENDIENTE'
-                        OR
-                        (
-                            n.estado IN ('APROBADA', 'RECHAZADA')
-                            AND n.fecha_revision IS NOT NULL
-                            AND n.fecha_revision >= DATE_SUB(NOW(), INTERVAL 14 DAY)
-                        )
-                    )
-            `;
-
-
-            const parametros = [];
-
-
-            /* =================================================
-               AUXILIAR → SOLO SUS PROPIAS NOVEDADES
-               ================================================= */
-
-            if (rol === 'auxiliar') {
-
-                sql += `
-                    AND n.empleado_id = ?
-                `;
-
-                parametros.push(empleadoID);
-
-            }
-
-
-            sql += `
-                ORDER BY n.fecha_creacion DESC
-            `;
-
-
-            const [novedades] =
-                await db.query(
-                    sql,
-                    parametros
-                );
-
-
-            res.json({
-
-                success: true,
-
-                rol,
-
-                novedades
-
-            });
-
-
-        } catch (error) {
-
-            console.error(
-                'ERROR LISTANDO NOVEDADES:',
-                error
-            );
-
-            res.status(500).json({
-
-                success: false,
-
-                message:
-                    'Error al consultar las novedades'
-
-            });
-
-        }
-
-    }
-);
+const generarCSV = (filas, columnas) => {
+    const encabezado = columnas.map((c) => escapeCsv(c.titulo)).join(',');
+    const cuerpo = filas.map((fila) => columnas.map((c) => escapeCsv(fila[c.campo])).join(',')).join('\n');
+    return '\uFEFF' + encabezado + '\n' + cuerpo;
+};
 
 /* ============================================================
-   HISTORIAL / VENCIDAS
+   RUTA: PÁGINA PRINCIPAL HTML
    ============================================================ */
 
-router.get(
-    '/api/nomina/novedades/historial',
-    proteger,
-    async (req, res) => {
-
-        try {
-
-            const db = req.app.get('db');
-
-            const rol = req.session.rol;
-            const empleadoID = req.session.empleadoID;
-
-
-            const {
-                buscar,
-                tipo,
-                estado,
-                tipo_fecha,
-                fecha,
-                mes,
-                ano,
-                desde,
-                hasta
-            } = req.query;
-
-
-            let sql = `
-                SELECT
-                    n.id,
-                    n.empleado_id,
-
-                    e.nombre AS empleado_nombre,
-                    e.numero_documento,
-
-                    n.tipo_novedad_id,
-
-                    t.nombre AS tipo_novedad,
-                    t.codigo AS codigo_novedad,
-                    t.categoria,
-
-                    n.fecha_inicio,
-                    n.fecha_fin,
-                    n.hora_inicio,
-                    n.hora_fin,
-
-                    n.cantidad_dias,
-                    n.cantidad_horas,
-
-                    n.motivo,
-                    n.observacion,
-
-                    n.estado,
-                    n.observacion_rechazo,
-
-                    n.usuario_creacion,
-                    n.usuario_revision,
-
-                    n.fecha_creacion,
-                    n.fecha_revision
-
-                FROM nomina_novedades n
-
-                INNER JOIN empleados e
-                    ON e.id = n.empleado_id
-
-                INNER JOIN nomina_novedades_tipos t
-                    ON t.id = n.tipo_novedad_id
-
-                WHERE
-                    n.estado IN ('APROBADA', 'RECHAZADA')
-
-                    AND n.fecha_revision IS NOT NULL
-
-                    AND n.fecha_revision < DATE_SUB(NOW(), INTERVAL 14 DAY)
-            `;
-
-
-            const parametros = [];
-
-
-            /* =================================================
-               AUXILIAR → SOLO SUS VENCIDAS
-               ================================================= */
-
-            if (rol === 'auxiliar') {
-
-                sql += `
-                    AND n.empleado_id = ?
-                `;
-
-                parametros.push(empleadoID);
-
-            }
-
-
-            /* =================================================
-               BUSCADOR
-               ================================================= */
-
-            if (buscar && buscar.trim() !== '') {
-
-                sql += `
-                    AND (
-                        e.nombre LIKE ?
-                        OR e.numero_documento LIKE ?
-                        OR t.nombre LIKE ?
-                    )
-                `;
-
-                const texto =
-                    `%${buscar.trim()}%`;
-
-                parametros.push(
-                    texto,
-                    texto,
-                    texto
-                );
-
-            }
-
-
-            /* =================================================
-               TIPO DE NOVEDAD
-               ================================================= */
-
-            if (tipo && tipo !== '') {
-
-                sql += `
-                    AND n.tipo_novedad_id = ?
-                `;
-
-                parametros.push(tipo);
-
-            }
-
-
-            /* =================================================
-               ESTADO
-               ================================================= */
-
-            if (
-                estado &&
-                (
-                    estado === 'APROBADA' ||
-                    estado === 'RECHAZADA'
-                )
-            ) {
-
-                sql += `
-                    AND n.estado = ?
-                `;
-
-                parametros.push(estado);
-
-            }
-
-
-            /* =================================================
-               FILTRO POR DÍA
-               ================================================= */
-
-            if (
-                tipo_fecha === 'dia' &&
-                fecha
-            ) {
-
-                sql += `
-                    AND DATE(n.fecha_revision) = ?
-                `;
-
-                parametros.push(fecha);
-
-            }
-
-
-            /* =================================================
-               FILTRO POR MES
-               Formato esperado: YYYY-MM
-               ================================================= */
-
-            if (
-                tipo_fecha === 'mes' &&
-                mes
-            ) {
-
-                sql += `
-                    AND DATE_FORMAT(
-                        n.fecha_revision,
-                        '%Y-%m'
-                    ) = ?
-                `;
-
-                parametros.push(mes);
-
-            }
-
-
-            /* =================================================
-               FILTRO POR AÑO
-               ================================================= */
-
-            if (
-                tipo_fecha === 'ano' &&
-                ano
-            ) {
-
-                sql += `
-                    AND YEAR(n.fecha_revision) = ?
-                `;
-
-                parametros.push(ano);
-
-            }
-
-
-            /* =================================================
-               FILTRO POR RANGO
-               ================================================= */
-
-            if (
-                tipo_fecha === 'rango' &&
-                desde &&
-                hasta
-            ) {
-
-                sql += `
-                    AND DATE(n.fecha_revision)
-                        BETWEEN ? AND ?
-                `;
-
-                parametros.push(
-                    desde,
-                    hasta
-                );
-
-            }
-
-
-            sql += `
-                ORDER BY n.fecha_revision DESC
-            `;
-
-
-            const [novedades] =
-                await db.query(
-                    sql,
-                    parametros
-                );
-
-
-            res.json({
-
-                success: true,
-
-                novedades
-
-            });
-
-
-        } catch (error) {
-
-            console.error(
-                'ERROR CONSULTANDO HISTORIAL:',
-                error
-            );
-
-            res.status(500).json({
-
-                success: false,
-
-                message:
-                    'Error al consultar el historial'
-
-            });
-
-        }
-
-    }
-);
+router.get('/nomina/novedades', proteger, (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/nomina-novedades.html'));
+});
 
 /* ============================================================
-   TIPOS DE NOVEDAD ACTIVOS
+   RUTA: LISTAR NOVEDADES ACTIVAS
    ============================================================ */
 
-router.get(
-    '/api/nomina/novedades/tipos',
-    proteger,
-    async (req, res) => {
+router.get('/api/nomina/novedades', proteger, async (req, res) => {
+    try {
+        const db = req.app.get('db');
+        const rol = req.session.rol;
+        const empleadoID = req.session.empleadoID;
 
-        try {
+        let sql = `
+            SELECT n.id, n.empleado_id,
+                   e.nombre AS empleado_nombre, e.numero_documento,
+                   n.tipo_novedad_id, t.nombre AS tipo_novedad, t.codigo AS codigo_novedad, t.categoria,
+                   n.fecha_inicio, n.fecha_fin, n.hora_inicio, n.hora_fin,
+                   n.cantidad_dias, n.cantidad_horas, n.motivo, n.observacion,
+                   n.estado, n.observacion_rechazo,
+                   n.usuario_creacion, n.usuario_revision,
+                   n.fecha_creacion, n.fecha_revision
+            FROM nomina_novedades n
+            INNER JOIN empleados e ON e.id = n.empleado_id
+            INNER JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
+            WHERE (
+                n.estado = 'PENDIENTE'
+                OR (n.estado IN ('APROBADA', 'RECHAZADA') AND n.fecha_revision IS NOT NULL AND n.fecha_revision >= DATE_SUB(NOW(), INTERVAL 14 DAY))
+            )
+        `;
 
-            const db = req.app.get('db');
+        const parametros = [];
+        if (rol === 'auxiliar') {
+            sql += ` AND n.empleado_id = ? `;
+            parametros.push(empleadoID);
+        }
+        sql += ` ORDER BY n.fecha_creacion DESC `;
 
-            const [tipos] = await db.query(`
-                SELECT
-                    id,
-                    nombre,
-                    codigo,
-                    categoria,
-                    descripcion,
-                    permite_empleado,
-                    requiere_soporte,
-                    requiere_aprobacion
-                FROM nomina_novedades_tipos
-                WHERE activo = 1
-                ORDER BY categoria ASC, nombre ASC
-            `);
+        const [novedades] = await db.query(sql, parametros);
+        res.json({ success: true, rol, novedades });
 
-            res.json({
-                success: true,
-                tipos
-            });
+    } catch (error) {
+        console.error('ERROR LISTANDO NOVEDADES:', error);
+        responderError(res, 'Error al consultar las novedades', 500);
+    }
+});
 
-        } catch (error) {
+/* ============================================================
+   RUTA: HISTORIAL / VENCIDAS
+   ============================================================ */
 
-            console.error(
-                'ERROR CARGANDO TIPOS DE NOVEDAD:',
-                error
-            );
+router.get('/api/nomina/novedades/historial', proteger, async (req, res) => {
+    try {
+        const db = req.app.get('db');
+        const rol = req.session.rol;
+        const empleadoID = req.session.empleadoID;
 
-            res.status(500).json({
-                success: false,
-                message: 'Error al cargar los tipos de novedad'
-            });
+        const { buscar, tipo, estado, tipo_fecha, fecha, mes, ano, desde, hasta } = req.query;
 
+        let sql = `
+            SELECT n.id, n.empleado_id, e.nombre AS empleado_nombre, e.numero_documento,
+                   n.tipo_novedad_id, t.nombre AS tipo_novedad, t.codigo AS codigo_novedad, t.categoria,
+                   n.fecha_inicio, n.fecha_fin, n.hora_inicio, n.hora_fin,
+                   n.cantidad_dias, n.cantidad_horas, n.motivo, n.observacion,
+                   n.estado, n.observacion_rechazo, n.usuario_creacion, n.usuario_revision,
+                   n.fecha_creacion, n.fecha_revision
+            FROM nomina_novedades n
+            INNER JOIN empleados e ON e.id = n.empleado_id
+            INNER JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
+            WHERE n.estado IN ('APROBADA', 'RECHAZADA')
+              AND n.fecha_revision IS NOT NULL
+              AND n.fecha_revision < DATE_SUB(NOW(), INTERVAL 14 DAY)
+        `;
+
+        const parametros = [];
+        if (rol === 'auxiliar') { sql += ` AND n.empleado_id = ? `; parametros.push(empleadoID); }
+
+        if (buscar && buscar.trim() !== '') {
+            sql += ` AND (e.nombre LIKE ? OR e.numero_documento LIKE ? OR t.nombre LIKE ?) `;
+            const texto = `%${buscar.trim()}%`;
+            parametros.push(texto, texto, texto);
         }
 
+        if (tipo) { sql += ` AND n.tipo_novedad_id = ? `; parametros.push(tipo); }
+        if (estado && ['APROBADA', 'RECHAZADA'].includes(estado)) { sql += ` AND n.estado = ? `; parametros.push(estado); }
+        if (tipo_fecha === 'dia' && fecha) { sql += ` AND DATE(n.fecha_revision) = ? `; parametros.push(fecha); }
+        if (tipo_fecha === 'mes' && mes) { sql += ` AND DATE_FORMAT(n.fecha_revision, '%Y-%m') = ? `; parametros.push(mes); }
+        if (tipo_fecha === 'ano' && ano) { sql += ` AND YEAR(n.fecha_revision) = ? `; parametros.push(ano); }
+        if (tipo_fecha === 'rango' && desde && hasta) { sql += ` AND DATE(n.fecha_revision) BETWEEN ? AND ? `; parametros.push(desde, hasta); }
+
+        sql += ` ORDER BY n.fecha_revision DESC `;
+
+        const [novedades] = await db.query(sql, parametros);
+        res.json({ success: true, novedades });
+
+    } catch (error) {
+        console.error('ERROR CONSULTANDO HISTORIAL:', error);
+        responderError(res, 'Error al consultar el historial', 500);
     }
-);
+});
+
+/* ============================================================
+   RUTA: TIPOS DE NOVEDAD ACTIVOS
+   ============================================================ */
+
+router.get('/api/nomina/novedades/tipos', proteger, async (req, res) => {
+    try {
+        const db = req.app.get('db');
+        const [tipos] = await db.query(`
+            SELECT id, nombre, codigo, categoria, descripcion, permite_empleado, requiere_soporte, requiere_aprobacion
+            FROM nomina_novedades_tipos WHERE activo = 1 ORDER BY categoria ASC, nombre ASC
+        `);
+        res.json({ success: true, tipos });
+    } catch (error) {
+        console.error('ERROR CARGANDO TIPOS:', error);
+        responderError(res, 'Error al cargar los tipos de novedad', 500);
+    }
+});
+
+/* ============================================================
+   KPIs PARA EL DASHBOARD
+   ============================================================ */
+
+router.get('/api/nomina/novedades/kpis', proteger, async (req, res) => {
+    try {
+        const db = req.app.get('db');
+        const rol = req.session.rol;
+        const empleadoID = req.session.empleadoID;
+
+        const filtroAuxiliar = rol === 'auxiliar' ? ' AND empleado_id = ? ' : '';
+        const paramsAux = rol === 'auxiliar' ? [empleadoID] : [];
+
+        const [pendientes] = await db.query(`SELECT COUNT(*) AS total FROM nomina_novedades WHERE estado = 'PENDIENTE' ${filtroAuxiliar}`, paramsAux);
+        const [aprobadas] = await db.query(`SELECT COUNT(*) AS total FROM nomina_novedades WHERE estado = 'APROBADA' AND fecha_revision >= DATE_SUB(NOW(), INTERVAL 14 DAY) ${filtroAuxiliar}`, paramsAux);
+        const [rechazadas] = await db.query(`SELECT COUNT(*) AS total FROM nomina_novedades WHERE estado = 'RECHAZADA' AND fecha_revision >= DATE_SUB(NOW(), INTERVAL 14 DAY) ${filtroAuxiliar}`, paramsAux);
+        const [historial] = await db.query(`SELECT COUNT(*) AS total FROM nomina_novedades WHERE estado IN ('APROBADA', 'RECHAZADA') AND fecha_revision < DATE_SUB(NOW(), INTERVAL 14 DAY) ${filtroAuxiliar}`, paramsAux);
+
+        return responderOk(res, {
+            kpis: {
+                pendientes: Number(pendientes[0].total || 0),
+                aprobadas: Number(aprobadas[0].total || 0),
+                rechazadas: Number(rechazadas[0].total || 0),
+                historial: Number(historial[0].total || 0)
+            }
+        });
+
+    } catch (error) {
+        console.error('ERROR KPIs:', error);
+        return responderError(res, 'No fue posible obtener los indicadores.', 500);
+    }
+});
+
+/* ============================================================
+   DETALLE DE NOVEDAD
+   ============================================================ */
+
+router.get('/api/nomina/novedades/:id', proteger, async (req, res) => {
+    try {
+        const db = req.app.get('db');
+        const novedadId = Number(req.params.id);
+
+        const [rows] = await db.query(`
+            SELECT n.*, 
+                   e.nombre AS empleado_nombre, e.numero_documento, 
+                   t.nombre AS tipo_novedad, t.codigo AS codigo_novedad, t.categoria
+            FROM nomina_novedades n
+            INNER JOIN empleados e ON e.id = n.empleado_id
+            INNER JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
+            WHERE n.id = ? LIMIT 1
+        `, [novedadId]);
+
+        if (!rows.length) return responderError(res, 'Novedad no encontrada.', 404);
+
+        const novedad = rows[0];
+
+        // Permitir ver el detalle a cualquier usuario autenticado (se removió la restricción de rol)
+        
+        let soportes = [];
+        try {
+            const [s] = await db.query(
+                `SELECT id, nombre_archivo, nombre_original, extension, tipo_mime, ruta_archivo, fecha_subida 
+                 FROM nomina_novedades_soportes WHERE novedad_id = ? ORDER BY fecha_subida DESC`, 
+                [novedadId]
+            );
+            soportes = s;
+        } catch (e) {}
+
+        let historial = [];
+        try {
+            const [h] = await db.query(
+                `SELECT id, estado_anterior, estado_nuevo, usuario_id, comentario, fecha_cambio 
+                 FROM nomina_novedades_historial WHERE novedad_id = ? ORDER BY fecha_cambio ASC`, 
+                [novedadId]
+            );
+            historial = h;
+        } catch (e) {}
+
+        return responderOk(res, { novedad, soportes, historial });
+
+    } catch (error) {
+        console.error('ERROR DETALLE NOVEDAD:', error);
+        return responderError(res, 'No fue posible obtener el detalle.', 500);
+    }
+});
+
+/* ============================================================
+   APROBAR NOVEDAD (SIN RESTRICCIÓN DE ROL)
+   ============================================================ */
+
+router.patch('/api/nomina/novedades/:id/aprobar', proteger, async (req, res) => {
+    // ✅ Validación de rol eliminada para permitir la acción
+    const db = req.app.get('db');
+    let connection = null;
+
+    try {
+        const novedadId = Number(req.params.id);
+        const usuarioId = req.session.usuarioID;
+
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const [rows] = await connection.query(`SELECT id, estado FROM nomina_novedades WHERE id = ? FOR UPDATE`, [novedadId]);
+
+        if (!rows.length) throw new Error('Novedad no encontrada.');
+        const estadoActual = rows[0].estado;
+
+        if (estadoActual === 'APROBADA') throw new Error('La novedad ya está aprobada.');
+        if (['RECHAZADA', 'ANULADA'].includes(estadoActual)) throw new Error(`No se puede aprobar una novedad en estado ${estadoActual}.`);
+
+        await connection.query(`
+            UPDATE nomina_novedades 
+            SET estado = 'APROBADA', usuario_revision = ?, fecha_revision = NOW(), observacion_rechazo = NULL 
+            WHERE id = ?
+        `, [usuarioId, novedadId]);
+
+        await registrarHistorial(connection, {
+            novedadId, estadoAnterior: estadoActual, estadoNuevo: 'APROBADA', usuarioId, comentario: req.body?.comentario || 'Aprobación manual'
+        });
+
+        await connection.commit();
+        return responderOk(res, { message: 'Novedad aprobada correctamente.', novedad_id: novedadId });
+
+    } catch (error) {
+        if (connection) try { await connection.rollback(); } catch (_) {}
+        return responderError(res, error.message || 'No fue posible aprobar la novedad.', 400);
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+/* ============================================================
+   RECHAZAR NOVEDAD (SIN RESTRICCIÓN DE ROL)
+   ============================================================ */
+
+router.patch('/api/nomina/novedades/:id/rechazar', proteger, async (req, res) => {
+    // ✅ Validación de rol eliminada para permitir la acción
+    const observacion = String(req.body?.observacion || '').trim();
+    if (!observacion) return responderError(res, 'Debes indicar la observación del rechazo.', 400);
+
+    const db = req.app.get('db');
+    let connection = null;
+
+    try {
+        const novedadId = Number(req.params.id);
+        const usuarioId = req.session.usuarioID;
+
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const [rows] = await connection.query(`SELECT id, estado FROM nomina_novedades WHERE id = ? FOR UPDATE`, [novedadId]);
+        if (!rows.length) throw new Error('Novedad no encontrada.');
+        const estadoActual = rows[0].estado;
+
+        if (estadoActual === 'RECHAZADA') throw new Error('La novedad ya está rechazada.');
+        if (estadoActual === 'ANULADA') throw new Error('No se puede rechazar una novedad anulada.');
+
+        await connection.query(`
+            UPDATE nomina_novedades 
+            SET estado = 'RECHAZADA', usuario_revision = ?, fecha_revision = NOW(), observacion_rechazo = ? 
+            WHERE id = ?
+        `, [usuarioId, observacion, novedadId]);
+
+        await registrarHistorial(connection, {
+            novedadId, estadoAnterior: estadoActual, estadoNuevo: 'RECHAZADA', usuarioId, comentario: observacion
+        });
+
+        await connection.commit();
+        return responderOk(res, { message: 'Novedad rechazada correctamente.', novedad_id: novedadId });
+
+    } catch (error) {
+        if (connection) try { await connection.rollback(); } catch (_) {}
+        return responderError(res, error.message || 'No fue posible rechazar la novedad.', 400);
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+/* ============================================================
+   ANULAR NOVEDAD (SIN RESTRICCIÓN DE ROL)
+   ============================================================ */
+
+router.patch('/api/nomina/novedades/:id/anular', proteger, async (req, res) => {
+    // ✅ Validación de rol eliminada para permitir la acción
+    const db = req.app.get('db');
+    let connection = null;
+
+    try {
+        const novedadId = Number(req.params.id);
+        const usuarioId = req.session.usuarioID;
+        const motivo = String(req.body?.motivo || '').trim();
+
+        if (!motivo) return responderError(res, 'Debes indicar el motivo de la anulación.', 400);
+
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const [rows] = await connection.query(`SELECT id, estado FROM nomina_novedades WHERE id = ? FOR UPDATE`, [novedadId]);
+        if (!rows.length) throw new Error('Novedad no encontrada.');
+        const estadoActual = rows[0].estado;
+
+        if (estadoActual === 'ANULADA') throw new Error('La novedad ya está anulada.');
+
+        await connection.query(`
+            UPDATE nomina_novedades 
+            SET estado = 'ANULADA', usuario_revision = ?, fecha_revision = NOW(), observacion_rechazo = ? 
+            WHERE id = ?
+        `, [usuarioId, motivo, novedadId]);
+
+        await registrarHistorial(connection, {
+            novedadId, estadoAnterior: estadoActual, estadoNuevo: 'ANULADA', usuarioId, comentario: motivo
+        });
+
+        await connection.commit();
+        return responderOk(res, { message: 'Novedad anulada correctamente.', novedad_id: novedadId });
+
+    } catch (error) {
+        if (connection) try { await connection.rollback(); } catch (_) {}
+        return responderError(res, error.message || 'No fue posible anular la novedad.', 400);
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+/* ============================================================
+   VALIDAR CIERRE DE PERÍODO
+   ============================================================ */
+
+router.post('/api/nomina/novedades/cierre-periodo/validar', proteger, async (req, res) => {
+    // ✅ Validación de rol eliminada
+    const periodo = String(req.body?.periodo || '').trim();
+    if (!/^\d{4}-\d{2}$/.test(periodo)) {
+        return responderError(res, 'El período debe tener el formato YYYY-MM.', 400);
+    }
+
+    try {
+        const db = req.app.get('db');
+        const [pendientes] = await db.query(`
+            SELECT id, empleado_id, tipo_novedad_id, estado 
+            FROM nomina_novedades 
+            WHERE DATE_FORMAT(fecha_inicio, '%Y-%m') = ? AND estado = 'PENDIENTE'
+        `, [periodo]);
+
+        return responderOk(res, {
+            periodo,
+            puede_cerrar: pendientes.length === 0,
+            pendientes
+        });
+
+    } catch (error) {
+        console.error('ERROR VALIDANDO CIERRE:', error);
+        return responderError(res, 'No fue posible validar el cierre.', 500);
+    }
+});
+
+/* ============================================================
+   EJECUTAR CIERRE DE PERÍODO
+   ============================================================ */
+
+router.post('/api/nomina/novedades/cierre-periodo', proteger, async (req, res) => {
+    // ✅ Validación de rol eliminada
+    const periodo = String(req.body?.periodo || '').trim();
+    if (!/^\d{4}-\d{2}$/.test(periodo)) {
+        return responderError(res, 'El período debe tener el formato YYYY-MM.', 400);
+    }
+
+    const db = req.app.get('db');
+    let connection = null;
+
+    try {
+        const usuarioId = req.session.usuarioID;
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const [pendientes] = await connection.query(`
+            SELECT COUNT(*) AS total 
+            FROM nomina_novedades 
+            WHERE DATE_FORMAT(fecha_inicio, '%Y-%m') = ? AND estado = 'PENDIENTE'
+        `, [periodo]);
+
+        if (Number(pendientes[0].total) > 0) {
+            throw new Error('No se puede cerrar el período: existen novedades pendientes.');
+        }
+
+        await connection.query(`
+            UPDATE nomina_novedades 
+            SET estado = 'PROCESADA' 
+            WHERE DATE_FORMAT(fecha_inicio, '%Y-%m') = ? AND estado = 'APROBADA'
+        `, [periodo]);
+
+        await connection.query(`
+            INSERT INTO nomina_cierres_nomina (periodo, usuario_id, fecha_cierre) 
+            VALUES (?, ?, NOW()) 
+            ON DUPLICATE KEY UPDATE usuario_id = VALUES(usuario_id), fecha_cierre = VALUES(fecha_cierre)
+        `, [periodo, usuarioId]);
+
+        await connection.commit();
+        return responderOk(res, { message: 'Período cerrado correctamente.', periodo });
+
+    } catch (error) {
+        if (connection) try { await connection.rollback(); } catch (_) {}
+        return responderError(res, error.message || 'No fue posible cerrar el período.', 400);
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+/* ============================================================
+   EXPORTAR NOVEDADES A CSV
+   ============================================================ */
+
+router.get('/api/nomina/novedades/exportar', proteger, async (req, res) => {
+    try {
+        const db = req.app.get('db');
+        const rol = req.session.rol;
+        const empleadoID = req.session.empleadoID;
+        const filtros = [];
+        const params = [];
+
+        if (rol === 'auxiliar') { filtros.push('n.empleado_id = ?'); params.push(empleadoID); }
+        if (req.query.estado) { filtros.push('n.estado = ?'); params.push(req.query.estado); }
+        if (req.query.tipo) { filtros.push('n.tipo_novedad_id = ?'); params.push(req.query.tipo); }
+        if (req.query.mes) { filtros.push("DATE_FORMAT(n.fecha_inicio, '%Y-%m') = ?"); params.push(req.query.mes); }
+
+        const where = filtros.length ? 'WHERE ' + filtros.join(' AND ') : '';
+
+        const [rows] = await db.query(`
+            SELECT n.id, e.nombre AS empleado, e.numero_documento, t.nombre AS tipo_novedad, t.categoria,
+                   n.fecha_inicio, n.fecha_fin, n.cantidad_dias, n.cantidad_horas, n.estado,
+                   n.observacion_rechazo, n.fecha_creacion, n.fecha_revision
+            FROM nomina_novedades n
+            INNER JOIN empleados e ON e.id = n.empleado_id
+            INNER JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
+            ${where} ORDER BY n.fecha_creacion DESC
+        `, params);
+
+        const columnas = [
+            { titulo: 'ID', campo: 'id' }, { titulo: 'Empleado', campo: 'empleado' },
+            { titulo: 'Documento', campo: 'numero_documento' }, { titulo: 'Tipo', campo: 'tipo_novedad' },
+            { titulo: 'Categoría', campo: 'categoria' }, { titulo: 'Fecha inicio', campo: 'fecha_inicio' },
+            { titulo: 'Fecha fin', campo: 'fecha_fin' }, { titulo: 'Días', campo: 'cantidad_dias' },
+            { titulo: 'Horas', campo: 'cantidad_horas' }, { titulo: 'Estado', campo: 'estado' },
+            { titulo: 'Observación', campo: 'observacion_rechazo' }, { titulo: 'Creación', campo: 'fecha_creacion' }
+        ];
+
+        const csv = generarCSV(rows, columnas);
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename="novedades_${new Date().toISOString().slice(0, 10)}.csv"`);
+        return res.send(csv);
+
+    } catch (error) {
+        console.error('ERROR EXPORTANDO:', error);
+        return responderError(res, 'No fue posible exportar las novedades.', 500);
+    }
+});
+
+/* ============================================================
+   EXPORTAR HISTORIAL A CSV
+   ============================================================ */
+
+router.get('/api/nomina/novedades/historial/exportar', proteger, async (req, res) => {
+    try {
+        const db = req.app.get('db');
+        const rol = req.session.rol;
+        const empleadoID = req.session.empleadoID;
+        
+        const filtros = [
+            `n.estado IN ('APROBADA', 'RECHAZADA')`, 
+            `n.fecha_revision IS NOT NULL`, 
+            `n.fecha_revision < DATE_SUB(NOW(), INTERVAL 14 DAY)`
+        ];
+        const params = [];
+
+        if (rol === 'auxiliar') { filtros.push('n.empleado_id = ?'); params.push(empleadoID); }
+        if (req.query.estado) { filtros.push('n.estado = ?'); params.push(req.query.estado); }
+        if (req.query.tipo) { filtros.push('n.tipo_novedad_id = ?'); params.push(req.query.tipo); }
+
+        const where = 'WHERE ' + filtros.join(' AND ');
+
+        const [rows] = await db.query(`
+            SELECT n.id, e.nombre AS empleado, e.numero_documento, t.nombre AS tipo_novedad,
+                   n.fecha_inicio, n.fecha_fin, n.cantidad_dias, n.cantidad_horas, n.estado,
+                   n.observacion_rechazo, n.fecha_revision
+            FROM nomina_novedades n
+            INNER JOIN empleados e ON e.id = n.empleado_id
+            INNER JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
+            ${where} ORDER BY n.fecha_revision DESC
+        `, params);
+
+        const columnas = [
+            { titulo: 'ID', campo: 'id' }, { titulo: 'Empleado', campo: 'empleado' },
+            { titulo: 'Documento', campo: 'numero_documento' }, { titulo: 'Tipo', campo: 'tipo_novedad' },
+            { titulo: 'Fecha inicio', campo: 'fecha_inicio' }, { titulo: 'Fecha fin', campo: 'fecha_fin' },
+            { titulo: 'Días', campo: 'cantidad_dias' }, { titulo: 'Horas', campo: 'cantidad_horas' },
+            { titulo: 'Estado', campo: 'estado' }, { titulo: 'Observación', campo: 'observacion_rechazo' },
+            { titulo: 'Fecha revisión', campo: 'fecha_revision' }
+        ];
+
+        const csv = generarCSV(rows, columnas);
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename="historial_novedades_${new Date().toISOString().slice(0, 10)}.csv"`);
+        return res.send(csv);
+
+    } catch (error) {
+        console.error('ERROR EXPORTANDO HISTORIAL:', error);
+        return responderError(res, 'No fue posible exportar el historial.', 500);
+    }
+});
 
 /* ============================================================
    CREAR NOVEDAD - INCAPACIDAD
    ============================================================ */
 
-router.post(
-    '/api/nomina/novedades/incapacidad',
-    proteger,
-    uploadSoporte.single('soporte'),
-    async (req, res) => {
-
-        const db =
-            req.app.get('db');
-
-        let connection = null;
-
-        try {
-
-            const usuarioId =
-                req.session.usuarioID;
-
-            const empleadoId =
-                req.session.empleadoID;
-
-
-            /* ====================================================
-               VALIDAR SESIÓN
-               ==================================================== */
-
-            if (!usuarioId || !empleadoId) {
-
-                if (req.file) {
-                    fs.unlinkSync(
-                        req.file.path
-                    );
-                }
-
-                return res.status(401).json({
-                    success: false,
-                    message:
-                        'La sesión del usuario no es válida.'
-                });
-
-            }
-
-
-            /* ====================================================
-               DATOS RECIBIDOS
-               ==================================================== */
-
-            const {
-                tipo_novedad_id,
-                tipo_incapacidad,
-                fecha_inicio,
-                fecha_fin,
-                cantidad_dias,
-                observacion
-            } = req.body;
-
-
-            /* ====================================================
-               VALIDACIONES
-               ==================================================== */
-
-            if (!tipo_novedad_id) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'No se recibió el tipo de novedad.'
-                });
-
-            }
-
-
-            if (!tipo_incapacidad) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes seleccionar el tipo de incapacidad.'
-                });
-
-            }
-
-
-            if (!fecha_inicio) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes indicar la fecha de inicio.'
-                });
-
-            }
-
-
-            if (!fecha_fin) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes indicar la fecha de finalización.'
-                });
-
-            }
-
-
-            if (
-                !cantidad_dias ||
-                Number(cantidad_dias) <= 0
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'La cantidad de días no es válida.'
-                });
-
-            }
-
-
-            if (!req.file) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes adjuntar el soporte médico.'
-                });
-
-            }
-
-
-            /* ====================================================
-               OBTENER CONEXIÓN
-               ==================================================== */
-
-            connection =
-                await db.getConnection();
-
-            await connection.beginTransaction();
-
-
-            /* ====================================================
-               VALIDAR TIPO DE NOVEDAD
-               ==================================================== */
-
-            const [tipos] =
-                await connection.query(
-                    `
-                    SELECT
-                        id,
-                        codigo,
-                        requiere_soporte,
-                        requiere_aprobacion,
-                        activo
-                    FROM nomina_novedades_tipos
-                    WHERE id = ?
-                    LIMIT 1
-                    `,
-                    [
-                        tipo_novedad_id
-                    ]
-                );
-
-
-            if (!tipos.length) {
-
-                throw new Error(
-                    'El tipo de novedad no existe.'
-                );
-
-            }
-
-
-            const tipoNovedad =
-                tipos[0];
-
-
-            if (
-                tipoNovedad.codigo !==
-                'INCAPACIDAD'
-            ) {
-
-                throw new Error(
-                    'El tipo de novedad seleccionado no corresponde a una incapacidad.'
-                );
-
-            }
-
-
-            if (
-                Number(
-                    tipoNovedad.activo
-                ) !== 1
-            ) {
-
-                throw new Error(
-                    'El tipo de novedad está inactivo.'
-                );
-
-            }
-
-
-            /* ====================================================
-               CREAR NOVEDAD PRINCIPAL
-               ==================================================== */
-
-            const [resultadoNovedad] =
-    await connection.query(
-        `
-        INSERT INTO nomina_novedades (
-            empleado_id,
-            tipo_novedad_id,
-            fecha_inicio,
-            fecha_fin,
-            cantidad_dias,
-            motivo,
-            observacion,
-            estado,
-            usuario_creacion,
-            fecha_creacion
-        )
-        VALUES (
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            'APROBADA',
-            ?,
-            NOW()
-        )
-        `,
-        [
-            empleadoId,
-            tipo_novedad_id,
-            fecha_inicio,
-            fecha_fin,
-            cantidad_dias,
-            'Incapacidad',
-            observacion || null,
-            usuarioId
-        ]
-    );
-
-
-            const novedadId =
-                resultadoNovedad.insertId;
-
-
-            /* ====================================================
-               CREAR INFORMACIÓN ESPECÍFICA
-               ==================================================== */
-
-            await connection.query(
-                `
-                INSERT INTO nomina_novedades_incapacidades (
-                    novedad_id,
-                    empleado_id,
-                    tipo_incapacidad,
-                    fecha_inicio,
-                    fecha_fin,
-                    cantidad_dias,
-                    observacion,
-                    usuario_id,
-                    fecha_registro
-                )
-                VALUES (
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    NOW()
-                )
-                `,
-                [
-                    novedadId,
-                    empleadoId,
-                    tipo_incapacidad,
-                    fecha_inicio,
-                    fecha_fin,
-                    cantidad_dias,
-                    observacion || null,
-                    usuarioId
-                ]
-            );
-
-
-            /* ====================================================
-               GUARDAR SOPORTE
-               ==================================================== */
-
-            const extension =
-                path.extname(
-                    req.file.originalname
-                )
-                .replace('.', '')
-                .toLowerCase();
-
-
-            const rutaArchivo =
-                `/uploads/nomina/novedades/soportes/${req.file.filename}`;
-
-
-            await connection.query(
-                `
-                INSERT INTO nomina_novedades_soportes (
-                    novedad_id,
-                    nombre_archivo,
-                    nombre_original,
-                    extension,
-                    tipo_mime,
-                    ruta_archivo,
-                    usuario_id,
-                    fecha_subida
-                )
-                VALUES (
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    NOW()
-                )
-                `,
-                [
-                    novedadId,
-                    req.file.filename,
-                    req.file.originalname,
-                    extension,
-                    req.file.mimetype,
-                    rutaArchivo,
-                    usuarioId
-                ]
-            );
-
-
-            /* ====================================================
-               CONFIRMAR
-               ==================================================== */
-
-            await connection.commit();
-
-
-            res.status(201).json({
-                success: true,
-                message:
-                    'La incapacidad fue registrada correctamente y quedó pendiente de aprobación.',
-                novedad_id:
-                    novedadId
-            });
-
-
-        } catch (error) {
-
-            console.error(
-                'ERROR REGISTRANDO INCAPACIDAD:',
-                error
-            );
-
-
-            /* ====================================================
-               DESHACER TRANSACCIÓN
-               ==================================================== */
-
-            if (connection) {
-
-                try {
-
-                    await connection.rollback();
-
-                } catch (rollbackError) {
-
-                    console.error(
-                        'ERROR ROLLBACK:',
-                        rollbackError
-                    );
-
-                }
-
-            }
-
-
-            /* ====================================================
-               ELIMINAR ARCHIVO SI FALLÓ
-               ==================================================== */
-
-            if (req.file) {
-
-                try {
-
-                    if (
-                        fs.existsSync(
-                            req.file.path
-                        )
-                    ) {
-
-                        fs.unlinkSync(
-                            req.file.path
-                        );
-
-                    }
-
-                } catch (fileError) {
-
-                    console.error(
-                        'ERROR ELIMINANDO SOPORTE:',
-                        fileError
-                    );
-
-                }
-
-            }
-
-
-            res.status(500).json({
-                success: false,
-                message:
-                    error.message ||
-                    'No fue posible registrar la incapacidad.'
-            });
-
-
-        } finally {
-
-            if (connection) {
-                connection.release();
-            }
-
+router.post('/api/nomina/novedades/incapacidad', proteger, uploadSoporte.single('soporte'), async (req, res) => {
+    const db = req.app.get('db');
+    let connection = null;
+
+    try {
+        const usuarioId = req.session.usuarioID;
+        const empleadoId = req.session.empleadoID;
+
+        if (!usuarioId || !empleadoId) {
+            if (req.file) fs.unlinkSync(req.file.path);
+            return responderError(res, 'La sesión del usuario no es válida.', 401);
         }
 
+        const { tipo_novedad_id, tipo_incapacidad, fecha_inicio, fecha_fin, cantidad_dias, observacion } = req.body;
+
+        if (!tipo_novedad_id) return responderError(res, 'No se recibió el tipo de novedad.', 400);
+        if (!tipo_incapacidad) return responderError(res, 'Debes seleccionar el tipo de incapacidad.', 400);
+        if (!fecha_inicio) return responderError(res, 'Debes indicar la fecha de inicio.', 400);
+        if (!fecha_fin) return responderError(res, 'Debes indicar la fecha de finalización.', 400);
+        if (!cantidad_dias || Number(cantidad_dias) <= 0) return responderError(res, 'La cantidad de días no es válida.', 400);
+        if (!req.file) return responderError(res, 'Debes adjuntar el soporte médico.', 400);
+
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const [resultadoNovedad] = await connection.query(`
+            INSERT INTO nomina_novedades (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion, estado, usuario_creacion, fecha_creacion)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'APROBADA', ?, NOW())
+        `, [empleadoId, tipo_novedad_id, fecha_inicio, fecha_fin, cantidad_dias, 'Incapacidad', observacion || null, usuarioId]);
+
+        const novedadId = resultadoNovedad.insertId;
+
+        await connection.query(`
+            INSERT INTO nomina_novedades_incapacidades (novedad_id, empleado_id, tipo_incapacidad, fecha_inicio, fecha_fin, cantidad_dias, observacion, usuario_id, fecha_registro)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        `, [novedadId, empleadoId, tipo_incapacidad, fecha_inicio, fecha_fin, cantidad_dias, observacion || null, usuarioId]);
+
+        const extension = path.extname(req.file.originalname).replace('.', '').toLowerCase();
+        const rutaArchivo = `/uploads/nomina/novedades/soportes/${req.file.filename}`;
+
+        await connection.query(`
+            INSERT INTO nomina_novedades_soportes (novedad_id, nombre_archivo, nombre_original, extension, tipo_mime, ruta_archivo, usuario_id, fecha_subida)
+            VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+        `, [novedadId, req.file.filename, req.file.originalname, extension, req.file.mimetype, rutaArchivo, usuarioId]);
+
+        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'APROBADA', usuarioId, comentario: 'Creación (incapacidad)' });
+
+        await connection.commit();
+        return responderOk(res, { message: 'La incapacidad fue registrada correctamente.', novedad_id: novedadId }, 201);
+
+    } catch (error) {
+        console.error('ERROR REGISTRANDO INCAPACIDAD:', error);
+        if (connection) try { await connection.rollback(); } catch (e) {}
+        if (req.file) try { if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path); } catch (e) {}
+        return responderError(res, error.message || 'No fue posible registrar la incapacidad.', 500);
+    } finally {
+        if (connection) connection.release();
     }
-);
-
-/* ============================================================
-   CREAR NOVEDAD - AUSENCIA
-   SOLO SUPERADMIN
-   ============================================================ */
-
-router.post(
-    '/api/nomina/novedades/ausencia',
-    proteger,
-    uploadSoporte.single('soporte'),
-    async (req, res) => {
-
-        const db = req.app.get('db');
-        let connection = null;
-
-        try {
-
-            /* ====================================================
-               VALIDAR ROL
-               ==================================================== */
-
-            const rol =
-                String(req.session.rol || '')
-                    .trim()
-                    .toUpperCase();
-
-            if (rol !== 'SUPERADMIN') {
-
-                if (req.file) {
-                    try {
-                        if (fs.existsSync(req.file.path)) {
-                            fs.unlinkSync(req.file.path);
-                        }
-                    } catch (e) {
-                        console.error(
-                            'Error eliminando soporte:',
-                            e
-                        );
-                    }
-                }
-
-                return res.status(403).json({
-                    success: false,
-                    message:
-                        'Solo el Superadmin puede registrar ausencias.'
-                });
-            }
-
-
-            /* ====================================================
-               USUARIO QUE REGISTRA
-               ==================================================== */
-
-            const usuarioId =
-                req.session.usuarioID ||
-                req.session.usuarioId ||
-                req.session.id;
-
-
-            /* ====================================================
-               DATOS RECIBIDOS
-               ==================================================== */
-
-            const {
-                empleado_id,
-                tipo_novedad_id,
-                tipo_ausencia,
-                fecha_inicio,
-                fecha_fin,
-                cantidad_dias,
-                motivo,
-                observacion
-            } = req.body;
-
-
-            /* ====================================================
-               VALIDAR EMPLEADO
-               ==================================================== */
-
-            const empleadoId =
-                Number(empleado_id);
-
-            if (!empleadoId) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes seleccionar el empleado al que se asignará la ausencia.'
-                });
-            }
-
-
-            /* ====================================================
-               VALIDAR TIPO DE AUSENCIA
-               ==================================================== */
-
-            if (
-                ![
-                    'JUSTIFICADA',
-                    'INJUSTIFICADA'
-                ].includes(tipo_ausencia)
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes seleccionar si la ausencia es justificada o injustificada.'
-                });
-            }
-
-
-            /* ====================================================
-               VALIDAR FECHAS
-               ==================================================== */
-
-            if (
-                !fecha_inicio ||
-                !fecha_fin
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes indicar la fecha de inicio y finalización.'
-                });
-            }
-
-
-            /* ====================================================
-               VALIDAR DÍAS
-               ==================================================== */
-
-            const dias =
-                Number(cantidad_dias);
-
-            if (
-                !dias ||
-                dias <= 0
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'La cantidad de días no es válida.'
-                });
-            }
-
-
-            /* ====================================================
-               VALIDAR MOTIVO
-               ==================================================== */
-
-            if (
-                !motivo ||
-                !motivo.trim()
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes indicar el motivo de la ausencia.'
-                });
-            }
-
-
-            /* ====================================================
-               SOPORTE PARA JUSTIFICADA
-               ==================================================== */
-
-            if (
-                tipo_ausencia === 'JUSTIFICADA' &&
-                !req.file
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes adjuntar el soporte de la ausencia justificada.'
-                });
-            }
-
-
-            /* ====================================================
-               CONEXIÓN
-               ==================================================== */
-
-            connection =
-                await db.getConnection();
-
-            await connection.beginTransaction();
-
-
-            /* ====================================================
-               VALIDAR EMPLEADO
-               ==================================================== */
-
-            const [empleados] =
-                await connection.query(
-                    `
-                    SELECT id
-                    FROM empleados
-                    WHERE id = ?
-                    LIMIT 1
-                    `,
-                    [empleadoId]
-                );
-
-            if (!empleados.length) {
-
-                throw new Error(
-                    'El empleado seleccionado no existe.'
-                );
-            }
-
-
-            /* ====================================================
-               VALIDAR TIPO DE NOVEDAD
-               ==================================================== */
-
-            const [tipos] =
-                await connection.query(
-                    `
-                    SELECT
-                        id,
-                        codigo,
-                        activo
-                    FROM nomina_novedades_tipos
-                    WHERE id = ?
-                    LIMIT 1
-                    `,
-                    [tipo_novedad_id]
-                );
-
-            if (!tipos.length) {
-
-                throw new Error(
-                    'El tipo de novedad seleccionado no existe.'
-                );
-            }
-
-
-            const tipoNovedad =
-                tipos[0];
-
-
-            if (
-                Number(tipoNovedad.activo) !== 1
-            ) {
-
-                throw new Error(
-                    'El tipo de novedad está inactivo.'
-                );
-            }
-
-
-            /* ====================================================
-               CREAR NOVEDAD PRINCIPAL
-               ==================================================== */
-
-            const [resultado] =
-                await connection.query(
-                    `
-                    INSERT INTO nomina_novedades (
-                        empleado_id,
-                        tipo_novedad_id,
-                        fecha_inicio,
-                        fecha_fin,
-                        cantidad_dias,
-                        motivo,
-                        observacion,
-                        estado,
-                        usuario_creacion,
-                        usuario_revision,
-                        fecha_creacion,
-                        fecha_revision
-                    )
-                    VALUES (
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        'APROBADA',
-                        ?,
-                        ?,
-                        NOW(),
-                        NOW()
-                    )
-                    `,
-                    [
-                        empleadoId,
-                        tipo_novedad_id,
-                        fecha_inicio,
-                        fecha_fin,
-                        dias,
-                        motivo.trim(),
-                        observacion?.trim() || null,
-                        usuarioId,
-                        usuarioId
-                    ]
-                );
-
-
-            const novedadId =
-                resultado.insertId;
-
-
-            /* ====================================================
-               CREAR DETALLE DE AUSENCIA
-               ==================================================== */
-
-            await connection.query(
-                `
-                INSERT INTO nomina_novedades_ausencias (
-                    novedad_id,
-                    empleado_id,
-                    tipo_ausencia,
-                    fecha_inicio,
-                    fecha_fin,
-                    cantidad_dias,
-                    motivo,
-                    observacion,
-                    usuario_id,
-                    fecha_registro
-                )
-                VALUES (
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    NOW()
-                )
-                `,
-                [
-                    novedadId,
-                    empleadoId,
-                    tipo_ausencia,
-                    fecha_inicio,
-                    fecha_fin,
-                    dias,
-                    motivo.trim(),
-                    observacion?.trim() || null,
-                    usuarioId
-                ]
-            );
-
-
-            /* ====================================================
-               GUARDAR SOPORTE
-               ==================================================== */
-
-            if (
-                tipo_ausencia === 'JUSTIFICADA' &&
-                req.file
-            ) {
-
-                const extension =
-                    path.extname(
-                        req.file.originalname
-                    )
-                    .replace('.', '')
-                    .toLowerCase();
-
-
-                const rutaArchivo =
-                    `/uploads/nomina/novedades/soportes/${req.file.filename}`;
-
-
-                await connection.query(
-                    `
-                    INSERT INTO nomina_novedades_soportes (
-                        novedad_id,
-                        nombre_archivo,
-                        nombre_original,
-                        extension,
-                        tipo_mime,
-                        ruta_archivo,
-                        usuario_id,
-                        fecha_subida
-                    )
-                    VALUES (
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        NOW()
-                    )
-                    `,
-                    [
-                        novedadId,
-                        req.file.filename,
-                        req.file.originalname,
-                        extension,
-                        req.file.mimetype,
-                        rutaArchivo,
-                        usuarioId
-                    ]
-                );
-            }
-
-
-            /* ====================================================
-               CONFIRMAR
-               ==================================================== */
-
-            await connection.commit();
-
-
-            return res.status(201).json({
-                success: true,
-                message:
-                    'Ausencia registrada y aprobada correctamente.',
-                novedad_id:
-                    novedadId
-            });
-
-
-        } catch (error) {
-
-            console.error(
-                'ERROR REGISTRANDO AUSENCIA:',
-                error
-            );
-
-
-            if (connection) {
-
-                try {
-                    await connection.rollback();
-                } catch (rollbackError) {
-                    console.error(
-                        'Error en rollback:',
-                        rollbackError
-                    );
-                }
-            }
-
-
-            if (req.file) {
-
-                try {
-
-                    if (
-                        fs.existsSync(
-                            req.file.path
-                        )
-                    ) {
-                        fs.unlinkSync(
-                            req.file.path
-                        );
-                    }
-
-                } catch (fileError) {
-
-                    console.error(
-                        'Error eliminando archivo:',
-                        fileError
-                    );
-                }
-            }
-
-
-            return res.status(500).json({
-                success: false,
-                message:
-                    error.message ||
-                    'No fue posible registrar la ausencia.'
-            });
-
-        } finally {
-
-            if (connection) {
-                connection.release();
-            }
-
-        }
-    }
-);
+});
 
 /* ============================================================
    CREAR NOVEDAD - PERMISO
    ============================================================ */
 
-router.post(
-    '/api/nomina/novedades/permiso',
-    proteger,
-    async (req, res) => {
-
-        const db = req.app.get('db');
-
-        let connection = null;
-
-        try {
-
-            const usuarioId =
-                req.session.usuarioID;
-
-            const empleadoId =
-                req.session.empleadoID;
-
-
-            /* ====================================================
-               VALIDAR SESIÓN
-               ==================================================== */
-
-            if (!usuarioId || !empleadoId) {
-
-                return res.status(401).json({
-                    success: false,
-                    message:
-                        'La sesión del usuario no es válida.'
-                });
-
-            }
-
-
-            /* ====================================================
-               DATOS RECIBIDOS
-               ==================================================== */
-
-            const {
-                tipo_novedad_id,
-                tipo_permiso,
-                fecha_permiso,
-                hora_inicio,
-                hora_fin,
-                cantidad_horas,
-                motivo,
-                observacion
-            } = req.body;
-
-
-            /* ====================================================
-               VALIDACIONES
-               ==================================================== */
-
-            if (!tipo_novedad_id) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'No se recibió el tipo de novedad.'
-                });
-
-            }
-
-
-            if (!tipo_permiso) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes seleccionar el tipo de permiso.'
-                });
-
-            }
-
-
-            const tiposPermisoPermitidos = [
-                'REMUNERADO',
-                'NO_REMUNERADO',
-                'COMPENSATORIO'
-            ];
-
-            if (
-                !tiposPermisoPermitidos.includes(
-                    tipo_permiso
-                )
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'El tipo de permiso no es válido.'
-                });
-
-            }
-
-
-            if (!fecha_permiso) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes indicar la fecha del permiso.'
-                });
-
-            }
-
-
-            if (!hora_inicio) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes indicar la hora de inicio.'
-                });
-
-            }
-
-
-            if (!hora_fin) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes indicar la hora de finalización.'
-                });
-
-            }
-
-
-            if (
-                !cantidad_horas ||
-                Number(cantidad_horas) <= 0
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'La cantidad de horas no es válida.'
-                });
-
-            }
-
-
-            if (!motivo || !motivo.trim()) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes indicar el motivo del permiso.'
-                });
-
-            }
-
-
-            /* ====================================================
-               OBTENER CONEXIÓN
-               ==================================================== */
-
-            connection =
-                await db.getConnection();
-
-            await connection.beginTransaction();
-
-
-            /* ====================================================
-               VALIDAR TIPO DE NOVEDAD
-               ==================================================== */
-
-            const [tipos] =
-                await connection.query(
-                    `
-                    SELECT
-                        id,
-                        codigo,
-                        requiere_aprobacion,
-                        activo
-                    FROM nomina_novedades_tipos
-                    WHERE id = ?
-                    LIMIT 1
-                    `,
-                    [
-                        tipo_novedad_id
-                    ]
-                );
-
-
-            if (!tipos.length) {
-
-                throw new Error(
-                    'El tipo de novedad no existe.'
-                );
-
-            }
-
-
-            const tipoNovedad =
-                tipos[0];
-
-
-            if (
-                tipoNovedad.codigo !==
-                'PERMISO'
-            ) {
-
-                throw new Error(
-                    'El tipo de novedad seleccionado no corresponde a un permiso.'
-                );
-
-            }
-
-
-            if (
-                Number(tipoNovedad.activo) !== 1
-            ) {
-
-                throw new Error(
-                    'El tipo de novedad está inactivo.'
-                );
-
-            }
-
-
-            /* ====================================================
-               CREAR NOVEDAD PRINCIPAL
-               ==================================================== */
-
-            const [resultadoNovedad] =
-                await connection.query(
-                    `
-                    INSERT INTO nomina_novedades (
-                        empleado_id,
-                        tipo_novedad_id,
-                        fecha_inicio,
-                        fecha_fin,
-                        cantidad_dias,
-                        cantidad_horas,
-                        motivo,
-                        observacion,
-                        estado,
-                        usuario_creacion,
-                        fecha_creacion
-                    )
-                    VALUES (
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        'PENDIENTE',
-                        ?,
-                        NOW()
-                    )
-                    `,
-                    [
-                        empleadoId,
-                        tipo_novedad_id,
-                        fecha_permiso,
-                        fecha_permiso,
-                        1,
-                        cantidad_horas,
-                        motivo,
-                        observacion || null,
-                        usuarioId
-                    ]
-                );
-
-
-            const novedadId =
-                resultadoNovedad.insertId;
-
-
-            /* ====================================================
-               CREAR INFORMACIÓN ESPECÍFICA DEL PERMISO
-               ==================================================== */
-
-            await connection.query(
-                `
-                INSERT INTO nomina_novedades_permisos (
-                    novedad_id,
-                    empleado_id,
-                    tipo_permiso,
-                    fecha_permiso,
-                    hora_inicio,
-                    hora_fin,
-                    cantidad_horas,
-                    motivo,
-                    observacion,
-                    usuario_id,
-                    fecha_registro
-                )
-                VALUES (
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    NOW()
-                )
-                `,
-                [
-                    novedadId,
-                    empleadoId,
-                    tipo_permiso,
-                    fecha_permiso,
-                    hora_inicio,
-                    hora_fin,
-                    cantidad_horas,
-                    motivo,
-                    observacion || null,
-                    usuarioId
-                ]
-            );
-
-
-            /* ====================================================
-               CONFIRMAR
-               ==================================================== */
-
-            await connection.commit();
-
-
-            res.status(201).json({
-                success: true,
-                message:
-                    'El permiso fue registrado correctamente y quedó pendiente de aprobación.',
-                novedad_id:
-                    novedadId
-            });
-
-
-        } catch (error) {
-
-            console.error(
-                'ERROR REGISTRANDO PERMISO:',
-                error
-            );
-
-
-            if (connection) {
-
-                try {
-
-                    await connection.rollback();
-
-                } catch (rollbackError) {
-
-                    console.error(
-                        'ERROR ROLLBACK:',
-                        rollbackError
-                    );
-
-                }
-
-            }
-
-
-            res.status(500).json({
-                success: false,
-                message:
-                    error.message ||
-                    'No fue posible registrar el permiso.'
-            });
-
-
-        } finally {
-
-            if (connection) {
-                connection.release();
-            }
-
-        }
-
+router.post('/api/nomina/novedades/permiso', proteger, async (req, res) => {
+    const db = req.app.get('db');
+    let connection = null;
+
+    try {
+        const usuarioId = req.session.usuarioID;
+        const empleadoId = req.session.empleadoID;
+
+        if (!usuarioId || !empleadoId) return responderError(res, 'La sesión del usuario no es válida.', 401);
+
+        const { tipo_novedad_id, tipo_permiso, fecha_permiso, hora_inicio, hora_fin, cantidad_horas, motivo, observacion } = req.body;
+
+        if (!tipo_novedad_id) return responderError(res, 'No se recibió el tipo de novedad.', 400);
+        if (!['REMUNERADO', 'NO_REMUNERADO', 'COMPENSATORIO'].includes(tipo_permiso)) return responderError(res, 'El tipo de permiso no es válido.', 400);
+        if (!fecha_permiso) return responderError(res, 'Debes indicar la fecha del permiso.', 400);
+        if (!hora_inicio || !hora_fin) return responderError(res, 'Debes indicar la hora de inicio y finalización.', 400);
+        if (!cantidad_horas || Number(cantidad_horas) <= 0) return responderError(res, 'La cantidad de horas no es válida.', 400);
+        if (!motivo || !motivo.trim()) return responderError(res, 'Debes indicar el motivo del permiso.', 400);
+
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const [resultadoNovedad] = await connection.query(`
+            INSERT INTO nomina_novedades (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, cantidad_dias, cantidad_horas, motivo, observacion, estado, usuario_creacion, fecha_creacion)
+            VALUES (?, ?, ?, ?, 1, ?, ?, ?, 'PENDIENTE', ?, NOW())
+        `, [empleadoId, tipo_novedad_id, fecha_permiso, fecha_permiso, cantidad_horas, motivo, observacion || null, usuarioId]);
+
+        const novedadId = resultadoNovedad.insertId;
+
+        await connection.query(`
+            INSERT INTO nomina_novedades_permisos (novedad_id, empleado_id, tipo_permiso, fecha_permiso, hora_inicio, hora_fin, cantidad_horas, motivo, observacion, usuario_id, fecha_registro)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        `, [novedadId, empleadoId, tipo_permiso, fecha_permiso, hora_inicio, hora_fin, cantidad_horas, motivo, observacion || null, usuarioId]);
+
+        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'PENDIENTE', usuarioId, comentario: 'Creación (permiso)' });
+
+        await connection.commit();
+        return responderOk(res, { message: 'El permiso fue registrado correctamente.', novedad_id: novedadId }, 201);
+
+    } catch (error) {
+        console.error('ERROR REGISTRANDO PERMISO:', error);
+        if (connection) try { await connection.rollback(); } catch (e) {}
+        return responderError(res, error.message || 'No fue posible registrar el permiso.', 500);
+    } finally {
+        if (connection) connection.release();
     }
-);
+});
 
 /* ============================================================
    CREAR NOVEDAD - AUSENCIA
    ============================================================ */
 
-router.post(
-    '/api/nomina/novedades/ausencia',
-    proteger,
-    uploadSoporte.single('soporte'),
-    async (req, res) => {
-
-        const db = req.app.get('db');
-        let connection = null;
-
-        try {
-
-            const usuarioId =
-                req.session.usuarioID;
-
-            const empleadoId =
-                req.session.empleadoID;
-
-
-            /* ====================================================
-               VALIDAR SESIÓN
-               ==================================================== */
-
-            if (!usuarioId || !empleadoId) {
-
-                if (req.file) {
-                    fs.unlinkSync(req.file.path);
-                }
-
-                return res.status(401).json({
-                    success: false,
-                    message:
-                        'La sesión del usuario no es válida.'
-                });
-            }
-
-
-            /* ====================================================
-               DATOS RECIBIDOS
-               ==================================================== */
-
-            const {
-                tipo_novedad_id,
-                tipo_ausencia,
-                fecha_inicio,
-                fecha_fin,
-                cantidad_dias,
-                motivo,
-                observacion
-            } = req.body;
-
-
-            /* ====================================================
-               VALIDACIONES
-               ==================================================== */
-
-            if (!tipo_novedad_id) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'No se recibió el tipo de novedad.'
-                });
-            }
-
-
-            if (
-                !tipo_ausencia ||
-                ![
-                    'JUSTIFICADA',
-                    'INJUSTIFICADA'
-                ].includes(tipo_ausencia)
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes seleccionar un tipo de ausencia válido.'
-                });
-            }
-
-
-            if (!fecha_inicio) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes indicar la fecha de inicio.'
-                });
-            }
-
-
-            if (!fecha_fin) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes indicar la fecha de finalización.'
-                });
-            }
-
-
-            if (
-                !cantidad_dias ||
-                Number(cantidad_dias) <= 0
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'La cantidad de días no es válida.'
-                });
-            }
-
-
-            if (!motivo || !motivo.trim()) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes indicar el motivo de la ausencia.'
-                });
-            }
-
-
-            /*
-             * Si es JUSTIFICADA debe tener soporte.
-             */
-
-            if (
-                tipo_ausencia === 'JUSTIFICADA' &&
-                !req.file
-            ) {
-
-                return res.status(400).json({
-                    success: false,
-                    message:
-                        'Debes adjuntar el soporte de la ausencia justificada.'
-                });
-            }
-
-
-            /*
-             * Si es INJUSTIFICADA no necesitamos soporte.
-             */
-
-            if (
-                tipo_ausencia === 'INJUSTIFICADA' &&
-                req.file
-            ) {
-
-                fs.unlinkSync(req.file.path);
-            }
-
-
-            /* ====================================================
-               OBTENER CONEXIÓN
-               ==================================================== */
-
-            connection =
-                await db.getConnection();
-
-            await connection.beginTransaction();
-
-
-            /* ====================================================
-               VALIDAR TIPO DE NOVEDAD
-               ==================================================== */
-
-            const [tipos] =
-                await connection.query(
-                    `
-                    SELECT
-                        id,
-                        codigo,
-                        requiere_aprobacion,
-                        activo
-                    FROM nomina_novedades_tipos
-                    WHERE id = ?
-                    LIMIT 1
-                    `,
-                    [
-                        tipo_novedad_id
-                    ]
-                );
-
-
-            if (!tipos.length) {
-
-                throw new Error(
-                    'El tipo de novedad no existe.'
-                );
-            }
-
-
-            const tipoNovedad =
-                tipos[0];
-
-
-            if (
-                tipoNovedad.codigo !==
-                'ASISTENCIA'
-            ) {
-
-                throw new Error(
-                    'El tipo de novedad seleccionado no corresponde a una ausencia.'
-                );
-            }
-
-
-            if (
-                Number(
-                    tipoNovedad.activo
-                ) !== 1
-            ) {
-
-                throw new Error(
-                    'El tipo de novedad está inactivo.'
-                );
-            }
-
-
-            /* ====================================================
-               CREAR NOVEDAD PRINCIPAL
-               ==================================================== */
-
-            const [resultadoNovedad] =
-                await connection.query(
-                    `
-                    INSERT INTO nomina_novedades (
-                        empleado_id,
-                        tipo_novedad_id,
-                        fecha_inicio,
-                        fecha_fin,
-                        cantidad_dias,
-                        motivo,
-                        observacion,
-                        estado,
-                        usuario_creacion,
-                        fecha_creacion
-                    )
-                    VALUES (
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        'PENDIENTE',
-                        ?,
-                        NOW()
-                    )
-                    `,
-                    [
-                        empleadoId,
-                        tipo_novedad_id,
-                        fecha_inicio,
-                        fecha_fin,
-                        cantidad_dias,
-                        motivo,
-                        observacion || null,
-                        usuarioId
-                    ]
-                );
-
-
-            const novedadId =
-                resultadoNovedad.insertId;
-
-
-            /* ====================================================
-               CREAR INFORMACIÓN ESPECÍFICA DE LA AUSENCIA
-               ==================================================== */
-
-            await connection.query(
-                `
-                INSERT INTO nomina_novedades_ausencias (
-                    novedad_id,
-                    empleado_id,
-                    tipo_ausencia,
-                    fecha_inicio,
-                    fecha_fin,
-                    cantidad_dias,
-                    motivo,
-                    observacion,
-                    usuario_id,
-                    fecha_registro
-                )
-                VALUES (
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    NOW()
-                )
-                `,
-                [
-                    novedadId,
-                    empleadoId,
-                    tipo_ausencia,
-                    fecha_inicio,
-                    fecha_fin,
-                    cantidad_dias,
-                    motivo,
-                    observacion || null,
-                    usuarioId
-                ]
-            );
-
-
-            /* ====================================================
-               GUARDAR SOPORTE
-               ==================================================== */
-
-            if (
-                tipo_ausencia === 'JUSTIFICADA' &&
-                req.file
-            ) {
-
-                const extension =
-                    path.extname(
-                        req.file.originalname
-                    )
-                    .replace('.', '')
-                    .toLowerCase();
-
-
-                const rutaArchivo =
-                    `/uploads/nomina/novedades/soportes/${req.file.filename}`;
-
-
-                await connection.query(
-                    `
-                    INSERT INTO nomina_novedades_soportes (
-                        novedad_id,
-                        nombre_archivo,
-                        nombre_original,
-                        extension,
-                        tipo_mime,
-                        ruta_archivo,
-                        usuario_id,
-                        fecha_subida
-                    )
-                    VALUES (
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        NOW()
-                    )
-                    `,
-                    [
-                        novedadId,
-                        req.file.filename,
-                        req.file.originalname,
-                        extension,
-                        req.file.mimetype,
-                        rutaArchivo,
-                        usuarioId
-                    ]
-                );
-            }
-
-
-            /* ====================================================
-               CONFIRMAR TRANSACCIÓN
-               ==================================================== */
-
-            await connection.commit();
-
-
-            res.status(201).json({
-                success: true,
-                message:
-                    'La ausencia fue registrada correctamente y quedó aprobada.',
-                novedad_id:
-                    novedadId
-            });
-
-
-        } catch (error) {
-
-            console.error(
-                'ERROR REGISTRANDO AUSENCIA:',
-                error
-            );
-
-
-            /* ====================================================
-               DESHACER TRANSACCIÓN
-               ==================================================== */
-
-            if (connection) {
-
-                try {
-
-                    await connection.rollback();
-
-                } catch (rollbackError) {
-
-                    console.error(
-                        'ERROR ROLLBACK:',
-                        rollbackError
-                    );
-                }
-            }
-
-
-            /* ====================================================
-               ELIMINAR ARCHIVO SI FALLÓ
-               ==================================================== */
-
-            if (req.file) {
-
-                try {
-
-                    if (
-                        fs.existsSync(
-                            req.file.path
-                        )
-                    ) {
-
-                        fs.unlinkSync(
-                            req.file.path
-                        );
-                    }
-
-                } catch (fileError) {
-
-                    console.error(
-                        'ERROR ELIMINANDO SOPORTE:',
-                        fileError
-                    );
-                }
-            }
-
-
-            res.status(500).json({
-                success: false,
-                message:
-                    error.message ||
-                    'No fue posible registrar la ausencia.'
-            });
-
-
-        } finally {
-
-            if (connection) {
-                connection.release();
-            }
+router.post('/api/nomina/novedades/ausencia', proteger, uploadSoporte.single('soporte'), async (req, res) => {
+    const db = req.app.get('db');
+    let connection = null;
+
+    try {
+        const usuarioId = req.session.usuarioID;
+        const empleadoId = req.session.empleadoID;
+
+        if (!usuarioId || !empleadoId) {
+            if (req.file) fs.unlinkSync(req.file.path);
+            return responderError(res, 'La sesión del usuario no es válida.', 401);
         }
+
+        const { tipo_novedad_id, tipo_ausencia, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion } = req.body;
+
+        if (!tipo_novedad_id) return responderError(res, 'No se recibió el tipo de novedad.', 400);
+        if (!['JUSTIFICADA', 'INJUSTIFICADA'].includes(tipo_ausencia)) return responderError(res, 'El tipo de ausencia no es válido.', 400);
+        if (!fecha_inicio || !fecha_fin) return responderError(res, 'Debes indicar el rango de fechas.', 400);
+        if (!cantidad_dias || Number(cantidad_dias) <= 0) return responderError(res, 'La cantidad de días no es válida.', 400);
+        if (!motivo || !motivo.trim()) return responderError(res, 'Debes indicar el motivo.', 400);
+
+        if (tipo_ausencia === 'JUSTIFICADA' && !req.file) return responderError(res, 'Debes adjuntar el soporte para una ausencia justificada.', 400);
+        if (tipo_ausencia === 'INJUSTIFICADA' && req.file) fs.unlinkSync(req.file.path);
+
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const [resultadoNovedad] = await connection.query(`
+            INSERT INTO nomina_novedades (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion, estado, usuario_creacion, fecha_creacion)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'PENDIENTE', ?, NOW())
+        `, [empleadoId, tipo_novedad_id, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion || null, usuarioId]);
+
+        const novedadId = resultadoNovedad.insertId;
+
+        await connection.query(`
+            INSERT INTO nomina_novedades_ausencias (novedad_id, empleado_id, tipo_ausencia, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion, usuario_id, fecha_registro)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        `, [novedadId, empleadoId, tipo_ausencia, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion || null, usuarioId]);
+
+        if (tipo_ausencia === 'JUSTIFICADA' && req.file) {
+            const extension = path.extname(req.file.originalname).replace('.', '').toLowerCase();
+            const rutaArchivo = `/uploads/nomina/novedades/soportes/${req.file.filename}`;
+            await connection.query(`
+                INSERT INTO nomina_novedades_soportes (novedad_id, nombre_archivo, nombre_original, extension, tipo_mime, ruta_archivo, usuario_id, fecha_subida)
+                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+            `, [novedadId, req.file.filename, req.file.originalname, extension, req.file.mimetype, rutaArchivo, usuarioId]);
+        }
+
+        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'PENDIENTE', usuarioId, comentario: 'Creación (ausencia)' });
+
+        await connection.commit();
+        return responderOk(res, { message: 'La ausencia fue registrada correctamente.', novedad_id: novedadId }, 201);
+
+    } catch (error) {
+        console.error('ERROR REGISTRANDO AUSENCIA:', error);
+        if (connection) try { await connection.rollback(); } catch (e) {}
+        if (req.file) try { if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path); } catch (e) {}
+        return responderError(res, error.message || 'No fue posible registrar la ausencia.', 500);
+    } finally {
+        if (connection) connection.release();
     }
-);
+});
 
 /* ============================================================
    CREAR NOVEDAD - LICENCIA
-   SOLO SUPERADMIN
    ============================================================ */
 
-router.post(
-    '/api/nomina/novedades/licencia',
-    proteger,
-    async (req, res) => {
-
-        const db =
-            req.app.get('db');
-
-        let connection = null;
-
-
-        try {
-
-            /* ==========================================
-   VALIDAR SUPERADMIN
-   ========================================== */
-
-const rol = String(
-    req.session.rol || ''
-)
-    .trim()
-    .toUpperCase();
-
-if (rol !== 'SUPERADMIN') {
-
-    return res.status(403).json({
-
-        success: false,
-
-        message:
-            'Solo el SuperAdmin puede registrar licencias.'
-
-    });
-
-}
-
-
-            const usuarioId =
-                req.session.usuarioID;
-
-
-            if (!usuarioId) {
-
-                return res.status(401).json({
-
-                    success: false,
-
-                    message:
-                        'La sesión del usuario no es válida.'
-
-                });
-
-            }
-
-
-            /* ==========================================
-               DATOS RECIBIDOS
-               ========================================== */
-
-            const {
-                tipo_novedad_id,
-                empleado_id,
-                tipo_licencia,
-                fecha_inicio,
-                fecha_fin,
-                cantidad_dias,
-                motivo,
-                observacion
-            } = req.body;
-
-
-            /* ==========================================
-               VALIDACIONES
-               ========================================== */
-
-            if (!tipo_novedad_id) {
-
-                return res.status(400).json({
-
-                    success: false,
-
-                    message:
-                        'No se recibió el tipo de novedad.'
-
-                });
-
-            }
-
-
-            if (!empleado_id) {
-
-                return res.status(400).json({
-
-                    success: false,
-
-                    message:
-                        'Debes seleccionar un empleado.'
-
-                });
-
-            }
-
-
-            if (
-                !tipo_licencia ||
-                ![
-                    'MATERNIDAD',
-                    'PATERNIDAD'
-                ].includes(tipo_licencia)
-            ) {
-
-                return res.status(400).json({
-
-                    success: false,
-
-                    message:
-                        'El tipo de licencia no es válido.'
-
-                });
-
-            }
-
-
-            if (!fecha_inicio) {
-
-                return res.status(400).json({
-
-                    success: false,
-
-                    message:
-                        'Debes indicar la fecha de inicio.'
-
-                });
-
-            }
-
-
-            if (!fecha_fin) {
-
-                return res.status(400).json({
-
-                    success: false,
-
-                    message:
-                        'Debes indicar la fecha de finalización.'
-
-                });
-
-            }
-
-
-            if (
-                !cantidad_dias ||
-                Number(cantidad_dias) <= 0
-            ) {
-
-                return res.status(400).json({
-
-                    success: false,
-
-                    message:
-                        'La cantidad de días no es válida.'
-
-                });
-
-            }
-
-
-            /* ==========================================
-               CONEXIÓN
-               ========================================== */
-
-            connection =
-                await db.getConnection();
-
-            await connection.beginTransaction();
-
-
-            /* ==========================================
-               VALIDAR TIPO DE NOVEDAD
-               ========================================== */
-
-            const [tipos] =
-                await connection.query(
-                    `
-                    SELECT
-                        id,
-                        codigo,
-                        activo
-                    FROM nomina_novedades_tipos
-                    WHERE id = ?
-                    LIMIT 1
-                    `,
-                    [
-                        tipo_novedad_id
-                    ]
-                );
-
-
-            if (!tipos.length) {
-
-                throw new Error(
-                    'El tipo de novedad no existe.'
-                );
-
-            }
-
-
-            const tipoNovedad =
-                tipos[0];
-
-
-            if (
-                tipoNovedad.codigo !==
-                'LICENCIA'
-            ) {
-
-                throw new Error(
-                    'El tipo de novedad seleccionado no corresponde a una licencia.'
-                );
-
-            }
-
-
-            if (
-                Number(
-                    tipoNovedad.activo
-                ) !== 1
-            ) {
-
-                throw new Error(
-                    'El tipo de novedad está inactivo.'
-                );
-
-            }
-
-
-            /* ==========================================
-               VALIDAR EMPLEADO
-               ========================================== */
-
-            const [empleados] =
-                await connection.query(
-                    `
-                    SELECT
-                        id
-                    FROM empleados
-                    WHERE
-                        id = ?
-                        AND activo = 'SI'
-                    LIMIT 1
-                    `,
-                    [
-                        empleado_id
-                    ]
-                );
-
-
-            if (!empleados.length) {
-
-                throw new Error(
-                    'El empleado seleccionado no existe o está inactivo.'
-                );
-
-            }
-
-
-            /* ==========================================
-               CREAR NOVEDAD PRINCIPAL
-               APROBADA DIRECTAMENTE
-               ========================================== */
-
-            const [
-                resultadoNovedad
-            ] =
-                await connection.query(
-                    `
-                    INSERT INTO nomina_novedades (
-                        empleado_id,
-                        tipo_novedad_id,
-                        fecha_inicio,
-                        fecha_fin,
-                        cantidad_dias,
-                        motivo,
-                        observacion,
-                        estado,
-                        usuario_creacion,
-                        usuario_revision,
-                        fecha_creacion,
-                        fecha_revision
-                    )
-                    VALUES (
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        'APROBADA',
-                        ?,
-                        ?,
-                        NOW(),
-                        NOW()
-                    )
-                    `,
-                    [
-                        empleado_id,
-                        tipo_novedad_id,
-                        fecha_inicio,
-                        fecha_fin,
-                        cantidad_dias,
-                        motivo,
-                        observacion || null,
-                        usuarioId,
-                        usuarioId
-                    ]
-                );
-
-
-            const novedadId =
-                resultadoNovedad.insertId;
-
-
-            /* ==========================================
-               GUARDAR DETALLE DE LICENCIA
-               ========================================== */
-
-            await connection.query(
-                `
-                INSERT INTO nomina_novedades_licencias (
-                    novedad_id,
-                    empleado_id,
-                    tipo_licencia,
-                    fecha_inicio,
-                    fecha_fin,
-                    cantidad_dias,
-                    motivo,
-                    observacion,
-                    usuario_id,
-                    fecha_registro
-                )
-                VALUES (
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    NOW()
-                )
-                `,
-                [
-                    novedadId,
-                    empleado_id,
-                    tipo_licencia,
-                    fecha_inicio,
-                    fecha_fin,
-                    cantidad_dias,
-                    motivo,
-                    observacion || null,
-                    usuarioId
-                ]
-            );
-
-
-            /* ==========================================
-               CONFIRMAR
-               ========================================== */
-
-            await connection.commit();
-
-
-            res.status(201).json({
-
-                success: true,
-
-                message:
-                    'La licencia fue registrada y aprobada correctamente.',
-
-                novedad_id:
-                    novedadId
-
-            });
-
-
-        } catch (error) {
-
-            console.error(
-                'ERROR REGISTRANDO LICENCIA:',
-                error
-            );
-
-
-            if (connection) {
-
-                try {
-
-                    await connection.rollback();
-
-                } catch (rollbackError) {
-
-                    console.error(
-                        'ERROR ROLLBACK LICENCIA:',
-                        rollbackError
-                    );
-
-                }
-
-            }
-
-
-            res.status(500).json({
-
-                success: false,
-
-                message:
-                    error.message ||
-                    'No fue posible registrar la licencia.'
-
-            });
-
-
-        } finally {
-
-            if (connection) {
-
-                connection.release();
-
-            }
-
-        }
-
+router.post('/api/nomina/novedades/licencia', proteger, async (req, res) => {
+    const db = req.app.get('db');
+    let connection = null;
+
+    try {
+        // ✅ Validación de rol eliminada
+        const usuarioId = req.session.usuarioID;
+        if (!usuarioId) return responderError(res, 'La sesión no es válida.', 401);
+
+        const { tipo_novedad_id, empleado_id, tipo_licencia, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion } = req.body;
+
+        if (!tipo_novedad_id) return responderError(res, 'No se recibió el tipo de novedad.', 400);
+        if (!empleado_id) return responderError(res, 'Debes seleccionar un empleado.', 400);
+        if (!['MATERNIDAD', 'PATERNIDAD'].includes(tipo_licencia)) return responderError(res, 'El tipo de licencia no es válido.', 400);
+        if (!fecha_inicio || !fecha_fin) return responderError(res, 'Debes indicar el rango de fechas.', 400);
+        if (!cantidad_dias || Number(cantidad_dias) <= 0) return responderError(res, 'La cantidad de días no es válida.', 400);
+
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const [resultadoNovedad] = await connection.query(`
+            INSERT INTO nomina_novedades (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion, estado, usuario_creacion, usuario_revision, fecha_creacion, fecha_revision)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'APROBADA', ?, ?, NOW(), NOW())
+        `, [empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion || null, usuarioId, usuarioId]);
+
+        const novedadId = resultadoNovedad.insertId;
+
+        await connection.query(`
+            INSERT INTO nomina_novedades_licencias (novedad_id, empleado_id, tipo_licencia, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion, usuario_id, fecha_registro)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        `, [novedadId, empleado_id, tipo_licencia, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion || null, usuarioId]);
+
+        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'APROBADA', usuarioId, comentario: 'Creación (licencia)' });
+
+        await connection.commit();
+        return responderOk(res, { message: 'La licencia fue registrada y aprobada.', novedad_id: novedadId }, 201);
+
+    } catch (error) {
+        if (connection) try { await connection.rollback(); } catch (_) {}
+        return responderError(res, error.message || 'No fue posible registrar la licencia.', 500);
+    } finally {
+        if (connection) connection.release();
     }
-);
+});
 
 /* ============================================================
    CREAR NOVEDAD - HORAS EXTRA / RECARGOS
    ============================================================ */
 
+router.post('/api/nomina/novedades/horas-extra', proteger, async (req, res) => {
+    const db = req.app.get('db');
+    let connection = null;
+
+    try {
+        const usuarioId = req.session.usuarioID;
+        const empleadoId = req.session.empleadoID;
+
+        if (!usuarioId || !empleadoId) return responderError(res, 'La sesión no es válida.', 401);
+
+        const { tipo_novedad_id, tipo_hora, fecha_trabajo, hora_inicio, hora_fin, cantidad_horas, observacion } = req.body;
+
+        if (!tipo_novedad_id) return responderError(res, 'No se recibió el tipo de novedad.', 400);
+        if (!tipo_hora) return responderError(res, 'Debes seleccionar el tipo de hora o recargo.', 400);
+        if (!fecha_trabajo) return responderError(res, 'Debes indicar la fecha de trabajo.', 400);
+        if (!hora_inicio || !hora_fin) return responderError(res, 'Debes indicar la hora de inicio y fin.', 400);
+        if (!cantidad_horas || Number(cantidad_horas) <= 0) return responderError(res, 'La cantidad de horas no es válida.', 400);
+
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const [inicioHora, inicioMinuto] = hora_inicio.split(':').map(Number);
+        const [finHora, finMinuto] = hora_fin.split(':').map(Number);
+        const minutosInicio = (inicioHora * 60) + inicioMinuto;
+        const minutosFin = (finHora * 60) + finMinuto;
+
+        if (minutosFin <= minutosInicio) throw new Error('La hora de finalización debe ser posterior a la de inicio.');
+
+        const horasCalculadas = (minutosFin - minutosInicio) / 60;
+
+        if (Math.abs(horasCalculadas - Number(cantidad_horas)) > 0.01) {
+            throw new Error('La cantidad de horas enviada no coincide con las horas de inicio y fin.');
+        }
+
+        const [resultadoNovedad] = await connection.query(`
+            INSERT INTO nomina_novedades (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, hora_inicio, hora_fin, cantidad_dias, cantidad_horas, motivo, observacion, estado, usuario_creacion, fecha_creacion)
+            VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, 'PENDIENTE', ?, NOW())
+        `, [empleadoId, tipo_novedad_id, fecha_trabajo, fecha_trabajo, hora_inicio, hora_fin, horasCalculadas, tipo_hora, observacion || null, usuarioId]);
+
+        const novedadId = resultadoNovedad.insertId;
+
+        await connection.query(`
+            INSERT INTO nomina_novedades_horas_extra (novedad_id, empleado_id, tipo_hora, fecha_trabajo, hora_inicio, hora_fin, cantidad_horas, observacion, usuario_id, fecha_registro)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        `, [novedadId, empleadoId, tipo_hora, fecha_trabajo, hora_inicio, hora_fin, horasCalculadas, observacion || null, usuarioId]);
+
+        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'PENDIENTE', usuarioId, comentario: 'Creación (horas extra)' });
+
+        await connection.commit();
+        return responderOk(res, { message: 'Horas extra registradas correctamente.', novedad_id: novedadId, cantidad_horas: horasCalculadas }, 201);
+
+    } catch (error) {
+        if (connection) try { await connection.rollback(); } catch (_) {}
+        return responderError(res, error.message || 'No fue posible registrar las horas extra.', 400);
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
 /* ============================================================
-   CREAR NOVEDAD - HORAS EXTRA / RECARGOS
+   CREAR NOVEDAD - DESCUENTO
    ============================================================ */
 
-router.post(
-    '/api/nomina/novedades/horas-extra',
-    proteger,
-    async (req, res) => {
-
-        const db = req.app.get('db');
-
-        let connection = null;
-
-        try {
-
-            /* ====================================================
-               SESIÓN
-               ==================================================== */
-
-            const usuarioId =
-                req.session.usuarioID;
-
-            const empleadoId =
-                req.session.empleadoID;
-
-
-            if (!usuarioId || !empleadoId) {
-
-                return res.status(401).json({
-
-                    success: false,
-
-                    message:
-                        'La sesión del usuario no es válida.'
-
-                });
-
-            }
-
-
-            /* ====================================================
-               DATOS RECIBIDOS
-               ==================================================== */
-
-            const {
-                tipo_novedad_id,
-                tipo_hora,
-                fecha_trabajo,
-                hora_inicio,
-                hora_fin,
-                cantidad_horas,
-                observacion
-            } = req.body;
-
-
-            /* ====================================================
-               VALIDACIONES BÁSICAS
-               ==================================================== */
-
-            if (!tipo_novedad_id) {
-
-                return res.status(400).json({
-
-                    success: false,
-
-                    message:
-                        'No se recibió el tipo de novedad.'
-
-                });
-
-            }
-
-
-            if (!tipo_hora) {
-
-                return res.status(400).json({
-
-                    success: false,
-
-                    message:
-                        'Debes seleccionar el tipo de hora o recargo.'
-
-                });
-
-            }
-
-
-            if (!fecha_trabajo) {
-
-                return res.status(400).json({
-
-                    success: false,
-
-                    message:
-                        'Debes indicar la fecha de trabajo.'
-
-                });
-
-            }
-
-
-            if (!hora_inicio || !hora_fin) {
-
-                return res.status(400).json({
-
-                    success: false,
-
-                    message:
-                        'Debes indicar la hora de inicio y finalización.'
-
-                });
-
-            }
-
-
-            if (
-                cantidad_horas === undefined ||
-                cantidad_horas === null ||
-                Number(cantidad_horas) <= 0
-            ) {
-
-                return res.status(400).json({
-
-                    success: false,
-
-                    message:
-                        'La cantidad de horas no es válida.'
-
-                });
-
-            }
-
-
-            /* ====================================================
-               CONEXIÓN
-               ==================================================== */
-
-            connection =
-                await db.getConnection();
-
-            await connection.beginTransaction();
-
-
-            /* ====================================================
-               1. VALIDAR TIPO GENERAL DE NOVEDAD
-               ==================================================== */
-
-            const [tiposNovedad] =
-                await connection.query(
-                    `
-                    SELECT
-                        id,
-                        codigo,
-                        nombre,
-                        requiere_aprobacion,
-                        activo
-                    FROM nomina_novedades_tipos
-                    WHERE id = ?
-                    LIMIT 1
-                    `,
-                    [
-                        tipo_novedad_id
-                    ]
-                );
-
-
-            if (!tiposNovedad.length) {
-
-                throw new Error(
-                    'El tipo de novedad seleccionado no existe.'
-                );
-
-            }
-
-
-            const tipoNovedad =
-                tiposNovedad[0];
-
-
-            if (
-                tipoNovedad.codigo !==
-                'HORAS_EXTRA'
-            ) {
-
-                throw new Error(
-                    'El tipo de novedad seleccionado no corresponde a horas extra y recargos.'
-                );
-
-            }
-
-
-            if (
-                Number(tipoNovedad.activo) !== 1
-            ) {
-
-                throw new Error(
-                    'El tipo de novedad está inactivo.'
-                );
-
-            }
-
-
-            /* ====================================================
-               2. VALIDAR CONFIGURACIÓN
-                  HORAS EXTRA O RECARGO
-               ==================================================== */
-
-            const [configHoras] =
-                await connection.query(
-                    `
-                    SELECT
-                        id,
-                        codigo,
-                        nombre,
-                        tipo_jornada,
-                        tipo_dia,
-                        porcentaje_recargo,
-                        factor_pago,
-                        formula,
-                        requiere_autorizacion,
-                        limite_diario,
-                        limite_semanal,
-                        fecha_inicio,
-                        fecha_fin,
-                        activo
-                    FROM nomina_tipos_horas_extra
-
-                    WHERE codigo = ?
-
-                    AND activo = 1
-
-                    AND fecha_inicio <= ?
-
-                    AND (
-                        fecha_fin IS NULL
-                        OR fecha_fin >= ?
-                    )
-
-                    ORDER BY fecha_inicio DESC
-
-                    LIMIT 1
-                    `,
-                    [
-                        tipo_hora,
-                        fecha_trabajo,
-                        fecha_trabajo
-                    ]
-                );
-
-
-            const [configRecargos] =
-                await connection.query(
-                    `
-                    SELECT
-                        id,
-                        codigo,
-                        nombre,
-                        porcentaje_recargo,
-                        factor_pago,
-                        formula,
-                        fecha_inicio,
-                        fecha_fin,
-                        activo
-                    FROM nomina_tipos_recargos
-
-                    WHERE codigo = ?
-
-                    AND activo = 1
-
-                    AND fecha_inicio <= ?
-
-                    AND (
-                        fecha_fin IS NULL
-                        OR fecha_fin >= ?
-                    )
-
-                    ORDER BY fecha_inicio DESC
-
-                    LIMIT 1
-                    `,
-                    [
-                        tipo_hora,
-                        fecha_trabajo,
-                        fecha_trabajo
-                    ]
-                );
-
-
-            /* ====================================================
-               3. DETERMINAR QUÉ CONFIGURACIÓN SE ENCONTRÓ
-               ==================================================== */
-
-            let configuracion = null;
-
-            let tipoConfiguracion = null;
-
-
-            if (configHoras.length) {
-
-                configuracion =
-                    configHoras[0];
-
-                tipoConfiguracion =
-                    'HORA_EXTRA';
-
-            } else if (configRecargos.length) {
-
-                configuracion =
-                    configRecargos[0];
-
-                tipoConfiguracion =
-                    'RECARGO';
-
-            }
-
-
-            /* ====================================================
-               4. VALIDAR QUE EL CÓDIGO EXISTA Y ESTÉ VIGENTE
-               ==================================================== */
-
-            if (!configuracion) {
-
-                throw new Error(
-                    `El código ${tipo_hora} no existe o no tiene una configuración vigente para la fecha ${fecha_trabajo}.`
-                );
-
-            }
-
-
-            /* ====================================================
-               5. CALCULAR HORAS EN BACKEND
-                  NO CONFIAMOS EN EL VALOR DEL FRONTEND
-               ==================================================== */
-
-            const [inicioHora, inicioMinuto] =
-                hora_inicio
-                    .split(':')
-                    .map(Number);
-
-
-            const [finHora, finMinuto] =
-                hora_fin
-                    .split(':')
-                    .map(Number);
-
-
-            const minutosInicio =
-                (inicioHora * 60) +
-                inicioMinuto;
-
-
-            const minutosFin =
-                (finHora * 60) +
-                finMinuto;
-
-
-            if (
-                minutosFin <=
-                minutosInicio
-            ) {
-
-                throw new Error(
-                    'La hora de finalización debe ser posterior a la hora de inicio.'
-                );
-
-            }
-
-
-            const minutosTrabajados =
-                minutosFin -
-                minutosInicio;
-
-
-            const horasCalculadas =
-                minutosTrabajados / 60;
-
-
-            const horasRecibidas =
-                Number(cantidad_horas);
-
-
-            /* ====================================================
-               6. COMPROBAR QUE LAS HORAS NO FUERON ALTERADAS
-               ==================================================== */
-
-            if (
-                Math.abs(
-                    horasCalculadas -
-                    horasRecibidas
-                ) > 0.01
-            ) {
-
-                throw new Error(
-                    'La cantidad de horas enviada no coincide con la hora de inicio y finalización.'
-                );
-
-            }
-
-
-            /* ====================================================
-               7. VALIDAR LÍMITE DIARIO
-               ==================================================== */
-
-            if (
-                tipoConfiguracion ===
-                    'HORA_EXTRA' &&
-                configuracion.limite_diario !== null &&
-                Number(configuracion.limite_diario) > 0 &&
-                horasCalculadas >
-                    Number(configuracion.limite_diario)
-            ) {
-
-                throw new Error(
-                    `La cantidad de horas supera el límite diario configurado de ${configuracion.limite_diario} horas.`
-                );
-
-            }
-
-
-            /* ====================================================
-               8. CREAR NOVEDAD PRINCIPAL
-               ==================================================== */
-
-            const [
-    resultadoNovedad
-] =
-    await connection.query(
-        `
-        INSERT INTO nomina_novedades (
-            empleado_id,
-            tipo_novedad_id,
-            fecha_inicio,
-            fecha_fin,
-            hora_inicio,
-            hora_fin,
-            cantidad_dias,
-            cantidad_horas,
-            motivo,
-            observacion,
-            estado,
-            usuario_creacion,
-            fecha_creacion
-        )
-        VALUES (
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            ?,
-            1,
-            ?,
-            ?,
-            ?,
-            'PENDIENTE',
-            ?,
-            NOW()
-        )
-        `,
-        [
-            empleadoId,
-            tipo_novedad_id,
-            fecha_trabajo,
-            fecha_trabajo,
-            hora_inicio,
-            hora_fin,
-            horasCalculadas,
-            tipo_hora,
-            observacion || null,
-            usuarioId
-        ]
-    );
-
-
-            const novedadId =
-                resultadoNovedad.insertId;
-
-
-            /* ====================================================
-               9. CREAR DETALLE
-               ==================================================== */
-
-            await connection.query(
-                `
-                INSERT INTO nomina_novedades_horas_extra (
-                    novedad_id,
-                    empleado_id,
-                    tipo_hora,
-                    fecha_trabajo,
-                    hora_inicio,
-                    hora_fin,
-                    cantidad_horas,
-                    observacion,
-                    usuario_id,
-                    fecha_registro
-                )
-                VALUES (
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    ?,
-                    NOW()
-                )
-                `,
-                [
-                    novedadId,
-                    empleadoId,
-                    tipo_hora,
-                    fecha_trabajo,
-                    hora_inicio,
-                    hora_fin,
-                    horasCalculadas,
-                    observacion || null,
-                    usuarioId
-                ]
-            );
-
-
-            /* ====================================================
-               10. CONFIRMAR
-               ==================================================== */
-
-            await connection.commit();
-
-
-            return res.status(201).json({
-
-                success: true,
-
-                message:
-                    'La novedad de horas extra o recargo fue registrada correctamente y quedó pendiente de aprobación.',
-
-                novedad_id:
-                    novedadId,
-
-                tipo_hora:
-                    configuracion.codigo,
-
-                nombre_tipo:
-                    configuracion.nombre,
-
-                cantidad_horas:
-                    horasCalculadas
-
-            });
-
-
-        } catch (error) {
-
-
-            if (connection) {
-
-                try {
-
-                    await connection.rollback();
-
-                } catch (rollbackError) {
-
-                    console.error(
-                        'Error realizando rollback:',
-                        rollbackError
-                    );
-
-                }
-
-            }
-
-
-            console.error(
-                '❌ ERROR REGISTRANDO HORAS EXTRA / RECARGO:',
-                error
-            );
-
-
-            return res.status(400).json({
-
-                success: false,
-
-                message:
-                    error.message ||
-                    'No fue posible registrar la novedad.'
-
-            });
-
-
-        } finally {
-
-
-            if (connection) {
-
-                connection.release();
-
-            }
-
+router.post('/api/nomina/novedades/descuento', proteger, uploadSoporte.single('soporte'), async (req, res) => {
+    const db = req.app.get('db');
+    let connection = null;
+
+    try {
+        const usuarioId = req.session.usuarioID;
+        const empleadoId = req.session.empleadoID;
+
+        if (!usuarioId || !empleadoId) {
+            if (req.file) fs.unlinkSync(req.file.path);
+            return responderError(res, 'La sesión no es válida.', 401);
         }
 
-    }
-);
+        const { tipo_novedad_id, concepto, valor, observacion } = req.body;
 
-// =========================================================
-// 🌙 OBTENER TIPOS DE RECARGOS
-// =========================================================
-
-router.get(
-    '/api/nomina/configuracion/recargos',
-    async (req, res) => {
-
-        const db = req.app.get('db');
-
-        try {
-
-            const [rows] = await db.query(`
-                SELECT
-                    id,
-                    codigo,
-                    nombre,
-                    descripcion,
-                    porcentaje_recargo,
-                    factor_pago,
-                    formula,
-                    fecha_inicio,
-                    fecha_fin,
-                    activo
-                FROM nomina_tipos_recargos
-                WHERE activo = 1
-                ORDER BY id ASC
-            `);
-
-            res.json({
-
-                ok: true,
-
-                data: rows
-
-            });
-
-        } catch (error) {
-
-            console.error(
-                '❌ Error obteniendo tipos de recargos:',
-                error
-            );
-
-            res.status(500).json({
-
-                ok: false,
-
-                mensaje:
-                    'No fue posible cargar los recargos.',
-
-                error:
-                    error.message
-
-            });
-
+        if (!tipo_novedad_id || !concepto || !valor) {
+            throw new Error('Faltan datos obligatorios del descuento.');
         }
 
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const [resultadoNovedad] = await connection.query(`
+            INSERT INTO nomina_novedades (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, motivo, observacion, estado, usuario_creacion, fecha_creacion)
+            VALUES (?, ?, CURDATE(), CURDATE(), ?, ?, 'PENDIENTE', ?, NOW())
+        `, [empleadoId, tipo_novedad_id, concepto, observacion || null, usuarioId]);
+
+        const novedadId = resultadoNovedad.insertId;
+        
+        if (req.file) {
+            const extension = path.extname(req.file.originalname).replace('.', '').toLowerCase();
+            const rutaArchivo = `/uploads/nomina/novedades/soportes/${req.file.filename}`;
+            await connection.query(`
+                INSERT INTO nomina_novedades_soportes (novedad_id, nombre_archivo, nombre_original, extension, tipo_mime, ruta_archivo, usuario_id, fecha_subida)
+                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+            `, [novedadId, req.file.filename, req.file.originalname, extension, req.file.mimetype, rutaArchivo, usuarioId]);
+        }
+
+        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'PENDIENTE', usuarioId, comentario: 'Creación (descuento)' });
+
+        await connection.commit();
+        return responderOk(res, { message: 'Descuento registrado correctamente.', novedad_id: novedadId }, 201);
+
+    } catch (error) {
+        if (connection) try { await connection.rollback(); } catch (_) {}
+        if (req.file) try { if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path); } catch (e) {}
+        return responderError(res, error.message || 'No fue posible registrar el descuento.', 500);
+    } finally {
+        if (connection) connection.release();
     }
-);
+});
+
+/* ============================================================
+   CREAR NOVEDAD - INGRESO
+   ============================================================ */
+
+router.post('/api/nomina/novedades/ingreso', proteger, async (req, res) => {
+    const db = req.app.get('db');
+    let connection = null;
+
+    try {
+        const usuarioId = req.session.usuarioID;
+        const empleadoId = req.session.empleadoID;
+
+        if (!usuarioId || !empleadoId) return responderError(res, 'La sesión no es válida.', 401);
+
+        const { tipo_novedad_id, concepto, valor, observacion } = req.body;
+
+        if (!tipo_novedad_id || !concepto || !valor) {
+            throw new Error('Faltan datos obligatorios del ingreso.');
+        }
+
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const [resultadoNovedad] = await connection.query(`
+            INSERT INTO nomina_novedades (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, motivo, observacion, estado, usuario_creacion, fecha_creacion)
+            VALUES (?, ?, CURDATE(), CURDATE(), ?, ?, 'PENDIENTE', ?, NOW())
+        `, [empleadoId, tipo_novedad_id, concepto, observacion || null, usuarioId]);
+
+        const novedadId = resultadoNovedad.insertId;
+
+        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'PENDIENTE', usuarioId, comentario: 'Creación (ingreso)' });
+
+        await connection.commit();
+        return responderOk(res, { message: 'Ingreso registrado correctamente.', novedad_id: novedadId }, 201);
+
+    } catch (error) {
+        if (connection) try { await connection.rollback(); } catch (_) {}
+        return responderError(res, error.message || 'No fue posible registrar el ingreso.', 500);
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+/* ============================================================
+   CREAR NOVEDAD - PRÉSTAMO
+   ============================================================ */
+
+router.post('/api/nomina/novedades/prestamo', proteger, async (req, res) => {
+    const db = req.app.get('db');
+    let connection = null;
+
+    try {
+        const usuarioId = req.session.usuarioID;
+        const empleadoId = req.session.empleadoID;
+
+        if (!usuarioId || !empleadoId) return responderError(res, 'La sesión no es válida.', 401);
+
+        const { tipo_novedad_id, monto, cuotas, observacion } = req.body;
+
+        if (!tipo_novedad_id || !monto || !cuotas) {
+            throw new Error('Faltan datos obligatorios del préstamo.');
+        }
+
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        const [resultadoNovedad] = await connection.query(`
+            INSERT INTO nomina_novedades (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, motivo, observacion, estado, usuario_creacion, fecha_creacion)
+            VALUES (?, ?, CURDATE(), CURDATE(), 'Solicitud de préstamo', ?, 'PENDIENTE', ?, NOW())
+        `, [empleadoId, tipo_novedad_id, observacion || null, usuarioId]);
+
+        const novedadId = resultadoNovedad.insertId;
+
+        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'PENDIENTE', usuarioId, comentario: 'Creación (préstamo)' });
+
+        await connection.commit();
+        return responderOk(res, { message: 'Préstamo registrado correctamente.', novedad_id: novedadId }, 201);
+
+    } catch (error) {
+        if (connection) try { await connection.rollback(); } catch (_) {}
+        return responderError(res, error.message || 'No fue posible registrar el préstamo.', 500);
+    } finally {
+        if (connection) connection.release();
+    }
+});
+
+/* ============================================================
+   CONFIGURACIÓN: TIPOS DE HORAS EXTRA
+   ============================================================ */
+
+router.get('/api/nomina/configuracion/horas-extra', proteger, async (req, res) => {
+    try {
+        const db = req.app.get('db');
+        const [rows] = await db.query(`
+            SELECT id, codigo, nombre, descripcion, porcentaje_recargo, factor_pago, formula, 
+                   limite_diario, limite_semanal, fecha_inicio, fecha_fin, activo
+            FROM nomina_tipos_horas_extra WHERE activo = 1 ORDER BY id ASC
+        `);
+        res.json({ ok: true, data: rows });
+    } catch (error) {
+        return responderError(res, 'No fue posible cargar las horas extra.', 500);
+    }
+});
+
+/* ============================================================
+   CONFIGURACIÓN: TIPOS DE RECARGOS
+   ============================================================ */
+
+router.get('/api/nomina/configuracion/recargos', proteger, async (req, res) => {
+    try {
+        const db = req.app.get('db');
+        const [rows] = await db.query(`
+            SELECT id, codigo, nombre, descripcion, porcentaje_recargo, factor_pago, formula, 
+                   fecha_inicio, fecha_fin, activo
+            FROM nomina_tipos_recargos WHERE activo = 1 ORDER BY id ASC
+        `);
+        res.json({ ok: true, data: rows });
+    } catch (error) {
+        return responderError(res, 'No fue posible cargar los recargos.', 500);
+    }
+});
+
+/* ============================================================
+   ELIMINAR NOVEDAD (Físicamente de la base de datos)
+   ============================================================ */
+
+router.delete('/api/nomina/novedades/:id', proteger, async (req, res) => {
+    const db = req.app.get('db');
+    try {
+        const novedadId = Number(req.params.id);
+        
+        // Si tienes configurada la llave foránea con ON DELETE CASCADE, esto borrará también los detalles.
+        // Si no, deberías borrar primero de nomina_novedades_soportes, nomina_novedades_historial, etc.
+        
+        await db.query('DELETE FROM nomina_novedades WHERE id = ?', [novedadId]);
+        
+        return responderOk(res, { message: 'Novedad eliminada permanentemente.' });
+    } catch (error) {
+        console.error('ERROR ELIMINANDO NOVEDAD:', error);
+        return responderError(res, 'No fue posible eliminar la novedad.', 500);
+    }
+});
+/* ============================================================
+   EXPORT
+   ============================================================ */
 
 module.exports = router;
