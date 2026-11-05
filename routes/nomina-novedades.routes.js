@@ -58,6 +58,19 @@ const responderOk = (res, data = {}, status = 200) => res.status(status).json({ 
 const responderError = (res, message, status = 500, extra = {}) => res.status(status).json({ success: false, message, ...extra });
 
 /* ============================================================
+   🔥 HELPER: DETERMINAR SI EL USUARIO VE TODAS LAS NOVEDADES
+   Admin y Super Admin ven todo. Cualquier otro rol solo ve lo suyo.
+   ============================================================ */
+
+const ROLES_ACCESO_TOTAL = ['admin', 'super admin', 'superadmin', 'administrador', 'super administrador'];
+
+function tieneAccesoTotal(rol) {
+    if (!rol) return false;
+    const limpio = String(rol).toLowerCase().trim().replace(/\s+/g, ' ');
+    return ROLES_ACCESO_TOTAL.includes(limpio);
+}
+
+/* ============================================================
    HELPER: REGISTRAR AUDITORÍA
    ============================================================ */
 
@@ -132,10 +145,13 @@ router.get('/api/nomina/novedades', proteger, async (req, res) => {
         `;
 
         const parametros = [];
-        if (rol === 'auxiliar') {
+
+        // 🔥 SOLO Admin / Super Admin ven todas. El resto ve solo sus novedades.
+        if (!tieneAccesoTotal(rol)) {
             sql += ` AND n.empleado_id = ? `;
             parametros.push(empleadoID);
         }
+
         sql += ` ORDER BY n.fecha_creacion DESC `;
 
         const [novedades] = await db.query(sql, parametros);
@@ -175,7 +191,12 @@ router.get('/api/nomina/novedades/historial', proteger, async (req, res) => {
         `;
 
         const parametros = [];
-        if (rol === 'auxiliar') { sql += ` AND n.empleado_id = ? `; parametros.push(empleadoID); }
+
+        // 🔥 Filtro por rol
+        if (!tieneAccesoTotal(rol)) {
+            sql += ` AND n.empleado_id = ? `;
+            parametros.push(empleadoID);
+        }
 
         if (buscar && buscar.trim() !== '') {
             sql += ` AND (e.nombre LIKE ? OR e.numero_documento LIKE ? OR t.nombre LIKE ?) `;
@@ -229,8 +250,9 @@ router.get('/api/nomina/novedades/kpis', proteger, async (req, res) => {
         const rol = req.session.rol;
         const empleadoID = req.session.empleadoID;
 
-        const filtroAuxiliar = rol === 'auxiliar' ? ' AND empleado_id = ? ' : '';
-        const paramsAux = rol === 'auxiliar' ? [empleadoID] : [];
+        // 🔥 Solo Admin / Super Admin cuentan todo
+        const filtroAuxiliar = !tieneAccesoTotal(rol) ? ' AND empleado_id = ? ' : '';
+        const paramsAux = !tieneAccesoTotal(rol) ? [empleadoID] : [];
 
         const [pendientes] = await db.query(`SELECT COUNT(*) AS total FROM nomina_novedades WHERE estado = 'PENDIENTE' ${filtroAuxiliar}`, paramsAux);
         const [aprobadas] = await db.query(`SELECT COUNT(*) AS total FROM nomina_novedades WHERE estado = 'APROBADA' AND fecha_revision >= DATE_SUB(NOW(), INTERVAL 14 DAY) ${filtroAuxiliar}`, paramsAux);
@@ -260,6 +282,8 @@ router.get('/api/nomina/novedades/:id', proteger, async (req, res) => {
     try {
         const db = req.app.get('db');
         const novedadId = Number(req.params.id);
+        const rol = req.session.rol;
+        const empleadoID = req.session.empleadoID;
 
         const [rows] = await db.query(`
             SELECT n.*, 
@@ -275,8 +299,11 @@ router.get('/api/nomina/novedades/:id', proteger, async (req, res) => {
 
         const novedad = rows[0];
 
-        // Permitir ver el detalle a cualquier usuario autenticado (se removió la restricción de rol)
-        
+        // 🔥 Validar que el usuario pueda ver esta novedad
+        if (!tieneAccesoTotal(rol) && Number(novedad.empleado_id) !== Number(empleadoID)) {
+            return responderError(res, 'Novedad no encontrada.', 404);
+        }
+
         let soportes = [];
         try {
             const [s] = await db.query(
@@ -306,11 +333,10 @@ router.get('/api/nomina/novedades/:id', proteger, async (req, res) => {
 });
 
 /* ============================================================
-   APROBAR NOVEDAD (SIN RESTRICCIÓN DE ROL)
+   APROBAR NOVEDAD
    ============================================================ */
 
 router.patch('/api/nomina/novedades/:id/aprobar', proteger, async (req, res) => {
-    // ✅ Validación de rol eliminada para permitir la acción
     const db = req.app.get('db');
     let connection = null;
 
@@ -351,11 +377,10 @@ router.patch('/api/nomina/novedades/:id/aprobar', proteger, async (req, res) => 
 });
 
 /* ============================================================
-   RECHAZAR NOVEDAD (SIN RESTRICCIÓN DE ROL)
+   RECHAZAR NOVEDAD
    ============================================================ */
 
 router.patch('/api/nomina/novedades/:id/rechazar', proteger, async (req, res) => {
-    // ✅ Validación de rol eliminada para permitir la acción
     const observacion = String(req.body?.observacion || '').trim();
     if (!observacion) return responderError(res, 'Debes indicar la observación del rechazo.', 400);
 
@@ -398,11 +423,10 @@ router.patch('/api/nomina/novedades/:id/rechazar', proteger, async (req, res) =>
 });
 
 /* ============================================================
-   ANULAR NOVEDAD (SIN RESTRICCIÓN DE ROL)
+   ANULAR NOVEDAD
    ============================================================ */
 
 router.patch('/api/nomina/novedades/:id/anular', proteger, async (req, res) => {
-    // ✅ Validación de rol eliminada para permitir la acción
     const db = req.app.get('db');
     let connection = null;
 
@@ -448,7 +472,6 @@ router.patch('/api/nomina/novedades/:id/anular', proteger, async (req, res) => {
    ============================================================ */
 
 router.post('/api/nomina/novedades/cierre-periodo/validar', proteger, async (req, res) => {
-    // ✅ Validación de rol eliminada
     const periodo = String(req.body?.periodo || '').trim();
     if (!/^\d{4}-\d{2}$/.test(periodo)) {
         return responderError(res, 'El período debe tener el formato YYYY-MM.', 400);
@@ -479,7 +502,6 @@ router.post('/api/nomina/novedades/cierre-periodo/validar', proteger, async (req
    ============================================================ */
 
 router.post('/api/nomina/novedades/cierre-periodo', proteger, async (req, res) => {
-    // ✅ Validación de rol eliminada
     const periodo = String(req.body?.periodo || '').trim();
     if (!/^\d{4}-\d{2}$/.test(periodo)) {
         return responderError(res, 'El período debe tener el formato YYYY-MM.', 400);
@@ -538,7 +560,7 @@ router.get('/api/nomina/novedades/exportar', proteger, async (req, res) => {
         const filtros = [];
         const params = [];
 
-        if (rol === 'auxiliar') { filtros.push('n.empleado_id = ?'); params.push(empleadoID); }
+        if (!tieneAccesoTotal(rol)) { filtros.push('n.empleado_id = ?'); params.push(empleadoID); }
         if (req.query.estado) { filtros.push('n.estado = ?'); params.push(req.query.estado); }
         if (req.query.tipo) { filtros.push('n.tipo_novedad_id = ?'); params.push(req.query.tipo); }
         if (req.query.mes) { filtros.push("DATE_FORMAT(n.fecha_inicio, '%Y-%m') = ?"); params.push(req.query.mes); }
@@ -592,7 +614,7 @@ router.get('/api/nomina/novedades/historial/exportar', proteger, async (req, res
         ];
         const params = [];
 
-        if (rol === 'auxiliar') { filtros.push('n.empleado_id = ?'); params.push(empleadoID); }
+        if (!tieneAccesoTotal(rol)) { filtros.push('n.empleado_id = ?'); params.push(empleadoID); }
         if (req.query.estado) { filtros.push('n.estado = ?'); params.push(req.query.estado); }
         if (req.query.tipo) { filtros.push('n.tipo_novedad_id = ?'); params.push(req.query.tipo); }
 
@@ -820,17 +842,33 @@ router.post('/api/nomina/novedades/licencia', proteger, async (req, res) => {
     let connection = null;
 
     try {
-        // ✅ Validación de rol eliminada
         const usuarioId = req.session.usuarioID;
         if (!usuarioId) return responderError(res, 'La sesión no es válida.', 401);
 
         const { tipo_novedad_id, empleado_id, tipo_licencia, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion } = req.body;
 
         if (!tipo_novedad_id) return responderError(res, 'No se recibió el tipo de novedad.', 400);
-        if (!empleado_id) return responderError(res, 'Debes seleccionar un empleado.', 400);
-        if (!['MATERNIDAD', 'PATERNIDAD'].includes(tipo_licencia)) return responderError(res, 'El tipo de licencia no es válido.', 400);
+        if (!tipo_licencia) return responderError(res, 'El tipo de licencia es obligatorio.', 400);
+        
+        // 🔥 SE ELIMINÓ LA RESTRICCIÓN (Antes solo dejaba MATERNIDAD y PATERNIDAD)
+        // Ahora acepta LUTO, CITA_MEDICA, VOTO, etc.
+        
         if (!fecha_inicio || !fecha_fin) return responderError(res, 'Debes indicar el rango de fechas.', 400);
         if (!cantidad_dias || Number(cantidad_dias) <= 0) return responderError(res, 'La cantidad de días no es válida.', 400);
+
+        // 🔥 Si es Admin/Super Admin puede elegir empleado; si no, usa el de la sesión
+        const rolLimpio = String(req.session.rol || '').toLowerCase().trim().replace(/\s+/g, ' ');
+        const esAdmin = ROLES_ACCESO_TOTAL.includes(rolLimpio);
+
+        const empleadoFinal = esAdmin
+            ? Number(empleado_id || req.session.empleadoID)
+            : Number(req.session.empleadoID);
+
+        if (!empleadoFinal) return responderError(res, 'No se pudo determinar el empleado.', 400);
+
+        // Si el frontend envía observación pero no motivo, usamos la observación como motivo principal
+        const motivoFinal = motivo || observacion || 'Licencia/Permiso legal';
+        const observacionFinal = observacion || null;
 
         connection = await db.getConnection();
         await connection.beginTransaction();
@@ -838,16 +876,16 @@ router.post('/api/nomina/novedades/licencia', proteger, async (req, res) => {
         const [resultadoNovedad] = await connection.query(`
             INSERT INTO nomina_novedades (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion, estado, usuario_creacion, usuario_revision, fecha_creacion, fecha_revision)
             VALUES (?, ?, ?, ?, ?, ?, ?, 'APROBADA', ?, ?, NOW(), NOW())
-        `, [empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion || null, usuarioId, usuarioId]);
+        `, [empleadoFinal, tipo_novedad_id, fecha_inicio, fecha_fin, cantidad_dias, motivoFinal, observacionFinal, usuarioId, usuarioId]);
 
         const novedadId = resultadoNovedad.insertId;
 
         await connection.query(`
             INSERT INTO nomina_novedades_licencias (novedad_id, empleado_id, tipo_licencia, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion, usuario_id, fecha_registro)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-        `, [novedadId, empleado_id, tipo_licencia, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion || null, usuarioId]);
+        `, [novedadId, empleadoFinal, tipo_licencia, fecha_inicio, fecha_fin, cantidad_dias, motivoFinal, observacionFinal, usuarioId]);
 
-        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'APROBADA', usuarioId, comentario: 'Creación (licencia)' });
+        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'APROBADA', usuarioId, comentario: `Creación (${tipo_licencia})` });
 
         await connection.commit();
         return responderOk(res, { message: 'La licencia fue registrada y aprobada.', novedad_id: novedadId }, 201);
@@ -1110,9 +1148,6 @@ router.delete('/api/nomina/novedades/:id', proteger, async (req, res) => {
     try {
         const novedadId = Number(req.params.id);
         
-        // Si tienes configurada la llave foránea con ON DELETE CASCADE, esto borrará también los detalles.
-        // Si no, deberías borrar primero de nomina_novedades_soportes, nomina_novedades_historial, etc.
-        
         await db.query('DELETE FROM nomina_novedades WHERE id = ?', [novedadId]);
         
         return responderOk(res, { message: 'Novedad eliminada permanentemente.' });
@@ -1121,6 +1156,7 @@ router.delete('/api/nomina/novedades/:id', proteger, async (req, res) => {
         return responderError(res, 'No fue posible eliminar la novedad.', 500);
     }
 });
+
 /* ============================================================
    EXPORT
    ============================================================ */

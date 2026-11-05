@@ -12,7 +12,6 @@
 
     <title>Novedades - Procesados Margarita</title>
 
-
     <!-- =====================================================
          GOOGLE FONTS
          ===================================================== -->
@@ -33,7 +32,6 @@
         rel="stylesheet"
     >
 
-
     <!-- =====================================================
          BOOTSTRAP
          ===================================================== -->
@@ -42,7 +40,6 @@
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet"
     >
-
 
     <!-- =====================================================
          FONT AWESOME
@@ -53,7 +50,6 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     >
 
-
     <!-- =====================================================
          CSS GENERAL DEL ERP
          ===================================================== -->
@@ -63,7 +59,6 @@
         href="/css/style1.css"
     >
 
-
     <!-- =====================================================
          SIDEBAR GLOBAL
          ===================================================== -->
@@ -72,7 +67,6 @@
         rel="stylesheet"
         href="/css/sidebar.css"
     >
-
 
     <!-- =====================================================
          CSS PROPIO DE NOVEDADES
@@ -85,16 +79,13 @@
 
 </head>
 
-
 <body data-pagina="nomina-novedades">
-
 
     <!-- =====================================================
          SIDEBAR GLOBAL
          ===================================================== -->
 
     <div id="sidebarContainer"></div>
-
 
     <!-- =====================================================
          OVERLAY SIDEBAR MÓVIL
@@ -104,7 +95,6 @@
         class="sidebar-overlay"
         id="sidebarOverlay"
     ></div>
-
 
     <!-- =====================================================
          NAVBAR GLOBAL
@@ -119,13 +109,11 @@
                 id="btnOpenSidebar"
             ></i>
 
-
             <span class="empresa-nombre">
                 Novedades
             </span>
 
         </div>
-
 
         <div class="acciones-navbar">
 
@@ -144,7 +132,6 @@
 
     </nav>
 
-
     <!-- =====================================================
          CONTENEDOR DE NOTIFICACIONES (TOASTS)
          ===================================================== -->
@@ -156,13 +143,11 @@
         aria-atomic="true"
     ></div>
 
-
     <!-- =====================================================
          CONTENIDO PRINCIPAL
          ===================================================== -->
 
     <main class="novedades-container">
-
 
         <!-- =================================================
              ENCABEZADO
@@ -186,10 +171,8 @@
 
             </div>
 
-
             <div class="novedades-header-actions">
 
-                <!-- Botón de Refrescar agregado -->
                 <button
                     type="button"
                     id="btnRefrescarNovedades"
@@ -200,7 +183,6 @@
                     Refrescar
                 </button>
 
-                <!-- Botón de Cerrar Período agregado -->
                 <button
                     type="button"
                     id="btnCerrarPeriodo"
@@ -227,17 +209,11 @@
 
         </section>
 
-
         <!-- =================================================
              TARJETAS RESUMEN
              ================================================= -->
 
         <section class="novedades-kpi-grid">
-
-
-            <!-- =================================================
-                 PENDIENTES
-                 ================================================= -->
 
             <article class="novedad-kpi-card kpi-pendientes">
 
@@ -257,7 +233,6 @@
 
                 </div>
 
-
                 <div class="novedad-kpi-icon">
 
                     <i class="fas fa-clock"></i>
@@ -265,11 +240,6 @@
                 </div>
 
             </article>
-
-
-            <!-- =================================================
-                 APROBADAS
-                 ================================================= -->
 
             <article class="novedad-kpi-card kpi-aprobadas">
 
@@ -289,7 +259,6 @@
 
                 </div>
 
-
                 <div class="novedad-kpi-icon">
 
                     <i class="fas fa-circle-check"></i>
@@ -297,11 +266,6 @@
                 </div>
 
             </article>
-
-
-            <!-- =================================================
-                 RECHAZADAS
-                 ================================================= -->
 
             <article class="novedad-kpi-card kpi-rechazadas">
 
@@ -321,7 +285,6 @@
 
                 </div>
 
-
                 <div class="novedad-kpi-icon">
 
                     <i class="fas fa-circle-xmark"></i>
@@ -329,11 +292,6 @@
                 </div>
 
             </article>
-
-
-            <!-- =================================================
-                 HISTORIAL
-                 ================================================= -->
 
             <article
                 class="novedad-kpi-card kpi-historial historial-kpi-clickable"
@@ -360,7 +318,6 @@
 
                 </div>
 
-
                 <div class="novedad-kpi-icon">
 
                     <i class="fas fa-clock-rotate-left"></i>
@@ -371,17 +328,11 @@
 
         </section>
 
-
         <!-- =================================================
              PANEL PRINCIPAL
              ================================================= -->
 
         <section class="novedades-panel">
-
-
-            <!-- =================================================
-                 CABECERA DEL PANEL
-                 ================================================= -->
 
             <header class="novedades-panel-header">
 
@@ -402,14 +353,8 @@
 
                 </div>
 
-
-                <!-- =================================================
-                     BOTONES DEL PANEL
-                     ================================================= -->
-
                 <div class="novedades-panel-header-actions">
 
-                    <!-- Botón de Exportar agregado -->
                     <button
                         type="button"
                         id="btnExportarNovedades"
@@ -438,19 +383,9 @@
 
             </header>
 
-
-            <!-- =================================================
-                 FILTROS
-                 ================================================= -->
-
             <div class="novedades-filtros">
 
                 <div class="novedades-filtros-grid">
-
-
-                    <!-- =================================================
-                         BUSCAR
-                         ================================================= -->
 
                     <div class="novedad-filtro">
 
@@ -458,13 +393,11 @@
                             Buscar
                         </label>
 
-
                         <div class="novedad-input-wrapper">
 
                             <i
                                 class="fas fa-magnifying-glass"
                             ></i>
-
 
                             <input
                                 type="text"
@@ -477,17 +410,11 @@
 
                     </div>
 
-
-                    <!-- =================================================
-                         TIPO DE NOVEDAD
-                         ================================================= -->
-
                     <div class="novedad-filtro">
 
                         <label for="filtroTipo">
                             Tipo de novedad
                         </label>
-
 
                         <select
                             id="filtroTipo"
@@ -502,17 +429,11 @@
 
                     </div>
 
-
-                    <!-- =================================================
-                         ESTADO
-                         ================================================= -->
-
                     <div class="novedad-filtro">
 
                         <label for="filtroEstado">
                             Estado
                         </label>
-
 
                         <select
                             id="filtroEstado"
@@ -543,17 +464,11 @@
 
                     </div>
 
-
-                    <!-- =================================================
-                         MES
-                         ================================================= -->
-
                     <div class="novedad-filtro">
 
                         <label for="filtroMes">
                             Mes
                         </label>
-
 
                         <input
                             type="month"
@@ -563,17 +478,11 @@
 
                     </div>
 
-
-                    <!-- =================================================
-                         LIMPIAR
-                         ================================================= -->
-
                     <div class="novedad-filtro filtro-limpiar">
 
                         <label>
                             &nbsp;
                         </label>
-
 
                         <button
                             type="button"
@@ -594,13 +503,9 @@
                 </div>
 
             </div>
-                        <!-- =================================================
-                 TABLA DE NOVEDADES
-                 ================================================= -->
-
+            
             <div class="novedades-table-wrapper">
 
-                <!-- SKELETON DE CARGA (NUEVO) -->
                 <div
                     id="tablaSkeleton"
                     class="novedades-skeleton"
@@ -652,22 +557,11 @@
 
                     </thead>
 
-
                     <tbody id="tablaNovedades">
-
-                        <!--
-                            Las novedades serán cargadas
-                            mediante nomina-novedades.js
-                        -->
 
                     </tbody>
 
                 </table>
-
-
-                <!-- =================================================
-                     ESTADO VACÍO
-                     ================================================= -->
 
                 <div
                     id="estadoVacio"
@@ -682,11 +576,9 @@
 
                     </div>
 
-
                     <h3>
                         No hay novedades para mostrar
                     </h3>
-
 
                     <p>
                         Las novedades registradas aparecerán aquí.
@@ -695,10 +587,6 @@
                 </div>
 
             </div>
-
-            <!-- =================================================
-                 PAGINACIÓN (NUEVO)
-                 ================================================= -->
 
             <nav
                 id="paginacionNovedades"
@@ -714,11 +602,9 @@
                     <i class="fas fa-chevron-left"></i>
                 </button>
 
-
                 <span id="infoPaginacion">
                     Página 1 de 1
                 </span>
-
 
                 <button
                     type="button"
@@ -732,9 +618,7 @@
 
         </section>
 
-
     </main>
-
 
     <!-- =====================================================
          MODAL HISTORIAL DE NOVEDADES
@@ -753,11 +637,6 @@
         >
 
             <div class="modal-content">
-
-
-                <!-- =================================================
-                     CABECERA DEL MODAL
-                     ================================================= -->
 
                 <div class="modal-header">
 
@@ -781,7 +660,6 @@
 
                     </div>
 
-
                     <button
                         type="button"
                         class="btn-close"
@@ -791,22 +669,12 @@
 
                 </div>
 
-
-                <!-- =================================================
-                     CUERPO DEL MODAL
-                     ================================================= -->
-
                 <div class="modal-body">
-
-                    <!-- =====================================================
-                         FILTROS DEL HISTORIAL
-                         ===================================================== -->
 
                     <div class="historial-filtros">
 
                         <div class="historial-filtros-grid">
 
-                            <!-- BUSCAR -->
                             <div class="novedad-filtro historial-filtro-busqueda">
 
                                 <label for="historialBuscar">
@@ -828,8 +696,6 @@
 
                             </div>
 
-
-                            <!-- TIPO DE NOVEDAD -->
                             <div class="novedad-filtro">
 
                                 <label for="historialTipo">
@@ -849,8 +715,6 @@
 
                             </div>
 
-
-                            <!-- ESTADO -->
                             <div class="novedad-filtro">
 
                                 <label for="historialEstado">
@@ -878,8 +742,6 @@
 
                             </div>
 
-
-                            <!-- TIPO DE FECHA -->
                             <div class="novedad-filtro">
 
                                 <label for="historialTipoFecha">
@@ -917,17 +779,10 @@
 
                         </div>
 
-
-                        <!-- =================================================
-                             CONTENEDOR FECHA
-                             ================================================= -->
-
                         <div
                             id="historialFechaContainer"
                             class="historial-fecha-container"
                         >
-
-                            <!-- DÍA -->
 
                             <div
                                 id="historialFechaDia"
@@ -947,9 +802,6 @@
 
                             </div>
 
-
-                            <!-- MES -->
-
                             <div
                                 id="historialFechaMes"
                                 class="historial-fecha-opcion"
@@ -967,9 +819,6 @@
                                 >
 
                             </div>
-
-
-                            <!-- AÑO -->
 
                             <div
                                 id="historialFechaAno"
@@ -992,9 +841,6 @@
 
                             </div>
 
-
-                            <!-- RANGO -->
-
                             <div
                                 id="historialFechaRango"
                                 class="historial-rango"
@@ -1015,7 +861,6 @@
 
                                 </div>
 
-
                                 <div>
 
                                     <label for="historialHasta">
@@ -1034,11 +879,6 @@
 
                         </div>
 
-
-                        <!-- =================================================
-                             BOTONES
-                             ================================================= -->
-
                         <div class="historial-filtros-acciones">
 
                             <button
@@ -1053,7 +893,6 @@
 
                             </button>
 
-
                             <button
                                 type="button"
                                 id="btnLimpiarHistorial"
@@ -1066,7 +905,6 @@
 
                             </button>
 
-                            <!-- Botón de Exportar Historial (NUEVO) -->
                             <button
                                 type="button"
                                 id="btnExportarHistorial"
@@ -1080,11 +918,6 @@
 
                     </div>
 
-
-                    <!-- =====================================================
-                         RESULTADOS
-                         ===================================================== -->
-
                     <div
                         id="historialResultados"
                         class="historial-resultados"
@@ -1097,7 +930,6 @@
                             Cargando historial...
 
                         </div>
-
 
                         <div
                             id="historialEstadoVacio"
@@ -1120,16 +952,12 @@
 
                         </div>
 
-
-                        <!-- TABLA HISTORIAL -->
-
                         <div
                             id="historialTablaWrapper"
                             class="novedades-table-wrapper"
                             style="display:none;"
                         >
 
-                            <!-- Contador del historial (NUEVO) -->
                             <div class="historial-contador">
                                 <span id="contadorHistorial">0 novedades</span>
                             </div>
@@ -1189,7 +1017,8 @@
         </div>
 
     </div>
-        <!-- ============================================================
+
+    <!-- ============================================================
          MODAL REGISTRAR NOVEDAD
          ============================================================ -->
 
@@ -1200,13 +1029,10 @@
         aria-hidden="true"
     >
 
-        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <!-- 🔥 AQUÍ ESTÁ EL CAMBIO CLAVE: Se agregó modal-dialog-scrollable y modal-lg para que el formulario no se corte -->
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
 
             <div class="modal-content">
-
-                <!-- =================================================
-                     HEADER
-                     ================================================= -->
 
                 <div class="modal-header">
 
@@ -1235,16 +1061,7 @@
 
                 </div>
 
-
-                <!-- =================================================
-                     BODY
-                     ================================================= -->
-
                 <div class="modal-body">
-
-                    <!-- =============================================
-                         TIPO DE NOVEDAD
-                         ============================================= -->
 
                     <div class="registro-novedad-seccion">
 
@@ -1266,7 +1083,6 @@
 
                         </div>
 
-
                         <div class="novedad-filtro">
 
                             <label for="registroTipoNovedad">
@@ -1286,9 +1102,6 @@
                             </select>
 
                         </div>
-
-
-                        <!-- INFORMACIÓN DEL TIPO -->
 
                         <div
                             id="informacionTipoNovedad"
@@ -1318,11 +1131,6 @@
 
                     </div>
 
-
-                    <!-- =============================================
-                         FORMULARIO DINÁMICO (Campos generados por JS)
-                         ============================================= -->
-
                     <div
                         id="formularioNovedadDinamico"
                         class="registro-novedad-seccion"
@@ -1347,22 +1155,14 @@
 
                         </div>
 
-
                         <div
                             id="camposNovedad"
                             class="campos-novedad"
                         >
 
-                            <!-- Los campos específicos aparecerán aquí mediante JS -->
-
                         </div>
 
                     </div>
-
-
-                    <!-- =============================================
-                         SOPORTE (CON DRAG & DROP)
-                         ============================================= -->
 
                     <div
                         id="seccionSoporteNovedad"
@@ -1388,7 +1188,6 @@
 
                         </div>
 
-
                         <div class="novedad-filtro">
 
                             <label for="soporteNovedad">
@@ -1404,9 +1203,6 @@
                             >
 
                         </div>
-
-
-                        <!-- ZONA DRAG & DROP -->
 
                         <div
                             id="zonaDragDropSoporte"
@@ -1429,9 +1225,6 @@
 
                         </div>
 
-
-                        <!-- PREVISUALIZACIÓN DEL ARCHIVO -->
-
                         <div
                             id="previsualizacionSoporte"
                             class="previsualizacion-soporte"
@@ -1452,7 +1245,6 @@
 
                             </div>
 
-
                             <button
                                 type="button"
                                 id="btnQuitarSoporte"
@@ -1467,11 +1259,6 @@
                         </div>
 
                     </div>
-
-
-                    <!-- =============================================
-                         AVISO DE APROBACIÓN
-                         ============================================= -->
 
                     <div
                         id="avisoAprobacionNovedad"
@@ -1496,11 +1283,6 @@
 
                     </div>
 
-
-                    <!-- =============================================
-                         ERROR (Mensajes de validación de JS)
-                         ============================================= -->
-
                     <div
                         id="errorRegistroNovedad"
                         class="alert alert-danger"
@@ -1509,11 +1291,6 @@
                     ></div>
 
                 </div>
-
-
-                <!-- =================================================
-                     FOOTER
-                     ================================================= -->
 
                 <div class="modal-footer">
 
@@ -1546,9 +1323,8 @@
 
     </div>
 
-
     <!-- =====================================================
-         MODAL CONFIRMACIÓN (Reemplaza al confirm nativo)
+         MODAL CONFIRMACIÓN
          ===================================================== -->
 
     <div
@@ -1577,7 +1353,6 @@
 
                 </div>
 
-
                 <div class="modal-body">
 
                     <div class="confirmacion-icono">
@@ -1591,7 +1366,6 @@
                     </p>
 
                 </div>
-
 
                 <div class="modal-footer">
 
@@ -1618,7 +1392,6 @@
         </div>
 
     </div>
-
 
     <!-- =====================================================
          MODAL CIERRE DE PERÍODO
@@ -1658,13 +1431,9 @@
 
                 </div>
 
-
                 <div class="modal-body" id="cierrePeriodoBody">
 
-                    <!-- Contenido dinámico inyectado por JS (validaciones previas) -->
-
                 </div>
-
 
                 <div class="modal-footer">
 
@@ -1692,37 +1461,9 @@
         </div>
 
     </div>
-        <!-- =====================================================
-         BOOTSTRAP JS
-         ===================================================== -->
-
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-    </script>
-
 
     <!-- =====================================================
-         SIDEBAR GLOBAL
-         ===================================================== -->
-
-    <script src="/js/sidebar.js"></script>
-
-
-    <!-- =====================================================
-         CATÁLOGO DE TIPOS (Respaldo local)
-         ===================================================== -->
-
-    <script src="/js/novedades-tipos.js"></script>
-
-
-    <!-- =====================================================
-         JAVASCRIPT PRINCIPAL DE NOVEDADES
-         ===================================================== -->
-
-    <script src="/js/nomina-novedades.js"></script>
-
-    <!-- =====================================================
-         MODAL DETALLE DE NOVEDAD
+         MODAL DETALLE DE NOVEDAD (Se movió aquí arriba)
          ===================================================== -->
     <div class="modal fade" id="modalDetalleNovedad" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -1757,7 +1498,21 @@
             </div>
         </div>
     </div>
-    
+
+    <!-- =====================================================
+         SCRIPTS
+         ===================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <script src="/js/sidebar.js"></script>
+
+    <script src="/js/novedades-tipos.js"></script>
+
+    <script src="/js/nomina-novedades.js"></script>
+
 </body>
 
 </html>

@@ -282,9 +282,10 @@
         </div>
     </div>
 
-    <!-- MODAL REGISTRAR NOVEDAD -->
+    <!-- 🔥 MODAL REGISTRAR NOVEDAD (Optimizado) -->
     <div class="modal fade novedad-modal" id="modalRegistrarNovedad" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <!-- modal-dialog-scrollable permite hacer scroll interno en formularios largos -->
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <div>
@@ -306,7 +307,9 @@
                     <div id="seccionSoporteNovedad" class="registro-novedad-seccion" style="display:none;">
                         <div class="novedad-filtro">
                             <label for="soporteNovedad">Documento de soporte *</label>
-                            <input type="file" id="soporteNovedad" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                            <!-- Solo se permiten formatos que el backend acepta -->
+                            <input type="file" id="soporteNovedad" class="form-control" accept=".pdf,.jpg,.jpeg,.png">
+                            <small class="text-muted" style="font-size: 11px;">Formatos permitidos: PDF, JPG o PNG (Máx. 10MB)</small>
                         </div>
                     </div>
                     <div id="avisoAprobacionNovedad" class="aviso-novedad" style="display:none;">

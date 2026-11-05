@@ -68,20 +68,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 </div>
 
-                <!-- [AGREGADO] Botón de Novedades para Admin -->
-                <div
-                    class="modulo-card novedades"
-                    onclick="irNovedades()">
-
-                    <i class="fas fa-bell icono-modulo"></i>
-
-                    <span>Novedades</span>
-
-                    <small>
-                        Pagos y nómina
-                    </small>
-
-                </div>
+                <!-- 🔥 SE ELIMINÓ EL BOTÓN DE NOVEDADES PARA EL ADMIN
+                     Ahora los admins solo acceden a novedades desde Nómina -->
 
                 <div class="modulo-card proximamente">
 
@@ -171,7 +159,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 </div>
 
-                <!-- [AGREGADO] Botón de Novedades para Usuario Normal -->
+                <Botón de Novedades para Usuario Normal -->
                 <div
                     class="modulo-card mis-novedades"
                     onclick="irmisNovedades()">

@@ -52,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     inicializar();
 
     async function inicializar() {
-        // Prevenir error de aria-hidden con modales
         document.querySelectorAll('.modal').forEach((modal) => {
             modal.addEventListener('hide.bs.modal', () => {
                 if (document.activeElement && modal.contains(document.activeElement)) {
@@ -72,18 +71,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (DOM.btnExportar) DOM.btnExportar.addEventListener('click', exportarCSV);
         if (DOM.btnRegistrar) DOM.btnRegistrar.addEventListener('click', abrirRegistroNovedad);
 
-        // Filtros
         if (DOM.buscar) DOM.buscar.addEventListener('input', debounce(aplicarFiltros, 300));
         if (DOM.filtroTipo) DOM.filtroTipo.addEventListener('change', aplicarFiltros);
         if (DOM.filtroEstado) DOM.filtroEstado.addEventListener('change', aplicarFiltros);
         if (DOM.filtroMes) DOM.filtroMes.addEventListener('change', aplicarFiltros);
         if (DOM.btnLimpiar) DOM.btnLimpiar.addEventListener('click', limpiarFiltros);
         
-        // Paginación
         if (DOM.btnPrev) DOM.btnPrev.addEventListener('click', () => { if (estadoApp.paginaActual > 1) { estadoApp.paginaActual--; renderizarTabla(); } });
         if (DOM.btnNext) DOM.btnNext.addEventListener('click', () => { const total = Math.ceil(estadoApp.novedadesFiltradas.length / estadoApp.tamanoPagina); if (estadoApp.paginaActual < total) { estadoApp.paginaActual++; renderizarTabla(); } });
 
-        // Modal
         if (DOM.selectTipo) DOM.selectTipo.addEventListener('change', seleccionarTipoNovedad);
         if (DOM.btnGuardar) DOM.btnGuardar.addEventListener('click', guardarNovedad);
     }
@@ -232,8 +228,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 opt.value = t.id;
                 opt.textContent = `${t.nombre} — ${t.categoria}`;
                 opt.dataset.nombre = t.nombre;
-                opt.dataset.codigo = t.codigo;
-                opt.dataset.categoria = t.categoria;
+                opt.dataset.codigo = t.codigo || '';
+                opt.dataset.categoria = t.categoria || '';
                 opt.dataset.descripcion = t.descripcion || '';
                 opt.dataset.requiereSoporte = t.requiere_soporte;
                 opt.dataset.requiereAprobacion = t.requiere_aprobacion;
@@ -257,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const codigo = (opt.dataset.codigo || '').toUpperCase();
         const categoria = (opt.dataset.categoria || '').toUpperCase();
-        const nombre = opt.dataset.nombre || '';
+        const nombre = (opt.dataset.nombre || '').toLowerCase();
 
         DOM.formDinamico.style.display = 'block';
         DOM.seccionSoporte.style.display = Number(opt.dataset.requiereSoporte) ? 'block' : 'none';
@@ -266,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
         DOM.campos.innerHTML = '';
 
         // --- AUSENCIA ---
-        if (categoria === 'ASISTENCIA' || nombre.toLowerCase().includes('ausencia')) {
+        if (categoria.includes('ASISTENCIA') || nombre.includes('ausencia')) {
             DOM.campos.innerHTML = `
                 <div class="row g-3">
                     <div class="col-md-6">
@@ -294,7 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // --- INCAPACIDAD ---
-        if (codigo === 'SALUD' || nombre.toLowerCase().includes('incapacidad')) {
+        if (codigo.includes('SALUD') || nombre.includes('incapacidad')) {
             DOM.campos.innerHTML = `
                 <div class="row g-3">
                     <div class="col-md-6">
@@ -322,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // --- PERMISO ---
-        if (codigo === 'PERMISO' || nombre.toLowerCase().includes('permiso')) {
+        if (codigo.includes('PERMISO') || nombre.includes('permiso')) {
             DOM.campos.innerHTML = `
                 <div class="row g-3">
                     <div class="col-md-6">
@@ -352,18 +348,160 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        DOM.campos.innerHTML = `<div class="alert alert-info">Formulario pendiente de configurar.</div>`;
+        // 🔥 --- LICENCIA / TIEMPO (TODAS LAS OPCIONES LEGALES) ---
+        if (codigo.includes('LICENCIA') || nombre.includes('licencia')) {
+            DOM.campos.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Tipo de licencia / permiso *</label>
+                        <select id="tipoLicencia" class="form-select">
+                            <optgroup label="Salud y Familia">
+                                <option value="CITA_MEDICA">Citas médicas y salud (Requiere soporte EPS)</option>
+                                <option value="CALAMIDAD">Calamidad doméstica grave</option>
+                                <option value="LUTO">Licencia por luto (5 días hábiles)</option>
+                                <option value="MATERNIDAD">Licencia de maternidad (18 semanas)</option>
+                                <option value="PATERNIDAD">Licencia de paternidad (2 semanas)</option>
+                            </optgroup>
+                            <optgroup label="Obligaciones Legales y Ciudadanas">
+                                <option value="VOTO">Ejercicio del voto (Media jornada)</option>
+                                <option value="JURADO">Jurado de votación (1 día)</option>
+                                <option value="CITA_JUDICIAL">Citas judiciales o administrativas</option>
+                                <option value="COLEGIO">Obligaciones escolares (Acudiente)</option>
+                            </optgroup>
+                            <optgroup label="Otros Permisos">
+                                <option value="MATRIMONIO">Matrimonio (3 días)</option>
+                                <option value="BICICLETA">Uso de la bicicleta (1 día por 6 meses)</option>
+                                <option value="SINDICATO">Comisiones sindicales / Entierro de compañero</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="col-md-4"><label class="form-label">Fecha inicio *</label><input type="date" id="fechaLicenciaInicio" class="form-control"></div>
+                    <div class="col-md-4"><label class="form-label">Fecha fin *</label><input type="date" id="fechaLicenciaFin" class="form-control"></div>
+                    <div class="col-md-4"><label class="form-label">Días calculados</label><input type="number" id="diasLicencia" class="form-control" readonly></div>
+                    <div class="col-12"><label class="form-label">Motivo / Observación</label><textarea id="observacionLicencia" class="form-control" rows="2" placeholder="Explica brevemente el motivo..."></textarea></div>
+                </div>
+            `;
+            const fIni = document.getElementById('fechaLicenciaInicio');
+            const fFin = document.getElementById('fechaLicenciaFin');
+            const dias = document.getElementById('diasLicencia');
+            const calc = () => {
+                if (fIni.value && fFin.value) {
+                    const d1 = new Date(fIni.value); const d2 = new Date(fFin.value);
+                    if (d2 >= d1) dias.value = Math.floor((d2 - d1) / (1000*60*60*24)) + 1;
+                }
+            };
+            fIni.addEventListener('change', calc);
+            fFin.addEventListener('change', calc);
+            return;
+        }
+
+        // 🔥 --- HORAS EXTRA / RECARGOS ---
+        if (codigo.includes('HORA') || codigo.includes('RECARGO') || nombre.includes('hora extra') || nombre.includes('recargo')) {
+            DOM.campos.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Tipo de hora / recargo *</label>
+                        <select id="tipoHora" class="form-select">
+                            <option value="">Cargando...</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6"><label class="form-label">Fecha de trabajo *</label><input type="date" id="fechaTrabajo" class="form-control"></div>
+                    <div class="col-md-4"><label class="form-label">Hora inicio *</label><input type="time" id="horaInicioExtra" class="form-control"></div>
+                    <div class="col-md-4"><label class="form-label">Hora fin *</label><input type="time" id="horaFinExtra" class="form-control"></div>
+                    <div class="col-md-4"><label class="form-label">Horas calculadas</label><input type="number" id="horasExtraCalculadas" class="form-control" readonly></div>
+                    <div class="col-12"><label class="form-label">Observación</label><textarea id="observacionExtra" class="form-control" rows="2"></textarea></div>
+                </div>
+            `;
+            (async () => {
+                const sel = document.getElementById('tipoHora');
+                try {
+                    const [resHE, resRec] = await Promise.all([
+                        fetch('/api/nomina/configuracion/horas-extra'),
+                        fetch('/api/nomina/configuracion/recargos')
+                    ]);
+                    const dataHE = await resHE.json();
+                    const dataRec = await resRec.json();
+                    sel.innerHTML = '<option value="">Selecciona...</option>';
+                    (dataHE.data || []).forEach(t => {
+                        const o = document.createElement('option');
+                        o.value = t.codigo || t.nombre;
+                        o.textContent = `${t.nombre} (Hora extra)`;
+                        sel.appendChild(o);
+                    });
+                    (dataRec.data || []).forEach(t => {
+                        const o = document.createElement('option');
+                        o.value = t.codigo || t.nombre;
+                        o.textContent = `${t.nombre} (Recargo)`;
+                        sel.appendChild(o);
+                    });
+                } catch (e) {
+                    sel.innerHTML = '<option value="">Error al cargar</option>';
+                }
+            })();
+            const hIni = document.getElementById('horaInicioExtra');
+            const hFin = document.getElementById('horaFinExtra');
+            const cant = document.getElementById('horasExtraCalculadas');
+            const calc = () => {
+                if (hIni.value && hFin.value) {
+                    const [h1, m1] = hIni.value.split(':').map(Number);
+                    const [h2, m2] = hFin.value.split(':').map(Number);
+                    const diff = (h2*60+m2) - (h1*60+m1);
+                    if (diff > 0) cant.value = (diff/60).toFixed(2);
+                }
+            };
+            hIni.addEventListener('change', calc);
+            hFin.addEventListener('change', calc);
+            return;
+        }
+
+        // 🔥 --- DESCUENTO ---
+        if (codigo.includes('DESCUENTO') || categoria.includes('DESCUENTO') || nombre.includes('descuento')) {
+            DOM.campos.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-md-8"><label class="form-label">Concepto *</label><input type="text" id="conceptoDescuento" class="form-control" placeholder="Ej: Préstamo, sanción, etc."></div>
+                    <div class="col-md-4"><label class="form-label">Valor *</label><input type="number" id="valorDescuento" class="form-control" min="0" step="0.01"></div>
+                    <div class="col-12"><label class="form-label">Observación</label><textarea id="observacionDescuento" class="form-control" rows="2"></textarea></div>
+                </div>
+            `;
+            return;
+        }
+
+        // 🔥 --- INGRESO ---
+        if (codigo.includes('INGRESO') || categoria.includes('INGRESO') || nombre.includes('ingreso')) {
+            DOM.campos.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-md-8"><label class="form-label">Concepto *</label><input type="text" id="conceptoIngreso" class="form-control" placeholder="Ej: Bono, comisión, etc."></div>
+                    <div class="col-md-4"><label class="form-label">Valor *</label><input type="number" id="valorIngreso" class="form-control" min="0" step="0.01"></div>
+                    <div class="col-12"><label class="form-label">Observación</label><textarea id="observacionIngreso" class="form-control" rows="2"></textarea></div>
+                </div>
+            `;
+            return;
+        }
+
+        // 🔥 --- PRÉSTAMO / ANTICIPO ---
+        if (codigo.includes('PRESTAMO') || codigo.includes('PRÉSTAMO') || categoria.includes('PRESTAMO') || nombre.includes('préstamo') || nombre.includes('prestamo') || nombre.includes('anticipo')) {
+            DOM.campos.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-md-6"><label class="form-label">Monto solicitado *</label><input type="number" id="montoPrestamo" class="form-control" min="0" step="0.01"></div>
+                    <div class="col-md-6"><label class="form-label">Número de cuotas *</label><input type="number" id="cuotasPrestamo" class="form-control" min="1"></div>
+                    <div class="col-12"><label class="form-label">Observación</label><textarea id="observacionPrestamo" class="form-control" rows="2"></textarea></div>
+                </div>
+            `;
+            return;
+        }
+
+        DOM.campos.innerHTML = `<div class="alert alert-info">Formulario pendiente de configurar para esta categoría (${categoria}).</div>`;
     }
 
     async function guardarNovedad() {
-        if (_guardando) return; // Evitar doble envío
+        if (_guardando) return; 
 
         const opt = DOM.selectTipo.selectedOptions[0];
         if (!opt || !opt.value) return mostrarErrorModal('Selecciona un tipo de novedad.');
 
         const codigo = (opt.dataset.codigo || '').toUpperCase();
         const categoria = (opt.dataset.categoria || '').toUpperCase();
-        const nombre = opt.dataset.nombre || '';
+        const nombre = (opt.dataset.nombre || '').toLowerCase();
         const tipoNovedadId = opt.value;
         const archivo = DOM.inputSoporte?.files?.[0];
 
@@ -379,7 +517,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let formData = null;
 
             // --- VALIDACIÓN Y CONSTRUCCIÓN ---
-            if (codigo === 'SALUD' || nombre.toLowerCase().includes('incapacidad')) {
+            if (codigo.includes('SALUD') || nombre.includes('incapacidad')) {
                 const fIni = document.getElementById('fechaInicio').value;
                 const fFin = document.getElementById('fechaFin').value;
                 const dias = document.getElementById('cantidadDias').value;
@@ -397,7 +535,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData.append('observacion', document.getElementById('observacion').value || '');
                 formData.append('soporte', archivo);
             }
-            else if (categoria === 'ASISTENCIA' || nombre.toLowerCase().includes('ausencia')) {
+            else if (categoria.includes('ASISTENCIA') || nombre.includes('ausencia')) {
                 const fIni = document.getElementById('fechaInicio').value;
                 const fFin = document.getElementById('fechaFin').value;
                 const motivo = document.getElementById('motivo').value.trim();
@@ -415,7 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData.append('motivo', motivo);
                 if (archivo) formData.append('soporte', archivo);
             }
-            else if (codigo === 'PERMISO' || nombre.toLowerCase().includes('permiso')) {
+            else if (codigo.includes('PERMISO') || nombre.includes('permiso')) {
                 const fecha = document.getElementById('fechaPermiso').value;
                 const hIni = document.getElementById('horaInicio').value;
                 const hFin = document.getElementById('horaFin').value;
@@ -433,6 +571,111 @@ document.addEventListener('DOMContentLoaded', () => {
                     hora_fin: hFin,
                     cantidad_horas: Number(document.getElementById('cantidadHoras').value),
                     motivo: motivo
+                };
+            }
+            // 🔥 LICENCIA
+            else if (codigo.includes('LICENCIA') || nombre.includes('licencia')) {
+                const tipoLicencia = document.getElementById('tipoLicencia').value;
+                const fIni = document.getElementById('fechaLicenciaInicio').value;
+                const fFin = document.getElementById('fechaLicenciaFin').value;
+                const dias = document.getElementById('diasLicencia').value;
+                const obs = document.getElementById('observacionLicencia').value || '';
+                
+                if (!fIni || !fFin || !dias) return mostrarErrorModal('Completa las fechas de la licencia.');
+                
+                endpoint = 'licencia';
+                payload = {
+                    tipo_novedad_id: tipoNovedadId,
+                    tipo_licencia: tipoLicencia,
+                    fecha_inicio: fIni,
+                    fecha_fin: fFin,
+                    cantidad_dias: Number(dias),
+                    motivo: tipoLicencia, // Enviamos el código como motivo base
+                    observacion: obs
+                };
+            }
+            // 🔥 HORAS EXTRA / RECARGOS
+            else if (codigo.includes('HORA') || codigo.includes('RECARGO') || nombre.includes('hora extra') || nombre.includes('recargo')) {
+                const tipoHora = document.getElementById('tipoHora').value;
+                const fechaTrabajo = document.getElementById('fechaTrabajo').value;
+                const hIni = document.getElementById('horaInicioExtra').value;
+                const hFin = document.getElementById('horaFinExtra').value;
+                const horas = document.getElementById('horasExtraCalculadas').value;
+                const obs = document.getElementById('observacionExtra').value || '';
+                
+                if (!tipoHora) return mostrarErrorModal('Selecciona el tipo de hora o recargo.');
+                if (!fechaTrabajo || !hIni || !hFin) return mostrarErrorModal('Completa la fecha y las horas.');
+                if (!horas || Number(horas) <= 0) return mostrarErrorModal('Las horas calculadas no son válidas.');
+                
+                endpoint = 'horas-extra';
+                payload = {
+                    tipo_novedad_id: tipoNovedadId,
+                    tipo_hora: tipoHora,
+                    fecha_trabajo: fechaTrabajo,
+                    hora_inicio: hIni,
+                    hora_fin: hFin,
+                    cantidad_horas: Number(horas),
+                    observacion: obs
+                };
+            }
+            // 🔥 DESCUENTO
+            else if (codigo.includes('DESCUENTO') || categoria.includes('DESCUENTO') || nombre.includes('descuento')) {
+                const concepto = document.getElementById('conceptoDescuento').value.trim();
+                const valor = document.getElementById('valorDescuento').value;
+                const obs = document.getElementById('observacionDescuento').value || '';
+                
+                if (!concepto) return mostrarErrorModal('Escribe el concepto del descuento.');
+                if (!valor || Number(valor) <= 0) return mostrarErrorModal('El valor debe ser mayor a cero.');
+                
+                endpoint = 'descuento';
+                if (archivo) {
+                    formData = new FormData();
+                    formData.append('tipo_novedad_id', tipoNovedadId);
+                    formData.append('concepto', concepto);
+                    formData.append('valor', valor);
+                    formData.append('observacion', obs);
+                    formData.append('soporte', archivo);
+                } else {
+                    payload = {
+                        tipo_novedad_id: tipoNovedadId,
+                        concepto: concepto,
+                        valor: Number(valor),
+                        observacion: obs
+                    };
+                }
+            }
+            // 🔥 INGRESO
+            else if (codigo.includes('INGRESO') || categoria.includes('INGRESO') || nombre.includes('ingreso')) {
+                const concepto = document.getElementById('conceptoIngreso').value.trim();
+                const valor = document.getElementById('valorIngreso').value;
+                const obs = document.getElementById('observacionIngreso').value || '';
+                
+                if (!concepto) return mostrarErrorModal('Escribe el concepto del ingreso.');
+                if (!valor || Number(valor) <= 0) return mostrarErrorModal('El valor debe ser mayor a cero.');
+                
+                endpoint = 'ingreso';
+                payload = {
+                    tipo_novedad_id: tipoNovedadId,
+                    concepto: concepto,
+                    valor: Number(valor),
+                    observacion: obs
+                };
+            }
+            // 🔥 PRÉSTAMO
+            else if (codigo.includes('PRESTAMO') || codigo.includes('PRÉSTAMO') || categoria.includes('PRESTAMO') || nombre.includes('préstamo') || nombre.includes('prestamo') || nombre.includes('anticipo')) {
+                const monto = document.getElementById('montoPrestamo').value;
+                const cuotas = document.getElementById('cuotasPrestamo').value;
+                const obs = document.getElementById('observacionPrestamo').value || '';
+                
+                if (!monto || Number(monto) <= 0) return mostrarErrorModal('El monto debe ser mayor a cero.');
+                if (!cuotas || Number(cuotas) < 1) return mostrarErrorModal('Debes indicar al menos 1 cuota.');
+                
+                endpoint = 'prestamo';
+                payload = {
+                    tipo_novedad_id: tipoNovedadId,
+                    monto: Number(monto),
+                    cuotas: Number(cuotas),
+                    observacion: obs
                 };
             }
             else {
@@ -466,12 +709,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Función auxiliar para mostrar errores en el modal
     function mostrarErrorModal(mensaje) {
         if (DOM.divError) {
             DOM.divError.textContent = mensaje;
             DOM.divError.style.display = 'block';
-            // Scroll automático al mensaje de error
             DOM.divError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         DOM.btnGuardar.disabled = false;
@@ -490,9 +731,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (DOM.inputSoporte) DOM.inputSoporte.value = '';
     }
 
-    /* ========================================================
-       VER DETALLE DE LA NOVEDAD
-       ======================================================== */
     async function verNovedad(id) {
         const modalElement = document.getElementById('modalDetalleNovedad');
         if (!modalElement) return;
@@ -543,16 +781,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /* ========================================================
-       EXPORTAR CSV
-       ======================================================== */
     function exportarCSV() {
         if (!estadoApp.novedadesFiltradas.length) return mostrarToast('No hay datos para exportar', 'warning');
         let csv = "Tipo,Fecha,Cantidad,Estado\n";
         estadoApp.novedadesFiltradas.forEach(n => {
             csv += `"${obtenerTipo(n)}","${obtenerFecha(n)}","${obtenerCantidad(n)}","${obtenerEstado(n)}"\n`;
         });
-        const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' }); // BOM para Excel
+        const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url; a.download = `mis_novedades_${new Date().getTime()}.csv`;
@@ -560,9 +795,6 @@ document.addEventListener('DOMContentLoaded', () => {
         mostrarToast('Archivo CSV descargado correctamente', 'success');
     }
 
-    /* ========================================================
-       UTILIDADES Y COMPONENTES
-       ======================================================== */
     function mostrarCargando() { if (DOM.skeleton) DOM.skeleton.style.display = 'flex'; }
     function ocultarCargando() { if (DOM.skeleton) DOM.skeleton.style.display = 'none'; }
     function mostrarError(msg) { if (DOM.tabla) DOM.tabla.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4"><i class="fas fa-triangle-exclamation"></i> ${msg}</td></tr>`; }

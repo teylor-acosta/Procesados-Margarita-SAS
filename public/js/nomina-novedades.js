@@ -841,7 +841,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const resultados = empleadosData.filter(emp => {
                 const nom = emp.nombre_completo || emp.nombre || `${emp.nombres || ''} ${emp.apellidos || ''}`.trim();
-                return nom.toLowerCase().includes(texto);
+                const doc = emp.numero_documento || emp.documento || '';
+                return nom.toLowerCase().includes(texto) || doc.includes(texto);
             });
 
             listaEmpleados.innerHTML = '';
@@ -906,36 +907,41 @@ document.addEventListener('DOMContentLoaded', () => {
         const fIni = document.getElementById('fechaInicioLicencia');
         const fFin = document.getElementById('fechaFinLicencia');
         const cantDias = document.getElementById('cantidadDiasLicencia');
+        let empleadosData = [];
 
-        // Búsqueda de empleado
         fetch('/api/empleados', { credentials: 'include' })
             .then(res => res.json())
-            .then(data => {
-                const empleados = data.empleados || data.data || data;
-                inputEmp.addEventListener('input', function() {
-                    const text = this.value.toLowerCase();
-                    idEmp.value = '';
-                    if(!text) { listaEmp.style.display = 'none'; return; }
-                    const res = empleados.filter(e => (e.nombre_completo || e.nombre || '').toLowerCase().includes(text));
-                    listaEmp.innerHTML = '';
-                    res.slice(0,5).forEach(e => {
-                        const btn = document.createElement('button');
-                        btn.type = 'button'; btn.className = 'list-group-item list-group-item-action';
-                        btn.textContent = e.nombre_completo || e.nombre;
-                        btn.onclick = () => { inputEmp.value = btn.textContent; idEmp.value = e.id; listaEmp.style.display = 'none'; };
-                        listaEmp.appendChild(btn);
-                    });
-                    listaEmp.style.display = 'block';
-                });
-            });
+            .then(data => empleadosData = data.empleados || data.data || data);
 
-        // Calcular días de ley según el tipo
+        inputEmp.addEventListener('input', function() {
+            const text = this.value.toLowerCase();
+            idEmp.value = '';
+            if(!text) { listaEmp.style.display = 'none'; return; }
+            
+            const res = empleadosData.filter(e => {
+                const nom = e.nombre_completo || e.nombre || `${e.nombres || ''} ${e.apellidos || ''}`.trim();
+                const doc = e.numero_documento || e.documento || '';
+                return nom.toLowerCase().includes(text) || doc.includes(text);
+            });
+            
+            listaEmp.innerHTML = '';
+            res.slice(0,5).forEach(e => {
+                const nom = e.nombre_completo || e.nombre || `${e.nombres || ''} ${e.apellidos || ''}`.trim();
+                const btn = document.createElement('button');
+                btn.type = 'button'; btn.className = 'list-group-item list-group-item-action';
+                btn.textContent = nom;
+                btn.onclick = () => { inputEmp.value = nom; idEmp.value = e.id; listaEmp.style.display = 'none'; };
+                listaEmp.appendChild(btn);
+            });
+            listaEmp.style.display = 'block';
+        });
+
         selTipo.addEventListener('change', () => {
             const tipo = selTipo.value;
             let diasDefault = 0;
 
-            if (tipo === 'MATERNIDAD') diasDefault = 126; // 18 semanas
-            else if (tipo === 'PATERNIDAD') diasDefault = 14; // 2 semanas
+            if (tipo === 'MATERNIDAD') diasDefault = 126;
+            else if (tipo === 'PATERNIDAD') diasDefault = 14;
             else if (tipo === 'LUTO') diasDefault = 5;
             else if (tipo === 'MATRIMONIO') diasDefault = 3;
             else if (tipo === 'JURADO') diasDefault = 1;
@@ -950,22 +956,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Calcular si cambia la fecha manualmente
-        fIni.addEventListener('change', () => {
+        const calcularFechas = () => {
             if (fIni.value && fFin.value) {
                 const ini = new Date(fIni.value + 'T00:00:00');
                 const fin = new Date(fFin.value + 'T00:00:00');
                 if (fin >= ini) cantDias.value = Math.floor((fin - ini) / (1000 * 60 * 60 * 24)) + 1;
             }
-        });
-        
-        fFin.addEventListener('change', () => {
-            if (fIni.value && fFin.value) {
-                const ini = new Date(fIni.value + 'T00:00:00');
-                const fin = new Date(fFin.value + 'T00:00:00');
-                if (fin >= ini) cantDias.value = Math.floor((fin - ini) / (1000 * 60 * 60 * 24)) + 1;
-            }
-        });
+        };
+        fIni.addEventListener('change', calcularFechas);
+        fFin.addEventListener('change', calcularFechas);
     }
 
     function configurarFormularioPermiso() {
@@ -1069,7 +1068,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             else if (categoria === 'ASISTENCIA') {
                 const empId = document.getElementById('empleadoAusenciaId').value;
-                if (!empId) throw new Error('Selecciona un empleado.');
+                if (!empId) throw new Error('Debes buscar y seleccionar un empleado de la lista.');
                 endpoint = 'ausencia';
                 formData = new FormData();
                 formData.append('tipo_novedad_id', tipoNovedadId);
@@ -1096,16 +1095,20 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             else if (codigo === 'LICENCIA' || nombre.toLowerCase().includes('licencia')) {
                 const empId = document.getElementById('empleadoLicencia').value;
-                if (!empId) throw new Error('Selecciona un empleado.');
+                if (!empId) throw new Error('Debes buscar y seleccionar un empleado de la lista.');
+                
+                const tipoLic = document.getElementById('tipoLicencia').value;
+                if (!tipoLic) throw new Error('Selecciona el tipo de licencia.');
+
                 endpoint = 'licencia';
                 payload = {
                     tipo_novedad_id: tipoNovedadId,
-                    empleado_id: empId,
-                    tipo_licencia: document.getElementById('tipoLicencia').value,
+                    empleado_id: Number(empId),
+                    tipo_licencia: tipoLic,
                     fecha_inicio: document.getElementById('fechaInicioLicencia').value,
                     fecha_fin: document.getElementById('fechaFinLicencia').value,
                     cantidad_dias: Number(document.getElementById('cantidadDiasLicencia').value),
-                    motivo: 'Licencia registrada',
+                    motivo: document.querySelector('#tipoLicencia option:checked').text,
                     observacion: null
                 };
             }
