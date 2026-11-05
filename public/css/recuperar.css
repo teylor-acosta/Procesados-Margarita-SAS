@@ -85,7 +85,14 @@
     width:100%;
     max-width:500px;
 
-    background:rgba(255,255,255,0.90);
+    /* 🔥 DEGRADADO VERDE → AZUL EN LA CARD BLANCA */
+    background:
+        linear-gradient(
+            135deg,
+            rgba(34,197,94,0.10),
+            rgba(37,99,235,0.10)
+        ),
+        rgba(255,255,255,0.90);
 
     border-radius:28px;
 
@@ -199,7 +206,14 @@
 
     transition:.3s;
 
-    background:white;
+    /* 🔥 DEGRADADO VERDE → AZUL EN EL INPUT BLANCO */
+    background:
+        linear-gradient(
+            135deg,
+            rgba(34,197,94,0.08),
+            rgba(37,99,235,0.08)
+        ),
+        #ffffff;
 }
 
 .input-group:focus-within{
@@ -214,7 +228,14 @@
 
 .input-group-text{
 
-    background:#f8fafc;
+    /* 🔥 DEGRADADO VERDE → AZUL EN EL ICONO BLANCO */
+    background:
+        linear-gradient(
+            135deg,
+            rgba(34,197,94,0.18),
+            rgba(37,99,235,0.18)
+        ),
+        #f8fafc;
 
     border:none;
 
@@ -235,7 +256,14 @@
 
     font-size:15px;
 
-    background:white;
+    /* 🔥 DEGRADADO VERDE → AZUL EN EL INPUT BLANCO */
+    background:
+        linear-gradient(
+            135deg,
+            rgba(34,197,94,0.06),
+            rgba(37,99,235,0.06)
+        ),
+        #ffffff;
 }
 
 /* =========================================
@@ -306,6 +334,14 @@
     font-size:14px;
 
     font-weight:600;
+
+    /* 🔥 DEGRADADO VERDE → AZUL SUAVE EN EL MENSAJE BLANCO */
+    background:
+        linear-gradient(
+            135deg,
+            rgba(34,197,94,0.10),
+            rgba(37,99,235,0.10)
+        );
 }
 
 /* =========================================

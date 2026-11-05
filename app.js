@@ -13,9 +13,9 @@ const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
 const path = require('path');
-const fs = require('fs'); // [AGREGADO] Para leer las plantillas HTML
-const multer = require('multer'); // 🔥 AGREGADO: Para que funcione 'upload'
-const nodemailer = require('nodemailer'); // 🔥 AGREGADO: Por si se usa 'transporter' en contacto
+const fs = require('fs');
+const multer = require('multer');
+const nodemailer = require('nodemailer');
 
 const db = require('./DB');
 
@@ -44,16 +44,24 @@ app.use(express.json({
     limit: '50mb'
 }));
 
-app.use(cors());
+
+// ============================================
+// 🔥 CORS CON CREDENCIALES (CORREGIDO)
+// ============================================
+
+app.use(cors({
+    origin: true,          // refleja el origen del request
+    credentials: true      // 🔥 permite enviar/recibir cookies de sesión
+}));
 
 
 // ============================================
-// SESSION SIMPLE TEMPORAL
+// 🔥 SESSION (CORREGIDA)
 // ============================================
 
 app.use(session({
 
-    secret: 'procesados_margarita_2026',
+    secret: process.env.SESSION_SECRET || 'procesados_margarita_2026',
 
     resave: false,
 
@@ -63,9 +71,11 @@ app.use(session({
 
     cookie: {
 
-        secure: false,
+        secure: false,          // true en producción con HTTPS
 
         httpOnly: true,
+
+        sameSite: 'lax',        // 🔥 permite cookies en peticiones same-site
 
         maxAge: 8 * 60 * 60 * 1000
 
@@ -115,6 +125,7 @@ app.use(
         path.join(__dirname, 'uploads')
     )
 );
+
 
 // ============================================
 // PASAR DB A ROUTES
@@ -233,6 +244,7 @@ app.use(
     require('./routes/nomina-novedades.routes')
 );
 
+
 // ============================================
 // TEST DB
 // ============================================
@@ -264,14 +276,12 @@ app.get('/test-db', async(req, res) => {
 // SERVER
 // ============================================
 
-// (El app.listen de aquí lo he quitado, porque tenías otro más abajo. 
-// Tener dos app.listen en el mismo archivo causaba que el servidor se reiniciara).
-
 app.get('/tienda', (req, res) => {
     res.sendFile(
         path.join(__dirname, 'public', 'tienda.html')
     );
 });
+
 
 // ============================================
 // 🔥 ERRORES GLOBALES
@@ -292,6 +302,8 @@ process.on('uncaughtException', (err) => {
     console.log(err);
 
 });
+
+
 /* =========================================================
    PROCESADOS MARGARITA S.A.S.
    Servidor Principal
@@ -304,14 +316,15 @@ const {
     notificarPedidoRechazado 
 } = require('./public/servicios/correo');
 
+
 /* =========================================================
-   CONFIGURACIÓN DE NODEMAILER PARA CONTACTO (HOSTINGER)
+   🔥 CONFIGURACIÓN DE NODEMAILER ÚNICA (HOSTINGER)
    ========================================================= */
-// [MODIFICADO] Configuración apuntando a Hostinger
+
 const transporter = nodemailer.createTransport({
     host: "smtp.hostinger.com",
     port: 465,
-    secure: true, // SSL
+    secure: true,
     auth: {
         user: process.env.EMAIL_USER, 
         pass: process.env.EMAIL_PASS  
@@ -321,12 +334,17 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+// Diagnóstico al arrancar
+transporter.verify()
+    .then(() => console.log('✅ SMTP Hostinger conectado correctamente'))
+    .catch(err => console.error('❌ SMTP error al verificar:', err.message));
+
+
 /* =========================================================
    FUNCIÓN PARA LEER Y REEMPLAZAR VARIABLES EN PLANTILLAS
    ========================================================= */
-// [AGREGADO] Función auxiliar para cargar las plantillas HTML
+
 function cargarPlantillaChatbot(nombreArchivo, variables) {
-    // Busca en la misma carpeta que ya usas para la tienda
     const ruta = path.join(__dirname, 'public', 'servicios', 'plantillas', nombreArchivo);
     
     if (!fs.existsSync(ruta)) {
@@ -335,7 +353,6 @@ function cargarPlantillaChatbot(nombreArchivo, variables) {
 
     let html = fs.readFileSync(ruta, 'utf8');
     
-    // Reemplazar todas las llaves {{VARIABLE}} por su valor real
     for (const [llave, valor] of Object.entries(variables)) {
         html = html.replace(new RegExp(`{{${llave}}}`, 'g'), valor !== undefined && valor !== null ? valor : '');
     }
@@ -352,7 +369,6 @@ app.post('/api/pedidos', async (req, res) => {
     try {
         const pedido = req.body;
 
-        // Validación básica de seguridad
         if (!pedido.cliente || !pedido.correo || !pedido.productos) {
             return res.status(400).json({ 
                 ok: false, 
@@ -360,13 +376,11 @@ app.post('/api/pedidos', async (req, res) => {
             });
         }
 
-        // Generar número de pedido único (basado en la fecha y hora)
         pedido.numero = `PM-${Date.now().toString().slice(-6)}`;
         pedido.fecha = new Date().toISOString();
 
         console.log(`📦 Recibiendo pedido #${pedido.numero} de ${pedido.cliente}`);
 
-        // 🚀 Enviar el correo al propietario
         const correoEnviado = await notificarPedidoPropietario(pedido);
 
         if (correoEnviado) {
@@ -392,11 +406,11 @@ app.post('/api/pedidos', async (req, res) => {
     }
 });
 
-// 2. Ruta para que el dueño confirme un pedido (envía correo al cliente)
+// 2. Ruta para que el dueño confirme un pedido
 app.post('/api/pedidos/:numero/confirmar', async (req, res) => {
     try {
         const { numero } = req.params;
-        const pedido = req.body; // El pedido completo debe venir desde el panel del ERP
+        const pedido = req.body;
 
         pedido.numero = numero;
 
@@ -413,7 +427,7 @@ app.post('/api/pedidos/:numero/confirmar', async (req, res) => {
     }
 });
 
-// 3. Ruta para que el dueño rechace un pedido (envía correo al cliente)
+// 3. Ruta para que el dueño rechace un pedido
 app.post('/api/pedidos/:numero/rechazar', async (req, res) => {
     try {
         const { numero } = req.params;
@@ -443,7 +457,6 @@ app.post('/api/contacto', upload.single('archivo'), async (req, res) => {
         const datosStr = req.body.datos || "{}";
         const datos = JSON.parse(datosStr);
 
-        // [AGREGADO] Detectar dinámicamente el correo, nombre y teléfono del cliente
         let emailCliente = "";
         let nombreCliente = "Cliente";
         let telefonoCliente = "No registrado";
@@ -469,7 +482,6 @@ app.post('/api/contacto', upload.single('archivo'), async (req, res) => {
         const fecha = new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' });
         const tipoSolicitud = tipo.charAt(0).toUpperCase() + tipo.slice(1);
 
-        // [AGREGADO] Formatear los datos en una tabla HTML legible
         let tablaDatos = "";
         for (const [key, value] of Object.entries(datos)) {
             if (value) {
@@ -483,7 +495,6 @@ app.post('/api/contacto', upload.single('archivo'), async (req, res) => {
             }
         }
 
-        // [AGREGADO] Elegir la plantilla adecuada para el asesor
         const plantillaAsesor = req.file ? 'chatbot-adjunto.html' : 'chatbot-asesor.html';
         
         const htmlAsesor = cargarPlantillaChatbot(plantillaAsesor, {
@@ -516,7 +527,6 @@ app.post('/api/contacto', upload.single('archivo'), async (req, res) => {
         await transporter.sendMail(mailAsesor);
         console.log(`✅ Correo 1 (Asesor) enviado a ${destino}`);
 
-        // [AGREGADO] Correo 2: Confirmación al cliente usando la nueva plantilla
         if (emailCliente && emailCliente.includes("@")) {
             const htmlCliente = cargarPlantillaChatbot('chatbot-cliente.html', {
                 'NOMBRE_CLIENTE': nombreCliente,
@@ -549,11 +559,11 @@ app.post('/api/contacto', upload.single('archivo'), async (req, res) => {
     }
 });
 
+
 /* =========================================================
-   INICIAR EL SERVIDOR
+   🔥 INICIAR EL SERVIDOR
    ========================================================= */
-// 🔥 IMPORTANTE: Este es el ÚNICO app.listen en todo el archivo. 
-// Debe ir al final para que todas las rutas estén cargadas antes de encender.
+
 app.listen(PORT, () => {
     console.log(`🚀 Servidor ejecutándose en http://localhost:${PORT}`);
     console.log(`📧 Correos configurados desde: ${process.env.EMAIL_USER}`);
