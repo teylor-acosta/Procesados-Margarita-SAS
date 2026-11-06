@@ -230,13 +230,9 @@ function obtenerPadre(idHijo) {
             if (modulo.hijos?.length) {
 
                 const encontrado =
-
                     buscar(
-
                         modulo.hijos,
-
                         modulo
-
                     );
 
                 if (encontrado) {
@@ -318,9 +314,7 @@ function obtenerRutaModulo(modulo) {
 function renderizarMenuDinamico(modulos) {
 
     const menu = document.getElementById(
-
         "menuDinamico"
-
     );
 
     if (!menu) return;
@@ -346,15 +340,12 @@ function renderizarMenuDinamico(modulos) {
 function activarEventosMenu() {
 
     document
-
         .querySelectorAll(".menu-parent")
-
         .forEach(parent => {
 
             parent.addEventListener("click", () => {
 
                 const grupo =
-
                     parent.closest(".menu-group");
 
                 grupo.classList.toggle("open");
@@ -372,9 +363,7 @@ function activarEventosMenu() {
 function crearNodoMenu(modulo) {
 
     // ==========================================
-
     // MÓDULO SIN HIJOS
-
     // ==========================================
 
     if (!modulo.hijos || modulo.hijos.length === 0) {
@@ -382,9 +371,7 @@ function crearNodoMenu(modulo) {
         return `
 
             <a
-
                 href="${modulo.ruta}"
-
                 class="menu-item">
 
                 <i class="fas ${modulo.icono}"></i>
@@ -402,9 +389,7 @@ function crearNodoMenu(modulo) {
     }
 
     // ==========================================
-
     // MÓDULO CON HIJOS
-
     // ==========================================
 
     return `
@@ -432,9 +417,7 @@ function crearNodoMenu(modulo) {
             <div class="submenu">
 
                 ${modulo.hijos
-
                     .map(hijo => crearNodoMenu(hijo))
-
                     .join("")}
 
             </div>
@@ -448,9 +431,7 @@ function crearNodoMenu(modulo) {
 function tieneModulo(nombre) {
 
     return menuSistema.some(modulo =>
-
         modulo.nombre === nombre
-
     );
 
 }
@@ -472,78 +453,48 @@ function moduloActivo(nombre) {
 function menuRecursosHumanos(paginaActiva) {
 
     const paginasEmpleados = [
-
         'empleados-menu',
-
         'empleados',
-
         'crear-empleado',
-
         'empleados-inactivos',
-
         'documentacion',
-
         'centro-actividad'
-
     ];
-
     const empleados =
-
     obtenerModuloPorId(4);
 
 const hijosEmpleados =
-
     obtenerHijos(4);
 
     const mostrarModuloEmpleados =
-
         paginasEmpleados.includes(paginaActiva);
-
         const recursosHumanos =
-
     obtenerModulo(
-
         "Recursos Humanos"
-
     );
 
 const modulosRH =
-
     recursosHumanos
-
         ? obtenerHijos(
-
             recursosHumanos.id
-
         )
-
         : [];
-
         console.log(
-
     "MODULOS RH:",
-
     modulosRH
-
 );
 
 
     return `
 
         <span class="menu-section-title">
-
             Recursos Humanos
-
         </span>
 
         <a href="/panel"
-
            class="menu-item">
-
             <i class="fas fa-th-large"></i>
-
             <span>Panel</span>
-
         </a>
 
         <div class="menu-group ">
@@ -551,21 +502,15 @@ const modulosRH =
             <div class="menu-item menu-parent">
 
                 <div style="
-
                     display:flex;
-
                     align-items:center;
-
                     gap:10px;
-
                 ">
 
                     <i class="fas fa-users-cog"></i>
 
                     <span>
-
                         Recursos Humanos
-
                     </span>
 
                 </div>
@@ -577,15 +522,12 @@ const modulosRH =
             <div class="submenu">
 
                 <a href="/recursos-humanos"
-
    class="menu-item submenu-item ${paginaActiva === 'recursos-humanos' ? 'active' : ''}">
 
     <i class="fas fa-house"></i>
 
     <span>
-
         Inicio Recursos Humanos
-
     </span>
 
 </a>
@@ -593,9 +535,7 @@ const modulosRH =
 ${modulosRH.map(modulo => `
 
     <a
-
         href="${modulo.ruta}"
-
         class="menu-item submenu-item ${paginaActiva === modulo.ruta.substring(1) ? 'active' : ''}">
 
         <i class="fas ${modulo.icono}"></i>
@@ -607,17 +547,13 @@ ${modulosRH.map(modulo => `
 `).join("")}
 
 <a
-
     href="/nomina"
-
     class="menu-item submenu-item ${paginaActiva === 'nomina' ? 'active' : ''}">
 
     <i class="fas fa-money-check-dollar"></i>
 
     <span>
-
         Nómina
-
     </span>
 
 </a>
@@ -633,21 +569,15 @@ ${modulosRH.map(modulo => `
             <div class="menu-item menu-parent">
 
                 <div style="
-
                     display:flex;
-
                     align-items:center;
-
                     gap:10px;
-
                 ">
 
                     <i class="fas fa-users"></i>
 
                     <span>
-
                         Módulo Empleados
-
                     </span>
 
                 </div>
@@ -659,63 +589,39 @@ ${modulosRH.map(modulo => `
             <div class="submenu">
 
                 <a href="/empleados-menu"
-
                    class="menu-item submenu-item ${paginaActiva === 'empleados-menu' ? 'active' : ''}">
-
                     <i class="fas fa-layer-group"></i>
-
                     <span>Inicio Módulo</span>
-
                 </a>
 
                 <a href="/empleados"
-
                    class="menu-item submenu-item ${paginaActiva === 'empleados' ? 'active' : ''}">
-
                     <i class="fas fa-list"></i>
-
                     <span>Listado Empleados</span>
-
                 </a>
 
                 <a href="/crear-empleado"
-
                    class="menu-item submenu-item ${paginaActiva === 'crear-empleado' ? 'active' : ''}">
-
                     <i class="fas fa-user-plus"></i>
-
                     <span>Crear Empleado</span>
-
                 </a>
 
                 <a href="/empleados-inactivos"
-
                    class="menu-item submenu-item ${paginaActiva === 'empleados-inactivos' ? 'active' : ''}">
-
                     <i class="fas fa-user-slash"></i>
-
                     <span>Empleados Inactivos</span>
-
                 </a>
 
                 <a href="/documentacion-empleados"
-
                    class="menu-item submenu-item ${paginaActiva === 'documentacion' ? 'active' : ''}">
-
                     <i class="fas fa-folder-open"></i>
-
                     <span>Gestión Documental</span>
-
                 </a>
 
                 <a href="/centro-actividad"
-
                    class="menu-item submenu-item ${paginaActiva === 'centro-actividad' ? 'active' : ''}">
-
                     <i class="fas fa-history"></i>
-
                     <span>Centro de Actividad</span>
-
                 </a>
 
             </div>
@@ -731,13 +637,10 @@ function menuUsuarios(paginaActiva) {
     return `
 
     <span class="menu-section-title">
-
         Recursos Humanos
-
     </span>
 
     <a href="/panel"
-
        class="menu-item">
 
         <i class="fas fa-th-large"></i>
@@ -751,21 +654,15 @@ function menuUsuarios(paginaActiva) {
         <div class="menu-item menu-parent">
 
             <div style="
-
                 display:flex;
-
                 align-items:center;
-
                 gap:10px;
-
             ">
 
                 <i class="fas fa-users-cog"></i>
 
                 <span>
-
                     Recursos Humanos
-
                 </span>
 
             </div>
@@ -777,57 +674,45 @@ function menuUsuarios(paginaActiva) {
         <div class="submenu">
 
             <a href="/recursos-humanos"
-
                class="menu-item submenu-item">
 
                 <i class="fas fa-house"></i>
 
                 <span>
-
                     Inicio Recursos Humanos
-
                 </span>
 
             </a>
 
             <a href="/empleados-menu"
-
                class="menu-item submenu-item">
 
                 <i class="fas fa-users"></i>
 
                 <span>
-
                     Empleados
-
                 </span>
 
             </a>
 
             <a href="/usuarios"
-
                class="menu-item submenu-item active">
 
                 <i class="fas fa-user-shield"></i>
 
                 <span>
-
                     Usuarios
-
                 </span>
 
             </a>
 
             <a href="#"
-
                class="menu-item submenu-item">
 
                 <i class="fas fa-graduation-cap"></i>
 
                 <span>
-
                     Capacitaciones
-
                 </span>
 
             </a>
@@ -841,21 +726,15 @@ function menuUsuarios(paginaActiva) {
         <div class="menu-item menu-parent">
 
             <div style="
-
                 display:flex;
-
                 align-items:center;
-
                 gap:10px;
-
             ">
 
                 <i class="fas fa-user-shield"></i>
 
                 <span>
-
                     Módulo Usuarios
-
                 </span>
 
             </div>
@@ -867,71 +746,56 @@ function menuUsuarios(paginaActiva) {
         <div class="submenu">
 
             <a href="/usuarios"
-
                class="menu-item submenu-item ${paginaActiva === 'usuarios' ? 'active' : ''}">
 
                 <i class="fas fa-house"></i>
 
                 <span>
-
                     Inicio Usuarios
-
                 </span>
 
             </a>
 
             <a href="/crear-usuario"
-
                class="menu-item submenu-item ${paginaActiva === 'crear-usuario' ? 'active' : ''}">
 
                 <i class="fas fa-user-plus"></i>
 
                 <span>
-
                     Crear Usuario
-
                 </span>
 
             </a>
 
             <a href="/usuarios-registrados"
-
                class="menu-item submenu-item ${paginaActiva === 'usuarios-registrados' ? 'active' : ''}">
 
                 <i class="fas fa-users"></i>
 
                 <span>
-
                     Usuarios Registrados
-
                 </span>
 
             </a>
 
             <a href="/roles-accesos"
-
                class="menu-item submenu-item ${paginaActiva === 'roles-accesos' ? 'active' : ''}">
 
                 <i class="fas fa-user-shield"></i>
 
                 <span>
-
                     Roles y Accesos
-
                 </span>
 
             </a>
 
             <a href="/historial-usuarios"
-
                class="menu-item submenu-item ${paginaActiva === 'historial-usuarios' ? 'active' : ''}">
 
                 <i class="fas fa-history"></i>
 
                 <span>
-
                     Centro de Actividad
-
                 </span>
 
             </a>
@@ -952,30 +816,23 @@ function menuNomina(paginaActiva) {
     return `
 
         <span class="menu-section-title">
-
             Recursos Humanos
-
         </span>
 
         <a href="/panel"
-
            class="menu-item">
 
             <i class="fas fa-th-large"></i>
 
             <span>
-
                 Panel
-
             </span>
 
         </a>
 
 
         <!-- ==============================
-
              RECURSOS HUMANOS
-
         =============================== -->
 
         <div class="menu-group ">
@@ -983,21 +840,15 @@ function menuNomina(paginaActiva) {
             <div class="menu-item menu-parent">
 
                 <div style="
-
                     display:flex;
-
                     align-items:center;
-
                     gap:10px;
-
                 ">
 
                     <i class="fas fa-users-cog"></i>
 
                     <span>
-
                         Recursos Humanos
-
                     </span>
 
                 </div>
@@ -1010,60 +861,48 @@ function menuNomina(paginaActiva) {
             <div class="submenu">
 
                 <a href="/recursos-humanos"
-
                    class="menu-item submenu-item">
 
                     <i class="fas fa-house"></i>
 
                     <span>
-
                         Inicio Recursos Humanos
-
                     </span>
 
                 </a>
 
 
                 <a href="/empleados-menu"
-
                    class="menu-item submenu-item">
 
                     <i class="fas fa-users"></i>
 
                     <span>
-
                         Empleados
-
                     </span>
 
                 </a>
 
 
                 <a href="/usuarios"
-
                    class="menu-item submenu-item">
 
                     <i class="fas fa-user-shield"></i>
 
                     <span>
-
                         Usuarios
-
                     </span>
 
                 </a>
 
 
                 <a href="/nomina"
-
                    class="menu-item submenu-item active">
 
                     <i class="fas fa-money-check-dollar"></i>
 
                     <span>
-
                         Nómina
-
                     </span>
 
                 </a>
@@ -1074,9 +913,7 @@ function menuNomina(paginaActiva) {
 
 
         <!-- ==============================
-
              MÓDULO NÓMINA
-
         =============================== -->
 
         <div class="menu-group open">
@@ -1084,21 +921,15 @@ function menuNomina(paginaActiva) {
             <div class="menu-item menu-parent">
 
                 <div style="
-
                     display:flex;
-
                     align-items:center;
-
                     gap:10px;
-
                 ">
 
                     <i class="fas fa-money-check-dollar"></i>
 
                     <span>
-
                         Módulo Nómina
-
                     </span>
 
                 </div>
@@ -1114,15 +945,12 @@ function menuNomina(paginaActiva) {
                 <!-- INICIO -->
 
                 <a href="/nomina"
-
                    class="menu-item submenu-item ${paginaActiva === 'nomina' ? 'active' : ''}">
 
                     <i class="fas fa-house"></i>
 
                     <span>
-
                         Inicio Módulo
-
                     </span>
 
                 </a>
@@ -1131,15 +959,12 @@ function menuNomina(paginaActiva) {
                 <!-- LIQUIDACIÓN -->
 
                 <a href="/nomina/liquidacion"
-
                    class="menu-item submenu-item ${paginaActiva === 'nomina-liquidacion' ? 'active' : ''}">
 
                     <i class="fas fa-calculator"></i>
 
                     <span>
-
                         Liquidación de Nómina
-
                     </span>
 
                 </a>
@@ -1148,15 +973,12 @@ function menuNomina(paginaActiva) {
                 <!-- NOVEDADES -->
 
                 <a href="/nomina/novedades"
-
                    class="menu-item submenu-item ${paginaActiva === 'nomina-novedades' ? 'active' : ''}">
 
                     <i class="fas fa-file-circle-plus"></i>
 
                     <span>
-
                         Novedades
-
                     </span>
 
                 </a>
@@ -1165,15 +987,12 @@ function menuNomina(paginaActiva) {
                 <!-- PRÉSTAMOS -->
 
                 <a href="/nomina/prestamos"
-
                    class="menu-item submenu-item ${paginaActiva === 'nomina-prestamos' ? 'active' : ''}">
 
                     <i class="fas fa-hand-holding-dollar"></i>
 
                     <span>
-
                         Préstamos
-
                     </span>
 
                 </a>
@@ -1182,15 +1001,12 @@ function menuNomina(paginaActiva) {
                 <!-- PRODUCCIÓN -->
 
                 <a href="/nomina/produccion"
-
                    class="menu-item submenu-item ${paginaActiva === 'nomina-produccion' ? 'active' : ''}">
 
                     <i class="fas fa-industry"></i>
 
                     <span>
-
                         Liquidación por Producción
-
                     </span>
 
                 </a>
@@ -1199,15 +1015,12 @@ function menuNomina(paginaActiva) {
                 <!-- CONFIGURACIÓN -->
 
                 <a href="/nomina/configuracion"
-
                    class="menu-item submenu-item ${paginaActiva === 'nomina-configuracion' ? 'active' : ''}">
 
                     <i class="fas fa-gear"></i>
 
                     <span>
-
                         Configuración
-
                     </span>
 
                 </a>
@@ -1216,15 +1029,12 @@ function menuNomina(paginaActiva) {
                 <!-- HISTORIAL -->
 
                 <a href="/nomina/historial"
-
                    class="menu-item submenu-item ${paginaActiva === 'nomina-historial' ? 'active' : ''}">
 
                     <i class="fas fa-chart-line"></i>
 
                     <span>
-
                         Historial y Reportes
-
                     </span>
 
                 </a>
@@ -1241,15 +1051,11 @@ function menuNomina(paginaActiva) {
 function menuCapacitaciones(paginaActiva) {
 
     const usuario =
-
         JSON.parse(
-
             localStorage.getItem("usuario")
-
         ) || {};
 
     const rol =
-
         (usuario.rol || "").toLowerCase();
 
     const esAdministrador =
@@ -1261,17 +1067,13 @@ function menuCapacitaciones(paginaActiva) {
     rol === "superadmin" ||
 
     rol === "superadministrador";
-
     return `
 
         <span class="menu-section-title">
-
             Navegación
-
         </span>
 
         <a href="/dashboard"
-
            class="menu-item">
 
             <i class="fas fa-home"></i>
@@ -1281,13 +1083,9 @@ function menuCapacitaciones(paginaActiva) {
         </a>
 
          ${
-
             paginaActiva === "capacitacion"
-
             ? `
-
                 <a href="/mis-capacitaciones"
-
                    class="menu-item">
 
                     <i class="fas fa-arrow-left"></i>
@@ -1295,16 +1093,12 @@ function menuCapacitaciones(paginaActiva) {
                     <span>Volver a mis capacitaciones</span>
 
                 </a>
-
             `
-
             : ""
-
         }
 
 
         <a href="/panel"
-
            class="menu-item">
 
             <i class="fas fa-th-large"></i>
@@ -1318,21 +1112,15 @@ function menuCapacitaciones(paginaActiva) {
             <div class="menu-item menu-parent">
 
                 <div style="
-
                     display:flex;
-
                     align-items:center;
-
                     gap:10px;
-
                 ">
 
                     <i class="fas fa-graduation-cap"></i>
 
                     <span>
-
                         Capacitaciones
-
                     </span>
 
                 </div>
@@ -1344,29 +1132,23 @@ function menuCapacitaciones(paginaActiva) {
             <div class="submenu">
 
                 <a href="/centro-capacitaciones"
-
                    class="menu-item submenu-item ${paginaActiva === "centro-capacitaciones" ? "active" : ""}">
 
                     <i class="fas fa-house"></i>
 
                     <span>
-
                         Inicio
-
                     </span>
 
                 </a>
 
                 <a href="/mis-capacitaciones"
-
                    class="menu-item submenu-item ${paginaActiva === "mis-capacitaciones" ? "active" : ""}">
 
                     <i class="fas fa-book-open"></i>
 
                     <span>
-
                         Mis Capacitaciones
-
                     </span>
 
                 </a>
@@ -1374,29 +1156,23 @@ function menuCapacitaciones(paginaActiva) {
                 ${esAdministrador ? `
 
                 <a href="/administrar-capacitaciones"
-
                    class="menu-item submenu-item ${paginaActiva === "administrar-capacitaciones" ? "active" : ""}">
 
                     <i class="fas fa-chalkboard-teacher"></i>
 
                     <span>
-
                         Administrar Capacitaciones
-
                     </span>
 
                 </a>
 
                 <a href="/seguimiento-general"
-
                    class="menu-item submenu-item ${paginaActiva === "seguimiento-general" ? "active" : ""}">
 
                     <i class="fas fa-chart-line"></i>
 
                     <span>
-
                         Seguimiento General
-
                     </span>
 
                 </a>
@@ -1419,24 +1195,22 @@ function construirMenu() {
 
     const pagina =
         document.body.dataset.pagina;
-        
-    const moduloActual =
+        const moduloActual =
     obtenerModuloActual();
-    
     const rutaActual =
     obtenerRutaModulo(
         moduloActual
     );
 
-    console.log(
-        "RUTA:",
-        rutaActual
-    );
+console.log(
+    "RUTA:",
+    rutaActual
+);
 
-    console.log(
-        "MODULO ACTUAL:",
-        moduloActual
-    );
+console.log(
+    "MODULO ACTUAL:",
+    moduloActual
+);
 
     const menu =
         document.getElementById(
@@ -1444,14 +1218,13 @@ function construirMenu() {
         );
 
     if (!menu) return;
-    
     const menuPanel =
     obtenerModulo("Panel");
 
-    const menuDashboard =
+const menuDashboard =
     obtenerModulo("Inicio");
 
-    const menuPerfil =
+const menuPerfil =
     obtenerModulo("Mi Perfil");
 
     /* ======================
@@ -1782,47 +1555,13 @@ else if (pagina === "nomina-liquidacion") {
 
 }
 
-/* =====================================
-   NOVEDADES (VISTA DE USUARIO Y ADMIN)
-===================================== */
 else if (pagina === "nomina-novedades") {
 
-    // [AGREGADO] Verificamos si el usuario logueado es auxiliar
-    const usuario = JSON.parse(localStorage.getItem("usuario")) || {};
-    const rol = (usuario.rol || "").toLowerCase();
-    const esAuxiliar = rol.includes("auxiliar");
+    menu.innerHTML =
+        menuNomina(
+            "nomina-novedades"
+        );
 
-    if (esAuxiliar) {
-        // Si es auxiliar, le mostramos un menú básico sin opciones de admin
-        menu.innerHTML = `
-            <span class="menu-section-title">
-                Navegación
-            </span>
-
-            <a href="/panel" class="menu-item">
-                <i class="fas fa-th-large"></i>
-                <span>Panel</span>
-            </a>
-
-            <a href="/perfil" class="menu-item">
-                <i class="fas fa-user-circle"></i>
-                <span>Mi Perfil</span>
-            </a>
-
-            <a href="/centro-capacitaciones" class="menu-item">
-                <i class="fas fa-graduation-cap"></i>
-                <span>Capacitaciones</span>
-            </a>
-
-            <a href="/nomina/novedades" class="menu-item active">
-                <i class="fas fa-bell"></i>
-                <span>Novedades</span>
-            </a>
-        `;
-    } else {
-        // Si es admin, mostramos el menú completo de nómina
-        menu.innerHTML = menuNomina("nomina-novedades");
-    }
 }
 
 else if (pagina === "nomina-prestamos") {

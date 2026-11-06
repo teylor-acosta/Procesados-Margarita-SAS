@@ -437,11 +437,22 @@ const [[certificados]] = await db.query(
 
         IFNULL(cp.capitulos_completados, 0) AS capitulos_completados,
 
-        (
-            SELECT COUNT(*)
-            FROM capitulos_curso cc
-            WHERE cc.curso_id = c.id
-        ) AS capitulos_totales,
+            (
+    SELECT COUNT(*)
+    FROM capitulos_curso cc
+    WHERE cc.curso_id = c.id
+) AS capitulos_totales,
+
+(
+    SELECT cert.id
+    FROM certificados_capacitacion cert
+    INNER JOIN usuarios u
+        ON u.id = cert.usuario_id
+    WHERE u.empleado_id = ac.empleado_id
+      AND cert.curso_id = c.id
+    ORDER BY cert.fecha_emision DESC
+    LIMIT 1
+) AS certificado_id
 
         (
             SELECT cert.id

@@ -7,135 +7,165 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log('📋 Módulo de Novedades iniciado');
 
-    /* ========================================================
-       FIX DE ACCESIBILIDAD (aria-hidden en modales)
-       ======================================================== */
-    document.querySelectorAll('.modal').forEach((modal) => {
-        modal.addEventListener('hide.bs.modal', () => {
-            if (document.activeElement && modal.contains(document.activeElement)) {
-                document.activeElement.blur();
-            }
-        });
-    });
-
 
     /* ========================================================
-       ELEMENTOS DEL DOM - ACCIONES PRINCIPALES
+       ELEMENTOS DEL DOM
        ======================================================== */
 
-    const btnRegistrar = document.getElementById('btnRegistrarNovedad');
-    const btnRefrescar = document.getElementById('btnRefrescarNovedades');
-    const btnCerrarPeriodo = document.getElementById('btnCerrarPeriodo');
-    const btnExportarNovedades = document.getElementById('btnExportarNovedades');
-    const btnLimpiar = document.getElementById('btnLimpiarFiltros');
+    const btnRegistrar =
+        document.getElementById('btnRegistrarNovedad');
+
+    const btnLimpiar =
+        document.getElementById('btnLimpiarFiltros');
+
+    const buscarNovedad =
+        document.getElementById('buscarNovedad');
+
+    const filtroTipo =
+        document.getElementById('filtroTipo');
+
+    const filtroEstado =
+        document.getElementById('filtroEstado');
+
+    const filtroMes =
+        document.getElementById('filtroMes');
+
+        /* ========================================================
+   REGISTRAR NOVEDAD
+   ======================================================== */
+
+const modalRegistrarNovedad =
+    document.getElementById('modalRegistrarNovedad');
+
+const registroTipoNovedad =
+    document.getElementById('registroTipoNovedad');
+
+const informacionTipoNovedad =
+    document.getElementById('informacionTipoNovedad');
+
+const registroTipoNombre =
+    document.getElementById('registroTipoNombre');
+
+const registroTipoDescripcion =
+    document.getElementById('registroTipoDescripcion');
+
+const formularioNovedadDinamico =
+    document.getElementById('formularioNovedadDinamico');
+
+const camposNovedad =
+    document.getElementById('camposNovedad');
+
+const seccionSoporteNovedad =
+    document.getElementById('seccionSoporteNovedad');
+
+const soporteNovedad =
+    document.getElementById('soporteNovedad');
+
+const avisoAprobacionNovedad =
+    document.getElementById('avisoAprobacionNovedad');
+
+const btnGuardarNovedad =
+    document.getElementById('btnGuardarNovedad');
+
+const errorRegistroNovedad =
+    document.getElementById('errorRegistroNovedad');
+
+
+        /* ========================================================
+   HISTORIAL
+   ======================================================== */
+
+const historialBuscar =
+    document.getElementById('historialBuscar');
+
+const historialTipo =
+    document.getElementById('historialTipo');
+
+const historialEstado =
+    document.getElementById('historialEstado');
+
+const historialTipoFecha =
+    document.getElementById('historialTipoFecha');
+
+const historialFechaContainer =
+    document.getElementById('historialFechaContainer');
+
+const historialFechaDia =
+    document.getElementById('historialFechaDia');
+
+const historialFechaMes =
+    document.getElementById('historialFechaMes');
+
+const historialFechaAno =
+    document.getElementById('historialFechaAno');
+
+const historialFechaRango =
+    document.getElementById('historialFechaRango');
+
+const historialDia =
+    document.getElementById('historialDia');
+
+const historialMes =
+    document.getElementById('historialMes');
+
+const historialAno =
+    document.getElementById('historialAno');
+
+const historialDesde =
+    document.getElementById('historialDesde');
+
+const historialHasta =
+    document.getElementById('historialHasta');
+
+const btnBuscarHistorial =
+    document.getElementById('btnBuscarHistorial');
+
+const btnLimpiarHistorial =
+    document.getElementById('btnLimpiarHistorial');
+
+const historialCargando =
+    document.getElementById('historialCargando');
+
+const historialEstadoVacio =
+    document.getElementById('historialEstadoVacio');
+
+const historialTablaWrapper =
+    document.getElementById('historialTablaWrapper');
+
+const tablaHistorialNovedades =
+    document.getElementById('tablaHistorialNovedades');
+
+    const tablaNovedades =
+        document.getElementById('tablaNovedades');
+
+    const estadoVacio =
+        document.getElementById('estadoVacio');
+
 
     /* ========================================================
-       ELEMENTOS DEL DOM - FILTROS Y TABLA
+       KPIs
        ======================================================== */
 
-    const buscarNovedad = document.getElementById('buscarNovedad');
-    const filtroTipo = document.getElementById('filtroTipo');
-    const filtroEstado = document.getElementById('filtroEstado');
-    const filtroMes = document.getElementById('filtroMes');
+    const kpiPendientes =
+        document.getElementById('kpiPendientes');
 
-    const contadorResultados = document.getElementById('contadorResultados');
-    const indicadorFiltrosActivos = document.getElementById('indicadorFiltrosActivos');
-    const ordenarNovedades = document.getElementById('ordenarNovedades');
-    const tamanoPagina = document.getElementById('tamanoPagina');
-    const btnPaginaAnterior = document.getElementById('btnPaginaAnterior');
-    const btnPaginaSiguiente = document.getElementById('btnPaginaSiguiente');
-    const infoPaginacion = document.getElementById('infoPaginacion');
+    const kpiAprobadas =
+        document.getElementById('kpiAprobadas');
 
-    const tablaNovedades = document.getElementById('tablaNovedades');
-    const estadoVacio = document.getElementById('estadoVacio');
-    const tablaSkeleton = document.getElementById('tablaSkeleton');
+    const kpiRechazadas =
+        document.getElementById('kpiRechazadas');
 
-    /* ========================================================
-       ELEMENTOS DEL DOM - KPIs
-       ======================================================== */
-
-    const kpiPendientes = document.getElementById('kpiPendientes');
-    const kpiAprobadas = document.getElementById('kpiAprobadas');
-    const kpiRechazadas = document.getElementById('kpiRechazadas');
-    const kpiHistorial = document.getElementById('kpiHistorial');
-    const kpiCards = document.querySelectorAll('[data-kpi-filtro]');
-
-    /* ========================================================
-       ELEMENTOS DEL DOM - MODAL REGISTRO
-       ======================================================== */
-
-    const modalRegistrarNovedad = document.getElementById('modalRegistrarNovedad');
-    const registroTipoNovedad = document.getElementById('registroTipoNovedad');
-    const informacionTipoNovedad = document.getElementById('informacionTipoNovedad');
-    const registroTipoNombre = document.getElementById('registroTipoNombre');
-    const registroTipoDescripcion = document.getElementById('registroTipoDescripcion');
-    const formularioNovedadDinamico = document.getElementById('formularioNovedadDinamico');
-    const camposNovedad = document.getElementById('camposNovedad');
-    const seccionSoporteNovedad = document.getElementById('seccionSoporteNovedad');
-    const soporteNovedad = document.getElementById('soporteNovedad');
-    const avisoAprobacionNovedad = document.getElementById('avisoAprobacionNovedad');
-    const btnGuardarNovedad = document.getElementById('btnGuardarNovedad');
-    const errorRegistroNovedad = document.getElementById('errorRegistroNovedad');
-
-    /* ========================================================
-       ELEMENTOS DEL DOM - DRAG & DROP
-       ======================================================== */
-
-    const zonaDragDropSoporte = document.getElementById('zonaDragDropSoporte');
-    const previsualizacionSoporte = document.getElementById('previsualizacionSoporte');
-    const soporteNombreArchivo = document.getElementById('soporteNombreArchivo');
-    const soporteTamanoArchivo = document.getElementById('soporteTamanoArchivo');
-    const btnQuitarSoporte = document.getElementById('btnQuitarSoporte');
-
-    /* ========================================================
-       ELEMENTOS DEL DOM - HISTORIAL
-       ======================================================== */
-
-    const historialBuscar = document.getElementById('historialBuscar');
-    const historialTipo = document.getElementById('historialTipo');
-    const historialEstado = document.getElementById('historialEstado');
-    const historialTipoFecha = document.getElementById('historialTipoFecha');
-    const historialFechaDia = document.getElementById('historialFechaDia');
-    const historialFechaMes = document.getElementById('historialFechaMes');
-    const historialFechaAno = document.getElementById('historialFechaAno');
-    const historialFechaRango = document.getElementById('historialFechaRango');
-    const historialDia = document.getElementById('historialDia');
-    const historialMes = document.getElementById('historialMes');
-    const historialAno = document.getElementById('historialAno');
-    const historialDesde = document.getElementById('historialDesde');
-    const historialHasta = document.getElementById('historialHasta');
-    const btnBuscarHistorial = document.getElementById('btnBuscarHistorial');
-    const btnLimpiarHistorial = document.getElementById('btnLimpiarHistorial');
-    const btnExportarHistorial = document.getElementById('btnExportarHistorial');
-    const historialCargando = document.getElementById('historialCargando');
-    const historialEstadoVacio = document.getElementById('historialEstadoVacio');
-    const historialTablaWrapper = document.getElementById('historialTablaWrapper');
-    const tablaHistorialNovedades = document.getElementById('tablaHistorialNovedades');
-    const contadorHistorial = document.getElementById('contadorHistorial');
-
-    /* ========================================================
-       ELEMENTOS DEL DOM - MODALES Y TOASTS
-       ======================================================== */
-
-    const modalConfirmacion = document.getElementById('modalConfirmacion');
-    const modalConfirmacionMensaje = document.getElementById('modalConfirmacionMensaje');
-    const btnConfirmarAccion = document.getElementById('btnConfirmarAccion');
-    const contenedorToasts = document.getElementById('contenedorToasts');
+    const kpiHistorial =
+        document.getElementById('kpiHistorial');
 
 
     /* ========================================================
        ESTADO LOCAL
        ======================================================== */
 
-    const estadoApp = {
-        novedades: [],
-        novedadesFiltradas: [],
-        paginaActual: 1,
-        tamanoPagina: 25,
-        ordenActual: 'fecha_desc',
-        filtrosActivos: false,
-        confirmCallback: null
-    };
+    let novedades = [];
+
+
 
     /* ========================================================
        INICIO
@@ -143,1436 +173,7187 @@ document.addEventListener('DOMContentLoaded', () => {
 
     inicializar();
 
+
     async function inicializar() {
+
         establecerMesActual();
+
         configurarEventos();
+
         await cargarNovedades();
+
     }
 
+
+
     /* ========================================================
-       CONFIGURAR EVENTOS
+       EVENTOS
        ======================================================== */
 
     function configurarEventos() {
-        if (btnRegistrar) btnRegistrar.addEventListener('click', abrirRegistroNovedad);
-        
-        if (btnRefrescar) {
-            btnRefrescar.addEventListener('click', () => {
-                mostrarToast('Actualizando datos...', 'info');
-                cargarNovedades();
-            });
+
+        /* -----------------------------------------------
+   REGISTRAR NOVEDAD
+------------------------------------------------ */
+
+if (btnRegistrarNovedad) {
+
+    btnRegistrarNovedad.addEventListener(
+        'click',
+        abrirRegistroNovedad
+    );
+
+}
+
+
+if (registroTipoNovedad) {
+
+    registroTipoNovedad.addEventListener(
+        'change',
+        seleccionarTipoNovedad
+    );
+
+}
+
+
+if (btnGuardarNovedad) {
+
+    btnGuardarNovedad.addEventListener(
+        'click',
+        guardarNovedad
+    );
+
+}
+
+        /* -----------------------------------------------
+   HISTORIAL - TIPO DE FECHA
+------------------------------------------------ */
+
+if (historialTipoFecha) {
+
+    historialTipoFecha.addEventListener(
+        'change',
+        cambiarTipoFechaHistorial
+    );
+
+}
+
+
+/* -----------------------------------------------
+   HISTORIAL - BUSCAR
+------------------------------------------------ */
+
+if (btnBuscarHistorial) {
+
+    btnBuscarHistorial.addEventListener(
+        'click',
+        buscarHistorial
+    );
+
+}
+
+
+/* -----------------------------------------------
+   HISTORIAL - LIMPIAR
+------------------------------------------------ */
+
+if (btnLimpiarHistorial) {
+
+    btnLimpiarHistorial.addEventListener(
+        'click',
+        limpiarFiltrosHistorial
+    );
+
+}
+
+        /* -----------------------------------------------
+           REGISTRAR NOVEDAD
+        ------------------------------------------------ */
+
+        if (btnRegistrar) {
+
+            btnRegistrar.addEventListener(
+                'click',
+                abrirRegistroNovedad
+            );
+
         }
 
-        if (btnExportarNovedades) btnExportarNovedades.addEventListener('click', exportarCSV);
-        if (btnCerrarPeriodo) btnCerrarPeriodo.addEventListener('click', abrirCierrePeriodo);
 
-        if (buscarNovedad) buscarNovedad.addEventListener('input', debounce(aplicarFiltros, 300));
-        if (filtroTipo) filtroTipo.addEventListener('change', aplicarFiltros);
-        if (filtroEstado) filtroEstado.addEventListener('change', aplicarFiltros);
-        if (filtroMes) filtroMes.addEventListener('change', aplicarFiltros);
-        if (btnLimpiar) btnLimpiar.addEventListener('click', limpiarFiltros);
+        /* -----------------------------------------------
+           BUSCADOR
+        ------------------------------------------------ */
 
-        kpiCards.forEach(card => {
-            card.addEventListener('click', () => {
-                const filtro = card.dataset.kpiFiltro;
-                if (filtroEstado) {
-                    filtroEstado.value = (filtroEstado.value === filtro) ? '' : filtro;
-                    aplicarFiltros();
-                }
-            });
-        });
+        if (buscarNovedad) {
 
-        if (ordenarNovedades) {
-            ordenarNovedades.addEventListener('change', (e) => {
-                estadoApp.ordenActual = e.target.value;
-                aplicarFiltros();
-            });
+            buscarNovedad.addEventListener(
+                'input',
+                aplicarFiltros
+            );
+
         }
 
-        if (tamanoPagina) {
-            tamanoPagina.addEventListener('change', (e) => {
-                estadoApp.tamanoPagina = Number(e.target.value);
-                estadoApp.paginaActual = 1;
-                renderizarTabla();
-            });
+
+        /* -----------------------------------------------
+           FILTRO TIPO
+        ------------------------------------------------ */
+
+        if (filtroTipo) {
+
+            filtroTipo.addEventListener(
+                'change',
+                aplicarFiltros
+            );
+
         }
 
-        if (btnPaginaAnterior) {
-            btnPaginaAnterior.addEventListener('click', () => {
-                if (estadoApp.paginaActual > 1) { estadoApp.paginaActual--; renderizarTabla(); }
-            });
+
+        /* -----------------------------------------------
+           FILTRO ESTADO
+        ------------------------------------------------ */
+
+        if (filtroEstado) {
+
+            filtroEstado.addEventListener(
+                'change',
+                aplicarFiltros
+            );
+
         }
 
-        if (btnPaginaSiguiente) {
-            btnPaginaSiguiente.addEventListener('click', () => {
-                const totalPaginas = Math.ceil(estadoApp.novedadesFiltradas.length / estadoApp.tamanoPagina);
-                if (estadoApp.paginaActual < totalPaginas) { estadoApp.paginaActual++; renderizarTabla(); }
-            });
+
+        /* -----------------------------------------------
+           FILTRO MES
+        ------------------------------------------------ */
+
+        if (filtroMes) {
+
+            filtroMes.addEventListener(
+                'change',
+                aplicarFiltros
+            );
+
         }
 
-        if (registroTipoNovedad) registroTipoNovedad.addEventListener('change', seleccionarTipoNovedad);
-        if (btnGuardarNovedad) btnGuardarNovedad.addEventListener('click', guardarNovedad);
-        
-        configurarDragAndDrop();
 
-        if (btnConfirmarAccion) {
-            btnConfirmarAccion.addEventListener('click', () => {
-                if (typeof estadoApp.confirmCallback === 'function') estadoApp.confirmCallback();
-                bootstrap.Modal.getInstance(modalConfirmacion)?.hide();
-            });
-        }
+        /* -----------------------------------------------
+           LIMPIAR FILTROS
+        ------------------------------------------------ */
 
-        if (historialTipoFecha) historialTipoFecha.addEventListener('change', cambiarTipoFechaHistorial);
-        if (btnBuscarHistorial) btnBuscarHistorial.addEventListener('click', buscarHistorial);
-        if (btnLimpiarHistorial) btnLimpiarHistorial.addEventListener('click', limpiarFiltrosHistorial);
-        if (btnExportarHistorial) btnExportarHistorial.addEventListener('click', () => window.open('/api/nomina/novedades/historial/exportar', '_blank'));
+        if (btnLimpiar) {
+
+            btnLimpiar.addEventListener(
+                'click',
+                limpiarFiltros
+            );
+
+            }
+
+}
+
+
+/* ========================================================
+   AQUÍ VAN LAS FUNCIONES DEL HISTORIAL
+   ======================================================== */
+
+
+/* ========================================================
+   CAMBIAR TIPO DE FECHA
+   ======================================================== */
+
+function cambiarTipoFechaHistorial() {
+
+    const tipo =
+        historialTipoFecha?.value || '';
+
+
+    if (historialFechaDia) {
+        historialFechaDia.style.display = 'none';
     }
 
+    if (historialFechaMes) {
+        historialFechaMes.style.display = 'none';
+    }
+
+    if (historialFechaAno) {
+        historialFechaAno.style.display = 'none';
+    }
+
+    if (historialFechaRango) {
+        historialFechaRango.style.display = 'none';
+    }
+
+
+    switch (tipo) {
+
+        case 'dia':
+
+            historialFechaDia.style.display = 'block';
+
+            break;
+
+
+        case 'mes':
+
+            historialFechaMes.style.display = 'block';
+
+            break;
+
+
+        case 'ano':
+
+            historialFechaAno.style.display = 'block';
+
+            break;
+
+
+        case 'rango':
+
+            historialFechaRango.style.display = 'grid';
+
+            break;
+
+    }
+
+}
+
+
+/* ========================================================
+   HISTORIAL - BUSCAR
+   ======================================================== */
+
+async function buscarHistorial() {
+
+    try {
+
+        const params =
+            new URLSearchParams();
+
+
+        const buscar =
+            historialBuscar?.value.trim() || '';
+
+        const tipo =
+            historialTipo?.value || '';
+
+        const estado =
+            historialEstado?.value || '';
+
+        const tipoFecha =
+            historialTipoFecha?.value || '';
+
+
+        if (buscar) {
+
+            params.append(
+                'buscar',
+                buscar
+            );
+
+        }
+
+
+        if (tipo) {
+
+            params.append(
+                'tipo',
+                tipo
+            );
+
+        }
+
+
+        if (estado) {
+
+            params.append(
+                'estado',
+                estado
+            );
+
+        }
+
+
+        if (tipoFecha) {
+
+            params.append(
+                'tipo_fecha',
+                tipoFecha
+            );
+
+
+            if (
+                tipoFecha === 'dia' &&
+                historialDia?.value
+            ) {
+
+                params.append(
+                    'fecha',
+                    historialDia.value
+                );
+
+            }
+
+
+            if (
+                tipoFecha === 'mes' &&
+                historialMes?.value
+            ) {
+
+                params.append(
+                    'mes',
+                    historialMes.value
+                );
+
+            }
+
+
+            if (
+                tipoFecha === 'ano' &&
+                historialAno?.value
+            ) {
+
+                params.append(
+                    'ano',
+                    historialAno.value
+                );
+
+            }
+
+
+            if (tipoFecha === 'rango') {
+
+                if (historialDesde?.value) {
+
+                    params.append(
+                        'desde',
+                        historialDesde.value
+                    );
+
+                }
+
+                if (historialHasta?.value) {
+
+                    params.append(
+                        'hasta',
+                        historialHasta.value
+                    );
+
+                }
+
+            }
+
+        }
+
+
+        /* ==========================================
+           MOSTRAR CARGANDO
+           ========================================== */
+
+        if (historialCargando) {
+
+            historialCargando.style.display =
+                'block';
+
+        }
+
+        if (historialEstadoVacio) {
+
+            historialEstadoVacio.style.display =
+                'none';
+
+        }
+
+        if (historialTablaWrapper) {
+
+            historialTablaWrapper.style.display =
+                'none';
+
+        }
+
+
+        /* ==========================================
+           CONSULTAR API
+           ========================================== */
+
+        const respuesta =
+            await fetch(
+                `/api/nomina/novedades/historial?${params.toString()}`
+            );
+
+
+        const data =
+            await respuesta.json();
+
+
+        if (!respuesta.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                'No fue posible consultar el historial'
+            );
+
+        }
+
+
+        console.log(
+            '📋 Historial:',
+            data.novedades
+        );
+
+
+        renderizarHistorial(
+            data.novedades || []
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            'ERROR HISTORIAL:',
+            error
+        );
+
+        if (historialEstadoVacio) {
+
+            historialEstadoVacio.style.display =
+                'flex';
+
+            historialEstadoVacio.innerHTML = `
+
+                <div class="novedades-empty-icon">
+                    <i class="fas fa-circle-exclamation"></i>
+                </div>
+
+                <h3>
+                    No fue posible consultar el historial
+                </h3>
+
+                <p>
+                    ${escapeHtml(error.message)}
+                </p>
+
+            `;
+
+        }
+
+    } finally {
+
+        if (historialCargando) {
+
+            historialCargando.style.display =
+                'none';
+
+        }
+
+    }
+
+}
+
+/* ========================================================
+   RENDERIZAR HISTORIAL
+   ======================================================== */
+
+function renderizarHistorial(novedades) {
+
+    if (!tablaHistorialNovedades) {
+        return;
+    }
+
+
+    tablaHistorialNovedades.innerHTML = '';
+
+
+    if (!novedades.length) {
+
+        if (historialTablaWrapper) {
+
+            historialTablaWrapper.style.display =
+                'none';
+
+        }
+
+        if (historialEstadoVacio) {
+
+            historialEstadoVacio.style.display =
+                'flex';
+
+            historialEstadoVacio.innerHTML = `
+
+                <div class="novedades-empty-icon">
+                    <i class="fas fa-clock-rotate-left"></i>
+                </div>
+
+                <h3>
+                    No hay novedades en el historial
+                </h3>
+
+                <p>
+                    No se encontraron novedades vencidas
+                    con los filtros seleccionados.
+                </p>
+
+            `;
+
+        }
+
+        return;
+
+    }
+
+
+    if (historialEstadoVacio) {
+
+        historialEstadoVacio.style.display =
+            'none';
+
+    }
+
+    if (historialTablaWrapper) {
+
+        historialTablaWrapper.style.display =
+            'block';
+
+    }
+
+
+    novedades.forEach(novedad => {
+
+        const fila =
+            document.createElement('tr');
+
+
+        const fecha =
+            formatearFecha(
+                novedad.fecha_revision ||
+                novedad.fecha_creacion
+            );
+
+
+        let cantidad = '-';
+
+
+        if (
+            novedad.cantidad_dias !== null &&
+            novedad.cantidad_dias !== undefined
+        ) {
+
+            cantidad =
+                `${novedad.cantidad_dias} día(s)`;
+
+        } else if (
+            novedad.cantidad_horas !== null &&
+            novedad.cantidad_horas !== undefined
+        ) {
+
+            cantidad =
+                `${novedad.cantidad_horas} hora(s)`;
+
+        }
+
+
+        fila.innerHTML = `
+
+            <td>
+                <strong>
+                    ${escapeHtml(
+                        novedad.empleado_nombre || '-'
+                    )}
+                </strong>
+
+                <small>
+                    ${escapeHtml(
+                        novedad.numero_documento || ''
+                    )}
+                </small>
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    novedad.tipo_novedad || '-'
+                )}
+            </td>
+
+            <td>
+                ${fecha}
+            </td>
+
+            <td>
+                ${escapeHtml(cantidad)}
+            </td>
+
+            <td>
+                <span class="estado-badge estado-${String(
+                    novedad.estado || ''
+                ).toLowerCase()}">
+                    ${escapeHtml(
+                        novedad.estado || '-'
+                    )}
+                </span>
+            </td>
+
+            <td>
+                ${formatearFecha(
+                    novedad.fecha_creacion
+                )}
+            </td>
+
+            <td>
+                <button
+                    type="button"
+                    class="btn-accion-novedad btn-ver-novedad"
+                    data-id="${novedad.id}"
+                    title="Ver novedad"
+                >
+                    <i class="fas fa-eye"></i>
+                </button>
+            </td>
+
+        `;
+
+
+        tablaHistorialNovedades.appendChild(
+            fila
+        );
+
+    });
+
+}
+
+
+/* ========================================================
+   LIMPIAR FILTROS DEL HISTORIAL
+   ======================================================== */
+
+function limpiarFiltrosHistorial() {
+
+    if (historialBuscar) {
+        historialBuscar.value = '';
+    }
+
+    if (historialTipo) {
+        historialTipo.value = '';
+    }
+
+    if (historialEstado) {
+        historialEstado.value = '';
+    }
+
+    if (historialTipoFecha) {
+        historialTipoFecha.value = '';
+    }
+
+    if (historialDia) {
+        historialDia.value = '';
+    }
+
+    if (historialMes) {
+        historialMes.value = '';
+    }
+
+    if (historialAno) {
+        historialAno.value = '';
+    }
+
+    if (historialDesde) {
+        historialDesde.value = '';
+    }
+
+    if (historialHasta) {
+        historialHasta.value = '';
+    }
+
+
+    cambiarTipoFechaHistorial();
+
+
+    if (historialTablaWrapper) {
+        historialTablaWrapper.style.display = 'none';
+    }
+
+    if (historialEstadoVacio) {
+        historialEstadoVacio.style.display = 'flex';
+    }
+
+}
+
+
+
     /* ========================================================
-       CARGAR NOVEDADES DESDE LA API
+       CARGAR NOVEDADES
        ======================================================== */
 
     async function cargarNovedades() {
+
         try {
+
             mostrarCargando();
-            const respuesta = await fetch('/api/nomina/novedades');
-            if (!respuesta.ok) throw new Error('Error al consultar la API.');
 
-            const resultado = await respuesta.json();
-            
-            if (Array.isArray(resultado)) estadoApp.novedades = resultado;
-            else if (Array.isArray(resultado.novedades)) estadoApp.novedades = resultado.novedades;
-            else if (Array.isArray(resultado.data)) estadoApp.novedades = resultado.data;
-            else estadoApp.novedades = [];
 
-            cargarTiposFiltro();
+            const respuesta = await fetch(
+                '/api/nomina/novedades'
+            );
+
+
+            if (!respuesta.ok) {
+
+                throw new Error(
+                    'No fue posible cargar las novedades.'
+                );
+
+            }
+
+
+            const resultado =
+                await respuesta.json();
+
+
+            /*
+             * Permitimos diferentes formatos
+             * de respuesta del backend.
+             */
+
+            if (Array.isArray(resultado)) {
+
+                novedades = resultado;
+
+            } else if (Array.isArray(resultado.data)) {
+
+                novedades = resultado.data;
+
+            } else {
+
+                novedades = [];
+
+            }
+
+
+            console.log(
+                '📋 Novedades cargadas:',
+                novedades
+            );
+
+
+            cargarTipos();
+
             actualizarKPIs();
-            aplicarFiltros();
+
+            renderizarTabla(novedades);
 
         } catch (error) {
-            console.error('❌ Error cargando novedades:', error);
-            mostrarError('No fue posible conectar con el servidor.');
+
+            console.error(
+                '❌ Error cargando novedades:',
+                error
+            );
+
+
+            mostrarError(
+                'No fue posible cargar las novedades.'
+            );
+
         }
+
     }
+
+
+
+    /* ========================================================
+       CARGAR TIPOS DE NOVEDAD
+       ======================================================== */
+
+    function cargarTipos() {
+
+        if (!filtroTipo) {
+            return;
+        }
+
+
+        const tipos = [
+            ...new Set(
+                novedades
+                    .map(novedad =>
+                        obtenerTipo(novedad)
+                    )
+                    .filter(Boolean)
+            )
+        ];
+
+
+        const valorActual =
+            filtroTipo.value;
+
+
+        filtroTipo.innerHTML = `
+            <option value="">
+                Todos los tipos
+            </option>
+        `;
+
+
+        tipos
+            .sort()
+            .forEach(tipo => {
+
+                const option =
+                    document.createElement('option');
+
+                option.value = tipo;
+
+                option.textContent =
+                    formatearTexto(tipo);
+
+                filtroTipo.appendChild(option);
+
+            });
+
+
+        filtroTipo.value = valorActual;
+
+    }
+
+
+
+    /* ========================================================
+       ACTUALIZAR KPIs
+       ======================================================== */
 
     function actualizarKPIs() {
-        if (kpiPendientes) kpiPendientes.textContent = estadoApp.novedades.filter(n => obtenerEstado(n) === 'PENDIENTE').length;
-        if (kpiAprobadas) kpiAprobadas.textContent = estadoApp.novedades.filter(n => obtenerEstado(n) === 'APROBADA').length;
-        if (kpiRechazadas) kpiRechazadas.textContent = estadoApp.novedades.filter(n => obtenerEstado(n) === 'RECHAZADA').length;
-        if (kpiHistorial) kpiHistorial.textContent = estadoApp.novedades.filter(n => obtenerEstado(n) === 'ANULADA').length;
+
+        const pendientes =
+            novedades.filter(
+                n => obtenerEstado(n) === 'PENDIENTE'
+            ).length;
+
+
+        const aprobadas =
+            novedades.filter(
+                n => obtenerEstado(n) === 'APROBADA'
+            ).length;
+
+
+        const rechazadas =
+            novedades.filter(
+                n => obtenerEstado(n) === 'RECHAZADA'
+            ).length;
+
+
+        /*
+         * Las anuladas/históricas se mantienen
+         * separadas del listado principal.
+         */
+
+        const historial =
+            novedades.filter(
+                n => obtenerEstado(n) === 'ANULADA'
+            ).length;
+
+
+        if (kpiPendientes) {
+
+            kpiPendientes.textContent =
+                pendientes;
+
+        }
+
+
+        if (kpiAprobadas) {
+
+            kpiAprobadas.textContent =
+                aprobadas;
+
+        }
+
+
+        if (kpiRechazadas) {
+
+            kpiRechazadas.textContent =
+                rechazadas;
+
+        }
+
+
+        if (kpiHistorial) {
+
+            kpiHistorial.textContent =
+                historial;
+
+        }
+
     }
 
-    function cargarTiposFiltro() {
-        if (!filtroTipo) return;
-        const tipos = [...new Set(estadoApp.novedades.map(n => obtenerTipo(n)).filter(Boolean))];
-        const valorActual = filtroTipo.value;
 
-        filtroTipo.innerHTML = `<option value="">Todos los tipos</option>`;
-        tipos.sort().forEach(tipo => {
-            const opt = document.createElement('option');
-            opt.value = tipo;
-            opt.textContent = formatearTexto(tipo);
-            filtroTipo.appendChild(opt);
-        });
-        filtroTipo.value = valorActual;
-    }
+
+    /* ========================================================
+       APLICAR FILTROS
+       ======================================================== */
 
     function aplicarFiltros() {
-        const texto = (buscarNovedad?.value || '').trim().toLowerCase();
-        const tipo = filtroTipo?.value || '';
-        const estado = filtroEstado?.value || '';
-        const mes = filtroMes?.value || '';
 
-        estadoApp.filtrosActivos = !!(texto || tipo || estado || mes);
+        const texto =
+            (buscarNovedad?.value || '')
+                .trim()
+                .toLowerCase();
 
-        estadoApp.novedadesFiltradas = estadoApp.novedades.filter(n => {
-            if (texto) {
-                const empleado = String(obtenerEmpleado(n)).toLowerCase();
-                const tipoNom = String(obtenerTipo(n)).toLowerCase();
-                const doc = String(n.numero_documento || '').toLowerCase();
-                if (!empleado.includes(texto) && !tipoNom.includes(texto) && !doc.includes(texto)) return false;
-            }
-            if (tipo && obtenerTipo(n) !== tipo) return false;
-            if (estado && obtenerEstado(n) !== estado) return false;
-            if (mes && !obtenerFecha(n).startsWith(mes)) return false;
-            return true;
-        });
 
-        estadoApp.novedadesFiltradas.sort((a, b) => {
-            switch (estadoApp.ordenActual) {
-                case 'fecha_asc': return new Date(obtenerFechaRegistro(a)) - new Date(obtenerFechaRegistro(b));
-                case 'empleado_asc': return String(obtenerEmpleado(a)).localeCompare(String(obtenerEmpleado(b)));
-                case 'empleado_desc': return String(obtenerEmpleado(b)).localeCompare(String(obtenerEmpleado(a)));
-                case 'estado_asc': return String(obtenerEstado(a)).localeCompare(String(obtenerEstado(b)));
-                case 'fecha_desc':
-                default: return new Date(obtenerFechaRegistro(b)) - new Date(obtenerFechaRegistro(a));
-            }
-        });
+        const tipo =
+            filtroTipo?.value || '';
 
-        estadoApp.paginaActual = 1;
-        if (indicadorFiltrosActivos) indicadorFiltrosActivos.style.display = estadoApp.filtrosActivos ? 'inline-flex' : 'none';
-        renderizarTabla();
+
+        const estado =
+            filtroEstado?.value || '';
+
+
+        const mes =
+            filtroMes?.value || '';
+
+
+        const filtradas =
+            novedades.filter(novedad => {
+
+                /* ----------------------------------------
+                   BUSCADOR
+                ---------------------------------------- */
+
+                if (texto) {
+
+                    const empleado =
+                        String(
+                            novedad.empleado_nombre ||
+                            novedad.empleado ||
+                            novedad.nombre_empleado ||
+                            ''
+                        ).toLowerCase();
+
+
+                    const documento =
+                        String(
+                            novedad.documento ||
+                            novedad.numero_documento ||
+                            ''
+                        ).toLowerCase();
+
+
+                    const tipoNovedad =
+                        String(
+                            obtenerTipo(novedad) || ''
+                        ).toLowerCase();
+
+
+                    const observacion =
+                        String(
+                            novedad.observacion ||
+                            novedad.observaciones ||
+                            ''
+                        ).toLowerCase();
+
+
+                    const coincide =
+                        empleado.includes(texto) ||
+                        documento.includes(texto) ||
+                        tipoNovedad.includes(texto) ||
+                        observacion.includes(texto);
+
+
+                    if (!coincide) {
+
+                        return false;
+
+                    }
+
+                }
+
+
+                /* ----------------------------------------
+                   TIPO
+                ---------------------------------------- */
+
+                if (
+                    tipo &&
+                    obtenerTipo(novedad) !== tipo
+                ) {
+
+                    return false;
+
+                }
+
+
+                /* ----------------------------------------
+                   ESTADO
+                ---------------------------------------- */
+
+                if (
+                    estado &&
+                    obtenerEstado(novedad) !== estado
+                ) {
+
+                    return false;
+
+                }
+
+
+                /* ----------------------------------------
+                   MES
+                ---------------------------------------- */
+
+                if (mes) {
+
+                    const fecha =
+                        obtenerFecha(novedad);
+
+
+                    if (!fecha.startsWith(mes)) {
+
+                        return false;
+
+                    }
+
+                }
+
+
+                return true;
+
+            });
+
+
+        renderizarTabla(filtradas);
+
     }
 
-    function limpiarFiltros() {
-        if (buscarNovedad) buscarNovedad.value = '';
-        if (filtroTipo) filtroTipo.value = '';
-        if (filtroEstado) filtroEstado.value = '';
-        establecerMesActual();
-        aplicarFiltros();
-    }
 
-    function establecerMesActual() {
-        if (!filtroMes) return;
-        const ahora = new Date();
-        const año = ahora.getFullYear();
-        const mes = String(ahora.getMonth() + 1).padStart(2, '0');
-        filtroMes.value = `${año}-${mes}`;
-    }
 
     /* ========================================================
-       RENDERIZAR TABLA Y PAGINACIÓN
+       RENDERIZAR TABLA
        ======================================================== */
 
-    function renderizarTabla() {
-        if (!tablaNovedades) return;
-        ocultarCargando();
+    function renderizarTabla(lista) {
 
-        const total = estadoApp.novedadesFiltradas.length;
-        const inicio = (estadoApp.paginaActual - 1) * estadoApp.tamanoPagina;
-        const fin = inicio + estadoApp.tamanoPagina;
-        const novedadesPagina = estadoApp.novedadesFiltradas.slice(inicio, fin);
-
-        if (contadorResultados) contadorResultados.textContent = `${total} novedad${total === 1 ? '' : 'es'}`;
-
-        if (total === 0) {
-            tablaNovedades.innerHTML = '';
-            if (estadoVacio) estadoVacio.style.display = 'flex';
-            renderizarPaginacion();
+        if (!tablaNovedades) {
             return;
         }
 
-        if (estadoVacio) estadoVacio.style.display = 'none';
+
         tablaNovedades.innerHTML = '';
-        
-        novedadesPagina.forEach(novedad => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>
-                    <div class="novedad-empleado">
-                        <strong>${escaparHTML(obtenerEmpleado(novedad))}</strong>
-                        <small>${escaparHTML(novedad.numero_documento || '')}</small>
-                    </div>
-                </td>
-                <td><span class="novedad-tipo">${escaparHTML(formatearTexto(obtenerTipo(novedad)))}</span></td>
-                <td>${formatearFecha(obtenerFecha(novedad))}</td>
-                <td>${escaparHTML(obtenerCantidad(novedad))}</td>
-                <td>${crearBadgeEstado(obtenerEstado(novedad))}</td>
-                <td>${formatearFechaHora(obtenerFechaRegistro(novedad))}</td>
-                <td>${crearAcciones(novedad)}</td>
-            `;
-            tablaNovedades.appendChild(tr);
-        });
 
-        agregarEventosAcciones();
-        renderizarPaginacion();
-    }
 
-    function renderizarPaginacion() {
-        const totalPaginas = Math.max(1, Math.ceil(estadoApp.novedadesFiltradas.length / estadoApp.tamanoPagina));
-        if (infoPaginacion) infoPaginacion.textContent = `Página ${estadoApp.paginaActual} de ${totalPaginas}`;
-        if (btnPaginaAnterior) btnPaginaAnterior.disabled = estadoApp.paginaActual <= 1;
-        if (btnPaginaSiguiente) btnPaginaSiguiente.disabled = estadoApp.paginaActual >= totalPaginas;
-    }
+        /*
+         * Ocultar estado vacío inicialmente.
+         */
 
-    /* ========================================================
-       ACCIONES EN LA TABLA (Aprobar / Rechazar / Ver / Eliminar)
-       ======================================================== */
+        if (estadoVacio) {
 
-    function crearAcciones(n) {
-        const estado = obtenerEstado(n);
-        let html = `
-            <div class="novedad-acciones">
-                <button type="button" class="novedad-accion-btn detalle btn-ver-novedad" data-id="${n.id}" title="Ver detalle">
-                    <i class="fas fa-eye"></i>
-                </button>
-                <button type="button" class="novedad-accion-btn rechazar btn-eliminar-novedad" data-id="${n.id}" title="Eliminar registro">
-                    <i class="fas fa-trash"></i>
-                </button>
-        `;
+            estadoVacio.style.display =
+                'none';
 
-        if (estado === 'PENDIENTE') {
-            html += `
-                <button type="button" class="novedad-accion-btn aprobar btn-aprobar-novedad" data-id="${n.id}" title="Aprobar">
-                    <i class="fas fa-check"></i>
-                </button>
-                <button type="button" class="novedad-accion-btn rechazar btn-rechazar-novedad" data-id="${n.id}" title="Rechazar">
-                    <i class="fas fa-xmark"></i>
-                </button>
-            `;
-        }
-        return html + `</div>`;
-    }
-
-    function agregarEventosAcciones() {
-        document.querySelectorAll('.btn-ver-novedad').forEach(btn => {
-            btn.addEventListener('click', () => verNovedad(btn.dataset.id));
-        });
-        
-        document.querySelectorAll('.btn-eliminar-novedad').forEach(btn => {
-            btn.addEventListener('click', () => {
-                mostrarConfirmacion('¿Estás seguro de ELIMINAR permanentemente esta novedad? Esta acción no se puede deshacer.', async () => {
-                    try {
-                        const res = await fetch(`/api/nomina/novedades/${btn.dataset.id}`, { method: 'DELETE' });
-                        const data = await res.json();
-                        if (!res.ok || !data.success) throw new Error(data.message || 'Error al eliminar');
-                        mostrarToast('Novedad eliminada correctamente', 'success');
-                        await cargarNovedades();
-                    } catch (error) { mostrarToast(error.message, 'error'); }
-                });
-            });
-        });
-
-        document.querySelectorAll('.btn-aprobar-novedad').forEach(btn => {
-            btn.addEventListener('click', () => {
-                mostrarConfirmacion('¿Estás seguro de aprobar esta novedad?', async () => {
-                    try {
-                        const res = await fetch(`/api/nomina/novedades/${btn.dataset.id}/aprobar`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' } });
-                        const data = await res.json();
-                        if (!res.ok || !data.success) throw new Error(data.message || 'Error al aprobar');
-                        mostrarToast('Novedad aprobada correctamente', 'success');
-                        await cargarNovedades();
-                    } catch (error) { mostrarToast(error.message, 'error'); }
-                });
-            });
-        });
-
-        document.querySelectorAll('.btn-rechazar-novedad').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const motivo = prompt('Indica el motivo del rechazo:');
-                if (motivo && motivo.trim()) {
-                    fetch(`/api/nomina/novedades/${btn.dataset.id}/rechazar`, {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ observacion: motivo.trim() })
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (!data.success) throw new Error(data.message || 'Error al rechazar');
-                        mostrarToast('Novedad rechazada', 'success');
-                        cargarNovedades();
-                    })
-                    .catch(error => mostrarToast(error.message, 'error'));
-                }
-            });
-        });
-    }
-
-    async function verNovedad(id) {
-        const modalElement = document.getElementById('modalDetalleNovedad');
-        if (!modalElement) return;
-
-        const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-        
-        document.getElementById('detalleTipoNovedad').textContent = "Cargando...";
-        document.getElementById('detalleContenido').innerHTML = `
-            <div class="col-12 text-center py-4">
-                <i class="fas fa-spinner fa-spin fa-2x text-success"></i>
-                <p class="mt-2 text-muted">Obteniendo información...</p>
-            </div>
-        `;
-        document.getElementById('detalleBtnSoporte').style.display = 'none';
-        modal.show();
-
-        try {
-            const res = await fetch(`/api/nomina/novedades/${id}`);
-            const data = await res.json();
-
-            if (!res.ok || !data.success) throw new Error(data.message || 'Error al cargar el detalle');
-
-            const n = data.novedad;
-            const soportes = data.soportes || [];
-            const historial = data.historial || [];
-
-            document.getElementById('detalleTipoNovedad').textContent = n.tipo_novedad || 'Detalle';
-
-            let html = `
-                <div class="col-md-6">
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
-                        <small style="color: #64748b; font-weight: 700; text-transform: uppercase;">Empleado</small>
-                        <div style="font-weight: 700; color: #0f172a; font-size: 15px;">${escaparHTML(n.empleado_nombre)}</div>
-                        <div style="color: #94a3b8; font-size: 13px;">Doc: ${escaparHTML(n.numero_documento || 'N/A')}</div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
-                        <small style="color: #64748b; font-weight: 700; text-transform: uppercase;">Estado</small>
-                        <div style="margin-top: 4px;">${crearBadgeEstado(n.estado)}</div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
-                        <small style="color: #64748b; font-weight: 700; text-transform: uppercase;">Fecha Inicio / Fin</small>
-                        <div style="font-weight: 600; color: #334155; font-size: 14px;">
-                            ${formatearFecha(n.fecha_inicio)} ${n.fecha_fin ? ' → ' + formatearFecha(n.fecha_fin) : ''}
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
-                        <small style="color: #64748b; font-weight: 700; text-transform: uppercase;">Cantidad</small>
-                        <div style="font-weight: 600; color: #334155; font-size: 14px;">
-                            ${n.cantidad_dias ? n.cantidad_dias + ' días' : (n.cantidad_horas ? n.cantidad_horas + ' horas' : 'N/A')}
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
-                        <small style="color: #64748b; font-weight: 700; text-transform: uppercase;">Motivo / Observación</small>
-                        <div style="color: #334155; font-size: 14px; margin-top: 4px;">
-                            ${escaparHTML(n.motivo || 'Sin motivo registrado')}<br>
-                            <span style="color: #64748b; font-style: italic;">${escaparHTML(n.observacion || '')}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            if (n.estado === 'RECHAZADA' && n.observacion_rechazo) {
-                html += `
-                    <div class="col-12 mt-3">
-                        <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 14px;">
-                            <small style="color: #b91c1c; font-weight: 700; text-transform: uppercase;">Motivo del Rechazo</small>
-                            <div style="color: #b91c1c; font-size: 14px; margin-top: 4px;">${escaparHTML(n.observacion_rechazo)}</div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            if (historial.length > 0) {
-                html += `
-                    <div class="col-12 mt-4">
-                        <small style="color: #64748b; font-weight: 700; text-transform: uppercase;">Historial de Cambios</small>
-                        <ul style="list-style: none; padding-left: 0; margin-top: 10px; border-left: 2px solid #e2e8f0; margin-left: 10px;">
-                `;
-                historial.forEach(h => {
-                    html += `
-                        <li style="margin-bottom: 12px; padding-left: 15px; position: relative;">
-                            <div style="position: absolute; left: -6px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: #16a34a; border: 2px solid #fff;"></div>
-                            <div style="font-weight: 700; font-size: 13px; color: #0f172a;">${h.estado_nuevo}</div>
-                            <div style="font-size: 12px; color: #64748b;">${formatearFechaHora(h.fecha_cambio)}</div>
-                            ${h.comentario ? `<div style="font-size: 12px; color: #94a3b8; font-style: italic;">"${h.comentario}"</div>` : ''}
-                        </li>
-                    `;
-                });
-                html += `</ul></div>`;
-            }
-
-            document.getElementById('detalleContenido').innerHTML = html;
-
-            if (soportes.length > 0) {
-                const btnSoporte = document.getElementById('detalleBtnSoporte');
-                btnSoporte.href = soportes[0].ruta_archivo;
-                btnSoporte.style.display = 'inline-flex';
-            }
-
-        } catch (error) {
-            console.error('Error al cargar el detalle:', error);
-            document.getElementById('detalleContenido').innerHTML = `
-                <div class="col-12">
-                    <div class="alert alert-danger">${escaparHTML(error.message)}</div>
-                </div>
-            `;
-        }
-    }
-
-    /* ========================================================
-       MODAL DE REGISTRO Y FORMULARIOS DINÁMICOS
-       ======================================================== */
-
-    async function abrirRegistroNovedad() {
-        limpiarFormularioNovedad();
-        await cargarTiposRegistro();
-        
-        const modalElement = document.getElementById('modalRegistrarNovedad');
-        if (modalElement) {
-            const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-            modal.show();
-        }
-    }
-
-    async function cargarTiposRegistro() {
-        try {
-            const res = await fetch('/api/nomina/novedades/tipos');
-            const data = await res.json();
-            if (!res.ok || !data.success) throw new Error('Error al cargar tipos');
-
-            registroTipoNovedad.innerHTML = `<option value="">Selecciona un tipo de novedad</option>`;
-            data.tipos.forEach(t => {
-                const opt = document.createElement('option');
-                opt.value = t.id;
-                opt.textContent = `${t.nombre} — ${t.categoria}`;
-                opt.dataset.nombre = t.nombre;
-                opt.dataset.codigo = t.codigo;
-                opt.dataset.categoria = t.categoria;
-                opt.dataset.descripcion = t.descripcion || '';
-                opt.dataset.permiteEmpleado = t.permite_empleado;
-                opt.dataset.requiereSoporte = t.requiere_soporte;
-                opt.dataset.requiereAprobacion = t.requiere_aprobacion;
-                registroTipoNovedad.appendChild(opt);
-            });
-        } catch (error) { mostrarToast(error.message, 'error'); }
-    }
-
-    async function seleccionarTipoNovedad() {
-        const opt = registroTipoNovedad.selectedOptions[0];
-        
-        if (!opt || !opt.value) {
-            informacionTipoNovedad.style.display = 'none';
-            formularioNovedadDinamico.style.display = 'none';
-            seccionSoporteNovedad.style.display = 'none';
-            avisoAprobacionNovedad.style.display = 'none';
-            btnGuardarNovedad.disabled = true;
-            return;
         }
 
-        const codigo = (opt.dataset.codigo || '').toUpperCase();
-        const categoria = (opt.dataset.categoria || '').toUpperCase();
-        const nombre = opt.dataset.nombre || '';
-        const permiteEmpleado = Number(opt.dataset.permiteEmpleado);
-
-        registroTipoNombre.textContent = nombre;
-        registroTipoDescripcion.textContent = opt.dataset.descripcion || 'Sin descripción.';
-        informacionTipoNovedad.style.display = 'block';
-        formularioNovedadDinamico.style.display = 'block';
-        seccionSoporteNovedad.style.display = Number(opt.dataset.requiereSoporte) ? 'block' : 'none';
-        avisoAprobacionNovedad.style.display = Number(opt.dataset.requiereAprobacion) ? 'flex' : 'none';
-
-        camposNovedad.innerHTML = '';
-        btnGuardarNovedad.disabled = true;
-
-        // Validación de permisos (ajustada para reconocer la Licencia por su nombre)
-        if (!permiteEmpleado && !['LICENCIA', 'PRESTAMOS', 'INGRESOS', 'DESCUENTOS'].includes(categoria) && !nombre.toLowerCase().includes('licencia')) {
-            camposNovedad.innerHTML = `<div class="alert alert-warning"><i class="fas fa-lock"></i> Este tipo de novedad no puede ser registrado directamente por un empleado.</div>`;
-            return;
-        }
-
-        if (categoria === 'ASISTENCIA' || codigo === 'AUSENCIA' || nombre.toLowerCase().includes('ausencia')) {
-            camposNovedad.innerHTML = `
-                <div class="row g-3">
-                    <div class="col-12">
-                        <label class="form-label">Empleado <span class="text-danger">*</span></label>
-                        <input type="text" id="empleadoAusencia" class="form-control" placeholder="Escribe el nombre..." autocomplete="off">
-                        <div id="listaEmpleadosAusencia" class="list-group mt-1" style="display: none; position: absolute; z-index: 1000; width: 95%;"></div>
-                        <input type="hidden" id="empleadoAusenciaId">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Tipo de ausencia <span class="text-danger">*</span></label>
-                        <select id="tipoAusencia" class="form-select"><option value="">Selecciona...</option><option value="JUSTIFICADA">Justificada</option><option value="INJUSTIFICADA">Injustificada</option></select>
-                    </div>
-                    <div class="col-md-3"><label class="form-label">Fecha inicio <span class="text-danger">*</span></label><input type="date" id="fechaInicioAusencia" class="form-control"></div>
-                    <div class="col-md-3"><label class="form-label">Fecha fin <span class="text-danger">*</span></label><input type="date" id="fechaFinAusencia" class="form-control"></div>
-                    <div class="col-md-4"><label class="form-label">Días</label><input type="number" id="cantidadDiasAusencia" class="form-control" readonly></div>
-                    <div class="col-md-8"><label class="form-label">Motivo <span class="text-danger">*</span></label><textarea id="motivoAusencia" class="form-control" rows="2"></textarea></div>
-                </div>
-            `;
-            configurarFormularioAusencia();
-            btnGuardarNovedad.disabled = false;
-            return;
-        }
-
-        if (codigo === 'SALUD' || nombre.toLowerCase().includes('incapacidad')) {
-            camposNovedad.innerHTML = `
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Tipo de incapacidad <span class="text-danger">*</span></label>
-                        <select id="tipoIncapacidad" class="form-select"><option value="">Selecciona...</option><option value="ENFERMEDAD_GENERAL">Enfermedad general</option><option value="ACCIDENTE_TRABAJO">Accidente de trabajo</option></select>
-                    </div>
-                    <div class="col-md-3"><label class="form-label">Fecha inicio <span class="text-danger">*</span></label><input type="date" id="fechaInicioIncapacidad" class="form-control"></div>
-                    <div class="col-md-3"><label class="form-label">Fecha fin <span class="text-danger">*</span></label><input type="date" id="fechaFinIncapacidad" class="form-control"></div>
-                    <div class="col-md-4"><label class="form-label">Días</label><input type="number" id="cantidadDiasIncapacidad" class="form-control" readonly></div>
-                    <div class="col-md-8"><label class="form-label">Observación</label><textarea id="observacionIncapacidad" class="form-control" rows="2"></textarea></div>
-                </div>
-            `;
-            configurarFormularioIncapacidad();
-            btnGuardarNovedad.disabled = false;
-            return;
-        }
-
-        if (codigo === 'HORAS_EXTRA' || nombre.toLowerCase().includes('hora')) {
-            camposNovedad.innerHTML = `
-                <div class="row g-3">
-                    <div class="col-md-6"><label class="form-label">Tipo de hora <span class="text-danger">*</span></label><select id="tipoHoraExtra" class="form-select"><option value="">Cargando...</option></select></div>
-                    <div class="col-md-6"><label class="form-label">Fecha de trabajo <span class="text-danger">*</span></label><input type="date" id="fechaTrabajoHoraExtra" class="form-control"></div>
-                    <div class="col-md-4"><label class="form-label">Hora inicio <span class="text-danger">*</span></label><input type="time" id="horaInicioHoraExtra" class="form-control"></div>
-                    <div class="col-md-4"><label class="form-label">Hora fin <span class="text-danger">*</span></label><input type="time" id="horaFinHoraExtra" class="form-control"></div>
-                    <div class="col-md-4"><label class="form-label">Cantidad horas</label><input type="number" id="cantidadHorasExtra" class="form-control" readonly></div>
-                    <div class="col-12"><label class="form-label">Observación</label><textarea id="observacionHoraExtra" class="form-control" rows="2"></textarea></div>
-                </div>
-            `;
-            await configurarFormularioHorasExtra();
-            btnGuardarNovedad.disabled = false;
-            return;
-        }
-
-        if (codigo === 'PERMISO' || nombre.toLowerCase().includes('permiso')) {
-            camposNovedad.innerHTML = `
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Tipo de permiso <span class="text-danger">*</span></label>
-                        <select id="tipoPermiso" class="form-select"><option value="">Selecciona...</option><option value="REMUNERADO">Remunerado</option><option value="NO_REMUNERADO">No remunerado</option><option value="COMPENSATORIO">Compensatorio</option></select>
-                    </div>
-                    <div class="col-md-6"><label class="form-label">Fecha <span class="text-danger">*</span></label><input type="date" id="fechaPermiso" class="form-control"></div>
-                    <div class="col-md-4"><label class="form-label">Hora inicio <span class="text-danger">*</span></label><input type="time" id="horaInicioPermiso" class="form-control"></div>
-                    <div class="col-md-4"><label class="form-label">Hora fin <span class="text-danger">*</span></label><input type="time" id="horaFinPermiso" class="form-control"></div>
-                    <div class="col-md-4"><label class="form-label">Cantidad horas</label><input type="number" id="cantidadHorasPermiso" class="form-control" readonly></div>
-                    <div class="col-md-6"><label class="form-label">Motivo <span class="text-danger">*</span></label><textarea id="motivoPermiso" class="form-control" rows="2"></textarea></div>
-                    <div class="col-md-6"><label class="form-label">Observación</label><textarea id="observacionPermiso" class="form-control" rows="2"></textarea></div>
-                </div>
-            `;
-            configurarFormularioPermiso();
-            btnGuardarNovedad.disabled = false;
-            return;
-        }
-
-        if (codigo === 'LICENCIA' || nombre.toLowerCase().includes('licencia')) {
-            camposNovedad.innerHTML = `
-                <div class="row g-3">
-                    <div class="col-12">
-                        <label class="form-label">Empleado <span class="text-danger">*</span></label>
-                        <input type="text" id="buscarEmpleadoLicencia" class="form-control" placeholder="Buscar..." autocomplete="off">
-                        <div id="resultadosEmpleadoLicencia" class="list-group" style="position: absolute; z-index: 1000; width: 95%; display:none;"></div>
-                        <input type="hidden" id="empleadoLicencia">
-                    </div>
-                    
-                    <div class="col-md-12">
-                        <label class="form-label">Tipo de licencia / permiso <span class="text-danger">*</span></label>
-                        <select id="tipoLicencia" class="form-select">
-                            <option value="">Selecciona...</option>
-                            <optgroup label="Licencias de Ley (Remuneradas)">
-                                <option value="MATERNIDAD">Licencia de Maternidad (18 semanas)</option>
-                                <option value="PATERNIDAD">Licencia de Paternidad (2 semanas)</option>
-                                <option value="LUTO">Licencia por Luto (5 días hábiles)</option>
-                                <option value="MATRIMONIO">Licencia por Matrimonio (3 días hábiles)</option>
-                                <option value="VOTO">Ejercicio del Voto (Media jornada / Certificado)</option>
-                                <option value="JURADO">Jurado de Votación (1 día completo)</option>
-                                <option value="CALAMIDAD">Calamidad Doméstica Grave (Tiempo razonable)</option>
-                            </optgroup>
-                            <optgroup label="Permisos Sindicales o Personales">
-                                <option value="CITA_MEDICA">Cita Médica (EPS/Clínica)</option>
-                                <option value="OBLIGACION_ESCOLAR">Obligación Escolar (Hijos/Representados)</option>
-                                <option value="CITA_JUDICIAL">Cita Judicial o Administrativa</option>
-                                <option value="BICICLETA">Uso de la Bicicleta (1 día por cada 6 meses)</option>
-                                <option value="SINDICATO">Comisiones Sindicales</option>
-                                <option value="ENTIERRO">Entierro de Compañero de Trabajo</option>
-                            </optgroup>
-                        </select>
-                    </div>
-
-                    <div class="col-md-6"><label class="form-label">Fecha inicio <span class="text-danger">*</span></label><input type="date" id="fechaInicioLicencia" class="form-control"></div>
-                    <div class="col-md-3"><label class="form-label">Fecha fin <span class="text-danger">*</span></label><input type="date" id="fechaFinLicencia" class="form-control"></div>
-                    <div class="col-md-3"><label class="form-label">Total Días</label><input type="number" id="cantidadDiasLicencia" class="form-control" readonly></div>
-                </div>
-            `;
-            configurarFormularioLicencia();
-            btnGuardarNovedad.disabled = false;
-            return;
-        }
-
-        if (categoria === 'DESCUENTOS' || nombre.toLowerCase().includes('descuento')) {
-            camposNovedad.innerHTML = `
-                <div class="row g-3">
-                    <div class="col-md-6"><label class="form-label">Concepto <span class="text-danger">*</span></label><input type="text" id="conceptoDescuento" class="form-control" placeholder="Ej. Libranza, Embargo..."></div>
-                    <div class="col-md-6"><label class="form-label">Valor a descontar <span class="text-danger">*</span></label><input type="number" id="valorDescuento" class="form-control" placeholder="0.00"></div>
-                    <div class="col-12"><label class="form-label">Observación</label><textarea id="observacionDescuento" class="form-control" rows="2"></textarea></div>
-                </div>
-            `;
-            seccionSoporteNovedad.style.display = 'block';
-            btnGuardarNovedad.disabled = false;
-            return;
-        }
-
-        if (categoria === 'INGRESOS' || nombre.toLowerCase().includes('ingreso')) {
-            camposNovedad.innerHTML = `
-                <div class="row g-3">
-                    <div class="col-md-6"><label class="form-label">Concepto <span class="text-danger">*</span></label><input type="text" id="conceptoIngreso" class="form-control" placeholder="Ej. Bonificación, Comisión..."></div>
-                    <div class="col-md-6"><label class="form-label">Valor del ingreso <span class="text-danger">*</span></label><input type="number" id="valorIngreso" class="form-control" placeholder="0.00"></div>
-                    <div class="col-12"><label class="form-label">Observación</label><textarea id="observacionIngreso" class="form-control" rows="2"></textarea></div>
-                </div>
-            `;
-            btnGuardarNovedad.disabled = false;
-            return;
-        }
-
-        if (categoria === 'PRESTAMOS' || nombre.toLowerCase().includes('préstamo') || nombre.toLowerCase().includes('anticipo')) {
-            camposNovedad.innerHTML = `
-                <div class="row g-3">
-                    <div class="col-md-6"><label class="form-label">Monto solicitado <span class="text-danger">*</span></label><input type="number" id="montoPrestamo" class="form-control" placeholder="0.00"></div>
-                    <div class="col-md-6"><label class="form-label">Número de cuotas <span class="text-danger">*</span></label><input type="number" id="cuotasPrestamo" class="form-control" value="1" min="1"></div>
-                    <div class="col-12"><label class="form-label">Observación</label><textarea id="observacionPrestamo" class="form-control" rows="2"></textarea></div>
-                </div>
-            `;
-            btnGuardarNovedad.disabled = false;
-            return;
-        }
-
-        camposNovedad.innerHTML = `<div class="alert alert-info">Formulario pendiente por implementar.</div>`;
-    }
-
-
-    /* ========================================================
-       CONFIGURADORES DE FORMULARIOS
-       ======================================================== */
-
-    function configurarFormularioAusencia() {
-        const inputEmpleado = document.getElementById('empleadoAusencia');
-        const listaEmpleados = document.getElementById('listaEmpleadosAusencia');
-        const empleadoId = document.getElementById('empleadoAusenciaId');
-        let empleadosData = [];
-
-        fetch('/api/empleados', { credentials: 'include' })
-            .then(res => res.json())
-            .then(data => empleadosData = data.empleados || data.data || data)
-            .catch(console.error);
-
-        inputEmpleado.addEventListener('input', function () {
-            const texto = this.value.trim().toLowerCase();
-            empleadoId.value = '';
-            if (!texto) { listaEmpleados.style.display = 'none'; return; }
-
-            const resultados = empleadosData.filter(emp => {
-                const nom = emp.nombre_completo || emp.nombre || `${emp.nombres || ''} ${emp.apellidos || ''}`.trim();
-                const doc = emp.numero_documento || emp.documento || '';
-                return nom.toLowerCase().includes(texto) || doc.includes(texto);
-            });
-
-            listaEmpleados.innerHTML = '';
-            resultados.slice(0, 5).forEach(emp => {
-                const nom = emp.nombre_completo || emp.nombre || `${emp.nombres || ''} ${emp.apellidos || ''}`.trim();
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'list-group-item list-group-item-action';
-                btn.textContent = nom;
-                btn.onclick = () => {
-                    inputEmpleado.value = nom;
-                    empleadoId.value = emp.id;
-                    listaEmpleados.style.display = 'none';
-                };
-                listaEmpleados.appendChild(btn);
-            });
-            listaEmpleados.style.display = 'block';
-        });
-
-        const fInicio = document.getElementById('fechaInicioAusencia');
-        const fFin = document.getElementById('fechaFinAusencia');
-        const diasInput = document.getElementById('cantidadDiasAusencia');
-
-        const calcular = () => {
-            if (fInicio.value && fFin.value) {
-                const d1 = new Date(fInicio.value + 'T00:00:00');
-                const d2 = new Date(fFin.value + 'T00:00:00');
-                if (d2 >= d1) diasInput.value = Math.floor((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
-                else diasInput.value = '';
-            }
-        };
-        fInicio.addEventListener('change', calcular);
-        fFin.addEventListener('change', calcular);
-
-        document.getElementById('tipoAusencia').addEventListener('change', (e) => {
-            seccionSoporteNovedad.style.display = (e.target.value === 'JUSTIFICADA') ? 'block' : 'none';
-        });
-    }
-
-    function configurarFormularioIncapacidad() {
-        const fInicio = document.getElementById('fechaInicioIncapacidad');
-        const fFin = document.getElementById('fechaFinIncapacidad');
-        const diasInput = document.getElementById('cantidadDiasIncapacidad');
-
-        const calcular = () => {
-            if (fInicio.value && fFin.value) {
-                const d1 = new Date(fInicio.value + 'T00:00:00');
-                const d2 = new Date(fFin.value + 'T00:00:00');
-                if (d2 >= d1) diasInput.value = Math.floor((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
-                else diasInput.value = '';
-            }
-        };
-        fInicio.addEventListener('change', calcular);
-        fFin.addEventListener('change', calcular);
-    }
-
-    function configurarFormularioLicencia() {
-        const inputEmp = document.getElementById('buscarEmpleadoLicencia');
-        const listaEmp = document.getElementById('resultadosEmpleadoLicencia');
-        const idEmp = document.getElementById('empleadoLicencia');
-        const selTipo = document.getElementById('tipoLicencia');
-        const fIni = document.getElementById('fechaInicioLicencia');
-        const fFin = document.getElementById('fechaFinLicencia');
-        const cantDias = document.getElementById('cantidadDiasLicencia');
-        let empleadosData = [];
-
-        fetch('/api/empleados', { credentials: 'include' })
-            .then(res => res.json())
-            .then(data => empleadosData = data.empleados || data.data || data);
-
-        inputEmp.addEventListener('input', function() {
-            const text = this.value.toLowerCase();
-            idEmp.value = '';
-            if(!text) { listaEmp.style.display = 'none'; return; }
-            
-            const res = empleadosData.filter(e => {
-                const nom = e.nombre_completo || e.nombre || `${e.nombres || ''} ${e.apellidos || ''}`.trim();
-                const doc = e.numero_documento || e.documento || '';
-                return nom.toLowerCase().includes(text) || doc.includes(text);
-            });
-            
-            listaEmp.innerHTML = '';
-            res.slice(0,5).forEach(e => {
-                const nom = e.nombre_completo || e.nombre || `${e.nombres || ''} ${e.apellidos || ''}`.trim();
-                const btn = document.createElement('button');
-                btn.type = 'button'; btn.className = 'list-group-item list-group-item-action';
-                btn.textContent = nom;
-                btn.onclick = () => { inputEmp.value = nom; idEmp.value = e.id; listaEmp.style.display = 'none'; };
-                listaEmp.appendChild(btn);
-            });
-            listaEmp.style.display = 'block';
-        });
-
-        selTipo.addEventListener('change', () => {
-            const tipo = selTipo.value;
-            let diasDefault = 0;
-
-            if (tipo === 'MATERNIDAD') diasDefault = 126;
-            else if (tipo === 'PATERNIDAD') diasDefault = 14;
-            else if (tipo === 'LUTO') diasDefault = 5;
-            else if (tipo === 'MATRIMONIO') diasDefault = 3;
-            else if (tipo === 'JURADO') diasDefault = 1;
-            else if (tipo === 'BICICLETA') diasDefault = 1;
-            
-            if (diasDefault > 0 && fIni.value) {
-                cantDias.value = diasDefault;
-                const ini = new Date(fIni.value + 'T00:00:00');
-                const fin = new Date(ini); 
-                fin.setDate(fin.getDate() + diasDefault - 1); 
-                fFin.value = fin.toISOString().split('T')[0];
-            }
-        });
-
-        const calcularFechas = () => {
-            if (fIni.value && fFin.value) {
-                const ini = new Date(fIni.value + 'T00:00:00');
-                const fin = new Date(fFin.value + 'T00:00:00');
-                if (fin >= ini) cantDias.value = Math.floor((fin - ini) / (1000 * 60 * 60 * 24)) + 1;
-            }
-        };
-        fIni.addEventListener('change', calcularFechas);
-        fFin.addEventListener('change', calcularFechas);
-    }
-
-    function configurarFormularioPermiso() {
-        const hIni = document.getElementById('horaInicioPermiso');
-        const hFin = document.getElementById('horaFinPermiso');
-        const cant = document.getElementById('cantidadHorasPermiso');
-
-        const calc = () => {
-            if (hIni.value && hFin.value) {
-                const [h1, m1] = hIni.value.split(':').map(Number);
-                const [h2, m2] = hFin.value.split(':').map(Number);
-                const diff = (h2 * 60 + m2) - (h1 * 60 + m1);
-                if (diff > 0) cant.value = (diff / 60).toFixed(2);
-                else cant.value = '';
-            }
-        };
-        hIni.addEventListener('change', calc);
-        hFin.addEventListener('change', calc);
-    }
-
-    async function configurarFormularioHorasExtra() {
-        const sel = document.getElementById('tipoHoraExtra');
-        
-        try {
-            const [resHE, resRec] = await Promise.all([
-                fetch('/api/nomina/configuracion/horas-extra', { credentials: 'include' }),
-                fetch('/api/nomina/configuracion/recargos', { credentials: 'include' })
-            ]);
-            const dataHE = await resHE.json();
-            const dataRec = await resRec.json();
-            
-            const he = dataHE.data || dataHE;
-            const rec = dataRec.data || dataRec;
-
-            sel.innerHTML = `<option value="">Selecciona...</option>`;
-            
-            if (he.length > 0) {
-                const group = document.createElement('optgroup'); group.label = 'Horas Extra';
-                he.forEach(t => { const o = document.createElement('option'); o.value = t.codigo; o.textContent = t.nombre; group.appendChild(o); });
-                sel.appendChild(group);
-            }
-            if (rec.length > 0) {
-                const group = document.createElement('optgroup'); group.label = 'Recargos';
-                rec.forEach(t => { const o = document.createElement('option'); o.value = t.codigo; o.textContent = t.nombre; group.appendChild(o); });
-                sel.appendChild(group);
-            }
-        } catch (error) {
-            sel.innerHTML = `<option value="">Error al cargar</option>`;
-        }
-
-        const hIni = document.getElementById('horaInicioHoraExtra');
-        const hFin = document.getElementById('horaFinHoraExtra');
-        const cant = document.getElementById('cantidadHorasExtra');
-
-        const calc = () => {
-            if (hIni.value && hFin.value) {
-                const [h1, m1] = hIni.value.split(':').map(Number);
-                const [h2, m2] = hFin.value.split(':').map(Number);
-                const diff = (h2 * 60 + m2) - (h1 * 60 + m1);
-                if (diff > 0) cant.value = (diff / 60).toFixed(2);
-                else cant.value = '';
-            }
-        };
-        hIni.addEventListener('change', calc);
-        hFin.addEventListener('change', calc);
-    }
-
-
-    /* ========================================================
-       GUARDAR NOVEDAD (ENVÍO AL BACKEND)
-       ======================================================== */
-
-    async function guardarNovedad() {
-        const opt = registroTipoNovedad.selectedOptions[0];
-        if (!opt || !opt.value) return mostrarToast('Selecciona un tipo de novedad', 'error');
-
-        const codigo = (opt.dataset.codigo || '').toUpperCase();
-        const categoria = (opt.dataset.categoria || '').toUpperCase();
-        const nombre = opt.dataset.nombre || '';
-        const tipoNovedadId = opt.value;
-        const archivo = soporteNovedad?.files?.[0];
-
-        try {
-            btnGuardarNovedad.disabled = true;
-            btnGuardarNovedad.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando...`;
-
-            let endpoint = '';
-            let payload = null;
-            let formData = null;
-
-            if (codigo === 'SALUD' || nombre.toLowerCase().includes('incapacidad')) {
-                if (!archivo) throw new Error('Debes adjuntar el soporte médico.');
-                endpoint = 'incapacidad';
-                formData = new FormData();
-                formData.append('tipo_novedad_id', tipoNovedadId);
-                formData.append('tipo_incapacidad', document.getElementById('tipoIncapacidad').value);
-                formData.append('fecha_inicio', document.getElementById('fechaInicioIncapacidad').value);
-                formData.append('fecha_fin', document.getElementById('fechaFinIncapacidad').value);
-                formData.append('observacion', document.getElementById('observacionIncapacidad').value);
-                formData.append('soporte', archivo);
-            }
-            else if (categoria === 'ASISTENCIA') {
-                const empId = document.getElementById('empleadoAusenciaId').value;
-                if (!empId) throw new Error('Debes buscar y seleccionar un empleado de la lista.');
-                endpoint = 'ausencia';
-                formData = new FormData();
-                formData.append('tipo_novedad_id', tipoNovedadId);
-                formData.append('empleado_id', empId);
-                formData.append('tipo_ausencia', document.getElementById('tipoAusencia').value);
-                formData.append('fecha_inicio', document.getElementById('fechaInicioAusencia').value);
-                formData.append('fecha_fin', document.getElementById('fechaFinAusencia').value);
-                formData.append('cantidad_dias', document.getElementById('cantidadDiasAusencia').value);
-                formData.append('motivo', document.getElementById('motivoAusencia').value);
-                if (archivo) formData.append('soporte', archivo);
-            }
-            else if (codigo === 'PERMISO' || nombre.toLowerCase().includes('permiso')) {
-                endpoint = 'permiso';
-                payload = {
-                    tipo_novedad_id: tipoNovedadId,
-                    tipo_permiso: document.getElementById('tipoPermiso').value,
-                    fecha_permiso: document.getElementById('fechaPermiso').value,
-                    hora_inicio: document.getElementById('horaInicioPermiso').value,
-                    hora_fin: document.getElementById('horaFinPermiso').value,
-                    cantidad_horas: Number(document.getElementById('cantidadHorasPermiso').value),
-                    motivo: document.getElementById('motivoPermiso').value,
-                    observacion: document.getElementById('observacionPermiso').value
-                };
-            }
-            else if (codigo === 'LICENCIA' || nombre.toLowerCase().includes('licencia')) {
-                const empId = document.getElementById('empleadoLicencia').value;
-                if (!empId) throw new Error('Debes buscar y seleccionar un empleado de la lista.');
-                
-                const tipoLic = document.getElementById('tipoLicencia').value;
-                if (!tipoLic) throw new Error('Selecciona el tipo de licencia.');
-
-                endpoint = 'licencia';
-                payload = {
-                    tipo_novedad_id: tipoNovedadId,
-                    empleado_id: Number(empId),
-                    tipo_licencia: tipoLic,
-                    fecha_inicio: document.getElementById('fechaInicioLicencia').value,
-                    fecha_fin: document.getElementById('fechaFinLicencia').value,
-                    cantidad_dias: Number(document.getElementById('cantidadDiasLicencia').value),
-                    motivo: document.querySelector('#tipoLicencia option:checked').text,
-                    observacion: null
-                };
-            }
-            else if (codigo === 'HORAS_EXTRA' || nombre.toLowerCase().includes('hora')) {
-                endpoint = 'horas-extra';
-                payload = {
-                    tipo_novedad_id: tipoNovedadId,
-                    tipo_hora: document.getElementById('tipoHoraExtra').value,
-                    fecha_trabajo: document.getElementById('fechaTrabajoHoraExtra').value,
-                    hora_inicio: document.getElementById('horaInicioHoraExtra').value,
-                    hora_fin: document.getElementById('horaFinHoraExtra').value,
-                    cantidad_horas: Number(document.getElementById('cantidadHorasExtra').value),
-                    observacion: document.getElementById('observacionHoraExtra').value
-                };
-            }
-            else if (categoria === 'DESCUENTOS') {
-                endpoint = 'descuento';
-                formData = new FormData();
-                formData.append('tipo_novedad_id', tipoNovedadId);
-                formData.append('concepto', document.getElementById('conceptoDescuento').value);
-                formData.append('valor', document.getElementById('valorDescuento').value);
-                formData.append('observacion', document.getElementById('observacionDescuento').value);
-                if (archivo) formData.append('soporte', archivo);
-            }
-            else if (categoria === 'INGRESOS') {
-                endpoint = 'ingreso';
-                payload = {
-                    tipo_novedad_id: tipoNovedadId,
-                    concepto: document.getElementById('conceptoIngreso').value,
-                    valor: Number(document.getElementById('valorIngreso').value),
-                    observacion: document.getElementById('observacionIngreso').value
-                };
-            }
-            else if (categoria === 'PRESTAMOS') {
-                endpoint = 'prestamo';
-                payload = {
-                    tipo_novedad_id: tipoNovedadId,
-                    monto: Number(document.getElementById('montoPrestamo').value),
-                    cuotas: Number(document.getElementById('cuotasPrestamo').value),
-                    observacion: document.getElementById('observacionPrestamo').value
-                };
-            }
-            else {
-                throw new Error('Formulario no implementado aún.');
-            }
-
-            const fetchOptions = {
-                method: 'POST',
-                body: formData ? formData : JSON.stringify(payload),
-                headers: formData ? {} : { 'Content-Type': 'application/json' }
-            };
-
-            const res = await fetch(`/api/nomina/novedades/${endpoint}`, fetchOptions);
-            const data = await res.json();
-
-            if (!res.ok || !data.success) throw new Error(data.message || 'Error al registrar.');
-
-            bootstrap.Modal.getInstance(document.getElementById('modalRegistrarNovedad')).hide();
-            mostrarToast('Novedad registrada correctamente', 'success');
-            await cargarNovedades();
-
-        } catch (error) {
-            mostrarToast(error.message, 'error');
-        } finally {
-            btnGuardarNovedad.disabled = false;
-            btnGuardarNovedad.innerHTML = `<i class="fas fa-save"></i> Registrar novedad`;
-        }
-    }
-
-
-    /* ========================================================
-       DRAG & DROP DE SOPORTES
-       ======================================================== */
-
-    function configurarDragAndDrop() {
-        if (!zonaDragDropSoporte || !soporteNovedad) return;
-
-        zonaDragDropSoporte.addEventListener('click', () => soporteNovedad.click());
-        zonaDragDropSoporte.addEventListener('dragover', (e) => { e.preventDefault(); zonaDragDropSoporte.classList.add('arrastrando'); });
-        zonaDragDropSoporte.addEventListener('dragleave', () => zonaDragDropSoporte.classList.remove('arrastrando'));
-        zonaDragDropSoporte.addEventListener('drop', (e) => {
-            e.preventDefault(); zonaDragDropSoporte.classList.remove('arrastrando');
-            if (e.dataTransfer.files.length > 0) { soporteNovedad.files = e.dataTransfer.files; actualizarPrevisualizacion(); }
-        });
-
-        soporteNovedad.addEventListener('change', actualizarPrevisualizacion);
-        if (btnQuitarSoporte) btnQuitarSoporte.addEventListener('click', () => { soporteNovedad.value = ''; actualizarPrevisualizacion(); });
-    }
-
-    function actualizarPrevisualizacion() {
-        const f = soporteNovedad?.files?.[0];
-        if (!f) { previsualizacionSoporte.style.display = 'none'; return; }
-        
-        if (f.size > 5 * 1024 * 1024) {
-            mostrarToast('El archivo supera el límite de 5 MB.', 'error');
-            soporteNovedad.value = ''; previsualizacionSoporte.style.display = 'none'; return;
-        }
-
-        if (soporteNombreArchivo) soporteNombreArchivo.textContent = f.name;
-        if (soporteTamanoArchivo) soporteTamanoArchivo.textContent = (f.size / 1024 / 1024).toFixed(2) + ' MB';
-        previsualizacionSoporte.style.display = 'flex';
-    }
-
-    function limpiarFormularioNovedad() {
-        if (registroTipoNovedad) registroTipoNovedad.value = '';
-        if (informacionTipoNovedad) informacionTipoNovedad.style.display = 'none';
-        if (formularioNovedadDinamico) formularioNovedadDinamico.style.display = 'none';
-        if (seccionSoporteNovedad) seccionSoporteNovedad.style.display = 'none';
-        if (camposNovedad) camposNovedad.innerHTML = '';
-        if (soporteNovedad) soporteNovedad.value = '';
-        if (previsualizacionSoporte) previsualizacionSoporte.style.display = 'none';
-        if (btnGuardarNovedad) btnGuardarNovedad.disabled = true;
-    }
-
-
-    /* ========================================================
-       HISTORIAL DE NOVEDADES
-       ======================================================== */
-
-    function cambiarTipoFechaHistorial() {
-        const tipo = historialTipoFecha?.value || '';
-        
-        if (historialFechaDia) historialFechaDia.style.display = 'none';
-        if (historialFechaMes) historialFechaMes.style.display = 'none';
-        if (historialFechaAno) historialFechaAno.style.display = 'none';
-        if (historialFechaRango) historialFechaRango.style.display = 'none';
-
-        if (tipo === 'dia') historialFechaDia.style.display = 'block';
-        if (tipo === 'mes') historialFechaMes.style.display = 'block';
-        if (tipo === 'ano') historialFechaAno.style.display = 'block';
-        if (tipo === 'rango') historialFechaRango.style.display = 'grid';
-    }
-
-    async function buscarHistorial() {
-        try {
-            const params = new URLSearchParams();
-            
-            if (historialBuscar?.value) params.append('buscar', historialBuscar.value.trim());
-            if (historialTipo?.value) params.append('tipo', historialTipo.value);
-            if (historialEstado?.value) params.append('estado', historialEstado.value);
-            
-            const tipoFecha = historialTipoFecha?.value;
-            if (tipoFecha) {
-                params.append('tipo_fecha', tipoFecha);
-                if (tipoFecha === 'dia' && historialDia?.value) params.append('fecha', historialDia.value);
-                if (tipoFecha === 'mes' && historialMes?.value) params.append('mes', historialMes.value);
-                if (tipoFecha === 'ano' && historialAno?.value) params.append('ano', historialAno.value);
-                if (tipoFecha === 'rango') {
-                    if (historialDesde?.value) params.append('desde', historialDesde.value);
-                    if (historialHasta?.value) params.append('hasta', historialHasta.value);
-                }
-            }
-
-            if (historialCargando) historialCargando.style.display = 'block';
-            if (historialEstadoVacio) historialEstadoVacio.style.display = 'none';
-            if (historialTablaWrapper) historialTablaWrapper.style.display = 'none';
-
-            const res = await fetch(`/api/nomina/novedades/historial?${params.toString()}`);
-            const data = await res.json();
-
-            if (!res.ok || !data.success) throw new Error(data.message || 'Error al consultar historial');
-
-            renderizarHistorial(data.novedades || []);
-
-        } catch (error) {
-            console.error('Error historial:', error);
-            if (historialEstadoVacio) {
-                historialEstadoVacio.style.display = 'flex';
-                historialEstadoVacio.innerHTML = `<div class="alert alert-danger">No se pudo cargar el historial: ${escaparHTML(error.message)}</div>`;
-            }
-        } finally {
-            if (historialCargando) historialCargando.style.display = 'none';
-        }
-    }
-
-    function renderizarHistorial(lista) {
-        if (!tablaHistorialNovedades) return;
-
-        tablaHistorialNovedades.innerHTML = '';
 
         if (!lista.length) {
-            if (historialTablaWrapper) historialTablaWrapper.style.display = 'none';
-            if (historialEstadoVacio) {
-                historialEstadoVacio.style.display = 'flex';
-                historialEstadoVacio.innerHTML = `
-                    <div class="novedades-empty-icon"><i class="fas fa-clock-rotate-left"></i></div>
-                    <h3>No hay novedades en el historial</h3>
-                    <p>No se encontraron novedades con los filtros seleccionados.</p>
-                `;
+
+            if (estadoVacio) {
+
+                estadoVacio.style.display =
+                    'flex';
+
             }
+
             return;
+
         }
 
-        if (historialEstadoVacio) historialEstadoVacio.style.display = 'none';
-        if (historialTablaWrapper) historialTablaWrapper.style.display = 'block';
-        
-        if (contadorHistorial) contadorHistorial.textContent = `${lista.length} novedades`;
 
-        lista.forEach(n => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
+        lista.forEach(novedad => {
+
+            const fila =
+                document.createElement('tr');
+
+
+            const empleado =
+                obtenerEmpleado(novedad);
+
+
+            const tipo =
+                obtenerTipo(novedad);
+
+
+            const fecha =
+                obtenerFecha(novedad);
+
+
+            const cantidad =
+                obtenerCantidad(novedad);
+
+
+            const estado =
+                obtenerEstado(novedad);
+
+
+            const registro =
+                obtenerFechaRegistro(novedad);
+
+
+            fila.innerHTML = `
+
                 <td>
-                    <strong>${escaparHTML(n.empleado_nombre || '-')}</strong><br>
-                    <small>${escaparHTML(n.numero_documento || '')}</small>
+                    <div class="novedad-empleado">
+                        ${escaparHTML(empleado)}
+                    </div>
                 </td>
-                <td>${escaparHTML(n.tipo_novedad || '-')}</td>
-                <td>${formatearFecha(n.fecha_revision || n.fecha_creacion)}</td>
-                <td>${escaparHTML(n.cantidad_dias ? n.cantidad_dias + ' días' : (n.cantidad_horas ? n.cantidad_horas + ' horas' : '-'))}</td>
-                <td>${crearBadgeEstado(n.estado)}</td>
-                <td>${formatearFechaHora(n.fecha_creacion)}</td>
+
                 <td>
-                    <button type="button" class="novedad-accion-btn detalle btn-ver-historial" data-id="${n.id}">
-                        <i class="fas fa-eye"></i>
-                    </button>
+                    <span class="novedad-tipo">
+                        ${escaparHTML(
+                            formatearTexto(tipo)
+                        )}
+                    </span>
                 </td>
+
+                <td>
+                    ${formatearFecha(fecha)}
+                </td>
+
+                <td>
+                    ${escaparHTML(
+                        cantidad ?? '-'
+                    )}
+                </td>
+
+                <td>
+                    ${crearBadgeEstado(estado)}
+                </td>
+
+                <td>
+                    ${formatearFechaHora(registro)}
+                </td>
+
+                <td>
+                    ${crearAcciones(novedad)}
+                </td>
+
             `;
-            tablaHistorialNovedades.appendChild(tr);
+
+
+            tablaNovedades.appendChild(fila);
+
         });
+
+
+        agregarEventosAcciones();
+
     }
 
-    function limpiarFiltrosHistorial() {
-        if (historialBuscar) historialBuscar.value = '';
-        if (historialTipo) historialTipo.value = '';
-        if (historialEstado) historialEstado.value = '';
-        if (historialTipoFecha) historialTipoFecha.value = '';
-        if (historialDia) historialDia.value = '';
-        if (historialMes) historialMes.value = '';
-        if (historialAno) historialAno.value = '';
-        if (historialDesde) historialDesde.value = '';
-        if (historialHasta) historialHasta.value = '';
-        
-        cambiarTipoFechaHistorial();
-        if (historialTablaWrapper) historialTablaWrapper.style.display = 'none';
-        if (historialEstadoVacio) historialEstadoVacio.style.display = 'flex';
-    }
 
 
     /* ========================================================
-       CIERRE DE PERÍODO
+       ACCIONES
        ======================================================== */
 
-    async function abrirCierrePeriodo() {
-        const modalElement = document.getElementById('modalCierrePeriodo');
-        const body = document.getElementById('cierrePeriodoBody');
-        const periodo = filtroMes?.value || new Date().toISOString().slice(0, 7);
+    function crearAcciones(novedad) {
 
-        if (!modalElement) return;
+        const estado =
+            obtenerEstado(novedad);
 
-        body.innerHTML = `<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x text-primary"></i><p class="mt-2">Validando pendientes...</p></div>`;
-        
-        const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-        modal.show();
 
-        try {
-            const res = await fetch('/api/nomina/novedades/cierre-periodo/validar', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ periodo })
-            });
-            const data = await res.json();
+        let html = `
 
-            if (!res.ok || !data.success) throw new Error(data.message);
+            <div class="novedad-acciones">
 
-            if (data.pendientes && data.pendientes.length > 0) {
-                body.innerHTML = `
-                    <div class="alert alert-danger">
-                        <h6><i class="fas fa-triangle-exclamation"></i> No se puede cerrar el período ${periodo}</h6>
-                        <p class="mb-0">Existen ${data.pendientes.length} novedades pendientes de aprobación. Debes resolverlas antes de cerrar.</p>
-                    </div>
-                `;
-                document.getElementById('btnConfirmarCierrePeriodo').disabled = true;
-            } else {
-                body.innerHTML = `
-                    <div class="alert alert-success">
-                        <h6><i class="fas fa-circle-check"></i> Todo listo para cerrar</h6>
-                        <p class="mb-0">No hay novedades pendientes para el período ${periodo}. Al cerrar, las aprobadas pasarán a estado PROCESADA.</p>
-                    </div>
-                `;
-                document.getElementById('btnConfirmarCierrePeriodo').disabled = false;
-                document.getElementById('btnConfirmarCierrePeriodo').onclick = () => ejecutarCierrePeriodo(periodo);
-            }
+                <button
+                    type="button"
+                    class="btn-novedad-action btn-ver-novedad"
+                    data-id="${novedad.id}"
+                    title="Ver detalle"
+                >
+                    <i class="fas fa-eye"></i>
+                </button>
 
-        } catch (error) {
-            body.innerHTML = `<div class="alert alert-danger">Error: ${escaparHTML(error.message)}</div>`;
+        `;
+
+
+        /*
+         * Pendiente:
+         * posteriormente conectaremos estas acciones
+         * con las rutas reales de aprobar/rechazar.
+         */
+
+        if (estado === 'PENDIENTE') {
+
+            html += `
+
+                <button
+                    type="button"
+                    class="btn-novedad-action btn-aprobar-novedad"
+                    data-id="${novedad.id}"
+                    title="Aprobar"
+                >
+                    <i class="fas fa-check"></i>
+                </button>
+
+                <button
+                    type="button"
+                    class="btn-novedad-action btn-rechazar-novedad"
+                    data-id="${novedad.id}"
+                    title="Rechazar"
+                >
+                    <i class="fas fa-xmark"></i>
+                </button>
+
+            `;
+
         }
+
+
+        html += `
+
+            </div>
+
+        `;
+
+
+        return html;
+
     }
 
-    async function ejecutarCierrePeriodo(periodo) {
-        try {
-            const btn = document.getElementById('btnConfirmarCierrePeriodo');
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Cerrando...`;
 
-            const res = await fetch('/api/nomina/novedades/cierre-periodo', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ periodo })
+
+    function agregarEventosAcciones() {
+
+        document
+            .querySelectorAll('.btn-ver-novedad')
+            .forEach(btn => {
+
+                btn.addEventListener(
+                    'click',
+                    () => {
+
+                        const id =
+                            btn.dataset.id;
+
+                        verNovedad(id);
+
+                    }
+                );
+
             });
-            const data = await res.json();
 
-            if (!res.ok || !data.success) throw new Error(data.message);
 
-            bootstrap.Modal.getInstance(document.getElementById('modalCierrePeriodo')).hide();
-            mostrarToast(`Período ${periodo} cerrado exitosamente`, 'success');
+        document
+            .querySelectorAll('.btn-aprobar-novedad')
+            .forEach(btn => {
+
+                btn.addEventListener(
+                    'click',
+                    () => {
+
+                        const id =
+                            btn.dataset.id;
+
+                        aprobarNovedad(id);
+
+                    }
+                );
+
+            });
+
+
+        document
+            .querySelectorAll('.btn-rechazar-novedad')
+            .forEach(btn => {
+
+                btn.addEventListener(
+                    'click',
+                    () => {
+
+                        const id =
+                            btn.dataset.id;
+
+                        rechazarNovedad(id);
+
+                    }
+                );
+
+            });
+
+    }
+
+
+
+    /* ========================================================
+       REGISTRAR
+       ======================================================== */
+
+    /* ========================================================
+   ABRIR REGISTRO DE NOVEDAD
+   ======================================================== */
+
+async function abrirRegistroNovedad() {
+
+    limpiarFormularioNovedad();
+
+    await cargarTiposRegistro();
+
+
+    const modalElement =
+        document.getElementById(
+            'modalRegistrarNovedad'
+        );
+
+
+    if (!modalElement) {
+        return;
+    }
+
+
+    const modal =
+        bootstrap.Modal.getOrCreateInstance(
+            modalElement
+        );
+
+
+    modal.show();
+
+}
+
+/* ====================================================
+   REGISTRAR LICENCIA EN BACKEND
+   ==================================================== */
+
+async function registrarLicencia(datos) {
+
+    try {
+
+        console.log(
+            '📋 Datos de licencia:',
+            datos
+        );
+
+        const response = await fetch(
+            '/api/nomina/novedades/licencia',
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify({
+
+                    tipo_novedad_id:
+                        datos.tipoNovedadId,
+
+                    empleado_id:
+                        datos.empleadoId,
+
+                    tipo_licencia:
+                        datos.tipoLicencia,
+
+                    fecha_inicio:
+                        datos.fechaInicio,
+
+                    fecha_fin:
+                        datos.fechaFin,
+
+                    cantidad_dias:
+                        Number(datos.cantidadDias),
+
+                    motivo:
+                        datos.motivo,
+
+                    observacion:
+                        datos.observacion || null
+
+                })
+            }
+        );
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                'No fue posible registrar la licencia.'
+            );
+
+        }
+
+        console.log(
+            '✅ LICENCIA REGISTRADA:',
+            data
+        );
+
+        mostrarMensaje(
+            data.message ||
+            'La licencia fue registrada y aprobada correctamente.',
+            'success'
+        );
+
+        await cargarNovedades();
+
+        setTimeout(
+            async () => {
+
+                await abrirRegistroNovedad();
+
+            },
+            800
+        );
+
+    } catch (error) {
+
+        console.error(
+            '❌ ERROR REGISTRANDO LICENCIA:',
+            error
+        );
+
+        mostrarMensaje(
+            error.message ||
+            'No fue posible registrar la licencia.',
+            'error'
+        );
+
+    }
+
+}
+
+/* ========================================================
+   SELECCIONAR TIPO DE NOVEDAD
+   ======================================================== */
+
+async function seleccionarTipoNovedad() {
+
+    const opcion =
+        registroTipoNovedad?.selectedOptions?.[0];
+
+    /* ==========================================
+       SIN TIPO SELECCIONADO
+       ========================================== */
+
+    if (
+        !opcion ||
+        !opcion.value
+    ) {
+
+        informacionTipoNovedad.style.display = 'none';
+
+        formularioNovedadDinamico.style.display = 'none';
+
+        seccionSoporteNovedad.style.display = 'none';
+
+        avisoAprobacionNovedad.style.display = 'none';
+
+        btnGuardarNovedad.disabled = true;
+
+        return;
+    }
+
+
+    /* ==========================================
+       DATOS DEL TIPO
+       ========================================== */
+
+    const nombre =
+        opcion.dataset.nombre || '';
+
+    const descripcion =
+        opcion.dataset.descripcion || '';
+
+    const codigo =
+        opcion.dataset.codigo || '';
+
+    const categoria =
+    opcion.dataset.categoria || '';
+
+    const permiteEmpleado =
+        Number(
+            opcion.dataset.permiteEmpleado
+        );
+
+    const requiereSoporte =
+        Number(
+            opcion.dataset.requiereSoporte
+        );
+
+    const requiereAprobacion =
+        Number(
+            opcion.dataset.requiereAprobacion
+        );
+
+
+    /* ==========================================
+       INFORMACIÓN
+       ========================================== */
+
+    registroTipoNombre.textContent =
+        nombre;
+
+    registroTipoDescripcion.textContent =
+        descripcion ||
+        'Sin descripción disponible.';
+
+    informacionTipoNovedad.style.display =
+        'block';
+
+
+    /* ==========================================
+       PERMISO DEL TIPO
+       ========================================== */
+
+    /* ==========================================
+   PERMISO DEL TIPO
+   ========================================== */
+
+if (
+    !permiteEmpleado &&
+    codigo !== 'LICENCIA'
+) {
+
+    camposNovedad.innerHTML = `
+
+        <div class="alert alert-warning">
+
+            <i class="fas fa-lock"></i>
+
+            Este tipo de novedad no puede ser
+            registrado directamente por un empleado.
+
+        </div>
+
+    `;
+
+    formularioNovedadDinamico.style.display =
+        'block';
+
+    seccionSoporteNovedad.style.display =
+        'none';
+
+    avisoAprobacionNovedad.style.display =
+        'none';
+
+    btnGuardarNovedad.disabled =
+        true;
+
+    return;
+}
+
+
+    /* ==========================================
+       SOPORTE GENERAL
+       ========================================== */
+
+    if (requiereSoporte) {
+
+        seccionSoporteNovedad.style.display =
+            'block';
+
+    } else {
+
+        seccionSoporteNovedad.style.display =
+            'none';
+
+    }
+
+
+    /* ==========================================
+       APROBACIÓN
+       ========================================== */
+
+    if (requiereAprobacion) {
+
+        avisoAprobacionNovedad.style.display =
+            'flex';
+
+    } else {
+
+        avisoAprobacionNovedad.style.display =
+            'none';
+
+    }
+
+    /* ==========================================
+   AUSENCIA
+   ========================================== */
+
+const textoTipo = `
+    ${nombre}
+    ${codigo}
+    ${categoria}
+    ${opcion.textContent}
+`.toLowerCase();
+
+const esAusencia =
+    textoTipo.includes('ausencia') ||
+    textoTipo.includes('asistencia');
+
+if (esAusencia) {
+
+    camposNovedad.innerHTML = `
+        <div class="row g-3">
+
+        <!-- EMPLEADO - SOLO SUPERADMIN -->
+<div class="col-12">
+
+    <div class="col-md-12">
+        <label for="empleadoAusencia" class="form-label">
+            Empleado
+            <span class="text-danger">*</span>
+        </label>
+
+        <input
+            type="text"
+            id="empleadoAusencia"
+            class="form-control"
+            placeholder="Escribe el nombre del empleado..."
+            autocomplete="off"
+            required
+        >
+
+        <div
+            id="listaEmpleadosAusencia"
+            class="list-group mt-1"
+            style="display: none;"
+        ></div>
+
+<input
+    type="hidden"
+    id="empleadoAusenciaId"
+>
+</div>
+
+<!-- TIPO DE AUSENCIA -->
+<div class="col-md-6">
+
+                <label
+                    for="tipoAusencia"
+                    class="form-label"
+                >
+                    Tipo de ausencia
+                    <span class="text-danger">*</span>
+                </label>
+
+                <select
+                    id="tipoAusencia"
+                    class="form-select"
+                    required
+                >
+                    <option value="">
+                        Selecciona el tipo
+                    </option>
+
+                    <option value="JUSTIFICADA">
+                        Ausencia justificada
+                    </option>
+
+                    <option value="INJUSTIFICADA">
+                        Ausencia injustificada
+                    </option>
+                </select>
+
+            </div>
+
+            <!-- FECHA INICIO -->
+            <div class="col-md-3">
+
+                <label
+                    for="fechaInicioAusencia"
+                    class="form-label"
+                >
+                    Fecha de inicio
+                    <span class="text-danger">*</span>
+                </label>
+
+                <input
+                    type="date"
+                    id="fechaInicioAusencia"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+            <!-- FECHA FIN -->
+            <div class="col-md-3">
+
+                <label
+                    for="fechaFinAusencia"
+                    class="form-label"
+                >
+                    Fecha de finalización
+                    <span class="text-danger">*</span>
+                </label>
+
+                <input
+                    type="date"
+                    id="fechaFinAusencia"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+            <!-- CANTIDAD DE DÍAS -->
+            <div class="col-md-4">
+
+                <label
+                    for="cantidadDiasAusencia"
+                    class="form-label"
+                >
+                    Cantidad de días
+                </label>
+
+                <input
+                    type="number"
+                    id="cantidadDiasAusencia"
+                    class="form-control"
+                    readonly
+                >
+
+                <small class="text-muted">
+                    Se calcula automáticamente según las fechas.
+                </small>
+
+            </div>
+
+            <!-- MOTIVO -->
+            <div class="col-md-8">
+
+                <label
+                    for="motivoAusencia"
+                    class="form-label"
+                >
+                    Motivo
+                    <span class="text-danger">*</span>
+                </label>
+
+                <textarea
+                    id="motivoAusencia"
+                    class="form-control"
+                    rows="2"
+                    placeholder="Indica el motivo de la ausencia..."
+                    required
+                ></textarea>
+
+            </div>
+
+            <!-- OBSERVACIÓN -->
+            <div class="col-12">
+
+                <label
+                    for="observacionAusencia"
+                    class="form-label"
+                >
+                    Observación
+                </label>
+
+                <textarea
+                    id="observacionAusencia"
+                    class="form-control"
+                    rows="3"
+                    placeholder="Escribe una observación si es necesario..."
+                ></textarea>
+
+            </div>
+
+        </div>
+    `;
+
+    /* ------------------------------------------
+       SOPORTE OCULTO AL INICIO
+       ------------------------------------------ */
+
+    seccionSoporteNovedad.style.display = 'none';
+
+    if (soporteNovedad) {
+        soporteNovedad.value = '';
+    }
+
+    /* ==========================================
+   BUSCADOR DE EMPLEADOS PARA AUSENCIA
+   ========================================== */
+
+const inputEmpleadoAusencia =
+    document.getElementById('empleadoAusencia');
+
+const listaEmpleadosAusencia =
+    document.getElementById('listaEmpleadosAusencia');
+
+const empleadoAusenciaId =
+    document.getElementById('empleadoAusenciaId');
+
+let empleadosAusencia = [];
+
+try {
+
+    const respuestaEmpleados =
+        await fetch('/api/empleados', {
+            credentials: 'include'
+        });
+
+    const datosEmpleados =
+        await respuestaEmpleados.json();
+
+    if (!respuestaEmpleados.ok) {
+        throw new Error(
+            datosEmpleados.message ||
+            'No fue posible cargar los empleados.'
+        );
+    }
+
+    empleadosAusencia =
+        datosEmpleados.empleados ||
+        datosEmpleados.data ||
+        datosEmpleados;
+
+    console.log(
+        'Empleados cargados para ausencia:',
+        empleadosAusencia
+    );
+
+} catch (error) {
+
+    console.error(
+        'Error cargando empleados:',
+        error
+    );
+
+    empleadosAusencia = [];
+}
+
+
+/* ==========================================
+   BUSCAR EMPLEADO MIENTRAS ESCRIBE
+   ========================================== */
+
+inputEmpleadoAusencia?.addEventListener(
+    'input',
+    function () {
+
+        const texto =
+            this.value
+                .trim()
+                .toLowerCase();
+
+        empleadoAusenciaId.value = '';
+
+        if (!texto) {
+
+            listaEmpleadosAusencia.style.display =
+                'none';
+
+            listaEmpleadosAusencia.innerHTML =
+                '';
+
+            return;
+        }
+
+        const resultados =
+            empleadosAusencia.filter(empleado => {
+
+                const nombre =
+                    empleado.nombre_completo ||
+                    empleado.nombre ||
+                    `${empleado.nombres || ''} ${empleado.apellidos || ''}`.trim();
+
+                return nombre
+                    .toLowerCase()
+                    .includes(texto);
+            });
+
+        listaEmpleadosAusencia.innerHTML =
+            '';
+
+        if (resultados.length === 0) {
+
+            listaEmpleadosAusencia.innerHTML = `
+                <div class="list-group-item">
+                    No se encontraron empleados.
+                </div>
+            `;
+
+            listaEmpleadosAusencia.style.display =
+                'block';
+
+            return;
+        }
+
+        resultados.forEach(empleado => {
+
+            const nombre =
+                empleado.nombre_completo ||
+                empleado.nombre ||
+                `${empleado.nombres || ''} ${empleado.apellidos || ''}`.trim();
+
+            const opcion =
+                document.createElement('button');
+
+            opcion.type = 'button';
+
+            opcion.className =
+                'list-group-item list-group-item-action';
+
+            opcion.textContent = nombre;
+
+            opcion.addEventListener(
+                'click',
+                function () {
+
+                    inputEmpleadoAusencia.value =
+                        nombre;
+
+                    empleadoAusenciaId.value =
+                        empleado.id;
+
+                    listaEmpleadosAusencia.style.display =
+                        'none';
+
+                    listaEmpleadosAusencia.innerHTML =
+                        '';
+                }
+            );
+
+            listaEmpleadosAusencia.appendChild(
+                opcion
+            );
+        });
+
+        listaEmpleadosAusencia.style.display =
+            'block';
+    }
+);
+
+    /* ------------------------------------------
+       MOSTRAR SOPORTE SOLO SI ES JUSTIFICADA
+       ------------------------------------------ */
+
+    const tipoAusenciaSelect =
+        document.getElementById('tipoAusencia');
+
+        const empleadoAusencia =
+    document.getElementById('empleadoAusencia')?.value;
+
+    tipoAusenciaSelect?.addEventListener(
+        'change',
+        function () {
+
+            if (this.value === 'JUSTIFICADA') {
+
+                seccionSoporteNovedad.style.display = 'block';
+
+            } else {
+
+                seccionSoporteNovedad.style.display = 'none';
+
+                if (soporteNovedad) {
+                    soporteNovedad.value = '';
+                }
+
+            }
+
+        }
+    );
+
+    /* ------------------------------------------
+       CALCULAR DÍAS
+       ------------------------------------------ */
+
+    const fechaInicio =
+        document.getElementById('fechaInicioAusencia');
+
+    const fechaFin =
+        document.getElementById('fechaFinAusencia');
+
+    const cantidadDias =
+        document.getElementById('cantidadDiasAusencia');
+
+    function calcularDiasAusencia() {
+
+        if (
+            !fechaInicio?.value ||
+            !fechaFin?.value
+        ) {
+            cantidadDias.value = '';
+            return;
+        }
+
+        const inicio =
+            new Date(fechaInicio.value + 'T00:00:00');
+
+        const fin =
+            new Date(fechaFin.value + 'T00:00:00');
+
+        if (fin < inicio) {
+            cantidadDias.value = '';
+            return;
+        }
+
+        const diferencia =
+            fin.getTime() - inicio.getTime();
+
+        const dias =
+            Math.floor(
+                diferencia /
+                (1000 * 60 * 60 * 24)
+            ) + 1;
+
+        cantidadDias.value = dias;
+    }
+
+    fechaInicio?.addEventListener(
+        'change',
+        calcularDiasAusencia
+    );
+
+    fechaFin?.addEventListener(
+        'change',
+        calcularDiasAusencia
+    );
+
+    formularioNovedadDinamico.style.display = 'block';
+
+    btnGuardarNovedad.disabled = false;
+
+    return;
+}
+
+
+    /* ==========================================
+       INCAPACIDAD
+       ========================================== */
+
+    if (
+        codigo === 'INCAPACIDAD' ||
+        nombre.toLowerCase().includes('incapacidad')
+    ) {
+
+        camposNovedad.innerHTML = `
+
+            <div class="row g-3">
+
+                <!-- TIPO DE INCAPACIDAD -->
+
+                <div class="col-md-6">
+
+                    <label
+                        for="tipoIncapacidad"
+                        class="form-label"
+                    >
+                        Tipo de incapacidad
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <select
+                        id="tipoIncapacidad"
+                        class="form-select"
+                        required
+                    >
+
+                        <option value="">
+                            Selecciona el tipo
+                        </option>
+
+                        <option value="ENFERMEDAD_GENERAL">
+                            Enfermedad general
+                        </option>
+
+                        <option value="ACCIDENTE_TRABAJO">
+                            Accidente de trabajo
+                        </option>
+
+                        <option value="ACCIDENTE_ORIGEN_COMUN">
+                            Accidente de origen común
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- FECHA INICIO -->
+
+                <div class="col-md-3">
+
+                    <label
+                        for="fechaInicioIncapacidad"
+                        class="form-label"
+                    >
+                        Fecha de inicio
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="fechaInicioIncapacidad"
+                        class="form-control"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- FECHA FIN -->
+
+                <div class="col-md-3">
+
+                    <label
+                        for="fechaFinIncapacidad"
+                        class="form-label"
+                    >
+                        Fecha de finalización
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="fechaFinIncapacidad"
+                        class="form-control"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- CANTIDAD DE DÍAS -->
+
+                <div class="col-md-4">
+
+                    <label
+                        for="cantidadDiasIncapacidad"
+                        class="form-label"
+                    >
+                        Cantidad de días
+                    </label>
+
+                    <input
+                        type="number"
+                        id="cantidadDiasIncapacidad"
+                        class="form-control"
+                        min="1"
+                        step="0.01"
+                        readonly
+                    >
+
+                    <small class="text-muted">
+                        Se calcula automáticamente según
+                        las fechas seleccionadas.
+                    </small>
+
+                </div>
+
+
+                <!-- OBSERVACIÓN -->
+
+                <div class="col-md-8">
+
+                    <label
+                        for="observacionIncapacidad"
+                        class="form-label"
+                    >
+                        Observación
+                    </label>
+
+                    <textarea
+                        id="observacionIncapacidad"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Escribe una observación si es necesario..."
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        /* ==========================================
+           SOPORTE EPS
+           ========================================== */
+
+        seccionSoporteNovedad.style.display =
+            'block';
+
+
+        /* ==========================================
+           OBTENER CAMPOS
+           ========================================== */
+
+        const fechaInicio =
+            document.getElementById(
+                'fechaInicioIncapacidad'
+            );
+
+        const fechaFin =
+            document.getElementById(
+                'fechaFinIncapacidad'
+            );
+
+        const cantidadDias =
+            document.getElementById(
+                'cantidadDiasIncapacidad'
+            );
+
+
+        /* ==========================================
+           CALCULAR DÍAS
+           ========================================== */
+
+        function calcularDiasIncapacidad() {
+
+            if (
+                !fechaInicio?.value ||
+                !fechaFin?.value
+            ) {
+
+                cantidadDias.value = '';
+
+                return;
+            }
+
+
+            const inicio =
+                new Date(
+                    fechaInicio.value +
+                    'T00:00:00'
+                );
+
+            const fin =
+                new Date(
+                    fechaFin.value +
+                    'T00:00:00'
+                );
+
+
+            if (
+                Number.isNaN(inicio.getTime()) ||
+                Number.isNaN(fin.getTime())
+            ) {
+
+                cantidadDias.value = '';
+
+                return;
+            }
+
+
+            if (fin < inicio) {
+
+                cantidadDias.value = '';
+
+                fechaFin.setCustomValidity(
+                    'La fecha de finalización no puede ser anterior a la fecha de inicio.'
+                );
+
+                return;
+
+            }
+
+
+            fechaFin.setCustomValidity('');
+
+
+            const diferencia =
+                fin.getTime() -
+                inicio.getTime();
+
+
+            const dias =
+                Math.floor(
+                    diferencia /
+                    (1000 * 60 * 60 * 24)
+                ) + 1;
+
+
+            cantidadDias.value =
+                dias;
+        }
+
+
+        fechaInicio?.addEventListener(
+            'change',
+            calcularDiasIncapacidad
+        );
+
+        fechaFin?.addEventListener(
+            'change',
+            calcularDiasIncapacidad
+        );
+
+
+        /* ==========================================
+           MOSTRAR FORMULARIO
+           ========================================== */
+
+        formularioNovedadDinamico.style.display =
+            'block';
+
+
+        /*
+         * Todavía no guardamos.
+         * Primero conectaremos este formulario
+         * con el backend.
+         */
+
+        btnGuardarNovedad.disabled =
+            false;
+
+        return;
+    }
+
+
+    /* ==========================================
+   LICENCIA
+   ========================================== */
+
+if (
+    codigo.toUpperCase() === 'LICENCIA' ||
+    nombre
+        .toUpperCase()
+        .includes('LICENCIA')
+) {
+
+    camposNovedad.innerHTML = `
+    <div class="row g-3">
+
+        <!-- EMPLEADO -->
+        <div class="col-12">
+
+            <label
+                for="empleadoLicencia"
+                class="form-label"
+            >
+                Empleado
+                <span class="text-danger">*</span>
+            </label>
+
+            <div
+    class="empleado-autocomplete"
+    style="position: relative;"
+>
+
+    <input
+        type="text"
+        id="buscarEmpleadoLicencia"
+        class="form-control"
+        placeholder="Escribe el nombre o código del empleado..."
+        autocomplete="off"
+    >
+
+    <input
+        type="hidden"
+        id="empleadoLicencia"
+    >
+
+    <div
+        id="resultadosEmpleadoLicencia"
+        class="list-group"
+        style="
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            z-index: 2000;
+            max-height: 220px;
+            overflow-y: auto;
+            display: none;
+        "
+    ></div>
+
+</div>
+
+<small class="text-muted">
+    Escribe el nombre o código del empleado y selecciona el empleado correspondiente.
+</small>
+
+        </div>
+
+
+        <!-- TIPO DE LICENCIA -->
+        <div class="col-md-6">
+
+                <label
+                    for="tipoLicencia"
+                    class="form-label"
+                >
+                    Tipo de licencia
+                    <span class="text-danger">*</span>
+                </label>
+
+                <select
+                    id="tipoLicencia"
+                    class="form-select"
+                    required
+                >
+
+                    <option value="">
+                        Selecciona una opción
+                    </option>
+
+                    <option value="MATERNIDAD">
+                        Maternidad
+                    </option>
+
+                    <option value="PATERNIDAD">
+                        Paternidad
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- CONTENEDOR MATERNIDAD -->
+            <div
+                id="camposLicenciaMaternidad"
+                class="row g-3"
+                style="display: none;"
+            >
+
+                <!-- FECHA PROBABLE DE PARTO -->
+                <div class="col-md-6">
+
+                    <label
+                        for="fechaProbableParto"
+                        class="form-label"
+                    >
+                        Fecha probable de parto
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="fechaProbableParto"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <!-- PREPARTO -->
+                <div class="col-md-6">
+
+                    <label
+                        for="semanasPreparto"
+                        class="form-label"
+                    >
+                        Preparto
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <select
+                        id="semanasPreparto"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Selecciona
+                        </option>
+
+                        <option value="1">
+                            1 semana
+                        </option>
+
+                        <option value="2">
+                            2 semanas
+                        </option>
+
+                    </select>
+
+                    <small class="text-muted">
+                        Selecciona la cantidad de semanas
+                        de preparto.
+                    </small>
+
+                </div>
+
+
+                <!-- FECHA INICIO -->
+                <div class="col-md-4">
+
+                    <label
+                        for="fechaInicioLicencia"
+                        class="form-label"
+                    >
+                        Fecha de inicio
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="fechaInicioLicencia"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <!-- FECHA FIN -->
+                <div class="col-md-4">
+
+                    <label
+                        for="fechaFinLicencia"
+                        class="form-label"
+                    >
+                        Fecha de finalización
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="fechaFinLicencia"
+                        class="form-control"
+                        readonly
+                    >
+
+                </div>
+
+
+                <!-- DÍAS PREPARTO -->
+                <div class="col-md-4">
+
+                    <label
+                        for="diasPreparto"
+                        class="form-label"
+                    >
+                        Días de preparto
+                    </label>
+
+                    <input
+                        type="number"
+                        id="diasPreparto"
+                        class="form-control"
+                        readonly
+                    >
+
+                </div>
+
+
+                <!-- DÍAS POSPARTO -->
+                <div class="col-md-4">
+
+                    <label
+                        for="diasPosparto"
+                        class="form-label"
+                    >
+                        Días de posparto
+                    </label>
+
+                    <input
+                        type="number"
+                        id="diasPosparto"
+                        class="form-control"
+                        readonly
+                    >
+
+                </div>
+
+
+                <!-- TOTAL DÍAS -->
+                <div class="col-md-4">
+
+                    <label
+                        for="cantidadDiasLicencia"
+                        class="form-label"
+                    >
+                        Total días
+                    </label>
+
+                    <input
+                        type="number"
+                        id="cantidadDiasLicencia"
+                        class="form-control"
+                        readonly
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- CONTENEDOR PATERNIDAD -->
+            <div
+                id="camposLicenciaPaternidad"
+                class="row g-3"
+                style="display: none;"
+            >
+
+                <!-- FECHA NACIMIENTO -->
+                <div class="col-md-6">
+
+                    <label
+                        for="fechaNacimientoHijo"
+                        class="form-label"
+                    >
+                        Fecha de nacimiento del hijo
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="fechaNacimientoHijo"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <!-- FECHA INICIO -->
+                <div class="col-md-6">
+
+                    <label
+                        for="fechaInicioPaternidad"
+                        class="form-label"
+                    >
+                        Fecha de inicio
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="fechaInicioPaternidad"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <!-- FECHA FIN -->
+                <div class="col-md-6">
+
+                    <label
+                        for="fechaFinPaternidad"
+                        class="form-label"
+                    >
+                        Fecha de finalización
+                    </label>
+
+                    <input
+                        type="date"
+                        id="fechaFinPaternidad"
+                        class="form-control"
+                        readonly
+                    >
+
+                </div>
+
+
+                <!-- DÍAS -->
+                <div class="col-md-6">
+
+                    <label
+                        for="cantidadDiasPaternidad"
+                        class="form-label"
+                    >
+                        Cantidad de días
+                    </label>
+
+                    <input
+                        type="number"
+                        id="cantidadDiasPaternidad"
+                        class="form-control"
+                        value="14"
+                        readonly
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- OBSERVACIÓN -->
+            <div class="col-12">
+
+                <label
+                    for="observacionLicencia"
+                    class="form-label"
+                >
+                    Observación
+                </label>
+
+                <textarea
+                    id="observacionLicencia"
+                    class="form-control"
+                    rows="3"
+                    placeholder="Escribe una observación si es necesario..."
+                ></textarea>
+
+            </div>
+
+        </div>
+    `;
+
+
+    /* ==========================================
+       OBTENER ELEMENTOS
+       ========================================== */
+
+    const tipoLicencia =
+        document.getElementById(
+            'tipoLicencia'
+        );
+
+    const camposMaternidad =
+        document.getElementById(
+            'camposLicenciaMaternidad'
+        );
+
+    const camposPaternidad =
+        document.getElementById(
+            'camposLicenciaPaternidad'
+        );
+
+    const fechaProbableParto =
+        document.getElementById(
+            'fechaProbableParto'
+        );
+
+    const semanasPreparto =
+        document.getElementById(
+            'semanasPreparto'
+        );
+
+    const fechaInicioLicencia =
+        document.getElementById(
+            'fechaInicioLicencia'
+        );
+
+    const fechaFinLicencia =
+        document.getElementById(
+            'fechaFinLicencia'
+        );
+
+    const diasPreparto =
+        document.getElementById(
+            'diasPreparto'
+        );
+
+    const diasPosparto =
+        document.getElementById(
+            'diasPosparto'
+        );
+
+    const cantidadDiasLicencia =
+        document.getElementById(
+            'cantidadDiasLicencia'
+        );
+
+    const fechaNacimientoHijo =
+        document.getElementById(
+            'fechaNacimientoHijo'
+        );
+
+    const fechaInicioPaternidad =
+        document.getElementById(
+            'fechaInicioPaternidad'
+        );
+
+    const fechaFinPaternidad =
+        document.getElementById(
+            'fechaFinPaternidad'
+        );
+
+    const cantidadDiasPaternidad =
+        document.getElementById(
+            'cantidadDiasPaternidad'
+        );
+
+        /* ==========================================
+   CARGAR EMPLEADOS
+   ========================================== */
+
+const empleadoLicencia =
+    document.getElementById(
+        'empleadoLicencia'
+    );
+
+
+async function cargarEmpleadosLicencia() {
+
+    const inputEmpleadoLicencia =
+        document.getElementById(
+            'buscarEmpleadoLicencia'
+        );
+
+    const listaEmpleadosLicencia =
+        document.getElementById(
+            'resultadosEmpleadoLicencia'
+        );
+
+    const empleadoLicenciaId =
+        document.getElementById(
+            'empleadoLicencia'
+        );
+
+
+    if (
+        !inputEmpleadoLicencia ||
+        !listaEmpleadosLicencia ||
+        !empleadoLicenciaId
+    ) {
+        return;
+    }
+
+
+    let empleadosLicencia = [];
+
+
+    try {
+
+        const respuestaEmpleados =
+            await fetch(
+                '/api/empleados',
+                {
+                    credentials: 'include'
+                }
+            );
+
+
+        const datosEmpleados =
+            await respuestaEmpleados.json();
+
+
+        if (!respuestaEmpleados.ok) {
+
+            throw new Error(
+                datosEmpleados.message ||
+                'No fue posible cargar los empleados.'
+            );
+
+        }
+
+
+        empleadosLicencia =
+            datosEmpleados.empleados ||
+            datosEmpleados.data ||
+            datosEmpleados;
+
+
+    } catch (error) {
+
+        console.error(
+            'Error cargando empleados para licencia:',
+            error
+        );
+
+        return;
+
+    }
+
+
+    /* ==========================================
+       BUSCAR EMPLEADO MIENTRAS ESCRIBE
+       ========================================== */
+
+    inputEmpleadoLicencia.addEventListener(
+        'input',
+        function () {
+
+            const texto =
+                this.value
+                    .trim()
+                    .toLowerCase();
+
+
+            empleadoLicenciaId.value = '';
+
+
+            if (!texto) {
+
+                listaEmpleadosLicencia.style.display =
+                    'none';
+
+                listaEmpleadosLicencia.innerHTML =
+                    '';
+
+                return;
+
+            }
+
+
+            const resultados =
+                empleadosLicencia.filter(
+                    empleado => {
+
+                        const nombre =
+                            empleado.nombre_completo ||
+                            empleado.nombre ||
+                            `${empleado.nombres || ''} ${empleado.apellidos || ''}`.trim();
+
+                        const codigo =
+                            empleado.codigo || '';
+
+
+                        return (
+                            nombre
+                                .toLowerCase()
+                                .includes(texto) ||
+
+                            codigo
+                                .toLowerCase()
+                                .includes(texto)
+                        );
+
+                    }
+                );
+
+
+            listaEmpleadosLicencia.innerHTML =
+                '';
+
+
+            if (!resultados.length) {
+
+                listaEmpleadosLicencia.innerHTML = `
+                    <div class="list-group-item">
+                        No se encontraron empleados.
+                    </div>
+                `;
+
+                listaEmpleadosLicencia.style.display =
+                    'block';
+
+                return;
+
+            }
+
+
+            resultados
+                .slice(0, 10)
+                .forEach(
+                    empleado => {
+
+                        const nombre =
+                            empleado.nombre_completo ||
+                            empleado.nombre ||
+                            `${empleado.nombres || ''} ${empleado.apellidos || ''}`.trim();
+
+
+                        const opcion =
+                            document.createElement(
+                                'button'
+                            );
+
+
+                        opcion.type =
+                            'button';
+
+
+                        opcion.className =
+                            'list-group-item list-group-item-action';
+
+
+                        opcion.innerHTML = `
+                            <strong>
+                                ${nombre}
+                            </strong>
+                            <br>
+                            <small class="text-muted">
+                                ${empleado.codigo || ''}
+                            </small>
+                        `;
+
+
+                        opcion.addEventListener(
+                            'click',
+                            function () {
+
+                                inputEmpleadoLicencia.value =
+                                    `${nombre} — ${empleado.codigo || ''}`;
+
+
+                                empleadoLicenciaId.value =
+                                    empleado.id;
+
+
+                                listaEmpleadosLicencia.style.display =
+                                    'none';
+
+
+                                listaEmpleadosLicencia.innerHTML =
+                                    '';
+
+                            }
+                        );
+
+
+                        listaEmpleadosLicencia.appendChild(
+                            opcion
+                        );
+
+                    }
+                );
+
+
+            listaEmpleadosLicencia.style.display =
+                'block';
+
+        }
+    );
+
+
+    /* ==========================================
+       CERRAR LISTA AL HACER CLIC AFUERA
+       ========================================== */
+
+    document.addEventListener(
+        'click',
+        function (event) {
+
+            if (
+                !event.target.closest(
+                    '#buscarEmpleadoLicencia'
+                ) &&
+                !event.target.closest(
+                    '#resultadosEmpleadoLicencia'
+                )
+            ) {
+
+                listaEmpleadosLicencia.style.display =
+                    'none';
+
+            }
+
+        }
+    );
+
+}
+
+
+    /* ==========================================
+       CAMBIAR TIPO DE LICENCIA
+       ========================================== */
+
+    tipoLicencia?.addEventListener(
+        'change',
+        () => {
+
+            camposMaternidad.style.display =
+                'none';
+
+            camposPaternidad.style.display =
+                'none';
+
+
+            if (
+                tipoLicencia.value ===
+                'MATERNIDAD'
+            ) {
+
+                camposMaternidad.style.display =
+                    'flex';
+
+            }
+
+
+            if (
+                tipoLicencia.value ===
+                'PATERNIDAD'
+            ) {
+
+                camposPaternidad.style.display =
+                    'flex';
+
+            }
+
+        }
+    );
+
+
+    /* ==========================================
+       CALCULAR MATERNIDAD
+       ========================================== */
+
+    function calcularLicenciaMaternidad() {
+
+        if (
+            !fechaProbableParto?.value ||
+            !semanasPreparto?.value
+        ) {
+
+            return;
+
+        }
+
+
+        const parto =
+            new Date(
+                fechaProbableParto.value +
+                'T00:00:00'
+            );
+
+        const semanas =
+            Number(
+                semanasPreparto.value
+            );
+
+        const diasPre =
+            semanas * 7;
+
+
+        diasPreparto.value =
+            diasPre;
+
+
+        /*
+         * La fecha de inicio corresponde
+         * al inicio del preparto.
+         */
+
+        const inicio =
+            new Date(parto);
+
+        inicio.setDate(
+            inicio.getDate() -
+            diasPre
+        );
+
+
+        fechaInicioLicencia.value =
+            inicio
+                .toISOString()
+                .split('T')[0];
+
+
+        /*
+         * Días posparto:
+         *
+         * 1 semana preparto = 17 semanas
+         * 2 semanas preparto = 16 semanas
+         */
+
+        const semanasPosparto =
+            semanas === 1
+                ? 17
+                : 16;
+
+
+        const diasPost =
+            semanasPosparto * 7;
+
+
+        diasPosparto.value =
+            diasPost;
+
+
+        const totalDias =
+            diasPre +
+            diasPost;
+
+
+        cantidadDiasLicencia.value =
+            totalDias;
+
+
+        /*
+         * La finalización se calcula
+         * desde la fecha de inicio.
+         */
+
+        const fin =
+            new Date(inicio);
+
+        fin.setDate(
+            fin.getDate() +
+            totalDias -
+            1
+        );
+
+
+        fechaFinLicencia.value =
+            fin
+                .toISOString()
+                .split('T')[0];
+
+    }
+
+
+    fechaProbableParto?.addEventListener(
+        'change',
+        calcularLicenciaMaternidad
+    );
+
+    semanasPreparto?.addEventListener(
+        'change',
+        calcularLicenciaMaternidad
+    );
+
+
+    /* ==========================================
+       CALCULAR PATERNIDAD
+       ========================================== */
+
+    function calcularLicenciaPaternidad() {
+
+        if (
+            !fechaInicioPaternidad?.value
+        ) {
+
+            return;
+
+        }
+
+
+        const inicio =
+            new Date(
+                fechaInicioPaternidad.value +
+                'T00:00:00'
+            );
+
+
+        const dias =
+            14;
+
+
+        cantidadDiasPaternidad.value =
+            dias;
+
+
+        const fin =
+            new Date(inicio);
+
+
+        fin.setDate(
+            fin.getDate() +
+            dias -
+            1
+        );
+
+
+        fechaFinPaternidad.value =
+            fin
+                .toISOString()
+                .split('T')[0];
+
+    }
+
+
+    fechaNacimientoHijo?.addEventListener(
+        'change',
+        () => {
+
+            /*
+             * Por defecto la licencia
+             * puede iniciar desde la
+             * fecha de nacimiento.
+             */
+
+            if (
+                fechaNacimientoHijo.value &&
+                !fechaInicioPaternidad.value
+            ) {
+
+                fechaInicioPaternidad.value =
+                    fechaNacimientoHijo.value;
+
+            }
+
+            calcularLicenciaPaternidad();
+
+        }
+    );
+
+
+    fechaInicioPaternidad?.addEventListener(
+        'change',
+        calcularLicenciaPaternidad
+    );
+
+
+    /* ==========================================
+       MOSTRAR FORMULARIO
+       ========================================== */
+
+    seccionSoporteNovedad.style.display =
+        'none';
+
+    formularioNovedadDinamico.style.display =
+        'block';
+
+        await cargarEmpleadosLicencia();
+
+    btnGuardarNovedad.disabled =
+        false;
+
+    return;
+}
+
+/* ====================================================
+   LICENCIA
+   ==================================================== */
+
+if (
+    codigo === 'LICENCIA' ||
+    (opcion.dataset.nombre || '')
+        .toLowerCase()
+        .includes('licencia')
+) {
+
+    const empleadoId =
+        document.getElementById(
+            'empleadoLicencia'
+        )?.value;
+
+    const tipoLicencia =
+        document.getElementById(
+            'tipoLicencia'
+        )?.value;
+
+    const observacion =
+        document.getElementById(
+            'observacionLicencia'
+        )?.value.trim();
+
+
+    /* ==========================================
+       VALIDAR EMPLEADO
+       ========================================== */
+
+    if (!empleadoId) {
+
+        mostrarMensaje(
+            'Debes seleccionar el empleado al que se le registrará la licencia.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    /* ==========================================
+       VALIDAR TIPO
+       ========================================== */
+
+    if (!tipoLicencia) {
+
+        mostrarMensaje(
+            'Debes seleccionar el tipo de licencia.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    /* ==========================================
+       MATERNIDAD
+       ========================================== */
+
+    if (
+        tipoLicencia === 'MATERNIDAD'
+    ) {
+
+        const fechaProbableParto =
+            document.getElementById(
+                'fechaProbableParto'
+            )?.value;
+
+        const semanasPreparto =
+            document.getElementById(
+                'semanasPreparto'
+            )?.value;
+
+        const fechaInicio =
+            document.getElementById(
+                'fechaInicioLicencia'
+            )?.value;
+
+        const fechaFin =
+            document.getElementById(
+                'fechaFinLicencia'
+            )?.value;
+
+        const diasPreparto =
+            document.getElementById(
+                'diasPreparto'
+            )?.value;
+
+        const diasPosparto =
+            document.getElementById(
+                'diasPosparto'
+            )?.value;
+
+        const cantidadDias =
+            document.getElementById(
+                'cantidadDiasLicencia'
+            )?.value;
+
+
+        /* ==========================================
+           VALIDACIONES
+           ========================================== */
+
+        if (!fechaProbableParto) {
+
+            mostrarMensaje(
+                'Debes seleccionar la fecha probable de parto.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!semanasPreparto) {
+
+            mostrarMensaje(
+                'Debes seleccionar las semanas de preparto.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!fechaInicio || !fechaFin) {
+
+            mostrarMensaje(
+                'No se pudieron calcular las fechas de la licencia.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (
+            !cantidadDias ||
+            Number(cantidadDias) <= 0
+        ) {
+
+            mostrarMensaje(
+                'La cantidad de días de la licencia no es válida.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        /* ==========================================
+           MOTIVO
+           ========================================== */
+
+        const motivo =
+            `Licencia de maternidad | ` +
+            `Fecha probable de parto: ${fechaProbableParto} | ` +
+            `Preparto: ${semanasPreparto} semana(s) | ` +
+            `Días preparto: ${diasPreparto} | ` +
+            `Días posparto: ${diasPosparto}`;
+
+
+        /* ==========================================
+           ENVIAR AL BACKEND
+           ========================================== */
+
+        try {
+
+            const response =
+                await fetch(
+                    '/api/nomina/novedades/licencia',
+                    {
+                        method: 'POST',
+
+                        headers: {
+                            'Content-Type':
+                                'application/json'
+                        },
+
+                        body: JSON.stringify({
+
+                            tipo_novedad_id:
+                                opcion.value,
+
+                            empleado_id:
+                                empleadoId,
+
+                            tipo_licencia:
+                                tipoLicencia,
+
+                            fecha_inicio:
+                                fechaInicio,
+
+                            fecha_fin:
+                                fechaFin,
+
+                            cantidad_dias:
+                                Number(
+                                    cantidadDias
+                                ),
+
+                            motivo:
+                                motivo,
+
+                            observacion:
+                                observacion || null
+
+                        })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    'No fue posible registrar la licencia.'
+                );
+
+            }
+
+
+            mostrarMensaje(
+                data.message ||
+                'La licencia fue registrada y aprobada correctamente.',
+                'success'
+            );
+
+
+            console.log(
+                '✅ Licencia de maternidad registrada:',
+                data
+            );
+
+
+            limpiarFormularioNovedad();
+
+
+            if (
+                typeof cargarNovedades ===
+                'function'
+            ) {
+
+                await cargarNovedades();
+
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                '❌ Error registrando licencia:',
+                error
+            );
+
+
+            mostrarMensaje(
+                error.message ||
+                'No fue posible registrar la licencia.',
+                'error'
+            );
+
+        }
+
+
+        return;
+    }
+
+
+    /* ==========================================
+       PATERNIDAD
+       ========================================== */
+
+    if (
+        tipoLicencia === 'PATERNIDAD'
+    ) {
+
+        const fechaNacimientoHijo =
+            document.getElementById(
+                'fechaNacimientoHijo'
+            )?.value;
+
+        const fechaInicio =
+            document.getElementById(
+                'fechaInicioPaternidad'
+            )?.value;
+
+        const fechaFin =
+            document.getElementById(
+                'fechaFinPaternidad'
+            )?.value;
+
+        const cantidadDias =
+            document.getElementById(
+                'cantidadDiasPaternidad'
+            )?.value;
+
+
+        /* ==========================================
+           VALIDACIONES
+           ========================================== */
+
+        if (!fechaNacimientoHijo) {
+
+            mostrarMensaje(
+                'Debes seleccionar la fecha de nacimiento del hijo.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!fechaInicio) {
+
+            mostrarMensaje(
+                'Debes seleccionar la fecha de inicio de la licencia.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!fechaFin) {
+
+            mostrarMensaje(
+                'No se pudo calcular la fecha de finalización.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (
+            !cantidadDias ||
+            Number(cantidadDias) <= 0
+        ) {
+
+            mostrarMensaje(
+                'La cantidad de días de la licencia no es válida.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        /* ==========================================
+           MOTIVO
+           ========================================== */
+
+        const motivo =
+            `Licencia de paternidad | ` +
+            `Fecha de nacimiento del hijo: ${fechaNacimientoHijo}`;
+
+
+        /* ==========================================
+           ENVIAR AL BACKEND
+           ========================================== */
+
+        try {
+
+            const response =
+                await fetch(
+                    '/api/nomina/novedades/licencia',
+                    {
+                        method: 'POST',
+
+                        headers: {
+                            'Content-Type':
+                                'application/json'
+                        },
+
+                        body: JSON.stringify({
+
+                            tipo_novedad_id:
+                                opcion.value,
+
+                            empleado_id:
+                                empleadoId,
+
+                            tipo_licencia:
+                                tipoLicencia,
+
+                            fecha_inicio:
+                                fechaInicio,
+
+                            fecha_fin:
+                                fechaFin,
+
+                            cantidad_dias:
+                                Number(
+                                    cantidadDias
+                                ),
+
+                            motivo:
+                                motivo,
+
+                            observacion:
+                                observacion || null
+
+                        })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    'No fue posible registrar la licencia.'
+                );
+
+            }
+
+
+            mostrarMensaje(
+                data.message ||
+                'La licencia fue registrada y aprobada correctamente.',
+                'success'
+            );
+
+
+            console.log(
+                '✅ Licencia de paternidad registrada:',
+                data
+            );
+
+
+            limpiarFormularioNovedad();
+
+
+            if (
+                typeof cargarNovedades ===
+                'function'
+            ) {
+
+                await cargarNovedades();
+
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                '❌ Error registrando licencia:',
+                error
+            );
+
+
+            mostrarMensaje(
+                error.message ||
+                'No fue posible registrar la licencia.',
+                'error'
+            );
+
+        }
+
+
+        return;
+    }
+
+
+    mostrarMensaje(
+        'Debes seleccionar un tipo de licencia válido.',
+        'error'
+    );
+
+    return;
+}
+
+
+    /* ==========================================
+   PERMISO
+   ========================================== */
+
+if (
+    codigo === 'PERMISO' ||
+    nombre.toLowerCase().includes('permiso')
+) {
+
+    camposNovedad.innerHTML = `
+
+        <div class="row g-3">
+
+            <!-- TIPO DE PERMISO -->
+            <div class="col-md-6">
+
+                <label
+                    for="tipoPermiso"
+                    class="form-label"
+                >
+                    Tipo de permiso
+                    <span class="text-danger">*</span>
+                </label>
+
+                <select
+                    id="tipoPermiso"
+                    class="form-select"
+                    required
+                >
+
+                    <option value="">
+                        Selecciona el tipo
+                    </option>
+
+                    <option value="REMUNERADO">
+                        Remunerado
+                    </option>
+
+                    <option value="NO_REMUNERADO">
+                        No remunerado
+                    </option>
+
+                    <option value="COMPENSATORIO">
+                        Compensatorio
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- FECHA -->
+            <div class="col-md-6">
+
+                <label
+                    for="fechaPermiso"
+                    class="form-label"
+                >
+                    Fecha del permiso
+                    <span class="text-danger">*</span>
+                </label>
+
+                <input
+                    type="date"
+                    id="fechaPermiso"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+
+            <!-- HORA INICIO -->
+            <div class="col-md-4">
+
+                <label
+                    for="horaInicioPermiso"
+                    class="form-label"
+                >
+                    Hora de inicio
+                    <span class="text-danger">*</span>
+                </label>
+
+                <input
+                    type="time"
+                    id="horaInicioPermiso"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+
+            <!-- HORA FIN -->
+            <div class="col-md-4">
+
+                <label
+                    for="horaFinPermiso"
+                    class="form-label"
+                >
+                    Hora de finalización
+                    <span class="text-danger">*</span>
+                </label>
+
+                <input
+                    type="time"
+                    id="horaFinPermiso"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+
+            <!-- CANTIDAD DE HORAS -->
+            <div class="col-md-4">
+
+                <label
+                    for="cantidadHorasPermiso"
+                    class="form-label"
+                >
+                    Cantidad de horas
+                </label>
+
+                <input
+                    type="number"
+                    id="cantidadHorasPermiso"
+                    class="form-control"
+                    min="0"
+                    step="0.01"
+                    readonly
+                >
+
+                <small class="text-muted">
+                    Se calcula automáticamente según
+                    la hora de inicio y finalización.
+                </small>
+
+            </div>
+
+
+            <!-- MOTIVO -->
+            <div class="col-md-6">
+
+                <label
+                    for="motivoPermiso"
+                    class="form-label"
+                >
+                    Motivo
+                    <span class="text-danger">*</span>
+                </label>
+
+                <textarea
+                    id="motivoPermiso"
+                    class="form-control"
+                    rows="3"
+                    placeholder="Indica el motivo del permiso..."
+                    required
+                ></textarea>
+
+            </div>
+
+
+            <!-- OBSERVACIÓN -->
+            <div class="col-md-6">
+
+                <label
+                    for="observacionPermiso"
+                    class="form-label"
+                >
+                    Observación
+                </label>
+
+                <textarea
+                    id="observacionPermiso"
+                    class="form-control"
+                    rows="3"
+                    placeholder="Escribe una observación si es necesario..."
+                ></textarea>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    /* ==========================================
+       SOPORTE
+       ========================================== */
+
+    /*
+     * Permiso no requiere soporte
+     * según la configuración del tipo.
+     */
+    seccionSoporteNovedad.style.display = 'none';
+
+
+    /* ==========================================
+       OBTENER CAMPOS
+       ========================================== */
+
+    const horaInicio =
+        document.getElementById(
+            'horaInicioPermiso'
+        );
+
+    const horaFin =
+        document.getElementById(
+            'horaFinPermiso'
+        );
+
+    const cantidadHoras =
+        document.getElementById(
+            'cantidadHorasPermiso'
+        );
+
+
+    /* ==========================================
+       CALCULAR HORAS
+       ========================================== */
+
+    function calcularHorasPermiso() {
+
+        if (
+            !horaInicio?.value ||
+            !horaFin?.value
+        ) {
+
+            cantidadHoras.value = '';
+
+            return;
+        }
+
+
+        const [horaInicioH, horaInicioM] =
+            horaInicio.value
+                .split(':')
+                .map(Number);
+
+        const [horaFinH, horaFinM] =
+            horaFin.value
+                .split(':')
+                .map(Number);
+
+
+        const minutosInicio =
+            (horaInicioH * 60) +
+            horaInicioM;
+
+        const minutosFin =
+            (horaFinH * 60) +
+            horaFinM;
+
+
+        if (
+            minutosFin <= minutosInicio
+        ) {
+
+            cantidadHoras.value = '';
+
+            horaFin.setCustomValidity(
+                'La hora de finalización debe ser posterior a la hora de inicio.'
+            );
+
+            return;
+        }
+
+
+        horaFin.setCustomValidity('');
+
+
+        const diferenciaMinutos =
+            minutosFin -
+            minutosInicio;
+
+
+        const horas =
+            diferenciaMinutos / 60;
+
+
+        cantidadHoras.value =
+            horas.toFixed(2);
+
+    }
+
+
+    horaInicio?.addEventListener(
+        'change',
+        calcularHorasPermiso
+    );
+
+    horaFin?.addEventListener(
+        'change',
+        calcularHorasPermiso
+    );
+
+
+    /* ==========================================
+       MOSTRAR FORMULARIO
+       ========================================== */
+
+    formularioNovedadDinamico.style.display =
+        'block';
+
+
+    /*
+     * La aprobación ya viene determinada
+     * por nomina_novedades_tipos:
+     *
+     * requiere_aprobacion = 1
+     *
+     * Por eso el aviso de aprobación
+     * ya se muestra arriba.
+     */
+
+    btnGuardarNovedad.disabled =
+        false;
+
+    return;
+}
+
+/* ====================================================
+   LICENCIA
+   ==================================================== */
+
+if (
+    codigo === 'LICENCIA' ||
+    (opcion.dataset.nombre || '')
+        .toLowerCase()
+        .includes('licencia')
+) {
+
+    console.log('📋 Registrando licencia');
+
+
+    const empleadoId =
+        document.getElementById(
+            'empleadoLicencia'
+        )?.value;
+
+
+    const tipoLicencia =
+        document.getElementById(
+            'tipoLicencia'
+        )?.value;
+
+
+    const observacion =
+        document.getElementById(
+            'observacionLicencia'
+        )?.value.trim();
+
+
+    /* ==========================================
+       VALIDAR EMPLEADO
+       ========================================== */
+
+    if (!empleadoId) {
+
+        mostrarMensaje(
+            'Debes seleccionar el empleado.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    /* ==========================================
+       VALIDAR TIPO
+       ========================================== */
+
+    if (!tipoLicencia) {
+
+        mostrarMensaje(
+            'Debes seleccionar el tipo de licencia.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    /* ==========================================
+       MATERNIDAD
+       ========================================== */
+
+    if (
+        tipoLicencia === 'MATERNIDAD'
+    ) {
+
+        const fechaProbableParto =
+            document.getElementById(
+                'fechaProbableParto'
+            )?.value;
+
+        const semanasPreparto =
+            document.getElementById(
+                'semanasPreparto'
+            )?.value;
+
+        const fechaInicio =
+            document.getElementById(
+                'fechaInicioLicencia'
+            )?.value;
+
+        const fechaFin =
+            document.getElementById(
+                'fechaFinLicencia'
+            )?.value;
+
+        const diasPreparto =
+            document.getElementById(
+                'diasPreparto'
+            )?.value;
+
+        const diasPosparto =
+            document.getElementById(
+                'diasPosparto'
+            )?.value;
+
+        const cantidadDias =
+            document.getElementById(
+                'cantidadDiasLicencia'
+            )?.value;
+
+
+        if (!fechaProbableParto) {
+
+            mostrarMensaje(
+                'Debes seleccionar la fecha probable de parto.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!semanasPreparto) {
+
+            mostrarMensaje(
+                'Debes seleccionar las semanas de preparto.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (
+            !fechaInicio ||
+            !fechaFin
+        ) {
+
+            mostrarMensaje(
+                'No se pudieron calcular las fechas de la licencia.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (
+            !cantidadDias ||
+            Number(cantidadDias) <= 0
+        ) {
+
+            mostrarMensaje(
+                'La cantidad de días no es válida.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        const motivo =
+            `Licencia de maternidad | ` +
+            `Fecha probable de parto: ${fechaProbableParto} | ` +
+            `Preparto: ${semanasPreparto} semana(s) | ` +
+            `Días preparto: ${diasPreparto} | ` +
+            `Días posparto: ${diasPosparto}`;
+
+
+        await registrarLicencia({
+
+            tipoNovedadId:
+                opcion.value,
+
+            empleadoId,
+
+            tipoLicencia,
+
+            fechaInicio,
+
+            fechaFin,
+
+            cantidadDias,
+
+            motivo,
+
+            observacion
+
+        });
+
+
+        return;
+    }
+
+
+    /* ==========================================
+       PATERNIDAD
+       ========================================== */
+
+    if (
+        tipoLicencia === 'PATERNIDAD'
+    ) {
+
+        const fechaNacimientoHijo =
+            document.getElementById(
+                'fechaNacimientoHijo'
+            )?.value;
+
+        const fechaInicio =
+            document.getElementById(
+                'fechaInicioPaternidad'
+            )?.value;
+
+        const fechaFin =
+            document.getElementById(
+                'fechaFinPaternidad'
+            )?.value;
+
+        const cantidadDias =
+            document.getElementById(
+                'cantidadDiasPaternidad'
+            )?.value;
+
+
+        if (!fechaNacimientoHijo) {
+
+            mostrarMensaje(
+                'Debes seleccionar la fecha de nacimiento del hijo.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!fechaInicio) {
+
+            mostrarMensaje(
+                'Debes seleccionar la fecha de inicio.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!fechaFin) {
+
+            mostrarMensaje(
+                'No se pudo calcular la fecha de finalización.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (
+            !cantidadDias ||
+            Number(cantidadDias) <= 0
+        ) {
+
+            mostrarMensaje(
+                'La cantidad de días no es válida.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        const motivo =
+            `Licencia de paternidad | ` +
+            `Fecha de nacimiento del hijo: ${fechaNacimientoHijo}`;
+
+
+        await registrarLicencia({
+
+            tipoNovedadId:
+                opcion.value,
+
+            empleadoId,
+
+            tipoLicencia,
+
+            fechaInicio,
+
+            fechaFin,
+
+            cantidadDias,
+
+            motivo,
+
+            observacion
+
+        });
+
+
+        return;
+    }
+
+
+    mostrarMensaje(
+        'Debes seleccionar un tipo de licencia válido.',
+        'error'
+    );
+
+    return;
+}
+/* ==========================================
+   HORAS EXTRA / RECARGOS
+   ========================================== */
+
+if (
+    codigo.toUpperCase() === 'HORAS_EXTRA' ||
+    nombre.toUpperCase().includes('HORA EXTRA') ||
+    nombre.toUpperCase().includes('RECARGO')
+) {
+
+    console.log(
+        '🟢 ENTRÓ AL BLOQUE HORAS EXTRA / RECARGOS'
+    );
+
+    camposNovedad.innerHTML = `
+
+        <div class="row g-3">
+
+            <!-- TIPO DE HORA -->
+            <div class="col-md-6">
+
+                <label
+                    for="tipoHoraExtra"
+                    class="form-label"
+                >
+                    Tipo de hora / recargo
+                    <span class="text-danger">*</span>
+                </label>
+
+                <select
+    id="tipoHoraExtra"
+    class="form-select"
+    required
+>
+    <option value="">
+        Cargando tipos...
+    </option>
+</select>
+
+            </div>
+
+
+            <!-- FECHA -->
+            <div class="col-md-6">
+
+                <label
+                    for="fechaTrabajoHoraExtra"
+                    class="form-label"
+                >
+                    Fecha de trabajo
+                    <span class="text-danger">*</span>
+                </label>
+
+                <input
+                    type="date"
+                    id="fechaTrabajoHoraExtra"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+
+            <!-- HORA INICIO -->
+            <div class="col-md-4">
+
+                <label
+                    for="horaInicioHoraExtra"
+                    class="form-label"
+                >
+                    Hora de inicio
+                    <span class="text-danger">*</span>
+                </label>
+
+                <input
+                    type="time"
+                    id="horaInicioHoraExtra"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+
+            <!-- HORA FIN -->
+            <div class="col-md-4">
+
+                <label
+                    for="horaFinHoraExtra"
+                    class="form-label"
+                >
+                    Hora de finalización
+                    <span class="text-danger">*</span>
+                </label>
+
+                <input
+                    type="time"
+                    id="horaFinHoraExtra"
+                    class="form-control"
+                    required
+                >
+
+            </div>
+
+
+            <!-- CANTIDAD -->
+            <div class="col-md-4">
+
+                <label
+                    for="cantidadHorasExtra"
+                    class="form-label"
+                >
+                    Cantidad de horas
+                    <span class="text-danger">*</span>
+                </label>
+
+                <input
+                    type="number"
+                    id="cantidadHorasExtra"
+                    class="form-control"
+                    min="0.01"
+                    step="0.01"
+                    readonly
+                >
+
+                <small class="text-muted">
+                    Se calcula automáticamente según la hora de inicio y finalización.
+                </small>
+
+            </div>
+
+
+            <!-- OBSERVACIÓN -->
+            <div class="col-12">
+
+                <label
+                    for="observacionHoraExtra"
+                    class="form-label"
+                >
+                    Observación
+                </label>
+
+                <textarea
+                    id="observacionHoraExtra"
+                    class="form-control"
+                    rows="3"
+                    placeholder="Indica el motivo o detalle de las horas trabajadas..."
+                ></textarea>
+
+            </div>
+
+        </div>
+
+    `;
+ 
+        /* ==========================================
+       CARGAR HORAS EXTRA Y RECARGOS
+       ========================================== */
+
+    const tipoHoraExtra =
+        document.getElementById('tipoHoraExtra');
+
+    try {
+
+        const [
+            respuestaHorasExtra,
+            respuestaRecargos
+        ] = await Promise.all([
+
+            fetch(
+                '/api/nomina/configuracion/horas-extra',
+                {
+                    credentials: 'include'
+                }
+            ),
+
+            fetch(
+                '/api/nomina/configuracion/recargos',
+                {
+                    credentials: 'include'
+                }
+            )
+
+        ]);
+
+
+        if (!respuestaHorasExtra.ok) {
+
+            throw new Error(
+                'No fue posible cargar la configuración de horas extra.'
+            );
+
+        }
+
+
+        if (!respuestaRecargos.ok) {
+
+            throw new Error(
+                'No fue posible cargar la configuración de recargos.'
+            );
+
+        }
+
+
+        const datosHorasExtra =
+            await respuestaHorasExtra.json();
+
+        const datosRecargos =
+            await respuestaRecargos.json();
+
+
+        const horasExtra =
+            Array.isArray(datosHorasExtra)
+                ? datosHorasExtra
+                : (
+                    Array.isArray(datosHorasExtra.data)
+                        ? datosHorasExtra.data
+                        : []
+                );
+
+
+        const recargos =
+            Array.isArray(datosRecargos)
+                ? datosRecargos
+                : (
+                    Array.isArray(datosRecargos.data)
+                        ? datosRecargos.data
+                        : []
+                );
+
+
+        console.log(
+            '⏱️ Horas extra cargadas:',
+            horasExtra
+        );
+
+        console.log(
+            '🌙 Recargos cargados:',
+            recargos
+        );
+
+
+        tipoHoraExtra.innerHTML = `
+            <option value="">
+                Selecciona el tipo de hora o recargo
+            </option>
+        `;
+
+
+        /* ==========================================
+           HORAS EXTRA
+           ========================================== */
+
+        if (horasExtra.length > 0) {
+
+            const grupoHorasExtra =
+                document.createElement('optgroup');
+
+            grupoHorasExtra.label =
+                'Horas extra';
+
+
+            horasExtra.forEach(tipo => {
+
+                if (!tipo.codigo || !tipo.nombre) {
+                    return;
+                }
+
+
+                const option =
+                    document.createElement('option');
+
+
+                option.value =
+                    tipo.codigo;
+
+                option.textContent =
+                    tipo.nombre;
+
+
+                grupoHorasExtra.appendChild(
+                    option
+                );
+
+            });
+
+
+            tipoHoraExtra.appendChild(
+                grupoHorasExtra
+            );
+
+        }
+
+
+        /* ==========================================
+           RECARGOS
+           ========================================== */
+
+        if (recargos.length > 0) {
+
+            const grupoRecargos =
+                document.createElement('optgroup');
+
+            grupoRecargos.label =
+                'Recargos';
+
+
+            recargos.forEach(recargo => {
+
+                if (
+                    !recargo.codigo ||
+                    !recargo.nombre
+                ) {
+                    return;
+                }
+
+
+                const option =
+                    document.createElement('option');
+
+
+                option.value =
+                    recargo.codigo;
+
+                option.textContent =
+                    recargo.nombre;
+
+
+                grupoRecargos.appendChild(
+                    option
+                );
+
+            });
+
+
+            tipoHoraExtra.appendChild(
+                grupoRecargos
+            );
+
+        }
+
+
+        if (
+            !horasExtra.length &&
+            !recargos.length
+        ) {
+
+            tipoHoraExtra.innerHTML = `
+                <option value="">
+                    No hay tipos configurados
+                </option>
+            `;
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            '❌ Error cargando horas extra y recargos:',
+            error
+        );
+
+
+        tipoHoraExtra.innerHTML = `
+            <option value="">
+                No fue posible cargar los tipos
+            </option>
+        `;
+
+
+        mostrarMensaje(
+            error.message ||
+            'No fue posible cargar la configuración de horas extra y recargos.',
+            'error'
+        );
+
+    }
+
+
+    /* ==========================================
+       OBTENER CAMPOS
+       ========================================== */
+
+    const fechaTrabajo =
+        document.getElementById(
+            'fechaTrabajoHoraExtra'
+        );
+
+    const horaInicio =
+        document.getElementById(
+            'horaInicioHoraExtra'
+        );
+
+    const horaFin =
+        document.getElementById(
+            'horaFinHoraExtra'
+        );
+
+    const cantidadHoras =
+        document.getElementById(
+            'cantidadHorasExtra'
+        );
+
+        
+
+
+    /* ==========================================
+       CALCULAR HORAS
+       ========================================== */
+
+    function calcularHorasExtra() {
+
+        if (
+            !horaInicio?.value ||
+            !horaFin?.value
+        ) {
+
+            cantidadHoras.value = '';
+
+            return;
+        }
+
+
+        const [horaInicioValor, minutoInicio] =
+            horaInicio.value
+                .split(':')
+                .map(Number);
+
+
+        const [horaFinValor, minutoFin] =
+            horaFin.value
+                .split(':')
+                .map(Number);
+
+
+        const minutosInicio =
+            (horaInicioValor * 60) +
+            minutoInicio;
+
+
+        const minutosFin =
+            (horaFinValor * 60) +
+            minutoFin;
+
+
+        if (
+            minutosFin <=
+            minutosInicio
+        ) {
+
+            cantidadHoras.value = '';
+
+            horaFin.setCustomValidity(
+                'La hora de finalización debe ser posterior a la hora de inicio.'
+            );
+
+            return;
+        }
+
+
+        horaFin.setCustomValidity('');
+
+
+        const diferenciaMinutos =
+            minutosFin -
+            minutosInicio;
+
+
+        const horas =
+            diferenciaMinutos / 60;
+
+
+        cantidadHoras.value =
+            horas.toFixed(2);
+
+    }
+
+
+    horaInicio?.addEventListener(
+        'change',
+        calcularHorasExtra
+    );
+
+    horaFin?.addEventListener(
+        'change',
+        calcularHorasExtra
+    );
+
+
+    /* ==========================================
+       MOSTRAR FORMULARIO
+       ========================================== */
+
+    formularioNovedadDinamico.style.display =
+        'block';
+
+    btnGuardarNovedad.disabled =
+        false;
+
+    return;
+}
+
+}
+
+
+
+    /* ========================================================
+       VER NOVEDAD
+       ======================================================== */
+
+    function verNovedad(id) {
+
+        const novedad =
+            novedades.find(
+                n => String(n.id) === String(id)
+            );
+
+
+        if (!novedad) {
+
+            return;
+
+        }
+
+
+        console.log(
+            '👁️ Novedad:',
+            novedad
+        );
+
+        
+    }
+
+    /* ========================================================
+   GUARDAR NOVEDAD
+   ======================================================== */
+
+async function guardarNovedad() {
+
+    console.log('💾 Guardar novedad iniciado');
+
+    const opcion =
+        registroTipoNovedad?.selectedOptions?.[0];
+
+    if (!opcion || !opcion.value) {
+
+        mostrarMensaje(
+            'Debes seleccionar un tipo de novedad.',
+            'error'
+        );
+
+        return;
+    }
+
+    const codigo =
+        opcion.dataset.codigo || '';
+
+        const nombreNovedad =
+    opcion.dataset.nombre || '';
+
+    console.log('🔎 TIPO SELECCIONADO:', {
+    value: opcion.value,
+    codigo: codigo,
+    nombre: nombreNovedad,
+    texto: opcion.textContent
+});
+
+
+    /* ====================================================
+       INCAPACIDAD
+       ==================================================== */
+
+    if (
+        codigo.toUpperCase() === 'INCAPACIDAD' ||
+        nombreNovedad
+            .toUpperCase()
+            .includes('INCAPACIDAD')
+    ) {
+
+        const tipoIncapacidad =
+            document.getElementById(
+                'tipoIncapacidad'
+            )?.value;
+
+        const fechaInicio =
+            document.getElementById(
+                'fechaInicioIncapacidad'
+            )?.value;
+
+        const fechaFin =
+            document.getElementById(
+                'fechaFinIncapacidad'
+            )?.value;
+
+        const cantidadDias =
+            document.getElementById(
+                'cantidadDiasIncapacidad'
+            )?.value;
+
+        const observacion =
+            document.getElementById(
+                'observacionIncapacidad'
+            )?.value.trim();
+
+        const archivo =
+            soporteNovedad?.files?.[0];
+
+
+        if (!tipoIncapacidad) {
+
+            mostrarMensaje(
+                'Selecciona el tipo de incapacidad.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!fechaInicio) {
+
+            mostrarMensaje(
+                'Selecciona la fecha de inicio.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!fechaFin) {
+
+            mostrarMensaje(
+                'Selecciona la fecha de finalización.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (
+            !cantidadDias ||
+            Number(cantidadDias) <= 0
+        ) {
+
+            mostrarMensaje(
+                'La cantidad de días de la incapacidad no es válida.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!archivo) {
+
+            mostrarMensaje(
+                'Debes adjuntar el soporte de la incapacidad.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        console.log(
+            '📎 Soporte seleccionado:',
+            archivo
+        );
+
+
+        const tipoNovedadId =
+            opcion.value;
+
+
+        if (!tipoNovedadId) {
+
+            mostrarMensaje(
+                'No se pudo identificar el tipo de novedad.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            'tipo_novedad_id',
+            tipoNovedadId
+        );
+
+        formData.append(
+    'empleado_id',
+    empleadoAusencia
+);
+
+        formData.append(
+            'tipo_incapacidad',
+            tipoIncapacidad
+        );
+
+        formData.append(
+            'fecha_inicio',
+            fechaInicio
+        );
+
+        formData.append(
+            'fecha_fin',
+            fechaFin
+        );
+
+        formData.append(
+            'cantidad_dias',
+            cantidadDias
+        );
+
+        formData.append(
+            'observacion',
+            observacion || ''
+        );
+
+        formData.append(
+            'soporte',
+            archivo
+        );
+
+
+        try {
+
+            const response =
+                await fetch(
+                    '/api/nomina/novedades/incapacidad',
+                    {
+                        method: 'POST',
+                        body: formData
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    'No fue posible registrar la incapacidad.'
+                );
+            }
+
+
+            mostrarMensaje(
+                data.message ||
+                'La incapacidad fue registrada correctamente y quedó pendiente de aprobación.',
+                'success'
+            );
+
+
+            console.log(
+                '✅ Incapacidad registrada:',
+                data
+            );
+
+
+            setTimeout(() => {
+    limpiarFormularioNovedad();
+}, 300);
+
+
+            if (
+                typeof cargarNovedades ===
+                'function'
+            ) {
+
+                await cargarNovedades();
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                '❌ Error registrando incapacidad:',
+                error
+            );
+
+
+            mostrarMensaje(
+                error.message ||
+                'No fue posible registrar la incapacidad.',
+                'error'
+            );
+        }
+
+
+        return;
+    }
+
+
+    /* ====================================================
+       PERMISO
+       ==================================================== */
+
+    if (
+        codigo === 'PERMISO' ||
+        (opcion.dataset.nombre || '')
+            .toLowerCase()
+            .includes('permiso')
+    ) {
+
+        const tipoPermiso =
+            document.getElementById(
+                'tipoPermiso'
+            )?.value;
+
+        const fechaPermiso =
+            document.getElementById(
+                'fechaPermiso'
+            )?.value;
+
+        const horaInicio =
+            document.getElementById(
+                'horaInicioPermiso'
+            )?.value;
+
+        const horaFin =
+            document.getElementById(
+                'horaFinPermiso'
+            )?.value;
+
+        const cantidadHoras =
+            document.getElementById(
+                'cantidadHorasPermiso'
+            )?.value;
+
+        const motivo =
+            document.getElementById(
+                'motivoPermiso'
+            )?.value.trim();
+
+        const observacion =
+            document.getElementById(
+                'observacionPermiso'
+            )?.value.trim();
+
+
+        console.log(
+            '📋 Datos permiso:',
+            {
+                tipoPermiso,
+                fechaPermiso,
+                horaInicio,
+                horaFin,
+                cantidadHoras,
+                motivo,
+                observacion
+            }
+        );
+
+
+        /* ==========================================
+           VALIDACIONES
+           ========================================== */
+
+        if (!tipoPermiso) {
+
+            mostrarMensaje(
+                'Selecciona el tipo de permiso.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!fechaPermiso) {
+
+            mostrarMensaje(
+                'Selecciona la fecha del permiso.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!horaInicio) {
+
+            mostrarMensaje(
+                'Selecciona la hora de inicio.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!horaFin) {
+
+            mostrarMensaje(
+                'Selecciona la hora de finalización.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (
+            !cantidadHoras ||
+            Number(cantidadHoras) <= 0
+        ) {
+
+            mostrarMensaje(
+                'La cantidad de horas del permiso no es válida.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!motivo) {
+
+            mostrarMensaje(
+                'Debes indicar el motivo del permiso.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        /* ==========================================
+           VALIDAR HORA
+           ========================================== */
+
+        const minutosInicio =
+            (() => {
+
+                const [h, m] =
+                    horaInicio
+                        .split(':')
+                        .map(Number);
+
+                return (h * 60) + m;
+
+            })();
+
+
+        const minutosFin =
+            (() => {
+
+                const [h, m] =
+                    horaFin
+                        .split(':')
+                        .map(Number);
+
+                return (h * 60) + m;
+
+            })();
+
+
+        if (
+            minutosFin <=
+            minutosInicio
+        ) {
+
+            mostrarMensaje(
+                'La hora de finalización debe ser posterior a la hora de inicio.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        console.log(
+            '✅ Permiso validado correctamente:',
+            {
+                tipoNovedadId: opcion.value,
+                tipoPermiso,
+                fechaPermiso,
+                horaInicio,
+                horaFin,
+                cantidadHoras,
+                motivo,
+                observacion
+            }
+        );
+
+
+        /*
+         * Por ahora solamente validamos.
+         * En el siguiente paso conectaremos
+         * el permiso con su ruta del backend.
+         */
+
+        try {
+
+    const response = await fetch(
+        '/api/nomina/novedades/permiso',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                tipo_novedad_id: opcion.value,
+                tipo_permiso: tipoPermiso,
+                fecha_permiso: fechaPermiso,
+                hora_inicio: horaInicio,
+                hora_fin: horaFin,
+                cantidad_horas: Number(cantidadHoras),
+                motivo: motivo,
+                observacion: observacion || null
+            })
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+        throw new Error(
+            data.message ||
+            'No fue posible registrar el permiso.'
+        );
+    }
+
+    console.log(
+        '✅ Permiso registrado correctamente:',
+        data
+    );
+
+    mostrarMensaje(
+        data.message ||
+        'El permiso fue registrado correctamente y quedó pendiente de aprobación.',
+        'success'
+    );
+
+    limpiarFormularioNovedad();
+
+    if (typeof cargarNovedades === 'function') {
+        await cargarNovedades();
+    }
+
+} catch (error) {
+
+    console.error(
+        '❌ Error registrando permiso:',
+        error
+    );
+
+    mostrarMensaje(
+        error.message ||
+        'No fue posible registrar el permiso.',
+        'error'
+    );
+}
+
+return;
+    }
+
+        /* ====================================================
+       AUSENCIA
+       ==================================================== */
+
+    if (
+        codigo === 'AUSENCIA' ||
+        (opcion.dataset.nombre || '')
+            .toLowerCase()
+            .includes('ausencia') ||
+        (opcion.dataset.categoria || '')
+            .toLowerCase()
+            .includes('ausencia')
+    ) {
+
+        const empleadoId =
+            document.getElementById('empleadoAusenciaId')?.value;
+
+        const tipoAusencia =
+            document.getElementById('tipoAusencia')?.value;
+
+        const fechaInicio =
+            document.getElementById('fechaInicioAusencia')?.value;
+
+        const fechaFin =
+            document.getElementById('fechaFinAusencia')?.value;
+
+        const cantidadDias =
+            document.getElementById('cantidadDiasAusencia')?.value;
+
+        const motivo =
+            document.getElementById('motivoAusencia')?.value.trim();
+
+        const observacion =
+            document.getElementById('observacionAusencia')?.value.trim();
+
+        const archivo =
+            soporteNovedad?.files?.[0];
+
+
+        console.log('📋 Datos ausencia:', {
+            empleadoId,
+            tipoAusencia,
+            fechaInicio,
+            fechaFin,
+            cantidadDias,
+            motivo,
+            observacion,
+            archivo
+        });
+
+
+        /* ==========================================
+           VALIDACIONES
+           ========================================== */
+
+        if (!empleadoId) {
+            mostrarMensaje(
+                'Debes seleccionar un empleado.',
+                'error'
+            );
+            return;
+        }
+
+        if (!tipoAusencia) {
+            mostrarMensaje(
+                'Selecciona el tipo de ausencia.',
+                'error'
+            );
+            return;
+        }
+
+        if (!fechaInicio) {
+            mostrarMensaje(
+                'Selecciona la fecha de inicio.',
+                'error'
+            );
+            return;
+        }
+
+        if (!fechaFin) {
+            mostrarMensaje(
+                'Selecciona la fecha de finalización.',
+                'error'
+            );
+            return;
+        }
+
+        if (
+            !cantidadDias ||
+            Number(cantidadDias) <= 0
+        ) {
+            mostrarMensaje(
+                'La cantidad de días de la ausencia no es válida.',
+                'error'
+            );
+            return;
+        }
+
+        if (!motivo) {
+            mostrarMensaje(
+                'Debes indicar el motivo de la ausencia.',
+                'error'
+            );
+            return;
+        }
+
+
+        /* ==========================================
+           SOPORTE PARA AUSENCIA JUSTIFICADA
+           ========================================== */
+
+        if (
+            tipoAusencia === 'JUSTIFICADA' &&
+            !archivo
+        ) {
+            mostrarMensaje(
+                'Debes adjuntar el documento de soporte para una ausencia justificada.',
+                'error'
+            );
+            return;
+        }
+
+
+        /* ==========================================
+           CREAR FORMDATA
+           ========================================== */
+
+        const formData = new FormData();
+
+        formData.append(
+            'tipo_novedad_id',
+            opcion.value
+        );
+
+        formData.append(
+            'empleado_id',
+            empleadoId
+        );
+
+        formData.append(
+            'tipo_ausencia',
+            tipoAusencia
+        );
+
+        formData.append(
+            'fecha_inicio',
+            fechaInicio
+        );
+
+        formData.append(
+            'fecha_fin',
+            fechaFin
+        );
+
+        formData.append(
+            'cantidad_dias',
+            cantidadDias
+        );
+
+        formData.append(
+            'motivo',
+            motivo
+        );
+
+        formData.append(
+            'observacion',
+            observacion || ''
+        );
+
+        if (archivo) {
+            formData.append(
+                'soporte',
+                archivo
+            );
+        }
+
+
+        /* ==========================================
+           ENVIAR AL BACKEND
+           ========================================== */
+
+        try {
+
+            const response = await fetch(
+                '/api/nomina/novedades/ausencia',
+                {
+                    method: 'POST',
+                    body: formData
+                }
+            );
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+                throw new Error(
+                    data.message ||
+                    'No fue posible registrar la ausencia.'
+                );
+            }
+
+
+            console.log(
+                '✅ Ausencia registrada correctamente:',
+                data
+            );
+
+
+            mostrarMensaje(
+                data.message ||
+                'La ausencia fue registrada correctamente y quedó pendiente de aprobación.',
+                'success'
+            );
+
+
+            /* ==========================================
+               LIMPIAR Y ACTUALIZAR
+               ========================================== */
+
+            setTimeout(() => {
+
+                limpiarFormularioNovedad();
+
+            }, 300);
+
+
+            if (
+                typeof cargarNovedades ===
+                'function'
+            ) {
+                await cargarNovedades();
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                '❌ Error registrando ausencia:',
+                error
+            );
+
+            mostrarMensaje(
+                error.message ||
+                'No fue posible registrar la ausencia.',
+                'error'
+            );
+        }
+
+
+        return;
+    }
+
+    /* ====================================================
+   LICENCIA
+   ==================================================== */
+
+if (
+    codigo.toUpperCase() === 'LICENCIA' ||
+    nombreNovedad
+        .toUpperCase()
+        .includes('LICENCIA')
+) {
+
+    const empleadoId =
+        document.getElementById(
+            'empleadoLicencia'
+        )?.value;
+
+    const tipoLicencia =
+        document.getElementById(
+            'tipoLicencia'
+        )?.value;
+
+    const observacion =
+        document.getElementById(
+            'observacionLicencia'
+        )?.value.trim() || '';
+
+
+    /* ==========================================
+       VALIDAR EMPLEADO
+       ========================================== */
+
+    if (!empleadoId) {
+
+        mostrarMensaje(
+            'Debes seleccionar el empleado.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    /* ==========================================
+       VALIDAR TIPO
+       ========================================== */
+
+    if (!tipoLicencia) {
+
+        mostrarMensaje(
+            'Debes seleccionar el tipo de licencia.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    /* ==========================================
+       MATERNIDAD
+       ========================================== */
+
+    if (
+        tipoLicencia === 'MATERNIDAD'
+    ) {
+
+        const fechaProbableParto =
+            document.getElementById(
+                'fechaProbableParto'
+            )?.value;
+
+        const semanasPreparto =
+            document.getElementById(
+                'semanasPreparto'
+            )?.value;
+
+        const fechaInicio =
+            document.getElementById(
+                'fechaInicioLicencia'
+            )?.value;
+
+        const fechaFin =
+            document.getElementById(
+                'fechaFinLicencia'
+            )?.value;
+
+        const cantidadDias =
+            document.getElementById(
+                'cantidadDiasLicencia'
+            )?.value;
+
+        const diasPreparto =
+            document.getElementById(
+                'diasPreparto'
+            )?.value;
+
+        const diasPosparto =
+            document.getElementById(
+                'diasPosparto'
+            )?.value;
+
+
+        if (!fechaProbableParto) {
+
+            mostrarMensaje(
+                'Debes seleccionar la fecha probable de parto.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!semanasPreparto) {
+
+            mostrarMensaje(
+                'Debes seleccionar las semanas de preparto.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!fechaInicio || !fechaFin) {
+
+            mostrarMensaje(
+                'No se pudieron calcular las fechas de la licencia.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (
+            !cantidadDias ||
+            Number(cantidadDias) <= 0
+        ) {
+
+            mostrarMensaje(
+                'La cantidad de días de la licencia no es válida.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        const motivo =
+            `Licencia de maternidad | ` +
+            `Fecha probable de parto: ${fechaProbableParto} | ` +
+            `Preparto: ${semanasPreparto} semana(s) | ` +
+            `Días preparto: ${diasPreparto} | ` +
+            `Días posparto: ${diasPosparto}`;
+
+
+        await registrarLicencia({
+
+            tipoNovedadId:
+                opcion.value,
+
+            empleadoId,
+
+            tipoLicencia,
+
+            fechaInicio,
+
+            fechaFin,
+
+            cantidadDias,
+
+            motivo,
+
+            observacion
+
+        });
+
+
+        return;
+    }
+
+
+    /* ==========================================
+       PATERNIDAD
+       ========================================== */
+
+    if (
+        tipoLicencia === 'PATERNIDAD'
+    ) {
+
+        const fechaNacimientoHijo =
+            document.getElementById(
+                'fechaNacimientoHijo'
+            )?.value;
+
+        const fechaInicio =
+            document.getElementById(
+                'fechaInicioPaternidad'
+            )?.value;
+
+        const fechaFin =
+            document.getElementById(
+                'fechaFinPaternidad'
+            )?.value;
+
+        const cantidadDias =
+            document.getElementById(
+                'cantidadDiasPaternidad'
+            )?.value;
+
+
+        if (!fechaNacimientoHijo) {
+
+            mostrarMensaje(
+                'Debes seleccionar la fecha de nacimiento del hijo.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!fechaInicio) {
+
+            mostrarMensaje(
+                'Debes seleccionar la fecha de inicio.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (!fechaFin) {
+
+            mostrarMensaje(
+                'No se pudo calcular la fecha de finalización.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        if (
+            !cantidadDias ||
+            Number(cantidadDias) <= 0
+        ) {
+
+            mostrarMensaje(
+                'La cantidad de días de la licencia no es válida.',
+                'error'
+            );
+
+            return;
+        }
+
+
+        const motivo =
+            `Licencia de paternidad | ` +
+            `Fecha de nacimiento del hijo: ${fechaNacimientoHijo}`;
+
+
+        await registrarLicencia({
+
+            tipoNovedadId:
+                opcion.value,
+
+            empleadoId,
+
+            tipoLicencia,
+
+            fechaInicio,
+
+            fechaFin,
+
+            cantidadDias,
+
+            motivo,
+
+            observacion
+
+        });
+
+
+        return;
+    }
+
+    /* ====================================================
+   HORAS EXTRA / RECARGOS
+   ==================================================== */
+
+if (
+    codigo.toUpperCase() === 'HORAS_EXTRA' ||
+    nombreNovedad
+        .toUpperCase()
+        .includes('HORA EXTRA') ||
+    nombreNovedad
+        .toUpperCase()
+        .includes('RECARGO')
+) {
+
+    const tipoHora =
+        document.getElementById(
+            'tipoHoraExtra'
+        )?.value;
+
+    const fechaTrabajo =
+        document.getElementById(
+            'fechaTrabajoHoraExtra'
+        )?.value;
+
+    const horaInicio =
+        document.getElementById(
+            'horaInicioHoraExtra'
+        )?.value;
+
+    const horaFin =
+        document.getElementById(
+            'horaFinHoraExtra'
+        )?.value;
+
+    const cantidadHoras =
+        document.getElementById(
+            'cantidadHorasExtra'
+        )?.value;
+
+    const observacion =
+        document.getElementById(
+            'observacionHoraExtra'
+        )?.value.trim();
+
+
+    /* ==========================================
+       VALIDACIONES
+       ========================================== */
+
+    if (!tipoHora) {
+
+        mostrarMensaje(
+            'Selecciona el tipo de hora o recargo.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    if (!fechaTrabajo) {
+
+        mostrarMensaje(
+            'Selecciona la fecha de trabajo.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    if (!horaInicio) {
+
+        mostrarMensaje(
+            'Selecciona la hora de inicio.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    if (!horaFin) {
+
+        mostrarMensaje(
+            'Selecciona la hora de finalización.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    if (
+        !cantidadHoras ||
+        Number(cantidadHoras) <= 0
+    ) {
+
+        mostrarMensaje(
+            'La cantidad de horas no es válida.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    /* ==========================================
+       VALIDAR HORARIO
+       ========================================== */
+
+    const [horaInicioNumero, minutoInicio] =
+        horaInicio
+            .split(':')
+            .map(Number);
+
+    const [horaFinNumero, minutoFin] =
+        horaFin
+            .split(':')
+            .map(Number);
+
+
+    const minutosInicio =
+        (horaInicioNumero * 60) +
+        minutoInicio;
+
+    const minutosFin =
+        (horaFinNumero * 60) +
+        minutoFin;
+
+
+    if (
+        minutosFin <=
+        minutosInicio
+    ) {
+
+        mostrarMensaje(
+            'La hora de finalización debe ser posterior a la hora de inicio.',
+            'error'
+        );
+
+        return;
+    }
+
+
+    /* ==========================================
+       ENVIAR AL BACKEND
+       ========================================== */
+
+    try {
+
+        const response =
+            await fetch(
+                '/api/nomina/novedades/horas-extra',
+                {
+                    method: 'POST',
+
+                    headers: {
+                        'Content-Type':
+                            'application/json'
+                    },
+
+                    body: JSON.stringify({
+
+                        tipo_novedad_id:
+                            opcion.value,
+
+                        tipo_hora:
+                            tipoHora,
+
+                        fecha_trabajo:
+                            fechaTrabajo,
+
+                        hora_inicio:
+                            horaInicio,
+
+                        hora_fin:
+                            horaFin,
+
+                        cantidad_horas:
+                            Number(cantidadHoras),
+
+                        observacion:
+                            observacion || null
+
+                    })
+                }
+            );
+
+
+        const data =
+    await response.json();
+
+console.log(
+    '📥 RESPUESTA HORAS EXTRA:',
+    {
+        status: response.status,
+        ok: response.ok,
+        data: data
+    }
+);
+
+if (
+    !response.ok ||
+    !data.success
+) {
+            throw new Error(
+                data.message ||
+                'No fue posible registrar las horas extra.'
+            );
+
+        }
+
+
+        console.log(
+    '✅ Horas extra / recargo registrado:',
+    data
+);
+
+/* ==========================================
+   MOSTRAR MENSAJE DE ÉXITO
+   ========================================== */
+
+mostrarMensaje(
+    data.message ||
+    'La hora extra o recargo fue registrado correctamente y quedó pendiente de aprobación.',
+    'success'
+);
+
+
+/* ==========================================
+   ACTUALIZAR LISTADO
+   ========================================== */
+
+await cargarNovedades();
+
+
+/* ==========================================
+   VOLVER A REGISTRAR NOVEDAD
+   ========================================== */
+
+setTimeout(async () => {
+
+    await abrirRegistroNovedad();
+
+}, 800);
+
+    } catch (error) {
+
+    console.error(
+        '❌ Error registrando horas extra / recargo:',
+        error
+    );
+
+    // Cerrar el modal para poder visualizar el mensaje
+    const modalElement =
+        document.getElementById('modalRegistrarNovedad');
+
+    if (modalElement) {
+
+        const modalActual =
+            bootstrap.Modal.getInstance(modalElement) ||
+            bootstrap.Modal.getOrCreateInstance(modalElement);
+
+        modalActual.hide();
+    }
+
+    // Mostrar el error claramente
+    setTimeout(() => {
+
+        mostrarMensaje(
+            error.message ||
+            'No fue posible registrar las horas extra o recargo.',
+            'error'
+        );
+
+    }, 300);
+
+}
+
+
+    return;
+}
+
+
+    /* ====================================================
+       OTROS TIPOS
+       ==================================================== */
+
+    mostrarMensaje(
+        'El guardado de este tipo de novedad todavía está pendiente de implementar.',
+        'error'
+    );
+}
+}
+
+    /* ========================================================
+   LIMPIAR FORMULARIO
+   ======================================================== */
+
+function limpiarFormularioNovedad() {
+
+    if (registroTipoNovedad) {
+
+        registroTipoNovedad.value = '';
+
+    }
+
+    if (informacionTipoNovedad) {
+
+        informacionTipoNovedad.style.display =
+            'none';
+
+    }
+
+    if (formularioNovedadDinamico) {
+
+        formularioNovedadDinamico.style.display =
+            'none';
+
+    }
+
+    if (seccionSoporteNovedad) {
+
+        seccionSoporteNovedad.style.display =
+            'none';
+
+    }
+
+    if (avisoAprobacionNovedad) {
+
+        avisoAprobacionNovedad.style.display =
+            'none';
+
+    }
+
+    if (camposNovedad) {
+
+        camposNovedad.innerHTML = '';
+
+    }
+
+    if (soporteNovedad) {
+
+        soporteNovedad.value = '';
+
+    }
+
+    if (errorRegistroNovedad) {
+
+        errorRegistroNovedad.style.display =
+            'none';
+
+        errorRegistroNovedad.textContent =
+            '';
+
+    }
+
+    if (btnGuardarNovedad) {
+
+        btnGuardarNovedad.disabled =
+            true;
+
+    }
+
+}
+
+
+
+    /* ========================================================
+       APROBAR
+       ======================================================== */
+
+    async function aprobarNovedad(id) {
+
+        const confirmar =
+            confirm(
+                '¿Deseas aprobar esta novedad?'
+            );
+
+
+        if (!confirmar) {
+            return;
+        }
+
+
+        try {
+
+            const respuesta =
+                await fetch(
+                    `/api/nomina/novedades/${id}/aprobar`,
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type':
+                                'application/json'
+                        }
+                    }
+                );
+
+
+            const resultado =
+                await respuesta.json();
+
+
+            if (!respuesta.ok) {
+
+                throw new Error(
+                    resultado.error ||
+                    'No fue posible aprobar la novedad.'
+                );
+
+            }
+
+
+            mostrarMensaje(
+                resultado.mensaje ||
+                'Novedad aprobada correctamente.',
+                'success'
+            );
+
+
             await cargarNovedades();
 
         } catch (error) {
-            mostrarToast(error.message, 'error');
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fas fa-lock"></i> Cerrar período`;
+
+            console.error(error);
+
+            mostrarMensaje(
+                error.message,
+                'error'
+            );
+
         }
+
     }
 
 
+
     /* ========================================================
-       EXPORTACIÓN A CSV
+       RECHAZAR
        ======================================================== */
 
-    function exportarCSV() {
-        if (!estadoApp.novedadesFiltradas.length) {
-            mostrarToast('No hay datos para exportar', 'warning');
+    async function rechazarNovedad(id) {
+
+        const motivo =
+            prompt(
+                'Indica el motivo del rechazo:'
+            );
+
+
+        if (
+            motivo === null ||
+            !motivo.trim()
+        ) {
+
+            return;
+
+        }
+
+
+        try {
+
+            const respuesta =
+                await fetch(
+                    `/api/nomina/novedades/${id}/rechazar`,
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type':
+                                'application/json'
+                        },
+                        body: JSON.stringify({
+                            motivo: motivo.trim()
+                        })
+                    }
+                );
+
+
+            const resultado =
+                await respuesta.json();
+
+
+            if (!respuesta.ok) {
+
+                throw new Error(
+                    resultado.error ||
+                    'No fue posible rechazar la novedad.'
+                );
+
+            }
+
+
+            mostrarMensaje(
+                resultado.mensaje ||
+                'Novedad rechazada correctamente.',
+                'success'
+            );
+
+
+            await cargarNovedades();
+
+        } catch (error) {
+
+            console.error(error);
+
+            mostrarMensaje(
+                error.message,
+                'error'
+            );
+
+        }
+
+    }
+
+
+
+    /* ========================================================
+       LIMPIAR FILTROS
+       ======================================================== */
+
+    function limpiarFiltros() {
+
+        if (buscarNovedad) {
+
+            buscarNovedad.value = '';
+
+        }
+
+
+        if (filtroTipo) {
+
+            filtroTipo.value = '';
+
+        }
+
+
+        if (filtroEstado) {
+
+            filtroEstado.value = '';
+
+        }
+
+
+        establecerMesActual();
+
+
+        renderizarTabla(novedades);
+
+    }
+
+
+
+    /* ========================================================
+       MES ACTUAL
+       ======================================================== */
+
+    function establecerMesActual() {
+
+        if (!filtroMes) {
             return;
         }
 
-        const columnas = ['ID', 'Empleado', 'Documento', 'Tipo', 'Fecha Inicio', 'Fecha Fin', 'Cantidad', 'Estado', 'Registro'];
-        const filas = estadoApp.novedadesFiltradas.map(n => [
-            n.id,
-            obtenerEmpleado(n),
-            n.numero_documento || '',
-            obtenerTipo(n),
-            n.fecha_inicio || '',
-            n.fecha_fin || '',
-            obtenerCantidad(n),
-            obtenerEstado(n),
-            formatearFecha(n.fecha_creacion)
-        ]);
 
-        let csvContent = "\uFEFF"; // BOM para Excel
-        csvContent += columnas.join(";") + "\n";
+        const ahora =
+            new Date();
 
-        filas.forEach(row => {
-            csvContent += row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(";") + "\n";
-        });
 
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `novedades_${new Date().getTime()}.csv`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        
-        mostrarToast('Archivo exportado correctamente', 'success');
+        const año =
+            ahora.getFullYear();
+
+
+        const mes =
+            String(
+                ahora.getMonth() + 1
+            ).padStart(2, '0');
+
+
+        filtroMes.value =
+            `${año}-${mes}`;
+
     }
 
-
     /* ========================================================
-       SISTEMA DE TOASTS Y MODAL DE CONFIRMACIÓN
-       ======================================================== */
+   CARGAR TIPOS PARA REGISTRO
+   ======================================================== */
 
-    function mostrarToast(mensaje, tipo = 'success') {
-        if (!contenedorToasts) return;
+async function cargarTiposRegistro() {
 
-        let icono = 'fa-check-circle';
-        if (tipo === 'error') icono = 'fa-times-circle';
-        if (tipo === 'warning') icono = 'fa-exclamation-triangle';
-        if (tipo === 'info') icono = 'fa-info-circle';
+    try {
 
-        const toast = document.createElement('div');
-        toast.className = `toast-novedad ${tipo}`;
-        toast.innerHTML = `
-            <div class="toast-novedad-icono"><i class="fas ${icono}"></i></div>
-            <div class="toast-novedad-contenido">${escaparHTML(mensaje)}</div>
-            <button class="toast-novedad-cerrar">&times;</button>
+        const respuesta =
+            await fetch(
+                '/api/nomina/novedades/tipos'
+            );
+
+
+        const data =
+            await respuesta.json();
+
+
+        if (!respuesta.ok || !data.success) {
+
+            throw new Error(
+                data.message ||
+                'No fue posible cargar los tipos'
+            );
+
+        }
+
+
+        registroTipoNovedad.innerHTML = `
+            <option value="">
+                Selecciona un tipo de novedad
+            </option>
         `;
 
-        contenedorToasts.appendChild(toast);
-        
-        requestAnimationFrame(() => toast.classList.add('mostrar'));
 
-        const cerrar = () => {
-            toast.classList.remove('mostrar');
-            setTimeout(() => toast.remove(), 300);
-        };
+        data.tipos.forEach(tipo => {
 
-        toast.querySelector('.toast-novedad-cerrar').onclick = cerrar;
-        setTimeout(cerrar, 4000);
+            const opcion =
+                document.createElement('option');
+
+            opcion.value = tipo.id;
+
+            opcion.textContent =
+                `${tipo.nombre} — ${tipo.categoria}`;
+
+            opcion.dataset.nombre =
+                tipo.nombre;
+
+            opcion.dataset.codigo =
+                tipo.codigo;
+
+            opcion.dataset.categoria =
+                tipo.categoria;
+
+            opcion.dataset.descripcion =
+                tipo.descripcion || '';
+
+            opcion.dataset.permiteEmpleado =
+                tipo.permite_empleado;
+
+            opcion.dataset.requiereSoporte =
+                tipo.requiere_soporte;
+
+            opcion.dataset.requiereAprobacion =
+                tipo.requiere_aprobacion;
+
+
+            registroTipoNovedad.appendChild(
+                opcion
+            );
+
+        });
+
+
+        console.log(
+            '📋 Tipos para registro:',
+            data.tipos
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            'ERROR CARGANDO TIPOS:',
+            error
+        );
+
     }
 
-    function mostrarConfirmacion(mensaje, callback) {
-        if (!modalConfirmacion) return;
-        modalConfirmacionMensaje.textContent = mensaje;
-        estadoApp.confirmCallback = callback;
-        
-        const modal = bootstrap.Modal.getOrCreateInstance(modalConfirmacion);
-        modal.show();
-    }
+}
+
 
 
     /* ========================================================
-       UTILIDADES DE FORMATO Y SEGURIDAD
+       BADGE ESTADO
+       ======================================================== */
+
+    function crearBadgeEstado(estado) {
+
+        const configuracion = {
+
+            PENDIENTE: {
+                clase: 'pendiente',
+                texto: 'Pendiente',
+                icono: 'fa-clock'
+            },
+
+            APROBADA: {
+                clase: 'aprobada',
+                texto: 'Aprobada',
+                icono: 'fa-circle-check'
+            },
+
+            RECHAZADA: {
+                clase: 'rechazada',
+                texto: 'Rechazada',
+                icono: 'fa-circle-xmark'
+            },
+
+            ANULADA: {
+                clase: 'anulada',
+                texto: 'Anulada',
+                icono: 'fa-ban'
+            }
+
+        };
+
+
+        const config =
+            configuracion[estado] ||
+            {
+                clase: 'desconocido',
+                texto: estado || 'Sin estado',
+                icono: 'fa-question'
+            };
+
+
+        return `
+
+            <span class="novedad-estado ${config.clase}">
+
+                <i class="fas ${config.icono}"></i>
+
+                ${config.texto}
+
+            </span>
+
+        `;
+
+    }
+
+
+
+    /* ========================================================
+       UTILIDADES DE CAMPOS
+       ======================================================== */
+
+    function obtenerEmpleado(novedad) {
+
+        return (
+            novedad.empleado_nombre ||
+            novedad.nombre_empleado ||
+            novedad.empleado ||
+            novedad.nombre ||
+            'Sin empleado'
+        );
+
+    }
+
+
+
+    function obtenerTipo(novedad) {
+
+        return (
+            novedad.tipo_novedad ||
+            novedad.tipo ||
+            novedad.novedad ||
+            ''
+        );
+
+    }
+
+
+
+    function obtenerEstado(novedad) {
+
+        return String(
+            novedad.estado ||
+            'PENDIENTE'
+        ).toUpperCase();
+
+    }
+
+
+
+    function obtenerFecha(novedad) {
+
+        return (
+            novedad.fecha_inicio ||
+            novedad.fecha ||
+            ''
+        );
+
+    }
+
+
+
+    function obtenerCantidad(novedad) {
+
+        return (
+            novedad.cantidad ??
+            novedad.valor ??
+            novedad.dias ??
+            ''
+        );
+
+    }
+
+
+
+    function obtenerFechaRegistro(novedad) {
+
+        return (
+            novedad.created_at ||
+            novedad.fecha_registro ||
+            novedad.fecha_creacion ||
+            ''
+        );
+
+    }
+
+
+
+    /* ========================================================
+       FORMATEAR FECHA
+       ======================================================== */
+
+    function formatearFecha(fecha) {
+
+        if (!fecha) {
+            return '-';
+        }
+
+
+        const fechaObj =
+            new Date(fecha);
+
+
+        if (
+            Number.isNaN(
+                fechaObj.getTime()
+            )
+        ) {
+
+            return fecha;
+
+        }
+
+
+        return fechaObj.toLocaleDateString(
+            'es-CO',
+            {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            }
+        );
+
+    }
+
+
+
+    /* ========================================================
+       FORMATEAR FECHA Y HORA
+       ======================================================== */
+
+    function formatearFechaHora(fecha) {
+
+        if (!fecha) {
+            return '-';
+        }
+
+
+        const fechaObj =
+            new Date(fecha);
+
+
+        if (
+            Number.isNaN(
+                fechaObj.getTime()
+            )
+        ) {
+
+            return fecha;
+
+        }
+
+
+        return fechaObj.toLocaleString(
+            'es-CO',
+            {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }
+        );
+
+    }
+
+
+
+    /* ========================================================
+       FORMATEAR TEXTO
+       ======================================================== */
+
+    function formatearTexto(texto) {
+
+        if (!texto) {
+            return '';
+        }
+
+
+        return String(texto)
+            .toLowerCase()
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, letra =>
+                letra.toUpperCase()
+            );
+
+    }
+
+
+
+    /* ========================================================
+       ESCAPAR HTML
+       ======================================================== */
+
+    function escaparHTML(valor) {
+
+        const div =
+            document.createElement('div');
+
+
+        div.textContent =
+            valor ?? '';
+
+
+        return div.innerHTML;
+
+    }
+
+
+
+    /* ========================================================
+       ESTADO DE CARGA
        ======================================================== */
 
     function mostrarCargando() {
-        if (tablaSkeleton) tablaSkeleton.style.display = 'flex';
-        if (tablaNovedades) tablaNovedades.innerHTML = '';
-        if (estadoVacio) estadoVacio.style.display = 'none';
+
+        if (!tablaNovedades) {
+            return;
+        }
+
+
+        tablaNovedades.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    style="text-align:center;"
+                >
+
+                    <i class="fas fa-spinner fa-spin"></i>
+
+                    Cargando novedades...
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+        if (estadoVacio) {
+
+            estadoVacio.style.display =
+                'none';
+
+        }
+
     }
 
-    function ocultarCargando() {
-        if (tablaSkeleton) tablaSkeleton.style.display = 'none';
+
+
+    /* ========================================================
+       ERROR
+       ======================================================== */
+
+    function mostrarError(mensaje) {
+
+        if (!tablaNovedades) {
+            return;
+        }
+
+
+        tablaNovedades.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    style="text-align:center;"
+                >
+
+                    <i class="fas fa-triangle-exclamation"></i>
+
+                    ${escaparHTML(mensaje)}
+
+                </td>
+
+            </tr>
+
+        `;
+
     }
 
-    function mostrarError(msg) {
-        ocultarCargando();
-        if (tablaNovedades) tablaNovedades.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4"><i class="fas fa-triangle-exclamation"></i> ${escaparHTML(msg)}</td></tr>`;
+
+
+    /* ========================================================
+       MENSAJE
+       ======================================================== */
+
+function mostrarMensaje(
+    mensaje,
+    tipo = 'success'
+) {
+
+    // Eliminar alerta anterior si existe
+    const alertaAnterior =
+        document.querySelector(
+            '.alerta-novedades'
+        );
+
+    if (alertaAnterior) {
+        alertaAnterior.remove();
     }
 
-    function crearBadgeEstado(estado) {
-        const map = {
-            PENDIENTE: { clase: 'pendiente', texto: 'Pendiente', icono: 'fa-clock' },
-            APROBADA: { clase: 'aprobada', texto: 'Aprobada', icono: 'fa-circle-check' },
-            RECHAZADA: { clase: 'rechazada', texto: 'Rechazada', icono: 'fa-circle-xmark' },
-            ANULADA: { clase: 'anulada', texto: 'Anulada', icono: 'fa-ban' }
-        };
-        const cfg = map[estado] || { clase: 'anulada', texto: estado || 'Sin estado', icono: 'fa-question' };
-        return `<span class="novedad-estado ${cfg.clase}"><i class="fas ${cfg.icono}"></i> ${cfg.texto}</span>`;
+
+    // Crear alerta
+    const alerta =
+        document.createElement('div');
+
+    alerta.className =
+        `alerta-novedades alerta-${tipo}`;
+
+
+    // Icono según el tipo
+    let icono = '✓';
+
+    if (tipo === 'error') {
+        icono = '✕';
     }
 
-    function obtenerEmpleado(n) { return n.empleado_nombre || n.empleado || 'Sin empleado'; }
-    function obtenerTipo(n) { return n.tipo_novedad || n.tipo || ''; }
-    function obtenerEstado(n) { return String(n.estado || 'PENDIENTE').toUpperCase(); }
-    function obtenerFecha(n) { return n.fecha_inicio || n.fecha || ''; }
-    function obtenerCantidad(n) { return n.cantidad_dias ? n.cantidad_dias + ' días' : (n.cantidad_horas ? n.cantidad_horas + ' hrs' : '-'); }
-    function obtenerFechaRegistro(n) { return n.fecha_creacion || n.created_at || ''; }
-
-    function formatearFecha(f) {
-        if (!f) return '-';
-        const d = new Date(f);
-        return isNaN(d.getTime()) ? f : d.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    else if (tipo === 'warning') {
+        icono = '⚠';
     }
 
-    function formatearFechaHora(f) {
-        if (!f) return '-';
-        const d = new Date(f);
-        return isNaN(d.getTime()) ? f : d.toLocaleString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    else if (tipo === 'info') {
+        icono = 'ⓘ';
     }
 
-    function formatearTexto(t) {
-        if (!t) return '';
-        return String(t).toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
+    alerta.innerHTML = `
+        <div class="alerta-novedades-icono">
+            ${icono}
+        </div>
+
+        <div class="alerta-novedades-contenido">
+            ${mensaje}
+        </div>
+
+        <button
+            type="button"
+            class="alerta-novedades-cerrar"
+            aria-label="Cerrar"
+        >
+            ×
+        </button>
+    `;
+
+
+    // Agregar al documento
+    document.body.appendChild(
+        alerta
+    );
+
+
+    // Mostrar con animación
+    requestAnimationFrame(() => {
+
+        alerta.classList.add(
+            'mostrar'
+        );
+
+    });
+
+
+    // Botón cerrar
+    const botonCerrar =
+        alerta.querySelector(
+            '.alerta-novedades-cerrar'
+        );
+
+    botonCerrar.addEventListener(
+        'click',
+        () => {
+
+            cerrarAlertaNovedades(
+                alerta
+            );
+
+        }
+    );
+
+
+    // Cerrar automáticamente
+    setTimeout(() => {
+
+        cerrarAlertaNovedades(
+            alerta
+        );
+
+    }, 5000);
+}
+
+
+/* ============================================================
+   CERRAR ALERTA
+   ============================================================ */
+
+function cerrarAlertaNovedades(
+    alerta
+) {
+
+    if (!alerta) {
+        return;
     }
 
-    function escaparHTML(val) {
-        const div = document.createElement('div');
-        div.textContent = val ?? '';
-        return div.innerHTML;
-    }
+    alerta.classList.remove(
+        'mostrar'
+    );
 
-    function debounce(fn, wait) {
-        let timeout;
-        return function(...args) { clearTimeout(timeout); timeout = setTimeout(() => fn(...args), wait); };
-    }
+
+    setTimeout(() => {
+
+        if (alerta.parentNode) {
+
+            alerta.remove();
+
+        }
+
+    }, 300);
+}
 
 });
