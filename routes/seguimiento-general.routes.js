@@ -280,39 +280,51 @@ router.get(
 
             // LISTADO DE CAPACITACIONES
             const [capacitaciones] = await db.query(`
-                SELECT
-                    ac.id,
-                    c.id AS capacitacion_id,
-                    c.titulo AS nombre,
-                    c.descripcion,
-                    c.obligatorio,
-                    ac.estado,
-                    ac.fecha_asignacion,
-                    ac.fecha_limite,
-                    cp.fecha_finalizacion,
-                    IFNULL(cp.porcentaje, 0) AS progreso,
-                    IFNULL(cp.capitulos_completados, 0) AS capitulos_completados,
-                    (
-                        SELECT COUNT(*)
-                        FROM capitulos_curso cc
-                        WHERE cc.curso_id = c.id
-                    ) AS capitulos_totales,
-                    (
-                        SELECT cert.id
-                        FROM certificados_capacitacion cert
-                        INNER JOIN usuarios u ON u.id = cert.usuario_id
-                        WHERE u.empleado_id = ac.empleado_id
-                          AND cert.curso_id = c.id
-                        ORDER BY cert.fecha_emision DESC
-                        LIMIT 1
-                    ) AS certificado_id
-                FROM asignaciones_capacitaciones ac
-                INNER JOIN cursos c ON c.id = ac.capacitacion_id
-                LEFT JOIN progreso_capacitaciones cp
-                    ON cp.asignacion_id = ac.id
-                WHERE ac.empleado_id = ?
-                ORDER BY ac.fecha_asignacion DESC
-            `, [id]);
+    SELECT
+        ac.id,
+        c.id AS capacitacion_id,
+        c.titulo AS nombre,
+        c.descripcion,
+        c.obligatorio,
+        ac.estado,
+        ac.fecha_asignacion,
+        ac.fecha_limite,
+        cp.fecha_finalizacion,
+        IFNULL(cp.porcentaje, 0) AS progreso,
+        IFNULL(cp.capitulos_completados, 0) AS capitulos_completados,
+
+        (
+            SELECT COUNT(*)
+            FROM capitulos_curso cc
+            WHERE cc.curso_id = c.id
+        ) AS capitulos_totales,
+
+        certificado.certificado_id AS certificado_id
+
+    FROM asignaciones_capacitaciones ac
+
+    INNER JOIN cursos c
+        ON c.id = ac.capacitacion_id
+
+    LEFT JOIN progreso_capacitaciones cp
+        ON cp.asignacion_id = ac.id
+
+    LEFT JOIN (
+        SELECT
+            u.empleado_id,
+            cert.curso_id,
+            MAX(cert.id) AS certificado_id
+        FROM certificados_capacitacion cert
+        INNER JOIN usuarios u
+            ON u.id = cert.usuario_id
+        GROUP BY u.empleado_id, cert.curso_id
+    ) certificado
+        ON certificado.empleado_id = ac.empleado_id
+        AND certificado.curso_id = c.id
+
+    WHERE ac.empleado_id = ?
+    ORDER BY ac.fecha_asignacion DESC
+`, [id]);
 
             res.json({
                 success: true,
