@@ -116,7 +116,7 @@
 }
 
 /* ============================================
-   TARJETAS
+   TARJETAS (ESTILO GLOBAL MODIFICADO)
 ============================================ */
 
 .modulo-card{
@@ -140,13 +140,15 @@
     gap:15px;
 
     cursor:pointer;
-
-    background:white;
-
-    border:1px solid #e2e8f0;
-
+    
+    /* [MODIFICADO] Degradado verde a azul para todas las tarjetas */
+    background: linear-gradient(135deg, var(--verde-dark), var(--azul));
+    color: white;
+    
+    border: none; /* Quitamos el borde gris para que se vea más limpio */
+    
     box-shadow:
-        0 10px 25px rgba(0,0,0,.08);
+        0 10px 25px rgba(0,0,0,.15);
 
     transition:.25s;
 
@@ -157,29 +159,12 @@
     transform:translateY(-8px);
 
     box-shadow:
-        0 20px 40px rgba(0,0,0,.15);
+        0 20px 40px rgba(0,0,0,.25);
 
 }
 
 /* ============================================
-   RECURSOS HUMANOS
-============================================ */
-
-.modulo-card.rh{
-
-    background:
-        linear-gradient(
-            135deg,
-            #16a34a,
-            #22c55e
-        );
-
-    color:white;
-
-}
-
-/* ============================================
-   MODULOS FUTUROS
+   MODULOS FUTUROS (Mantienen su estilo apagado)
 ============================================ */
 
 .modulo-card.proximamente{

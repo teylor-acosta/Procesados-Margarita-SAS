@@ -12,7 +12,7 @@ const { proteger } = require('../middlewares/auth');
 const SALT_ROUNDS = 10;
 
 // ============================================
-// 🔥 CONFIG EMAIL
+// 🔥 CONFIG EMAIL (HOSTINGER — unificado con app.js)
 // ============================================
 
 const transporter = nodemailer.createTransport({
@@ -20,11 +20,17 @@ const transporter = nodemailer.createTransport({
     port: 465,
     secure: true,
     auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        user: process.env.EMAIL_USER,   // tecnologiaerp@procesadosmargaritasas.com
+        pass: process.env.EMAIL_PASS    // ← tu contraseña real de Hostinger
+    },
+    tls: {
+        rejectUnauthorized: false
     }
 });
 
+transporter.verify()
+    .then(() => console.log('✅ SMTP Hostinger conectado (auth.routes)'))
+    .catch(err => console.error('❌ SMTP error (auth.routes):', err.message));
 // ============================================
 // 🔥 LOGIN
 // ============================================
@@ -60,7 +66,7 @@ router.post('/api/login', async (req, res) => {
 
         const user = results[0];
         console.log("===== USER LOGIN =====");
-console.log(user);
+        console.log(user);
 
         // =========================================
         // 🚫 EMPLEADO INACTIVO
@@ -114,13 +120,11 @@ console.log(user);
         // =========================================
 
         if (!passwordMatch) {
-            // Sumar intentos
             await db.query(
                 `UPDATE usuarios SET intentos_fallidos = intentos_fallidos + 1 WHERE ID = ?`,
                 [user.ID]
             );
 
-            // Consultar nuevos intentos
             const [nuevoIntento] = await db.query(
                 `SELECT intentos_fallidos FROM usuarios WHERE ID = ?`,
                 [user.ID]
@@ -128,7 +132,6 @@ console.log(user);
 
             const intentos = nuevoIntento[0].intentos_fallidos;
 
-            // Bloquear si llega a 3
             if (intentos >= 3) {
                 await db.query(
                     `UPDATE usuarios SET bloqueado = 1 WHERE ID = ?`,
@@ -162,26 +165,17 @@ console.log(user);
         // =========================================
 
         req.session.usuarioID = user.ID;
+        req.session.empleadoID = user.empleado_id;
+        req.session.rolID = user.rol_id;
+        req.session.rol = user.rol;
 
-req.session.empleadoID = user.empleado_id;
-
-req.session.rolID = user.rol_id;
-
-req.session.rol = user.rol;
-
-console.log("===== SESSION =====");
-
-console.log({
-
-    usuarioID: req.session.usuarioID,
-
-    empleadoID: req.session.empleadoID,
-
-    rolID: req.session.rolID,
-
-    rol: req.session.rol
-
-});
+        console.log("===== SESSION =====");
+        console.log({
+            usuarioID: req.session.usuarioID,
+            empleadoID: req.session.empleadoID,
+            rolID: req.session.rolID,
+            rol: req.session.rol
+        });
 
         // =========================================
         // 🔥 CAMBIO PASSWORD OBLIGATORIO
@@ -242,28 +236,20 @@ console.log({
         }
 
         req.session.save(() => {
-    res.json({
-        success: true,
-        redirect: destino,
-        usuario: {
-
-    id: user.ID,
-
-    empleado_id: user.empleado_id,
-
-    rol_id: user.rol_id,
-
-    nombre: user.nombre,
-
-    rol: user.rol,
-
-    activo: user.activo,
-
-    fecha_ultimo_login: user.fecha_ultimo_login
-
-}
-    });
-});
+            res.json({
+                success: true,
+                redirect: destino,
+                usuario: {
+                    id: user.ID,
+                    empleado_id: user.empleado_id,
+                    rol_id: user.rol_id,
+                    nombre: user.nombre,
+                    rol: user.rol,
+                    activo: user.activo,
+                    fecha_ultimo_login: user.fecha_ultimo_login
+                }
+            });
+        });
 
     } catch (error) {
         console.error('🔥 ERROR LOGIN COMPLETO:', error);
@@ -365,11 +351,11 @@ WHERE estado = 'ACTIVO') AS total_capacitaciones,
             tiene_certificado: tieneCertificado,
             redirect,
             conteos: {
-    empleados: u.total_empleados_activos || 0,
-    usuarios: u.total_usuarios_sistema || 0,
-    capacitaciones: u.total_capacitaciones || 0,
-    certificates: u.total_certificados_emitidos || 0
-}
+                empleados: u.total_empleados_activos || 0,
+                usuarios: u.total_usuarios_sistema || 0,
+                capacitaciones: u.total_capacitaciones || 0,
+                certificates: u.total_certificados_emitidos || 0
+            }
         });
 
     } catch (error) {
@@ -379,13 +365,20 @@ WHERE estado = 'ACTIVO') AS total_capacitaciones,
 });
 
 // ============================================
-// 🔥 RECUPERAR PASSWORD TOKEN
+// 🔥 RECUPERAR PASSWORD TOKEN (CORREGIDO)
 // ============================================
 
 router.post('/api/recuperar', async (req, res) => {
     try {
         const db = req.app.get('db');
         const { documento } = req.body;
+
+        if (!documento) {
+            return res.status(400).json({
+                success: false,
+                message: 'Debe ingresar el número de documento'
+            });
+        }
 
         const sql = `
             SELECT u.id, e.nombre, e.email
@@ -396,6 +389,7 @@ router.post('/api/recuperar', async (req, res) => {
 
         const [results] = await db.query(sql, [documento]);
 
+        // Respuesta genérica si no existe (seguridad)
         if (results.length === 0) {
             return res.json({
                 success: true,
@@ -404,6 +398,14 @@ router.post('/api/recuperar', async (req, res) => {
         }
 
         const usuario = results[0];
+
+        if (!usuario.email) {
+            return res.json({
+                success: true,
+                message: 'Si la cuenta existe se enviará un correo.'
+            });
+        }
+
         const token = crypto.randomBytes(32).toString('hex');
 
         await db.query(
@@ -411,8 +413,10 @@ router.post('/api/recuperar', async (req, res) => {
             [token, usuario.id]
         );
 
-        const resetLink = `https://procesadosmargaritasas.com/reset/${token}`;
+        const baseUrl = process.env.BASE_URL || 'https://procesadosmargaritasas.com';
+        const resetLink = `${baseUrl}/reset/${token}`;
 
+        // Envío de correo — si falla, se registra pero NO se devuelve 500 al cliente
         try {
             await transporter.sendMail({
                 from: `"Procesados Margarita SAS" <${process.env.EMAIL_USER}>`,
@@ -422,30 +426,39 @@ router.post('/api/recuperar', async (req, res) => {
                     <div style="font-family:Arial; padding:20px;">
                         <h2>Recuperación de acceso</h2>
                         <p>Hola ${usuario.nombre}.</p>
-                        <p>Haz clic aquí para reestablecer tu clave de acceso:</p>
+                        <p>Haz clic aquí para restablecer tu clave de acceso:</p>
                         <br>
                         <a href="${resetLink}" style="display:inline-block; padding:12px 25px; background:#2563eb; color:white; text-decoration:none; border-radius:10px; font-weight:bold;">
                             Restablecer contraseña
                         </a>
+                        <p style="margin-top:20px; color:#888; font-size:12px;">
+                            Este enlace expira en 10 minutos.
+                        </p>
                     </div>
                 `
             });
-        } catch(error) {
-            console.log('🔥 ERROR EMAIL:', error);
-            return res.status(500).json({
-                success: false,
-                message: 'Error enviando correo'
-            });
+
+            console.log(`✅ Correo de recuperación enviado a ${usuario.email}`);
+
+        } catch (emailError) {
+            console.error('🔥 ERROR EMAIL (pero respondemos OK por seguridad):', emailError.message);
+
+            // Limpiar el token si el correo no se pudo enviar
+            await db.query(
+                `UPDATE usuarios SET token_reset = NULL, token_expira = NULL WHERE id = ?`,
+                [usuario.id]
+            );
         }
 
-        res.json({
+        // Respuesta uniforme: siempre success para no revelar info
+        return res.json({
             success: true,
             message: 'Si la cuenta existe se enviará un correo.'
         });
 
     } catch (error) {
         console.error('🔥 ERROR RECUPERAR:', error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: 'Error interno del servidor'
         });
@@ -475,32 +488,21 @@ router.post('/api/cambiar-password', proteger, async (req, res) => {
             [hash, req.session.usuarioID]
         );
 
-        // Cerrar la sesión para obligar a iniciar nuevamente
-req.session.destroy(err => {
+        req.session.destroy(err => {
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: 'No se pudo cerrar la sesión.'
+                });
+            }
 
-    if (err) {
+            res.clearCookie('connect.sid', { path: '/' });
 
-        return res.status(500).json({
-
-            success: false,
-
-            message: 'No se pudo cerrar la sesión.'
-
+            res.json({
+                success: true,
+                redirect: '/login'
+            });
         });
-
-    }
-
-    res.clearCookie('connect.sid', { path: '/' });
-
-    res.json({
-
-        success: true,
-
-        redirect: '/login'
-
-    });
-
-});
 
     } catch (error) {
         console.error('🔥 ERROR CAMBIAR PASSWORD:', error);
@@ -514,34 +516,30 @@ req.session.destroy(err => {
 // ============================================
 // 🔥 LOGOUT UNIFICADO (COMPATIBLE CON FETCH JSON)
 // ============================================
+
 const limpiarSesionCompleta = (req, res) => {
     console.log('🔥 Destruyendo sesión en backend...');
-    
-    // Forzamos cabeceras HTTP anti-caché en la respuesta
+
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-    
+
     req.session.destroy(err => {
         if (err) {
             console.error("Error destruyendo req.session:", err);
             return res.status(500).json({ success: false, message: 'No se pudo cerrar la sesión' });
         }
-        
+
         console.log('✅ Sesión eliminada de memoria del servidor.');
-        
-        // Limpiamos la cookie explícitamente asignándole ruta raíz
+
         res.clearCookie('connect.sid', { path: '/' });
-        
-        // Si la petición viene de nuestro fetch del Dashboard, respondemos JSON limpio
+
         if (req.xhr || req.headers.accept?.includes('json') || req.originalUrl.includes('/api/')) {
             return res.json({ success: true, redirect: '/login' });
         }
-        
-        // Caída por si entran manual por URL
+
         res.redirect('/login');
     });
 };
 
-// Escucha en ambos endpoints indistintamente (POST y GET)
 router.all('/api/logout', limpiarSesionCompleta);
 router.all('/logout', limpiarSesionCompleta);
 

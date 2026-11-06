@@ -1701,44 +1701,220 @@
 }
 
 
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
+/* ==========================================================================
+   RESPONSIVE COMPLETO Y OPTIMIZADO PARA TODOS LOS DISPOSITIVOS
+   ========================================================================== */
 
-@media (max-width: 900px) {
-
-    #modalHistorialNovedades .historial-filtros-grid {
-        grid-template-columns: 1fr 1fr;
+/* 1. TABLETS GRANDES Y LAPTOPS PEQUEÑOS (<= 1200px) */
+@media (max-width: 1200px) {
+    .novedades-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-
+    .novedades-filtros-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .filtro-limpiar {
+        min-width: 0;
+    }
 }
 
-
-@media (max-width: 600px) {
-
-    #modalHistorialNovedades .modal-dialog {
-        margin: 10px;
+/* 2. TABLETS VERTICALES Y LAPTOPS (<= 992px) */
+@media (max-width: 992px) {
+    /* El menú lateral (sidebar) se oculta, el contenedor ocupa todo */
+    .novedades-container {
+        margin-left: 0;
+        width: 100%;
+        padding: 25px 20px 45px;
     }
 
+    .novedades-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .novedades-header-actions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .btn-novedad-primary {
+        width: 100%;
+    }
+
+    .novedades-panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
+    }
+
+    .novedades-panel-header-actions {
+        width: 100%;
+        margin-top: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .novedades-panel-header-actions .btn-novedad-secondary {
+        flex: 1;
+    }
+}
+
+/* 3. TABLETS PEQUEÑAS Y MÓVILES GRANDES (<= 768px) */
+@media (max-width: 768px) {
+    /* Contenedor general */
+    .novedades-container {
+        padding: 20px 15px 35px;
+    }
+
+    /* KPIs en 1 sola columna */
+    .novedades-kpi-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .novedad-kpi-card {
+        min-height: 110px;
+        padding: 18px;
+    }
+
+    .novedad-kpi-info strong {
+        font-size: 28px;
+    }
+
+    /* Filtros en 1 sola columna */
+    .novedades-filtros {
+        padding: 15px 20px;
+    }
+    
+    .novedades-filtros-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    /* Tabla con scroll horizontal (No se aplasta, se desliza con el dedo) */
+    .novedades-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 12px;
+    }
+
+    .novedades-table {
+        min-width: 700px; /* Fuerza el scroll horizontal */
+    }
+
+    /* Modales al 95% de la pantalla */
+    .novedad-modal .modal-dialog {
+        margin: 10px;
+        max-width: calc(100% - 20px);
+    }
+
+    .novedad-modal .modal-body {
+        padding: 15px;
+    }
+
+    /* Ajustes del formulario dentro del modal */
+    .registro-novedad-seccion {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+    }
+
+    .zona-drag-drop {
+        padding: 15px;
+    }
+
+    /* Modal de Historial específico */
     #modalHistorialNovedades .historial-filtros-grid {
         grid-template-columns: 1fr;
+        gap: 10px;
     }
 
     #modalHistorialNovedades .historial-rango {
         grid-template-columns: 1fr;
+        max-width: 100%;
     }
 
     #modalHistorialNovedades .historial-filtros-acciones {
-        justify-content: stretch;
         flex-direction: column;
+        align-items: stretch;
     }
 
     #modalHistorialNovedades .historial-filtros-acciones button {
         width: 100%;
     }
 
+    #modalHistorialNovedades .historial-resultados {
+        padding: 15px;
+    }
+
+    /* Paginación */
+    .novedades-paginacion {
+        padding: 15px 20px;
+        justify-content: space-between;
+    }
 }
 
+/* 4. MÓVILES PEQUEÑOS (<= 480px) */
+@media (max-width: 480px) {
+    .novedades-container {
+        padding: 15px 12px 30px;
+    }
+
+    /* Títulos más pequeños */
+    .novedades-header h1 {
+        font-size: 26px;
+    }
+
+    .novedades-header p {
+        font-size: 14px;
+    }
+
+    .novedades-panel-header h2 {
+        font-size: 20px;
+    }
+
+    /* Tabla compacta */
+    .novedades-table thead th,
+    .novedades-table tbody td {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    /* Acciones del header (Refrescar, Cerrar Período, Registrar) apiladas */
+    .novedades-header-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .novedades-header-actions .btn-novedad-secondary,
+    .novedades-header-actions .btn-novedad-primary {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    /* Botones del modal (Cancelar / Registrar) al 100% de ancho */
+    .novedad-modal .modal-footer {
+        flex-direction: column;
+        gap: 10px;
+        padding: 15px;
+    }
+
+    .novedad-modal .modal-footer button,
+    .novedad-modal .modal-footer a {
+        width: 100%;
+        margin: 0;
+    }
+    
+    /* Toasts de notificación ocupan todo el ancho de la pantalla */
+    .contenedor-toasts {
+        right: 12px;
+        left: 12px;
+    }
+    .toast-novedad {
+        min-width: 100%;
+        max-width: 100%;
+    }
+}
 /* ============================================================
    ALERTAS VISUALES - NOVEDADES
    ============================================================ */
@@ -1946,4 +2122,144 @@
 
     color: #0d6efd;
 
+}
+
+/* ==========================================================================
+   MEJORAS VISUALES PREMIUM (COLORES INTENSOS)
+   ========================================================================== */
+
+/* 1. Panel Principal y Tarjetas KPI (Degradado diagonal más intenso) */
+.novedades-panel, 
+.novedad-kpi-card {
+    background: linear-gradient(135deg, #ffffff 0%, #dcfce7 45%, #dbeafe 100%) !important;
+    border: 1px solid rgba(148, 163, 184, 0.5) !important;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+/* 2. Efecto hover para las tarjetas KPI */
+.novedad-kpi-card:hover {
+    background: linear-gradient(135deg, #ffffff 0%, #bbf7d0 40%, #bfdbfe 100%) !important;
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(22, 163, 74, 0.25) !important;
+    border-color: #86efac !important;
+}
+
+/* 3. Cabeceras y Barras de Filtros (Transición horizontal notoria) */
+.novedades-panel-header,
+.novedades-filtros,
+.novedades-toolbar {
+    background: linear-gradient(90deg, #ffffff 0%, #f0fdf4 50%, #eff6ff 100%) !important;
+}
+
+/* 4. Tabla de Novedades (Filas con transición fuerte al pasar el ratón) */
+.novedades-table tbody tr {
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.novedades-table tbody td {
+    background: transparent !important; 
+}
+
+.novedades-table tbody tr:hover {
+    background: linear-gradient(90deg, #ffffff 0%, #dcfce7 50%, #dbeafe 100%) !important;
+    transform: scale(1.003);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    position: relative;
+    z-index: 2;
+}
+
+/* 5. Modales (Fondo con degradado azul/verde más marcado) */
+.novedad-modal .modal-content {
+    background: linear-gradient(135deg, #ffffff 0%, #dcfce7 50%, #dbeafe 100%) !important;
+    border: 1px solid rgba(148, 163, 184, 0.5) !important;
+}
+
+.novedad-modal .modal-header,
+.novedad-modal .modal-footer {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(10px);
+}
+
+.novedad-modal .modal-body {
+    background: transparent !important; 
+}
+
+/* 6. Botones Principales (Degradado Verde más brillante) */
+.btn-novedad-primary {
+    background: linear-gradient(135deg, #4ade80 0%, #16a34a 100%) !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3) !important;
+}
+
+.btn-novedad-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #22c55e 0%, #15803d 100%) !important;
+    box-shadow: 0 8px 25px rgba(22, 163, 74, 0.5) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* 7. Botón Eliminar (Icono de basura) - Color rojo al pasar el ratón */
+.novedad-accion-btn.btn-eliminar-novedad:hover {
+    border-color: #fecaca !important;
+    background: #fef2f2 !important;
+    color: #dc2626 !important;
+}
+
+/* 8. Cajas de información dentro del Modal de Detalle */
+#detalleContenido > div > div {
+    transition: background 0.3s ease;
+}
+#detalleContenido > div > div:hover {
+    background: linear-gradient(135deg, #ffffff 0%, #dcfce7 100%) !important;
+    border-color: #86efac !important;
+}
+
+/* ==========================================================================
+   FIX PARA EL MODAL DE HISTORIAL (CENTRADO Y VISIBLE)
+   ========================================================================== */
+
+/* 1. Asegurar que el modal se centre en el área visible */
+#modalHistorialNovedades .modal-dialog {
+    max-width: 95%; /* No dejar que se salga de la pantalla */
+    margin: 1.75rem auto; /* Centrado vertical y horizontal */
+}
+
+/* 2. Arreglar el grid de los filtros para que no se desborden */
+#modalHistorialNovedades .historial-filtros-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    width: 100%;
+}
+
+/* 3. Asegurar que el modal tenga un ancho máximo sensato */
+#modalHistorialNovedades .modal-content {
+    width: 100%;
+    max-width: 1200px; /* Para pantallas gigantes */
+    margin: 0 auto;
+}
+
+/* 4. Arreglar el contenedor de resultados para que haga scroll interno */
+#modalHistorialNovedades .modal-body {
+    max-height: 75vh;
+    overflow-y: auto;
+}
+
+/* 5. Ajuste para pantallas donde el sidebar ocupa espacio */
+@media (min-width: 993px) {
+    /* Si el sidebar está abierto (280px), empujamos el modal un poco a la derecha */
+    #modalHistorialNovedades {
+        padding-left: 280px !important; 
+    }
+}
+
+/* 6. En pantallas de laptop/tablet, que ocupe todo el ancho disponible sin cortarse */
+@media (max-width: 1200px) {
+    #modalHistorialNovedades .modal-dialog {
+        max-width: 98%;
+        margin: 10px auto;
+    }
+    
+    #modalHistorialNovedades .historial-filtros-grid {
+        grid-template-columns: 1fr 1fr; /* 2 columnas en tablet */
+    }
 }
