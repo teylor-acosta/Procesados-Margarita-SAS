@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#12345a">
+    <meta name="description" content="Catálogo de productos de Procesados Margarita S.A.S. Consulta los productos disponibles y organiza tu pedido.">
+
+    <title>Catálogo de Compras | Procesados Margarita S.A.S.</title>
+
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700;800&display=swap" rel="stylesheet">
+
+    <!-- Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- ✅ SOLO ESTE CSS PARA MANTENER EL DISEÑO PREMIUM -->
+    <link rel="stylesheet" href="css/tienda.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/style1.css">
+
+    <script src="js/tienda.js" defer></script>
+</head>
+
+<body class="pagina-tienda">
+
+    <!-- ============================================
+         ENCABEZADO
+         ============================================ -->
+    <header class="encabezado" id="inicio">
+        <div class="contenedor encabezado-contenido">
+
+            <a href="index.html" class="marca" aria-label="Inicio del catálogo">
+                <img src="img/logo.png" alt="Logo de Procesados Margarita" class="marca-logo">
+                <div class="marca-texto">
+                    <strong>PROCESADOS MARGARITA</strong>
+                    <span>S.A.S. · CATÁLOGO EMPRESARIAL</span>
+                </div>
+            </a>
+
+            <nav class="navegacion" aria-label="Navegación principal">
+                <a href="index.html" class="enlace-nav">Página principal</a>
+                <a href="#productos" class="enlace-nav">Productos y Materiales</a>
+            </nav>
+
+            <div style="display: flex; gap: 12px; align-items: center;">
+
+                <button
+                    type="button"
+                    class="boton-carrito"
+                    id="abrir-carrito"
+                    aria-label="Abrir carrito de compras"
+                    aria-haspopup="dialog"
+                    aria-controls="ventana-carrito"
+                >
+                    <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+                    <span>Mi carrito</span>
+                    <span class="contador-carrito" id="contador-carrito" aria-live="polite" aria-atomic="true">0</span>
+                </button>
+
+                <a href="carrito.html" class="boton-carrito" id="btn-ir-carrito" style="background: var(--verde-oscuro); text-decoration: none;">
+                    <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>
+                    <span>Revisar pedido</span>
+                </a>
+
+            </div>
+
+        </div>
+    </header>
+
+
+    <main>
+
+        <!-- ============================================
+             PORTADA
+             ============================================ -->
+        <section class="portada">
+            <div class="contenedor portada-contenido">
+
+                <div class="portada-texto">
+
+                    <span class="etiqueta-portada">
+                        <i class="fa-solid fa-building" aria-hidden="true"></i>
+                        PROCESADOS MARGARITA S.A.S.
+                    </span>
+
+                    <h1>
+                        tienda virtual en actualización
+                        <h3>estamos preparando nuestro catalogo</h3>
+                        <h3>actualmente algunas imagenes y caracteristicas se encuentran en proceso de actualización</h3>
+                        <h3>estamos trabajando para incorporar fotografias reale e informacion completa de nuestros productos</h3>
+                        <h3>muy pronto podras conocer nuestros productos</h3>
+                        <h3>gracias por visitar Procesados Margarita S.A.S.</h3>
+                    </h1>
+
+                    <h1>
+                        Encuentra lo que necesitas
+                        <span>en un solo lugar.</span>
+                    </h1>
+
+                    <p>
+                        Explora nuestro catálogo de productos y materiales, consulta sus
+                        características y agrega los artículos que necesites
+                        a tu carrito para organizar tu pedido fácilmente.
+                    </p>
+
+                    <a href="#productos" class="boton-principal">
+                        Explorar catálogo
+                        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                    </a>
+
+                    <div class="portada-datos">
+                        <div>
+                            <i class="fa-solid fa-box-open" aria-hidden="true"></i>
+                            <span>Catálogo organizado</span>
+                        </div>
+                        <div>
+                            <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+                            <span>Carrito de compras</span>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="portada-decoracion" aria-hidden="true">
+
+                    <div class="portada-circulo"></div>
+
+                    <div class="portada-tarjeta portada-tarjeta-principal">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                        <span>Catálogo empresarial</span>
+                        <strong>Todo más organizado</strong>
+                    </div>
+
+                    <div class="portada-tarjeta portada-tarjeta-secundaria">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <div>
+                            <strong>Tu pedido</strong><br>
+                            <span>Organiza tus productos</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ============================================
+             CATÁLOGO DE PRODUCTOS
+             ============================================ -->
+        <section class="seccion-productos" id="productos" aria-labelledby="titulo-productos">
+            <div class="contenedor">
+
+                <div class="titulo-seccion">
+                    <div>
+                        <span class="subtitulo">NUESTRO CATÁLOGO</span>
+                        <h2 id="titulo-productos">Productos y Materiales</h2>
+                        <p>Busca, consulta y agrega los productos o materiales que necesites.</p>
+                    </div>
+
+                    <div class="indicador-catalogo">
+                        <span class="indicador-punto"></span>
+                        <span>Explora el catálogo</span>
+                    </div>
+                </div>
+
+
+                <!-- ============================================
+                     BUSCADOR Y FILTROS
+                     ============================================ -->
+                <div class="herramientas" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+
+                    <label class="buscador" style="flex: 1; min-width: 250px;">
+                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                        <span class="sr-only">Buscar productos</span>
+                        <input
+                            type="search"
+                            id="buscar-producto"
+                            placeholder="Buscar por nombre o descripción..."
+                            autocomplete="off"
+                        >
+                    </label>
+
+                    <div class="filtros-categoria" style="display: flex; gap: 8px;">
+                        <button type="button" class="btn-filtro activo" data-filtro="todos">
+                            <i class="fa-solid fa-list"></i> Todos
+                        </button>
+                        <button type="button" class="btn-filtro" data-filtro="producto">
+                            <i class="fa-solid fa-box"></i> Productos
+                        </button>
+                        <button type="button" class="btn-filtro" data-filtro="material">
+                            <i class="fa-solid fa-boxes-stacked"></i> Materiales
+                        </button>
+                    </div>
+
+                </div>
+
+
+                <p class="resultado-busqueda" id="texto-resultados" aria-live="polite">
+                    Cargando productos...
+                </p>
+
+
+                <div class="productos-grid" id="lista-productos" aria-live="polite" aria-busy="true">
+
+                    <!-- ====================================================
+                         PRODUCTOS REALES (CON PRECIO)
+                    ==================================================== -->
+
+                    <!-- PRODUCTO 1: GANCHO NEGRO -->
+                    <article class="tarjeta-producto" data-id="1" data-tipo="producto">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Gancho Negro" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Gancho Negro</h3>
+                            <p class="producto-descripcion">Gancho negro resistente para exhibición y organización.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 300</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Lleva 200 uds o más y paga $ 40.000 por lote.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="1" data-precio="300" data-precio-mayor="40000" data-cantidad-mayor="200" aria-label="Agregar Gancho Negro al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- PRODUCTO 2: GANCHO DE COLOR -->
+                    <article class="tarjeta-producto" data-id="2" data-tipo="producto">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Gancho de Color" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Gancho de Color</h3>
+                            <p class="producto-descripcion">Gancho de color disponible en varias tonalidades.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 390</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Lleva 200 uds o más y paga $ 76.000 por lote.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="2" data-precio="390" data-precio-mayor="76000" data-cantidad-mayor="200" aria-label="Agregar Gancho de Color al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- PRODUCTO 3: COMEDERO DE PERRO -->
+                    <article class="tarjeta-producto" data-id="3" data-tipo="producto">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/bodega_1.png" alt="Comedero de Perro" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Comedero de Perro</h3>
+                            <p class="producto-descripcion">Comedero práctico y resistente para mascotas.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 3.500</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Lleva 100 uds o más y paga $ 250.000 por lote.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="3" data-precio="3500" data-precio-mayor="250000" data-cantidad-mayor="100" aria-label="Agregar Comedero de Perro al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- PRODUCTO 4: FICHAS DE PARQUÉS 4 JUGADORES -->
+                    <article class="tarjeta-producto" data-id="4" data-tipo="producto">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/planta_1.png" alt="Fichas de Parqués 4 Jugadores" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Fichas de Parqués 4 Jugadores</h3>
+                            <p class="producto-descripcion">Set de fichas para parqués de 4 jugadores.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 1.200</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Lleva 30 uds o más y paga $ 25.500 por lote.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="4" data-precio="1200" data-precio-mayor="25500" data-cantidad-mayor="30" aria-label="Agregar Fichas de Parqués 4 Jugadores al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- PRODUCTO 5: FICHAS DE PARQUÉS 6 JUGADORES -->
+                    <article class="tarjeta-producto" data-id="5" data-tipo="producto">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Fichas de Parqués 6 Jugadores" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Fichas de Parqués 6 Jugadores</h3>
+                            <p class="producto-descripcion">Set de fichas para parqués de 6 jugadores.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 1.400</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Lleva 30 uds o más y paga $ 28.500 por lote.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="5" data-precio="1400" data-precio-mayor="28500" data-cantidad-mayor="30" aria-label="Agregar Fichas de Parqués 6 Jugadores al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                    <!-- PRODUCTO 6 -->
+                    <article class="tarjeta-producto" data-id="6" data-tipo="producto">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Producto Ejemplo 6" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Producto Ejemplo 6</h3>
+                            <p class="producto-descripcion">Espacio reservado para un producto real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 6.800</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Lleva 10 uds o más y paga $ 6.120 c/u.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="6" data-precio="6800" data-precio-mayor="6120" data-cantidad-mayor="10" aria-label="Agregar Producto Ejemplo 6 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- PRODUCTO 7 -->
+                    <article class="tarjeta-producto" data-id="7" data-tipo="producto">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/planta_1.png" alt="Producto Ejemplo 7" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Producto Ejemplo 7</h3>
+                            <p class="producto-descripcion">Espacio reservado para un producto real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 15.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Lleva 5 uds o más y paga $ 13.500 c/u.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="7" data-precio="15000" data-precio-mayor="13500" data-cantidad-mayor="5" aria-label="Agregar Producto Ejemplo 7 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- PRODUCTO 8 -->
+                    <article class="tarjeta-producto" data-id="8" data-tipo="producto">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/bodega_1.png" alt="Producto Ejemplo 8" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Producto Ejemplo 8</h3>
+                            <p class="producto-descripcion">Espacio reservado para un producto real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio">$ 22.000</strong>
+                                    <small style="color: var(--verde-oscuro); font-weight: 700; font-size: 11px; margin-top: 4px; display: block;">
+                                        Lleva 5 uds o más y paga $ 19.800 c/u.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="8" data-precio="22000" data-precio-mayor="19800" data-cantidad-mayor="5" aria-label="Agregar Producto Ejemplo 8 al carrito">
+                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 1 -->
+                    <article class="tarjeta-producto" data-id="101" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Material 1" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 1</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="101" data-tipo="material" aria-label="Solicitar cotización del Material 1">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 2 -->
+                    <article class="tarjeta-producto" data-id="102" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Material 2" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 2</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="102" data-tipo="material" aria-label="Solicitar cotización del Material 2">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 3 -->
+                    <article class="tarjeta-producto" data-id="103" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/planta_1.png" alt="Material 3" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 3</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="103" data-tipo="material" aria-label="Solicitar cotización del Material 3">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 4 -->
+                    <article class="tarjeta-producto" data-id="104" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/bodega_1.png" alt="Material 4" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 4</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="104" data-tipo="material" aria-label="Solicitar cotización del Material 4">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 5 -->
+                    <article class="tarjeta-producto" data-id="105" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Material 5" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 5</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="105" data-tipo="material" aria-label="Solicitar cotización del Material 5">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 6 -->
+                    <article class="tarjeta-producto" data-id="106" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Material 6" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 6</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="106" data-tipo="material" aria-label="Solicitar cotización del Material 6">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 7 -->
+                    <article class="tarjeta-producto" data-id="107" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/planta_1.png" alt="Material 7" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 7</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="107" data-tipo="material" aria-label="Solicitar cotización del Material 7">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 8 -->
+                    <article class="tarjeta-producto" data-id="108" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/bodega_1.png" alt="Material 8" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 8</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="108" data-tipo="material" aria-label="Solicitar cotización del Material 8">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 9 -->
+                    <article class="tarjeta-producto" data-id="109" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Material 9" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 9</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="109" data-tipo="material" aria-label="Solicitar cotización del Material 9">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 10 -->
+                    <article class="tarjeta-producto" data-id="110" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Material 10" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 10</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="110" data-tipo="material" aria-label="Solicitar cotización del Material 10">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 11 -->
+                    <article class="tarjeta-producto" data-id="111" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/planta_1.png" alt="Material 11" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 11</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="111" data-tipo="material" aria-label="Solicitar cotización del Material 11">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 12 -->
+                    <article class="tarjeta-producto" data-id="112" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/bodega_1.png" alt="Material 12" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 12</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="112" data-tipo="material" aria-label="Solicitar cotización del Material 12">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 13 -->
+                    <article class="tarjeta-producto" data-id="113" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Material 13" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 13</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="113" data-tipo="material" aria-label="Solicitar cotización del Material 13">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                                        <!-- MATERIAL 14 -->
+                    <article class="tarjeta-producto" data-id="114" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Material 14" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 14</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="114" data-tipo="material" aria-label="Solicitar cotización del Material 14">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 15 -->
+                    <article class="tarjeta-producto" data-id="115" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/planta_1.png" alt="Material 15" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 15</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="115" data-tipo="material" aria-label="Solicitar cotización del Material 15">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 16 -->
+                    <article class="tarjeta-producto" data-id="116" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/bodega_1.png" alt="Material 16" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 16</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="116" data-tipo="material" aria-label="Solicitar cotización del Material 16">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 17 -->
+                    <article class="tarjeta-producto" data-id="117" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Material 17" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 17</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="117" data-tipo="material" aria-label="Solicitar cotización del Material 17">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 18 -->
+                    <article class="tarjeta-producto" data-id="118" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Material 18" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 18</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="118" data-tipo="material" aria-label="Solicitar cotización del Material 18">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 19 -->
+                    <article class="tarjeta-producto" data-id="119" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/planta_1.png" alt="Material 19" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 19</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="119" data-tipo="material" aria-label="Solicitar cotización del Material 19">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 20 -->
+                    <article class="tarjeta-producto" data-id="120" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/bodega_1.png" alt="Material 20" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 20</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="120" data-tipo="material" aria-label="Solicitar cotización del Material 20">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 21 -->
+                    <article class="tarjeta-producto" data-id="121" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Material 21" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 21</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="121" data-tipo="material" aria-label="Solicitar cotización del Material 21">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 22 -->
+                    <article class="tarjeta-producto" data-id="122" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Material 22" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 22</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="122" data-tipo="material" aria-label="Solicitar cotización del Material 22">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 23 -->
+                    <article class="tarjeta-producto" data-id="123" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/planta_1.png" alt="Material 23" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 23</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="123" data-tipo="material" aria-label="Solicitar cotización del Material 23">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 24 -->
+                    <article class="tarjeta-producto" data-id="124" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/bodega_1.png" alt="Material 24" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 24</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="124" data-tipo="material" aria-label="Solicitar cotización del Material 24">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 25 -->
+                    <article class="tarjeta-producto" data-id="125" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/camion_1.png" alt="Material 25" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 25</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="125" data-tipo="material" aria-label="Solicitar cotización del Material 25">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MATERIAL 26 -->
+                    <article class="tarjeta-producto" data-id="126" data-tipo="material">
+                        <div class="producto-imagen">
+                            <img src="img/productos_ejemplos/operarios_1.png" alt="Material 26" loading="lazy">
+                        </div>
+                        <div class="producto-info">
+                            <h3 class="producto-nombre">Material Ejemplo 26</h3>
+                            <p class="producto-descripcion">Espacio reservado para un material real.</p>
+                            <div class="producto-pie">
+                                <div class="producto-precio-contenedor">
+                                    <span class="producto-precio-etiqueta">Precio</span>
+                                    <strong class="producto-precio" style="color: var(--azul-medio);">Requiere cotización</strong>
+                                    <small style="color: var(--texto-terciario); font-weight: 600; font-size: 11px; margin-top: 4px; display: block;">
+                                        Un asesor se contactará contigo.
+                                    </small>
+                                </div>
+                                <button type="button" class="boton-agregar" data-id="126" data-tipo="material" aria-label="Solicitar cotización del Material 26">
+                                    <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+
+                </div> <!-- Cierre de productos-grid -->
+            </div> <!-- Cierre de contenedor -->
+        </section> <!-- Cierre de seccion-productos -->
+
+    </main> <!-- Cierre de main -->
+
+
+    <!-- ============================================
+         PIE DE PÁGINA
+         ============================================ -->
+    <footer class="pie">
+        <div class="contenedor pie-contenido">
+
+            <a href="#inicio" class="marca marca-pie">
+                <img src="img/logo.png" alt="" class="marca-logo">
+                <div class="marca-texto">
+                    <strong>PROCESADOS MARGARITA</strong>
+                    <span>S.A.S. · CATÁLOGO EMPRESARIAL</span>
+                </div>
+            </a>
+
+            <p>Catálogo de productos de Procesados Margarita S.A.S.</p>
+
+            <p class="pie-copyright">
+                &copy; <span id="anio-actual"></span> Procesados Margarita S.A.S.
+            </p>
+
+        </div>
+    </footer>
+        <!-- ============================================
+         MODAL DE DETALLE DEL PRODUCTO
+         ============================================ -->
+    <dialog
+        class="ventana ventana-producto"
+        id="ventana-producto"
+        aria-labelledby="titulo-producto-modal"
+    >
+        <div class="ventana-contenido">
+
+            <div class="ventana-encabezado">
+                <div>
+                    <span class="subtitulo">DETALLE DEL PRODUCTO</span>
+                    <h2 id="titulo-producto-modal">Producto</h2>
+                </div>
+                <button
+                    type="button"
+                    class="boton-cerrar"
+                    id="cerrar-producto"
+                    aria-label="Cerrar detalle"
+                >
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <div class="modal-producto-cuerpo">
+
+                <div class="modal-producto-imagen">
+                    <img id="modal-imagen" src="" alt="">
+                </div>
+
+                <div class="modal-producto-info">
+
+                    <p class="modal-descripcion" id="modal-descripcion"></p>
+
+                    <!-- INFORMACIÓN DE PRECIO (SOLO PRODUCTOS) -->
+                    <div class="modal-detalles-grid" id="modal-precio-contenedor" style="grid-template-columns: 1fr; gap: 12px;">
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;">
+                            <span>Precio unitario</span>
+                            <strong id="modal-precio-unitario" style="font-size: 18px;">$ 0</strong>
+                        </div>
+
+                        <!-- Contenedor para precio al por mayor -->
+                        <div id="contenedor-precio-mayoreo" style="display: none; justify-content: space-between; align-items: center; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px;">
+                            <span>Precio al por mayor</span>
+                            <strong id="modal-precio-mayor" style="font-size: 18px; color: var(--verde-oscuro);">$ 0</strong>
+                        </div>
+
+                        <!-- Contenedor para la cantidad mínima -->
+                        <div id="contenedor-cantidad-mayor" style="display: none; justify-content: space-between; align-items: center;">
+                            <span>A partir de</span>
+                            <strong id="modal-cantidad-mayor-texto" style="font-size: 16px;">0 unidades</strong>
+                        </div>
+
+                    </div>
+
+                    <!-- AVISO DE COTIZACIÓN (SOLO MATERIALES) -->
+                    <div id="modal-aviso-cotizacion" style="display: none; background: #e5efff; color: #155eef; padding: 16px; border-radius: 12px; font-size: 14px; font-weight: 700; border: 1px solid rgba(21, 94, 239, 0.3); text-align: center; margin-bottom: 10px;">
+                        <i class="fa-solid fa-file-invoice-dollar" style="font-size: 24px; display: block; margin-bottom: 8px;"></i>
+                        <span style="display: block; margin-bottom: 4px;">Este material requiere cotización.</span>
+                        <span style="font-size: 12px; font-weight: 500;">Un asesor se contactará contigo para negociar el precio.</span>
+                    </div>
+
+                    <!-- AVISO DE MAYOREO APLICADO -->
+                    <div id="modal-aviso-mayoreo" style="display: none; background: var(--verde-suave); color: var(--verde-oscuro); padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 700; border: 1px solid rgba(18, 199, 106, 0.3); text-align: center;">
+                        <i class="fa-solid fa-tags"></i> ¡Descuento por mayoreo aplicado!
+                    </div>
+
+                    <div class="modal-cantidad">
+                        <label for="modal-cantidad">Cantidad (Kg o Unidades)</label>
+                        <div class="selector-cantidad">
+                            <button
+                                type="button"
+                                class="boton-cantidad"
+                                id="modal-menos"
+                                aria-label="Disminuir cantidad"
+                            >
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+
+                            <input
+                                type="number"
+                                id="modal-cantidad"
+                                value="1"
+                                min="1"
+                                max="999999"
+                                aria-label="Cantidad"
+                                style="width: 80px; font-size: 16px;"
+                            >
+
+                            <button
+                                type="button"
+                                class="boton-cantidad"
+                                id="modal-mas"
+                                aria-label="Aumentar cantidad"
+                            >
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- TOTAL DEL PEDIDO (SOLO PARA PRODUCTOS) -->
+                    <div class="modal-total" id="modal-total-contenedor">
+                        <span>Total del pedido</span>
+                        <strong id="modal-total">$ 0</strong>
+                    </div>
+
+                    <!-- BOTÓN AGREGAR (Cambia de texto según sea producto o material) -->
+                    <button
+                        type="button"
+                        class="boton-confirmar modal-btn-agregar"
+                        id="modal-agregar"
+                    >
+                        <i class="fa-solid fa-cart-plus" aria-hidden="true"></i>
+                        Agregar al carrito
+                    </button>
+
+                </div>
+            </div>
+
+        </div>
+    </dialog>
+
+
+    <!-- ============================================
+         VENTANA DEL CARRITO
+         ============================================ -->
+    <dialog
+        class="ventana"
+        id="ventana-carrito"
+        aria-labelledby="titulo-carrito"
+    >
+        <div class="ventana-contenido">
+
+            <div class="ventana-encabezado">
+                <div>
+                    <span class="subtitulo">TU SELECCIÓN</span>
+                    <h2 id="titulo-carrito">Mi carrito</h2>
+                </div>
+                <button
+                    type="button"
+                    class="boton-cerrar"
+                    id="cerrar-carrito"
+                    aria-label="Cerrar carrito"
+                >
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <div
+                class="contenido-carrito"
+                id="contenido-carrito"
+                aria-live="polite"
+            >
+                <div class="carrito-vacio">
+                    <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+                    <h3>Tu carrito está vacío</h3>
+                    <p>
+                        Agrega productos del catálogo para comenzar a organizar
+                        tu pedido.
+                    </p>
+                </div>
+            </div>
+
+            <!-- RESUMEN DEL CARRITO -->
+            <div class="resumen-carrito">
+                <div class="resumen-fila">
+                    <span>Subtotal (Productos)</span>
+                    <strong id="subtotal-carrito">$ 0</strong>
+                </div>
+                
+                <!-- Aviso si hay materiales -->
+                <div class="resumen-fila" id="aviso-materiales-carrito" style="display: none; color: var(--azul-medio); font-size: 13px; align-items: flex-start; background: #e5efff; padding: 10px; border-radius: 8px; margin-top: 10px;">
+                    <i class="fa-solid fa-file-invoice-dollar" style="margin-top: 2px;"></i>
+                    <span style="margin-left: 6px; font-weight: 600;">Tienes materiales que requieren cotización. Un asesor te contactará.</span>
+                </div>
+
+                <div class="resumen-fila">
+                    <span>IVA estimado (19%)</span>
+                    <strong id="iva-carrito">$ 0</strong>
+                </div>
+                <div class="resumen-fila resumen-total">
+                    <span>Total estimado</span>
+                    <strong id="total-carrito">$ 0</strong>
+                </div>
+
+                <!-- Ahorro por mayoreo (se muestra si aplica) -->
+                <div class="resumen-fila" id="ahorro-carrito" style="color: var(--verde-oscuro); font-weight: 700; font-size: 13px;"></div>
+            </div>
+
+            <p class="aviso-carrito">
+                Los valores mostrados son orientativos. Los materiales serán cotizados por un asesor.
+            </p>
+
+            <!-- BOTONES DEL CARRITO -->
+            <div class="acciones-carrito">
+                <button
+                    type="button"
+                    class="boton-volver"
+                    id="seguir-comprando"
+                >
+                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                    Seguir comprando
+                </button>
+                <button
+                    type="button"
+                    class="boton-confirmar"
+                    id="confirmar-compra"
+                >
+                    <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>
+                    Revisar pedido
+                </button>
+            </div>
+
+            <div
+                class="resultado-compra"
+                id="resultado-compra"
+                role="status"
+                aria-live="polite"
+            ></div>
+
+        </div>
+    </dialog>
+
+
+    <!-- ============================================
+         NOTIFICACIONES TOAST
+         ============================================ -->
+    <div
+        class="notificacion-tienda"
+        id="notificacion-tienda"
+        role="status"
+        aria-live="polite"
+    ></div>
+
+
+    <!-- ============================================
+         SCRIPT PARA EL AÑO AUTOMÁTICO
+         ============================================ -->
+    <script>
+        document.getElementById("anio-actual").textContent = new Date().getFullYear();
+    </script>
+
+    <!-- Enlaces del Chatbot (si los usas) -->
+    <link rel="stylesheet" href="css/chatbot.css">
+        <script src="js/chatbot.js"></script>
+        <script src="js/chatbot-formularios.js"></script> 
+
+</body>
+
+</html>

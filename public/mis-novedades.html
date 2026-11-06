@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Novedades - Procesados Margarita</title>
+
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- BOOTSTRAP -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- CSS GENERAL DEL ERP -->
+    <link rel="stylesheet" href="/css/style1.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/nomina-novedades.css">
+</head>
+
+<body data-pagina="nomina-novedades">
+
+    <!-- SIDEBAR GLOBAL -->
+    <div id="sidebarContainer"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- NAVBAR GLOBAL -->
+    <nav class="navbar-custom">
+        <div class="navbar-left">
+            <i class="fas fa-bars menu-toggle" id="btnOpenSidebar"></i>
+            <span class="empresa-nombre">Mis Novedades</span>
+        </div>
+        <div class="acciones-navbar">
+            <a href="/panel" class="btn-light">
+                <i class="fas fa-arrow-left"></i>
+                Volver al Panel
+            </a>
+        </div>
+    </nav>
+
+    <!-- CONTENEDOR DE NOTIFICACIONES -->
+    <div id="contenedorToasts" class="contenedor-toasts" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="novedades-container">
+
+        <!-- ENCABEZADO -->
+        <section class="novedades-header">
+            <div class="novedades-header-info">
+                <span class="novedades-overline">CONSULTA DE NÓMINA</span>
+                <h1>Mis Novedades</h1>
+                <p>Registra y consulta el estado de tus solicitudes.</p>
+            </div>
+
+            <div class="novedades-header-actions">
+                <button type="button" id="btnRefrescarNovedades" class="btn-novedad-secondary" title="Actualizar lista de novedades">
+                    <i class="fas fa-rotate"></i> Refrescar
+                </button>
+
+                <!-- Botón de Registrar novedad -->
+                <button type="button" id="btnRegistrarNovedad" class="btn-novedad-primary">
+                    <i class="fas fa-plus"></i> Registrar novedad
+                </button>
+            </div>
+        </section>
+
+        <!-- TARJETAS RESUMEN -->
+        <section class="novedades-kpi-grid">
+            <article class="novedad-kpi-card kpi-pendientes">
+                <div class="novedad-kpi-info">
+                    <span>Pendientes</span>
+                    <strong id="kpiPendientes">0</strong>
+                    <small>En revisión</small>
+                </div>
+                <div class="novedad-kpi-icon"><i class="fas fa-clock"></i></div>
+            </article>
+
+            <article class="novedad-kpi-card kpi-aprobadas">
+                <div class="novedad-kpi-info">
+                    <span>Aprobadas</span>
+                    <strong id="kpiAprobadas">0</strong>
+                    <small>Novedades aprobadas</small>
+                </div>
+                <div class="novedad-kpi-icon"><i class="fas fa-circle-check"></i></div>
+            </article>
+
+            <article class="novedad-kpi-card kpi-rechazadas">
+                <div class="novedad-kpi-info">
+                    <span>Rechazadas</span>
+                    <strong id="kpiRechazadas">0</strong>
+                    <small>Novedades rechazadas</small>
+                </div>
+                <div class="novedad-kpi-icon"><i class="fas fa-circle-xmark"></i></div>
+            </article>
+
+            <article class="novedad-kpi-card kpi-historial historial-kpi-clickable" data-bs-toggle="modal" data-bs-target="#modalHistorialNovedades" role="button" tabindex="0">
+                <div class="novedad-kpi-info">
+                    <span>Historial</span>
+                    <strong id="kpiHistorial">0</strong>
+                    <small>Novedades archivadas</small>
+                </div>
+                <div class="novedad-kpi-icon"><i class="fas fa-clock-rotate-left"></i></div>
+            </article>
+        </section>
+
+        <!-- PANEL PRINCIPAL -->
+        <section class="novedades-panel">
+            <header class="novedades-panel-header">
+                <div>
+                    <span class="novedades-panel-overline">CONTROL DE NOVEDADES</span>
+                    <h2>Mis novedades registradas</h2>
+                    <p>Consulta el historial de tus solicitudes.</p>
+                </div>
+
+                <div class="novedades-panel-header-actions">
+                    <button type="button" id="btnExportarNovedades" class="btn-novedad-secondary" title="Exportar novedades a CSV">
+                        <i class="fas fa-file-export"></i> Exportar
+                    </button>
+                    <button type="button" id="btnVerHistorial" class="btn-novedad-secondary" data-bs-toggle="modal" data-bs-target="#modalHistorialNovedades">
+                        <i class="fas fa-clock-rotate-left"></i> Ver historial
+                    </button>
+                </div>
+            </header>
+
+            <!-- FILTROS -->
+            <div class="novedades-filtros">
+                <div class="novedades-filtros-grid">
+                    <div class="novedad-filtro">
+                        <label for="buscarNovedad">Buscar</label>
+                        <div class="novedad-input-wrapper">
+                            <i class="fas fa-magnifying-glass"></i>
+                            <input type="text" id="buscarNovedad" class="form-control" placeholder="Buscar por tipo de novedad...">
+                        </div>
+                    </div>
+                    <div class="novedad-filtro">
+                        <label for="filtroTipo">Tipo de novedad</label>
+                        <select id="filtroTipo" class="form-control"><option value="">Todos los tipos</option></select>
+                    </div>
+                    <div class="novedad-filtro">
+                        <label for="filtroEstado">Estado</label>
+                        <select id="filtroEstado" class="form-control">
+                            <option value="">Todos</option>
+                            <option value="PENDIENTE">Pendiente</option>
+                            <option value="APROBADA">Aprobada</option>
+                            <option value="RECHAZADA">Rechazada</option>
+                            <option value="ANULADA">Anulada</option>
+                        </select>
+                    </div>
+                    <div class="novedad-filtro">
+                        <label for="filtroMes">Mes</label>
+                        <input type="month" id="filtroMes" class="form-control">
+                    </div>
+                    <div class="novedad-filtro filtro-limpiar">
+                        <label>&nbsp;</label>
+                        <button type="button" id="btnLimpiarFiltros" class="btn-novedad-secondary">
+                            <i class="fas fa-filter-circle-xmark"></i> Limpiar
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- TABLA DE NOVEDADES -->
+            <div class="novedades-table-wrapper">
+                <div id="tablaSkeleton" class="novedades-skeleton" style="display:none;" aria-hidden="true">
+                    <div class="skeleton-row"></div>
+                    <div class="skeleton-row"></div>
+                    <div class="skeleton-row"></div>
+                </div>
+
+                <table class="novedades-table">
+                    <thead>
+                        <tr>
+                            <th>Tipo de Novedad</th>
+                            <th>Fecha</th>
+                            <th>Cantidad</th>
+                            <th>Estado</th>
+                            <th>Registro</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaNovedades"></tbody>
+                </table>
+
+                <!-- ESTADO VACÍO -->
+                <div id="estadoVacio" class="novedades-empty-state">
+                    <div class="novedades-empty-icon"><i class="fas fa-file-circle-exclamation"></i></div>
+                    <h3>No tienes novedades registradas</h3>
+                    <p>Tus solicitudes aparecerán aquí una vez que las registres.</p>
+                </div>
+            </div>
+
+            <!-- PAGINACIÓN -->
+            <nav id="paginacionNovedades" class="novedades-paginacion" aria-label="Paginación de novedades">
+                <button type="button" id="btnPaginaAnterior" class="btn-novedad-secondary btn-paginacion" aria-label="Página anterior"><i class="fas fa-chevron-left"></i></button>
+                <span id="infoPaginacion">Página 1 de 1</span>
+                <button type="button" id="btnPaginaSiguiente" class="btn-novedad-secondary btn-paginacion" aria-label="Página siguiente"><i class="fas fa-chevron-right"></i></button>
+            </nav>
+        </section>
+    </main>
+
+    <!-- MODAL HISTORIAL -->
+    <div class="modal fade novedad-modal" id="modalHistorialNovedades" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <span class="novedades-panel-overline">CONSULTA HISTÓRICA</span>
+                        <h2 class="modal-title">Historial / Vencidas</h2>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="historial-filtros">
+                        <div class="historial-filtros-grid">
+                            <div class="novedad-filtro historial-filtro-busqueda">
+                                <label>Buscar</label>
+                                <div class="novedad-input-wrapper">
+                                    <i class="fas fa-magnifying-glass"></i>
+                                    <input type="text" id="historialBuscar" class="form-control" placeholder="Buscar...">
+                                </div>
+                            </div>
+                            <div class="novedad-filtro">
+                                <label>Tipo de novedad</label>
+                                <select id="historialTipo" class="form-control"><option value="">Todos</option></select>
+                            </div>
+                            <div class="novedad-filtro">
+                                <label>Estado</label>
+                                <select id="historialEstado" class="form-control">
+                                    <option value="">Todos</option>
+                                    <option value="APROBADA">Aprobada</option>
+                                    <option value="RECHAZADA">Rechazada</option>
+                                </select>
+                            </div>
+                            <div class="novedad-filtro">
+                                <label>Buscar por fecha</label>
+                                <select id="historialTipoFecha" class="form-control">
+                                    <option value="">Sin filtro</option>
+                                    <option value="dia">Día</option>
+                                    <option value="mes">Mes</option>
+                                    <option value="ano">Año</option>
+                                    <option value="rango">Rango</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="historialFechaContainer" class="historial-fecha-container">
+                            <div id="historialFechaDia" class="historial-fecha-opcion" style="display:none;"><label>Día</label><input type="date" id="historialDia" class="form-control"></div>
+                            <div id="historialFechaMes" class="historial-fecha-opcion" style="display:none;"><label>Mes</label><input type="month" id="historialMes" class="form-control"></div>
+                            <div id="historialFechaAno" class="historial-fecha-opcion" style="display:none;"><label>Año</label><input type="number" id="historialAno" class="form-control" min="2000" max="2100"></div>
+                            <div id="historialFechaRango" class="historial-rango" style="display:none;">
+                                <div><label>Desde</label><input type="date" id="historialDesde" class="form-control"></div>
+                                <div><label>Hasta</label><input type="date" id="historialHasta" class="form-control"></div>
+                            </div>
+                        </div>
+                        <div class="historial-filtros-acciones">
+                            <button type="button" id="btnBuscarHistorial" class="btn-novedad-primary"><i class="fas fa-magnifying-glass"></i> Buscar</button>
+                            <button type="button" id="btnLimpiarHistorial" class="btn-novedad-secondary"><i class="fas fa-filter-circle-xmark"></i> Limpiar</button>
+                            <button type="button" id="btnExportarHistorial" class="btn-novedad-secondary"><i class="fas fa-file-export"></i> Exportar</button>
+                        </div>
+                    </div>
+                    <div id="historialResultados" class="historial-resultados">
+                        <div class="novedades-loading" id="historialCargando" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Cargando...</div>
+                        <div id="historialEstadoVacio" class="novedades-empty-state historial-empty">
+                            <div class="novedades-empty-icon"><i class="fas fa-clock-rotate-left"></i></div>
+                            <h3>Historial de novedades</h3>
+                            <p>Utiliza los filtros para consultar.</p>
+                        </div>
+                        <div id="historialTablaWrapper" class="novedades-table-wrapper" style="display:none;">
+                            <div class="historial-contador"><span id="contadorHistorial">0 novedades</span></div>
+                            <table class="novedades-table">
+                                <thead><tr><th>Tipo</th><th>Fecha</th><th>Cantidad</th><th>Estado</th><th>Registro</th><th>Acciones</th></tr></thead>
+                                <tbody id="tablaHistorialNovedades"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔥 MODAL REGISTRAR NOVEDAD (Optimizado) -->
+    <div class="modal fade novedad-modal" id="modalRegistrarNovedad" tabindex="-1" aria-hidden="true">
+        <!-- modal-dialog-scrollable permite hacer scroll interno en formularios largos -->
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <div class="novedad-modal-subtitle">REGISTRO DE NÓMINA</div>
+                        <h5 class="modal-title">Registrar novedad</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="registro-novedad-seccion">
+                        <div class="novedad-filtro">
+                            <label for="registroTipoNovedad">Tipo de novedad *</label>
+                            <select id="registroTipoNovedad" class="form-control"><option value="">Selecciona...</option></select>
+                        </div>
+                    </div>
+                    <div id="formularioNovedadDinamico" class="registro-novedad-seccion" style="display:none;">
+                        <div id="camposNovedad" class="campos-novedad"></div>
+                    </div>
+                    <div id="seccionSoporteNovedad" class="registro-novedad-seccion" style="display:none;">
+                        <div class="novedad-filtro">
+                            <label for="soporteNovedad">Documento de soporte *</label>
+                            <!-- Solo se permiten formatos que el backend acepta -->
+                            <input type="file" id="soporteNovedad" class="form-control" accept=".pdf,.jpg,.jpeg,.png">
+                            <small class="text-muted" style="font-size: 11px;">Formatos permitidos: PDF, JPG o PNG (Máx. 10MB)</small>
+                        </div>
+                    </div>
+                    <div id="avisoAprobacionNovedad" class="aviso-novedad" style="display:none;">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <strong>Esta novedad requiere revisión</strong>
+                            <span>Quedará en estado PENDIENTE hasta que sea revisada.</span>
+                        </div>
+                    </div>
+                    <div id="errorRegistroNovedad" class="alert alert-danger" style="display:none;" role="alert"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-novedad-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btnGuardarNovedad" class="btn-novedad-primary" disabled><i class="fas fa-save"></i> Registrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DETALLE DE NOVEDAD -->
+    <div class="modal fade" id="modalDetalleNovedad" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div>
+                        <span style="color: #16a34a; font-size: 11px; font-weight: 700; text-transform: uppercase;">DETALLE DE NOVEDAD</span>
+                        <h5 class="modal-title" id="detalleTipoNovedad">Cargando...</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3" id="detalleContenido"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-novedad-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <a href="#" id="detalleBtnSoporte" class="btn-novedad-primary" target="_blank" style="display: none;">
+                        <i class="fas fa-paperclip"></i> Ver Soporte
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sidebar.js"></script>
+    <script src="/js/novedades-tipos.js"></script>
+    <script src="/js/mis-novedades.js"></script>
+
+</body>
+</html>
