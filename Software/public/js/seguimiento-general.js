@@ -765,6 +765,15 @@ try {
     const capacitaciones =
         dataCapacitaciones.capacitaciones || [];
 
+        console.log("CAPACITACIONES RECIBIDAS:", capacitaciones);
+console.table(capacitaciones);
+
+        console.table(capacitaciones.map(cap => ({
+            capacitacion: cap.nombre,
+            estado: cap.estado,
+            certificado_id: cap.certificado_id,
+        })));
+
        const capacitacionesActivas =
     capacitaciones.filter(
         cap =>
@@ -1048,11 +1057,53 @@ const capacitacionesFinalizadas =
 
                         <div class="detalle-mensaje finalizada-msg">
 
-                            <i class="fas fa-check-circle"></i>
+    <i class="fas fa-check-circle"></i>
 
-                            El colaborador ha completado esta capacitación.
+    El colaborador ha completado esta capacitación.
 
-                        </div>
+</div>
+
+${
+    cap.certificado_id
+        ? `
+            <div class="certificado-acciones">
+
+                <a href="/certificado-capacitacion/${cap.certificado_id}"
+                   target="_blank"
+                   class="btn-descargar-certificado">
+
+                    <i class="fas fa-file-pdf"></i>
+
+                    Ver y descargar certificado
+
+                </a>
+
+            </div>
+        `
+        : `
+            <div class="text-muted mt-3">
+                <i class="fas fa-info-circle"></i>
+                Certificado no disponible.
+            </div>
+        `
+}
+
+${
+    cap.certificado_id
+        ? `
+            <div class="certificado-acciones">
+                <a href="/certificado-capacitacion/${cap.certificado_id}"
+                   target="_blank"
+                   class="btn-descargar-certificado">
+
+                    <i class="fas fa-file-pdf"></i>
+                    Ver y descargar certificado
+
+                </a>
+            </div>
+        `
+        : ""
+}
 
                     `
                 }
@@ -1263,11 +1314,31 @@ if (capacitacionesFinalizadas.length > 0) {
 
                     <div class="detalle-mensaje finalizada-msg">
 
-                        <i class="fas fa-check-circle"></i>
+    <i class="fas fa-check-circle"></i>
 
-                        El colaborador ha completado esta capacitación.
+    El colaborador ha completado esta capacitación.
 
-                    </div>
+</div>
+
+${
+    cap.certificado_id
+        ? `
+            <div class="certificado-acciones">
+
+                <a href="/certificado-capacitacion/${cap.certificado_id}"
+                   target="_blank"
+                   class="btn-descargar-certificado">
+
+                    <i class="fas fa-file-pdf"></i>
+
+                    Ver y descargar certificado
+
+                </a>
+
+            </div>
+        `
+        : ""
+}
 
                 </div>
 

@@ -3643,3 +3643,28 @@ LISTA EMPLEADOS
 .btn-anular-asignacion:active {
     transform: translateY(0);
 }
+
+.certificado-acciones {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 18px;
+}
+
+.btn-descargar-certificado {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 11px 18px;
+    background: #198754;
+    color: white !important;
+    border-radius: 9px;
+    text-decoration: none !important;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-descargar-certificado:hover {
+    background: #146c43;
+    color: white !important;
+    transform: translateY(-2px);
+}
