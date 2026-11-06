@@ -90,6 +90,13 @@ router.get(
                     descripcion,
                     obligatorio,
                     fecha_limite
+                    (SELECT cc.id
+                    FROM certificados_capacitacion cc
+                    INNER JOIN usuarios u
+                        ON u.id = cc.usuario_id
+                    WHERE u.empleado_id = e.id
+                    AND cc.capacitacion_id = c.id
+                    LIMIT 1) AS certificado_id
                 FROM capacitaciones
                 WHERE estado = 'ACTIVO'
                 ORDER BY nombre ASC
@@ -408,45 +415,56 @@ const [[certificados]] = await db.query(
 
     SELECT
 
-    ac.id,
+        ac.id,
 
-    c.id AS capacitacion_id,
+        c.id AS capacitacion_id,
 
-    c.titulo AS nombre,
+        c.titulo AS nombre,
 
-    c.descripcion,
+        c.descripcion,
 
-    c.obligatorio,
+        c.obligatorio,
 
-    ac.estado,
+        ac.estado,
 
-    ac.fecha_asignacion,
+        ac.fecha_asignacion,
 
-    ac.fecha_limite,
+        ac.fecha_limite,
 
-    cp.fecha_finalizacion,
+        cp.fecha_finalizacion,
 
-    IFNULL(cp.porcentaje, 0) AS progreso,
+        IFNULL(cp.porcentaje, 0) AS progreso,
 
-    IFNULL(cp.capitulos_completados, 0) AS capitulos_completados,
+        IFNULL(cp.capitulos_completados, 0) AS capitulos_completados,
 
-    (
-        SELECT COUNT(*)
-        FROM capitulos_curso cc
-        WHERE cc.curso_id = c.id
-    ) AS capitulos_totales
+        (
+            SELECT COUNT(*)
+            FROM capitulos_curso cc
+            WHERE cc.curso_id = c.id
+        ) AS capitulos_totales,
 
-FROM asignaciones_capacitaciones ac
+        (
+            SELECT cert.id
+            FROM certificados_capacitacion cert
+            INNER JOIN usuarios u
+                ON u.id = cert.usuario_id
+            WHERE u.empleado_id = ac.empleado_id
+              AND cert.curso_id = c.id
+            ORDER BY cert.fecha_emision DESC
+            LIMIT 1
+        ) AS certificado_id
 
-INNER JOIN cursos c
-    ON c.id = ac.capacitacion_id
+    FROM asignaciones_capacitaciones ac
 
-LEFT JOIN progreso_capacitaciones cp
-    ON cp.asignacion_id = ac.id
+    INNER JOIN cursos c
+        ON c.id = ac.capacitacion_id
 
-WHERE ac.empleado_id = ?
+    LEFT JOIN progreso_capacitaciones cp
+        ON cp.asignacion_id = ac.id
 
-ORDER BY ac.fecha_asignacion DESC
+    WHERE ac.empleado_id = ?
+
+    ORDER BY ac.fecha_asignacion DESC
 
 `, [id]);
 
