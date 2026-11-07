@@ -346,4 +346,44 @@ router.get(
     }
 );
 
+
+/* =========================================
+   DOCUMENTOS Y POLÍTICAS EMPRESARIALES
+========================================= */
+
+// Administración documental - SOLO SUPERADMIN
+router.get(
+    '/documentos-lectura-admin',
+    proteger,
+    soloSuperAdmin,
+    (req, res) => {
+
+        res.sendFile(
+            path.join(
+                __dirname,
+                '../public/documentos-lectura-admin.html'
+            )
+        );
+
+    }
+);
+
+
+// Lectura de documentos - EMPLEADOS AUTENTICADOS
+router.get(
+    '/documentos-lectura',
+    proteger,
+    (req, res) => {
+
+        res.sendFile(
+            path.join(
+                __dirname,
+                '../public/documentos-lectura-empleado.html'
+            )
+        );
+
+    }
+);
+
+
 module.exports = router;

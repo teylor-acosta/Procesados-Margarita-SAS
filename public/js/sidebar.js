@@ -472,20 +472,14 @@ function moduloActivo(nombre) {
 function menuRecursosHumanos(paginaActiva) {
 
     const paginasEmpleados = [
-
-        'empleados-menu',
-
-        'empleados',
-
-        'crear-empleado',
-
-        'empleados-inactivos',
-
-        'documentacion',
-
-        'centro-actividad'
-
-    ];
+    'empleados-menu',
+    'empleados',
+    'crear-empleado',
+    'empleados-inactivos',
+    'documentacion',
+    'documentos-lectura-admin',
+    'centro-actividad'
+];
 
     const empleados =
 
@@ -707,6 +701,12 @@ ${modulosRH.map(modulo => `
                     <span>Gestión Documental</span>
 
                 </a>
+
+                <a href="/documentos-lectura-admin"
+   class="menu-item submenu-item ${paginaActiva === 'documentos-lectura-admin' ? 'active' : ''}">
+    <i class="fas fa-book-open"></i>
+    <span>Documentos y Políticas</span>
+</a>
 
                 <a href="/centro-actividad"
 
@@ -1696,6 +1696,16 @@ else if (pagina === "documentacion") {
     menu.innerHTML =
         menuRecursosHumanos(
             "documentacion"
+        );
+
+}
+
+
+else if (pagina === "documentos-lectura-admin") {
+
+    menu.innerHTML =
+        menuRecursosHumanos(
+            "documentos-lectura-admin"
         );
 
 }

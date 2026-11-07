@@ -174,6 +174,9 @@ app.use(require('./routes/catalogos.routes'));
 
 app.use(require('./routes/documentacion.routes'));
 
+// MÓDULO DE DOCUMENTOS Y ACEPTACIONES
+app.use(require('./routes/documentos-lectura.routes'));
+
 app.use(require('./routes/centro-actividad.routes'));
 
 app.use(

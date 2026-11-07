@@ -1563,52 +1563,67 @@ router.get(
 
         try {
 
-            const certificadoId = req.params.id;
-            const usuarioId = req.session.usuarioID;
+            // ============================================
+// IDENTIFICAR PERMISOS DEL USUARIO
+// ============================================
+
+const certificadoId = req.params.id;
+const usuarioId = req.session.usuarioID;
+
+const rol = String(req.session.rol || "").toLowerCase();
+
+const esAdministrador = [
+    "admin",
+    "superadmin"
+].includes(rol);
 
 
-            // ==================================================
-            // 1. BUSCAR CERTIFICADO
-            // ==================================================
+// ============================================
+// BUSCAR CERTIFICADO
+// ============================================
 
-            const [certificados] = await db.query(
-                `
-                SELECT
-                    cu.id,
-                    cu.usuario_id,
-                    cu.curso_id,
-                    cu.nota_final,
-                    cu.fecha_emision,
-                    cu.codigo_certificado,
-                    cu.fecha_vencimiento,
-                    cu.token_validacion,
+const consulta = `
+    SELECT
+        cu.id,
+        cu.usuario_id,
+        cu.curso_id,
+        cu.nota_final,
+        cu.fecha_emision,
+        cu.codigo_certificado,
+        cu.fecha_vencimiento,
+        cu.token_validacion,
 
-                    c.titulo AS nombre_capacitacion,
-                    c.descripcion AS descripcion_capacitacion,
+        c.titulo AS nombre_capacitacion,
+        c.descripcion AS descripcion_capacitacion,
 
-                    e.nombre AS nombre_empleado
+        e.nombre AS nombre_empleado
 
-                FROM certificados_capacitacion cu
+    FROM certificados_capacitacion cu
 
-                INNER JOIN cursos c
-                    ON c.id = cu.curso_id
+    INNER JOIN cursos c
+        ON c.id = cu.curso_id
 
-                INNER JOIN usuarios u
-                    ON u.ID = cu.usuario_id
+    INNER JOIN usuarios u
+        ON u.ID = cu.usuario_id
 
-                INNER JOIN empleados e
-                    ON e.id = u.empleado_id
+    INNER JOIN empleados e
+        ON e.id = u.empleado_id
 
-                WHERE cu.id = ?
-                AND cu.usuario_id = ?
+    WHERE cu.id = ?
 
-                LIMIT 1
-                `,
-                [
-                    certificadoId,
-                    usuarioId
-                ]
-            );
+    ${esAdministrador ? "" : "AND cu.usuario_id = ?" }
+
+    LIMIT 1
+`;
+
+const parametros = esAdministrador
+    ? [certificadoId]
+    : [certificadoId, usuarioId];
+
+const [certificados] = await db.query(
+    consulta,
+    parametros
+);
 
 
             // ==================================================
