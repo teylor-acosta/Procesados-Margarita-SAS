@@ -2,613 +2,602 @@
 
 /* =====================================================
    PROCESADOS MARGARITA S.A.S.
-   Lógica de Tienda (Con soporte para Cotización de Materiales)
+   Lógica de Tienda — Dinámica y Optimizada
 ===================================================== */
+
+/* =====================================================
+   0. CATÁLOGO (Fuente de verdad)
+===================================================== */
+const CATALOGO = [
+    // PRODUCTOS (con precio)
+    { id: 1, tipo: "producto", nombre: "Gancho Negro",
+      descripcion: "Gancho negro resistente para exhibición y organización.",
+      imagen: "img/productos_ejemplos/operarios_1.png",
+      precio: 300, precioMayor: 40000, cantidadMayor: 200,
+      notaMayor: "Lleva 200 uds o más y paga $ 40.000 por lote." },
+
+    { id: 2, tipo: "producto", nombre: "Gancho de Color",
+      descripcion: "Gancho de color disponible en varias tonalidades.",
+      imagen: "img/productos_ejemplos/camion_1.png",
+      precio: 390, precioMayor: 76000, cantidadMayor: 200,
+      notaMayor: "Lleva 200 uds o más y paga $ 76.000 por lote." },
+
+    { id: 3, tipo: "producto", nombre: "Comedero de Perro",
+      descripcion: "Comedero práctico y resistente para mascotas.",
+      imagen: "img/productos_ejemplos/bodega_1.png",
+      precio: 3500, precioMayor: 250000, cantidadMayor: 100,
+      notaMayor: "Lleva 100 uds o más y paga $ 250.000 por lote." },
+
+    { id: 4, tipo: "producto", nombre: "Fichas de Parqués 4 Jugadores",
+      descripcion: "Set de fichas para parqués de 4 jugadores.",
+      imagen: "img/productos_ejemplos/planta_1.png",
+      precio: 1200, precioMayor: 25500, cantidadMayor: 30,
+      notaMayor: "Lleva 30 uds o más y paga $ 25.500 por lote." },
+
+    { id: 5, tipo: "producto", nombre: "Fichas de Parqués 6 Jugadores",
+      descripcion: "Set de fichas para parqués de 6 jugadores.",
+      imagen: "img/productos_ejemplos/operarios_1.png",
+      precio: 1400, precioMayor: 28500, cantidadMayor: 30,
+      notaMayor: "Lleva 30 uds o más y paga $ 28.500 por lote." },
+
+    { id: 6, tipo: "producto", nombre: "Producto Ejemplo 6",
+      descripcion: "Espacio reservado para un producto real.",
+      imagen: "img/productos_ejemplos/camion_1.png",
+      precio: 6800, precioMayor: 6120, cantidadMayor: 10,
+      notaMayor: "Lleva 10 uds o más y paga $ 6.120 c/u." },
+
+    { id: 7, tipo: "producto", nombre: "Producto Ejemplo 7",
+      descripcion: "Espacio reservado para un producto real.",
+      imagen: "img/productos_ejemplos/planta_1.png",
+      precio: 15000, precioMayor: 13500, cantidadMayor: 5,
+      notaMayor: "Lleva 5 uds o más y paga $ 13.500 c/u." },
+
+    { id: 8, tipo: "producto", nombre: "Producto Ejemplo 8",
+      descripcion: "Espacio reservado para un producto real.",
+      imagen: "img/productos_ejemplos/bodega_1.png",
+      precio: 22000, precioMayor: 19800, cantidadMayor: 5,
+      notaMayor: "Lleva 5 uds o más y paga $ 19.800 c/u." },
+
+    // MATERIALES (requieren cotización)
+    ...Array.from({ length: 26 }, (_, i) => ({
+        id: 101 + i,
+        tipo: "material",
+        nombre: `Material Ejemplo ${i + 1}`,
+        descripcion: "Espacio reservado para un material real.",
+        imagen: [
+            "img/productos_ejemplos/camion_1.png",
+            "img/productos_ejemplos/operarios_1.png",
+            "img/productos_ejemplos/planta_1.png",
+            "img/productos_ejemplos/bodega_1.png"
+        ][i % 4],
+        precio: 0,
+        precioMayor: null,
+        cantidadMayor: null
+    }))
+];
 
 /* =====================================================
    1. REFERENCIAS DEL DOM
 ===================================================== */
-const $ = (sel) => document.querySelector(sel);
+const $  = (sel, ctx = document) => ctx.querySelector(sel);
+const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
-const listaProductos = $("#lista-productos");
-const buscarProducto = $("#buscar-producto");
-const textoResultados = $("#texto-resultados");
-const botonesFiltro = document.querySelectorAll(".btn-filtro");
+const DOM = {
+    listaProductos:    $("#lista-productos"),
+    buscarProducto:    $("#buscar-producto"),
+    textoResultados:   $("#texto-resultados"),
+    botonesFiltro:     $$(".btn-filtro"),
 
-const botonAbrirCarrito = $("#abrir-carrito");
-const contadorCarrito = $("#contador-carrito");
-const ventanaCarrito = $("#ventana-carrito");
-const cerrarCarrito = $("#cerrar-carrito");
-const contenidoCarrito = $("#contenido-carrito");
-const subtotalCarrito = $("#subtotal-carrito");
-const ivaCarrito = $("#iva-carrito");
-const totalCarrito = $("#total-carrito");
-const ahorroCarrito = $("#ahorro-carrito");
-const avisoMaterialesCarrito = $("#aviso-materiales-carrito");
-const seguirComprando = $("#seguir-comprando");
-const confirmarCompra = $("#confirmar-compra");
+    botonAbrirCarrito: $("#abrir-carrito"),
+    contadorCarrito:   $("#contador-carrito"),
+    ventanaCarrito:    $("#ventana-carrito"),
+    cerrarCarrito:     $("#cerrar-carrito"),
+    contenidoCarrito:  $("#contenido-carrito"),
+    subtotalCarrito:   $("#subtotal-carrito"),
+    ivaCarrito:        $("#iva-carrito"),
+    totalCarrito:      $("#total-carrito"),
+    ahorroCarrito:     $("#ahorro-carrito"),
+    avisoMateriales:   $("#aviso-materiales-carrito"),
+    seguirComprando:   $("#seguir-comprando"),
+    confirmarCompra:   $("#confirmar-compra"),
 
-const ventanaProducto = $("#ventana-producto");
-const cerrarProducto = $("#cerrar-producto");
-const modalImagen = $("#modal-imagen");
-const tituloProductoModal = $("#titulo-producto-modal");
-const modalDescripcion = $("#modal-descripcion");
+    ventanaProducto:   $("#ventana-producto"),
+    cerrarProducto:    $("#cerrar-producto"),
+    modalImagen:       $("#modal-imagen"),
+    tituloModal:       $("#titulo-producto-modal"),
+    modalDescripcion:  $("#modal-descripcion"),
+    modalPrecioUnit:   $("#modal-precio-unitario"),
+    modalPrecioBox:    $("#modal-precio-contenedor"),
+    modalTotalBox:     $("#modal-total-contenedor"),
+    modalAvisoCotiza:  $("#modal-aviso-cotizacion"),
+    modalCantidad:     $("#modal-cantidad"),
+    modalMenos:        $("#modal-menos"),
+    modalMas:          $("#modal-mas"),
+    modalTotal:        $("#modal-total"),
+    modalAgregar:      $("#modal-agregar"),
+    modalAvisoMayoreo: $("#modal-aviso-mayoreo"),
+    boxPrecioMayor:    $("#contenedor-precio-mayoreo"),
+    modalPrecioMayor:  $("#modal-precio-mayor"),
+    boxCantidadMayor:  $("#contenedor-cantidad-mayor"),
+    modalCantidadMayorTxt: $("#modal-cantidad-mayor-texto"),
 
-// Elementos del modal de producto
-const modalPrecioUnitario = $("#modal-precio-unitario");
-const modalPrecioContenedor = $("#modal-precio-contenedor");
-const modalTotalContenedor = $("#modal-total-contenedor");
-const modalAvisoCotizacion = $("#modal-aviso-cotizacion");
-
-const modalCantidad = $("#modal-cantidad");
-const modalMenos = $("#modal-menos");
-const modalMas = $("#modal-mas");
-const modalTotal = $("#modal-total");
-const modalAgregar = $("#modal-agregar");
-
-const modalAvisoMayoreo = $("#modal-aviso-mayoreo");
-const contenedorPrecioMayoreo = $("#contenedor-precio-mayoreo");
-const modalPrecioMayor = $("#modal-precio-mayor");
-const contenedorCantidadMayor = $("#contenedor-cantidad-mayor");
-const modalCantidadMayorTexto = $("#modal-cantidad-mayor-texto");
-
-const notificacion = $("#notificacion-tienda");
+    notificacion:      $("#notificacion-tienda")
+};
 
 /* =====================================================
    2. ESTADO Y CONFIGURACIÓN
 ===================================================== */
-let carrito = [];
-let productoActual = null;
-let notificacionTimeout = null;
-let filtroActual = "todos";
+const ESTADO = {
+    carrito: [],
+    productoActual: null,
+    filtroActual: "todos",
+    busqueda: "",
+    notificacionTimer: null
+};
 
-const IVA_PORCENTAJE = 0.19;
-const STORAGE_KEY = "carrito_margarita_v1";
-const MAX_CANTIDAD = 999999;
+const CONFIG = {
+    IVA: 0.19,
+    STORAGE_KEY: "carrito_margarita_v1",
+    MAX_CANTIDAD: 999999
+};
 
 /* =====================================================
    3. UTILIDADES
 ===================================================== */
-const formatoMoneda = (valor) =>
-    new Intl.NumberFormat("es-CO", {
-        style: "currency",
-        currency: "COP",
-        minimumFractionDigits: 0
-    }).format(valor);
+const formatoMoneda = new Intl.NumberFormat("es-CO", {
+    style: "currency", currency: "COP", minimumFractionDigits: 0
+}).format;
 
-const escaparHTML = (str = "") =>
-    String(str)
+function escaparHTML(str = "") {
+    return String(str)
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+        .replaceAll("'", "&#039;")
+        .replaceAll("`", "&#096;");
+}
 
-const normalizarTexto = (str = "") =>
-    String(str)
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "");
+function normalizarTexto(str = "") {
+    return String(str).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function getProductoPorId(id) {
+    return CATALOGO.find(p => p.id === Number(id)) || null;
+}
+
+function getItemCarrito(id) {
+    return ESTADO.carrito.find(i => Number(i.id) === Number(id)) || null;
+}
 
 function mostrarNotificacion(mensaje, tipo = "info") {
-    if (!notificacion) return;
-    clearTimeout(notificacionTimeout);
-    notificacion.textContent = mensaje;
-    notificacion.className = "notificacion-tienda notificacion-visible";
-    if (tipo === "error") notificacion.classList.add("notificacion-error");
-    if (tipo === "exito") notificacion.classList.add("notificacion-exito");
-
-    notificacionTimeout = setTimeout(() => {
-        notificacion.classList.remove("notificacion-visible");
+    const el = DOM.notificacion;
+    if (!el) return;
+    clearTimeout(ESTADO.notificacionTimer);
+    el.textContent = mensaje;
+    el.className = "notificacion-tienda notificacion-visible";
+    if (tipo === "error") el.classList.add("notificacion-error");
+    if (tipo === "exito") el.classList.add("notificacion-exito");
+    ESTADO.notificacionTimer = setTimeout(() => {
+        el.classList.remove("notificacion-visible");
     }, 3000);
 }
 
 function animarContador() {
-    if (!contadorCarrito) return;
-    contadorCarrito.classList.remove("animar");
-    void contadorCarrito.offsetWidth;
-    contadorCarrito.classList.add("animar");
+    const c = DOM.contadorCarrito;
+    if (!c) return;
+    c.classList.remove("animar");
+    void c.offsetWidth;
+    c.classList.add("animar");
 }
 
 /* =====================================================
-   4. CÁLCULO DE MAYOREO POR BLOQUES
+   4. CÁLCULO DE MAYOREO
 ===================================================== */
 function calcularPrecioItem(precioUnitario, precioMayor, cantidadMayor, cantidad) {
-    const unitario = Number(precioUnitario) || 0;
+    const unit = Number(precioUnitario) || 0;
     const mayor = Number(precioMayor) || 0;
     const umbral = Number(cantidadMayor) || 0;
     const cant = Math.max(0, Math.floor(Number(cantidad) || 0));
 
     if (mayor <= 0 || umbral <= 0 || cant < umbral) {
-        return {
-            total: unitario * cant,
-            aplicaMayoreo: false,
-            precioUnitarioEfectivo: unitario,
-            ahorro: 0
-        };
+        return { total: unit * cant, aplicaMayoreo: false, precioUnitarioEfectivo: unit, ahorro: 0 };
     }
 
     const bloques = Math.floor(cant / umbral);
     const sobrante = cant % umbral;
-    const total = bloques * mayor + sobrante * unitario;
-    const ahorro = unitario * cant - total;
+    const total = bloques * mayor + sobrante * unit;
+    const ahorro = Math.max(0, unit * cant - total);
 
-    return {
-        total,
-        aplicaMayoreo: true,
-        precioUnitarioEfectivo: total / cant,
-        ahorro: ahorro > 0 ? ahorro : 0
-    };
+    return { total, aplicaMayoreo: true, precioUnitarioEfectivo: total / cant, ahorro };
 }
 
 /* =====================================================
-   5. PERSISTENCIA (LocalStorage)
+   5. PERSISTENCIA
 ===================================================== */
 function guardarCarrito() {
     try {
-        // Guardamos el carrito completo sin filtrar, para evitar perder datos
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(carrito));
+        localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(ESTADO.carrito));
     } catch (e) {
-        console.error("Error al guardar el carrito:", e);
+        console.error("No se pudo guardar el carrito:", e);
     }
 }
 
 function cargarCarrito() {
     try {
-        const data = localStorage.getItem(STORAGE_KEY);
-        if (!data) return;
-        const parsed = JSON.parse(data);
-        
-        // ✅ Validamos de forma más flexible
-        if (Array.isArray(parsed)) {
-            carrito = parsed.filter(item => item && item.id !== undefined && item.cantidad > 0);
-        }
+        const raw = localStorage.getItem(CONFIG.STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return;
+
+        ESTADO.carrito = parsed
+            .filter(it => it && typeof it === "object" && Number.isFinite(Number(it.id)) && Number(it.cantidad) > 0)
+            .map(it => ({
+                id: Number(it.id),
+                tipo: it.tipo === "material" ? "material" : "producto",
+                nombre: String(it.nombre || ""),
+                descripcion: String(it.descripcion || ""),
+                imagen: String(it.imagen || ""),
+                precio: Number(it.precio) || 0,
+                precioMayor: it.precioMayor != null ? Number(it.precioMayor) : null,
+                cantidadMayor: it.cantidadMayor != null ? Number(it.cantidadMayor) : null,
+                cantidad: Math.min(CONFIG.MAX_CANTIDAD, Number(it.cantidad))
+            }));
     } catch (e) {
-        console.error("Error al cargar el carrito:", e);
-        carrito = [];
+        console.error("No se pudo cargar el carrito:", e);
+        ESTADO.carrito = [];
     }
 }
+
 /* =====================================================
-   6. EVENTOS DEL CATÁLOGO Y FILTROS
+   6. RENDER DEL CATÁLOGO
 ===================================================== */
-function registrarEventosCatalogo() {
-    if (!listaProductos) return;
+function crearTarjetaHTML(p) {
+    const esMaterial = p.tipo === "material";
 
-    listaProductos.addEventListener("click", (e) => {
-        const boton = e.target.closest(".boton-agregar");
-        if (!boton) return;
+    const precioHTML = esMaterial
+        ? `<strong class="producto-precio producto-precio--cotizacion">Requiere cotización</strong>
+           <small class="producto-cotizacion-nota">Un asesor se contactará contigo.</small>`
+        : `<strong class="producto-precio">${formatoMoneda(p.precio)}</strong>
+           <small class="producto-mayoreo">${escaparHTML(p.notaMayor || "")}</small>`;
 
-        // ✅ Extraemos el ID forzando a Número
-        const id = Number(boton.dataset.id);
-        const card = boton.closest(".tarjeta-producto");
-        if (Number.isNaN(id) || !card) return;
+    const botonHTML = esMaterial
+        ? `<button type="button" class="boton-agregar" data-id="${p.id}" data-tipo="material" aria-label="Solicitar cotización de ${escaparHTML(p.nombre)}">
+             <i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Cotizar
+           </button>`
+        : `<button type="button" class="boton-agregar" data-id="${p.id}" data-tipo="producto" aria-label="Agregar ${escaparHTML(p.nombre)} al carrito">
+             <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar
+           </button>`;
 
-        // ✅ Extraemos el tipo directamente del HTML
-        const tipo = card.dataset.tipo || "producto";
-        const nombre = card.querySelector(".producto-nombre").textContent.trim();
-        const descripcionCorta = card.querySelector(".producto-descripcion").textContent.trim();
-        const imagen = card.querySelector(".producto-imagen img")?.getAttribute("src") || "";
-
-        // ✅ LÓGICA PARA MATERIALES (Sin precio)
-        if (tipo === "material") {
-            const producto = {
-                id,
-                tipo: "material",
-                nombre,
-                descripcionCorta,
-                descripcion: descripcionCorta,
-                imagen,
-                precio: 0,
-                precioMayor: null,
-                cantidadMayor: null
-            };
-            abrirModalProducto(producto);
-            return;
-        }
-
-        // ✅ LÓGICA PARA PRODUCTOS (Con precio y mayoreo)
-        const precio = Number(boton.dataset.precio) || 0;
-        const precioMayor = boton.dataset.precioMayor ? Number(boton.dataset.precioMayor) : null;
-        const cantidadMayor = boton.dataset.cantidadMayor ? Number(boton.dataset.cantidadMayor) : null;
-
-        const producto = {
-            id,
-            tipo: "producto",
-            nombre,
-            descripcionCorta,
-            descripcion: descripcionCorta,
-            imagen,
-            precio,
-            precioMayor: (precioMayor && precioMayor > 0) ? precioMayor : null,
-            cantidadMayor: (cantidadMayor && cantidadMayor > 0) ? cantidadMayor : null
-        };
-
-        abrirModalProducto(producto);
-    });
+    return `
+        <article class="tarjeta-producto" data-id="${p.id}" data-tipo="${p.tipo}">
+            <div class="producto-imagen">
+                <img src="${escaparHTML(p.imagen)}" alt="${escaparHTML(p.nombre)}" loading="lazy"
+                     onerror="this.replaceWith(Object.assign(document.createElement('i'),{className:'fa-solid fa-box'}))">
+            </div>
+            <div class="producto-info">
+                <h3 class="producto-nombre">${escaparHTML(p.nombre)}</h3>
+                <p class="producto-descripcion">${escaparHTML(p.descripcion)}</p>
+                <div class="producto-pie">
+                    <div class="producto-precio-contenedor">
+                        <span class="producto-precio-etiqueta">Precio</span>
+                        ${precioHTML}
+                    </div>
+                    ${botonHTML}
+                </div>
+            </div>
+        </article>`;
 }
 
-function aplicarFiltros() {
-    if (!listaProductos) return;
+function renderCatalogo(lista) {
+    const grid = DOM.listaProductos;
+    if (!grid) return;
 
-    const q = normalizarTexto(buscarProducto?.value.trim() || "");
-    const tarjetas = listaProductos.querySelectorAll(".tarjeta-producto");
-    let visibles = 0;
+    const frag = document.createDocumentFragment();
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = lista.map(crearTarjetaHTML).join("");
+    while (wrapper.firstChild) frag.appendChild(wrapper.firstChild);
+    grid.replaceChildren(frag);
+    grid.setAttribute("aria-busy", "false");
 
-    tarjetas.forEach((card) => {
-        const nombre = normalizarTexto(card.querySelector(".producto-nombre").textContent);
-        const descripcion = normalizarTexto(card.querySelector(".producto-descripcion").textContent);
-        const tipo = card.dataset.tipo;
-
-        const coincideTexto = !q || nombre.includes(q) || descripcion.includes(q);
-        const coincideFiltro = filtroActual === "todos" || tipo === filtroActual;
-
-        if (coincideTexto && coincideFiltro) {
-            card.style.display = "";
-            visibles++;
-        } else {
-            card.style.display = "none";
-        }
-    });
-
-    if (textoResultados) {
-        textoResultados.textContent = visibles === 0
+    if (DOM.textoResultados) {
+        DOM.textoResultados.textContent = lista.length === 0
             ? "No se encontraron elementos para tu búsqueda."
-            : `Mostrando ${visibles} elementos.`;
+            : `Mostrando ${lista.length} elemento${lista.length !== 1 ? "s" : ""}.`;
     }
+
+    animarTarjetasVisibles(grid);
 }
 
-function registrarFiltrosCategoria() {
-    if (!botonesFiltro.length) return;
+function animarTarjetasVisibles(grid) {
+    if (!("IntersectionObserver" in window)) {
+        grid.querySelectorAll(".tarjeta-producto").forEach(t => { t.dataset.animada = "true"; });
+        return;
+    }
 
-    botonesFiltro.forEach(btn => {
+    const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.dataset.animada = "true";
+                obs.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" });
+
+    grid.querySelectorAll(".tarjeta-producto").forEach(t => obs.observe(t));
+}
+
+/* =====================================================
+   7. FILTROS Y BÚSQUEDA
+===================================================== */
+function aplicarFiltros() {
+    const q = normalizarTexto(ESTADO.busqueda);
+    const filtrados = CATALOGO.filter(p => {
+        const coincideTipo = ESTADO.filtroActual === "todos" || p.tipo === ESTADO.filtroActual;
+        const coincideTexto = !q
+            || normalizarTexto(p.nombre).includes(q)
+            || normalizarTexto(p.descripcion).includes(q);
+        return coincideTipo && coincideTexto;
+    });
+    renderCatalogo(filtrados);
+}
+
+function registrarFiltros() {
+    DOM.botonesFiltro.forEach(btn => {
         btn.addEventListener("click", () => {
-            botonesFiltro.forEach(b => b.classList.remove("activo"));
+            DOM.botonesFiltro.forEach(b => {
+                b.classList.remove("activo");
+                b.setAttribute("aria-pressed", "false");
+            });
             btn.classList.add("activo");
-            filtroActual = btn.dataset.filtro;
+            btn.setAttribute("aria-pressed", "true");
+            ESTADO.filtroActual = btn.dataset.filtro || "todos";
             aplicarFiltros();
         });
     });
 }
+
 /* =====================================================
-   7. MODAL DE PRODUCTO
+   8. MODAL DE PRODUCTO
 ===================================================== */
 function abrirModalProducto(producto) {
-    if (!ventanaProducto) return;
-    productoActual = producto;
+    const v = DOM.ventanaProducto;
+    if (!v) return;
+    ESTADO.productoActual = producto;
 
-    // Datos generales
-    tituloProductoModal.textContent = producto.nombre;
-    modalDescripcion.textContent = producto.descripcion;
-    modalImagen.src = producto.imagen;
-    modalImagen.alt = producto.nombre;
-    modalCantidad.value = 1;
+    DOM.tituloModal.textContent = producto.nombre;
+    DOM.modalDescripcion.textContent = producto.descripcion;
+    DOM.modalImagen.src = producto.imagen;
+    DOM.modalImagen.alt = producto.nombre;
+    DOM.modalCantidad.value = "1";
 
-    // ✅ SI ES UN MATERIAL
     if (producto.tipo === "material") {
-        if (modalPrecioContenedor) modalPrecioContenedor.style.display = "none";
-        if (modalTotalContenedor) modalTotalContenedor.style.display = "none";
-        if (modalAvisoCotizacion) modalAvisoCotizacion.style.display = "block";
+        DOM.modalPrecioBox.hidden = true;
+        DOM.modalTotalBox.hidden = true;
+        DOM.modalAvisoCotiza.hidden = false;
+        DOM.boxPrecioMayor.hidden = true;
+        DOM.boxCantidadMayor.hidden = true;
+        DOM.modalAvisoMayoreo.hidden = true;
+        DOM.modalAgregar.innerHTML = `<i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Solicitar cotización`;
+    } else {
+        DOM.modalPrecioBox.hidden = false;
+        DOM.modalTotalBox.hidden = false;
+        DOM.modalAvisoCotiza.hidden = true;
+        DOM.modalAgregar.innerHTML = `<i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Agregar al carrito`;
+        DOM.modalPrecioUnit.textContent = formatoMoneda(producto.precio);
 
-        if (modalAgregar) {
-            modalAgregar.innerHTML = `<i class="fa-solid fa-file-invoice-dollar"></i> Solicitar cotización`;
-        }
-
-        if (contenedorPrecioMayoreo) contenedorPrecioMayoreo.style.display = "none";
-        if (contenedorCantidadMayor) contenedorCantidadMayor.style.display = "none";
-        if (modalAvisoMayoreo) modalAvisoMayoreo.style.display = "none";
-    } 
-    // ✅ SI ES UN PRODUCTO
-    else {
-        if (modalPrecioContenedor) modalPrecioContenedor.style.display = "grid";
-        if (modalTotalContenedor) modalTotalContenedor.style.display = "flex";
-        if (modalAvisoCotizacion) modalAvisoCotizacion.style.display = "none";
-
-        if (modalAgregar) {
-            modalAgregar.innerHTML = `<i class="fa-solid fa-cart-plus"></i> Agregar al carrito`;
-        }
-
-        if (modalPrecioUnitario) modalPrecioUnitario.textContent = formatoMoneda(producto.precio);
-
-        if (producto.precioMayor && producto.cantidadMayor) {
-            if (contenedorPrecioMayoreo) contenedorPrecioMayoreo.style.display = "flex";
-            if (modalPrecioMayor) {
-                modalPrecioMayor.textContent = `${formatoMoneda(producto.precioMayor)} (lote de ${producto.cantidadMayor} uds)`;
-            }
-            if (contenedorCantidadMayor) contenedorCantidadMayor.style.display = "flex";
-            if (modalCantidadMayorTexto) {
-                modalCantidadMayorTexto.textContent = `${producto.cantidadMayor} unidades`;
-            }
-        } else {
-            if (contenedorPrecioMayoreo) contenedorPrecioMayoreo.style.display = "none";
-            if (contenedorCantidadMayor) contenedorCantidadMayor.style.display = "none";
+        const tieneMayoreo = producto.precioMayor > 0 && producto.cantidadMayor > 0;
+        DOM.boxPrecioMayor.hidden = !tieneMayoreo;
+        DOM.boxCantidadMayor.hidden = !tieneMayoreo;
+        if (tieneMayoreo) {
+            DOM.modalPrecioMayor.textContent = `${formatoMoneda(producto.precioMayor)} (lote de ${producto.cantidadMayor} uds)`;
+            DOM.modalCantidadMayorTxt.textContent = `${producto.cantidadMayor} unidades`;
         }
     }
 
     actualizarTotalModal();
 
-    if (!ventanaProducto.open) {
-        ventanaProducto.showModal();
-    }
+    if (!v.open) v.showModal();
 }
 
 function actualizarTotalModal() {
-    if (!productoActual || !modalTotal) return;
+    const p = ESTADO.productoActual;
+    if (!p || !DOM.modalTotal) return;
 
-    if (productoActual.tipo === "material") {
-        if (modalTotal) modalTotal.textContent = "$ 0";
+    if (p.tipo === "material") {
+        DOM.modalTotal.textContent = "—";
         return;
     }
 
-    const cantidad = obtenerCantidadValida(modalCantidad);
-    const { total, aplicaMayoreo } = calcularPrecioItem(
-        productoActual.precio,
-        productoActual.precioMayor,
-        productoActual.cantidadMayor,
-        cantidad
-    );
+    const cant = obtenerCantidadValida(DOM.modalCantidad);
+    const { total, aplicaMayoreo } = calcularPrecioItem(p.precio, p.precioMayor, p.cantidadMayor, cant);
 
-    if (modalAvisoMayoreo) {
-        modalAvisoMayoreo.style.display = aplicaMayoreo ? "block" : "none";
-    }
-
-    modalTotal.textContent = formatoMoneda(total);
+    DOM.modalAvisoMayoreo.hidden = !aplicaMayoreo;
+    DOM.modalTotal.textContent = formatoMoneda(total);
 }
 
 function obtenerCantidadValida(input) {
     if (!input) return 1;
     let n = parseInt(input.value, 10);
-    if (isNaN(n) || n < 1) n = 1;
-    if (n > MAX_CANTIDAD) n = MAX_CANTIDAD;
-    input.value = n;
+    if (!Number.isFinite(n) || n < 1) n = 1;
+    if (n > CONFIG.MAX_CANTIDAD) n = CONFIG.MAX_CANTIDAD;
+    input.value = String(n);
     return n;
 }
 
 function cerrarModalProducto() {
-    if (ventanaProducto) ventanaProducto.close();
-    productoActual = null;
+    if (DOM.ventanaProducto?.open) DOM.ventanaProducto.close();
+    ESTADO.productoActual = null;
 }
 
 /* =====================================================
-   8. CARRITO (Lógica)
+   9. CARRITO — MUTACIONES
 ===================================================== */
 function agregarAlCarrito(cantidad = 1) {
-    if (!productoActual) return;
+    const p = ESTADO.productoActual;
+    if (!p) return;
 
-    const id = productoActual.id;
-    // Buscamos si ya existe (usando == para evitar conflictos de string vs number)
-    const existente = carrito.find((item) => item.id == id);
-
+    const existente = getItemCarrito(p.id);
     if (existente) {
-        existente.cantidad = Math.min(MAX_CANTIDAD, existente.cantidad + cantidad);
-        // Aseguramos que el tipo se mantenga
-        existente.tipo = productoActual.tipo || "producto";
+        existente.cantidad = Math.min(CONFIG.MAX_CANTIDAD, existente.cantidad + cantidad);
     } else {
-        // ✅ GUARDAR EL PRODUCTO O MATERIAL CON SU TIPO
-        carrito.push({
-            id: productoActual.id,
-            tipo: productoActual.tipo || "producto",
-            nombre: productoActual.nombre,
-            descripcion: productoActual.descripcion,
-            descripcionCorta: productoActual.descripcionCorta,
-            precio: productoActual.precio || 0,
-            precioMayor: productoActual.precioMayor || null,
-            cantidadMayor: productoActual.cantidadMayor || null,
-            imagen: productoActual.imagen,
-            cantidad
+        ESTADO.carrito.push({
+            id: p.id, tipo: p.tipo, nombre: p.nombre, descripcion: p.descripcion,
+            imagen: p.imagen, precio: p.precio || 0, precioMayor: p.precioMayor || null,
+            cantidadMayor: p.cantidadMayor || null, cantidad
         });
     }
 
     guardarCarrito();
-    actualizarCarrito();
+    renderCarrito();
     animarContador();
-    
-    if (productoActual.tipo === "material") {
-        mostrarNotificacion(`✅ ${productoActual.nombre} agregado a cotización`, "exito");
-    } else {
-        mostrarNotificacion(`✅ ${productoActual.nombre} agregado (${cantidad})`, "exito");
-    }
+
+    const msg = p.tipo === "material"
+        ? `✅ ${p.nombre} agregado a cotización`
+        : `✅ ${p.nombre} agregado (${cantidad})`;
+    mostrarNotificacion(msg, "exito");
 }
 
 function cambiarCantidad(id, delta) {
-    // Usamos == para que no importe si el id es string o number
-    const item = carrito.find((i) => i.id == id);
+    const item = getItemCarrito(id);
     if (!item) return;
 
-    item.cantidad += delta;
-
-    if (item.cantidad <= 0) {
-        carrito = carrito.filter((i) => i.id != id);
-    } else if (item.cantidad > MAX_CANTIDAD) {
-        item.cantidad = MAX_CANTIDAD;
+    const nueva = item.cantidad + delta;
+    if (nueva <= 0) {
+        quitarDelCarrito(id);
+        return;
     }
+    item.cantidad = Math.min(CONFIG.MAX_CANTIDAD, nueva);
 
     guardarCarrito();
-    actualizarCarrito();
+    renderCarrito();
 }
 
 function quitarDelCarrito(id) {
-    carrito = carrito.filter((i) => i.id != id);
+    ESTADO.carrito = ESTADO.carrito.filter(i => Number(i.id) !== Number(id));
     guardarCarrito();
-    actualizarCarrito();
+    renderCarrito();
     mostrarNotificacion("🗑️ Producto eliminado del carrito");
 }
+
 /* =====================================================
-   9. TOTALES Y RENDERIZADO DEL CARRITO
+   10. CARRITO — TOTALES (1 sola pasada)
 ===================================================== */
 function calcularTotales() {
-    let subtotal = 0;
-    let ahorroTotal = 0;
-
-    carrito.forEach(item => {
-        // ✅ Si es un material, NO suma al total (se cotiza aparte)
-        if (item.tipo === "material") return;
-
-        const r = calcularPrecioItem(
-            item.precio,
-            item.precioMayor,
-            item.cantidadMayor,
-            item.cantidad
-        );
+    let subtotal = 0, ahorro = 0;
+    for (const item of ESTADO.carrito) {
+        if (item.tipo === "material") continue;
+        const r = calcularPrecioItem(item.precio, item.precioMayor, item.cantidadMayor, item.cantidad);
         subtotal += r.total;
-        ahorroTotal += r.ahorro;
-    });
-
-    const iva = Math.round(subtotal * IVA_PORCENTAJE);
-    const total = subtotal + iva;
-
-    return { subtotal, iva, total, ahorroTotal };
+        ahorro   += r.ahorro;
+    }
+    const iva = Math.round(subtotal * CONFIG.IVA);
+    return { subtotal, iva, total: subtotal + iva, ahorro };
 }
 
-function actualizarCarrito() {
-    if (!contadorCarrito) return;
+/* =====================================================
+   11. CARRITO — RENDER
+===================================================== */
+function itemCarritoHTML(item) {
+    if (item.tipo === "material") {
+        return `
+        <div class="item-carrito" data-id="${item.id}">
+            <div class="item-carrito-imagen">
+                <img src="${escaparHTML(item.imagen)}" alt="${escaparHTML(item.nombre)}" loading="lazy"
+                     onerror="this.replaceWith(Object.assign(document.createElement('i'),{className:'fa-solid fa-box'}))">
+            </div>
+            <div class="item-carrito-info">
+                <h3>${escaparHTML(item.nombre)}</h3>
+                <p class="item-carrito-cotizacion"><i class="fa-solid fa-file-invoice-dollar" aria-hidden="true"></i> Requiere cotización</p>
+                <div class="controles-cantidad">
+                    <button type="button" class="boton-cantidad" data-action="restar" data-id="${item.id}" aria-label="Restar"><i class="fa-solid fa-minus"></i></button>
+                    <span class="cantidad-producto">${item.cantidad}</span>
+                    <button type="button" class="boton-cantidad" data-action="sumar" data-id="${item.id}" aria-label="Sumar"><i class="fa-solid fa-plus"></i></button>
+                </div>
+            </div>
+            <div class="item-carrito-derecha">
+                <strong class="item-carrito-subtotal item-carrito-subtotal--cotiza">Por cotizar</strong>
+                <button type="button" class="boton-quitar" data-action="quitar" data-id="${item.id}">
+                    <i class="fa-solid fa-trash-can" aria-hidden="true"></i> Quitar
+                </button>
+            </div>
+        </div>`;
+    }
 
-    const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
-    contadorCarrito.textContent = totalItems;
+    const r = calcularPrecioItem(item.precio, item.precioMayor, item.cantidadMayor, item.cantidad);
+    const precioMostrar = r.aplicaMayoreo ? r.precioUnitarioEfectivo : item.precio;
+    const etiquetaMayoreo = r.aplicaMayoreo
+        ? `<span class="item-tachado">${formatoMoneda(item.precio)}</span> <span class="item-mayoreo-tag">MAYOREO</span>`
+        : "";
 
-    if (!contenidoCarrito) return;
+    return `
+    <div class="item-carrito" data-id="${item.id}">
+        <div class="item-carrito-imagen">
+            <img src="${escaparHTML(item.imagen)}" alt="${escaparHTML(item.nombre)}" loading="lazy"
+                 onerror="this.replaceWith(Object.assign(document.createElement('i'),{className:'fa-solid fa-box'}))">
+        </div>
+        <div class="item-carrito-info">
+            <h3>${escaparHTML(item.nombre)}</h3>
+            <p>${etiquetaMayoreo} ${formatoMoneda(precioMostrar)} c/u</p>
+            <div class="controles-cantidad">
+                <button type="button" class="boton-cantidad" data-action="restar" data-id="${item.id}" aria-label="Restar"><i class="fa-solid fa-minus"></i></button>
+                <span class="cantidad-producto">${item.cantidad}</span>
+                <button type="button" class="boton-cantidad" data-action="sumar" data-id="${item.id}" aria-label="Sumar"><i class="fa-solid fa-plus"></i></button>
+            </div>
+        </div>
+        <div class="item-carrito-derecha">
+            <strong class="item-carrito-subtotal">${formatoMoneda(r.total)}</strong>
+            <button type="button" class="boton-quitar" data-action="quitar" data-id="${item.id}">
+                <i class="fa-solid fa-trash-can" aria-hidden="true"></i> Quitar
+            </button>
+        </div>
+    </div>`;
+}
 
-    if (!carrito.length) {
-        contenidoCarrito.innerHTML = `
+function renderCarrito() {
+    if (!DOM.contenidoCarrito) return;
+
+    const totalItems = ESTADO.carrito.reduce((a, i) => a + i.cantidad, 0);
+    if (DOM.contadorCarrito) DOM.contadorCarrito.textContent = String(totalItems);
+
+    if (ESTADO.carrito.length === 0) {
+        DOM.contenidoCarrito.innerHTML = `
             <div class="carrito-vacio">
                 <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
                 <h3>Tu carrito está vacío</h3>
                 <p>Agrega productos del catálogo para comenzar a organizar tu pedido.</p>
-            </div>
-        `;
+            </div>`;
     } else {
-        contenidoCarrito.innerHTML = carrito.map((item) => {
-            // ✅ Si es material, mostramos aviso de cotización
-            if (item.tipo === "material") {
-                return `
-                <div class="item-carrito" data-id="${item.id}">
-                    <div class="item-carrito-imagen">
-                        <img src="${escaparHTML(item.imagen)}" alt="${escaparHTML(item.nombre)}"
-                            onerror="this.outerHTML='<i class=\\'fa-solid fa-box\\'></i>'">
-                    </div>
-                    <div class="item-carrito-info">
-                        <h3>${escaparHTML(item.nombre)}</h3>
-                        <p style="color: var(--azul-medio); font-weight: 700;">
-                            <i class="fa-solid fa-file-invoice-dollar"></i> Requiere cotización
-                        </p>
-                        <div class="controles-cantidad">
-                            <button type="button" class="boton-cantidad" data-action="restar" data-id="${item.id}">
-                                <i class="fa-solid fa-minus"></i>
-                            </button>
-                            <span class="cantidad-producto">${item.cantidad}</span>
-                            <button type="button" class="boton-cantidad" data-action="sumar" data-id="${item.id}">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="item-carrito-derecha">
-                        <strong class="item-carrito-subtotal" style="color: var(--azul-medio);">Por cotizar</strong>
-                        <button type="button" class="boton-quitar" data-action="quitar" data-id="${item.id}">
-                            <i class="fa-solid fa-trash-can"></i> Quitar
-                        </button>
-                    </div>
-                </div>
-                `;
-            }
-
-            // Si es un producto normal, se calcula normal
-            const r = calcularPrecioItem(
-                item.precio,
-                item.precioMayor,
-                item.cantidadMayor,
-                item.cantidad
-            );
-
-            const precioMostrar = r.aplicaMayoreo
-                ? r.precioUnitarioEfectivo
-                : item.precio;
-
-            let etiquetaMayoreo = "";
-            if (r.aplicaMayoreo) {
-                etiquetaMayoreo = `
-                    <span style="text-decoration: line-through; color: #94a3b8; font-size: 10px; margin-right: 5px;">
-                        ${formatoMoneda(item.precio)}
-                    </span>
-                    <span style="color:#16a34a;font-size:10px;font-weight:600;margin-right:4px;">
-                        MAYOREO
-                    </span>
-                `;
-            }
-
-            const subtotalItem = r.total;
-
-            return `
-            <div class="item-carrito" data-id="${item.id}">
-                <div class="item-carrito-imagen">
-                    <img src="${escaparHTML(item.imagen)}" alt="${escaparHTML(item.nombre)}"
-                        onerror="this.outerHTML='<i class=\\'fa-solid fa-box\\'></i>'">
-                </div>
-                <div class="item-carrito-info">
-                    <h3>${escaparHTML(item.nombre)}</h3>
-                    <p>${etiquetaMayoreo} ${formatoMoneda(precioMostrar)} c/u</p>
-                    <div class="controles-cantidad">
-                        <button type="button" class="boton-cantidad" data-action="restar" data-id="${item.id}">
-                            <i class="fa-solid fa-minus"></i>
-                        </button>
-                        <span class="cantidad-producto">${item.cantidad}</span>
-                        <button type="button" class="boton-cantidad" data-action="sumar" data-id="${item.id}">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="item-carrito-derecha">
-                    <strong class="item-carrito-subtotal">${formatoMoneda(subtotalItem)}</strong>
-                    <button type="button" class="boton-quitar" data-action="quitar" data-id="${item.id}">
-                        <i class="fa-solid fa-trash-can"></i> Quitar
-                    </button>
-                </div>
-            </div>
-            `;
-        }).join("");
-
-        // Eventos de los botones de cantidad y quitar
-        contenidoCarrito.querySelectorAll(".boton-cantidad, .boton-quitar").forEach((btn) => {
-            btn.addEventListener("click", () => {
-                const id = Number(btn.dataset.id);
-                const action = btn.dataset.action;
-                if (action === "sumar") cambiarCantidad(id, 1);
-                if (action === "restar") cambiarCantidad(id, -1);
-                if (action === "quitar") quitarDelCarrito(id);
-            });
-        });
+        DOM.contenidoCarrito.innerHTML = ESTADO.carrito.map(itemCarritoHTML).join("");
     }
 
-    const { subtotal, iva, total, ahorroTotal } = calcularTotales();
-    if (subtotalCarrito) subtotalCarrito.textContent = formatoMoneda(subtotal);
-    if (ivaCarrito) ivaCarrito.textContent = formatoMoneda(iva);
-    if (totalCarrito) totalCarrito.textContent = formatoMoneda(total);
+    const { subtotal, iva, total, ahorro } = calcularTotales();
+    if (DOM.subtotalCarrito) DOM.subtotalCarrito.textContent = formatoMoneda(subtotal);
+    if (DOM.ivaCarrito)      DOM.ivaCarrito.textContent      = formatoMoneda(iva);
+    if (DOM.totalCarrito)    DOM.totalCarrito.textContent    = formatoMoneda(total);
 
-    if (ahorroCarrito) {
-        ahorroCarrito.textContent = ahorroTotal > 0
-            ? `Ahorro por mayoreo: ${formatoMoneda(ahorroTotal)}`
-            : "";
+    if (DOM.ahorroCarrito) {
+        DOM.ahorroCarrito.textContent = ahorro > 0 ? `Ahorro por mayoreo: ${formatoMoneda(ahorro)}` : "";
     }
 
-    // ✅ Mostrar u ocultar el aviso de materiales en el carrito
-    if (avisoMaterialesCarrito) {
-        const tieneMateriales = carrito.some(item => item.tipo === "material");
-        avisoMaterialesCarrito.style.display = tieneMateriales ? "flex" : "none";
+    if (DOM.avisoMateriales) {
+        DOM.avisoMateriales.hidden = !ESTADO.carrito.some(i => i.tipo === "material");
     }
 
-    if (confirmarCompra) confirmarCompra.disabled = carrito.length === 0;
+    if (DOM.confirmarCompra) DOM.confirmarCompra.disabled = ESTADO.carrito.length === 0;
 }
 
+/* =====================================================
+   12. CARRITO — ABRIR / CERRAR / REVISAR
+===================================================== */
 function abrirCarrito() {
-    if (ventanaCarrito && !ventanaCarrito.open) {
-        ventanaCarrito.showModal();
-    }
+    if (DOM.ventanaCarrito && !DOM.ventanaCarrito.open) DOM.ventanaCarrito.showModal();
 }
-
 function cerrarVentanaCarrito() {
-    if (ventanaCarrito) ventanaCarrito.close();
+    if (DOM.ventanaCarrito?.open) DOM.ventanaCarrito.close();
 }
-
 function revisarPedido() {
-    if (!carrito.length) {
+    if (!ESTADO.carrito.length) {
         mostrarNotificacion("Tu carrito está vacío.", "error");
         return;
     }
@@ -617,86 +606,98 @@ function revisarPedido() {
 }
 
 /* =====================================================
-   10. REGISTRO DE EVENTOS GENERALES
+   13. EVENTOS
 ===================================================== */
-function registrarEventos() {
-    // Buscador
-    if (buscarProducto) {
-        buscarProducto.addEventListener("input", aplicarFiltros);
-    }
+function registrarEventosCatalogo() {
+    if (!DOM.listaProductos) return;
+    DOM.listaProductos.addEventListener("click", (e) => {
+        const boton = e.target.closest(".boton-agregar");
+        if (!boton) return;
+        const id = Number(boton.dataset.id);
+        if (!Number.isFinite(id)) return;
+        const producto = getProductoPorId(id);
+        if (producto) abrirModalProducto(producto);
+    });
+}
 
-    // Carrito
-    if (botonAbrirCarrito) botonAbrirCarrito.addEventListener("click", abrirCarrito);
-    if (cerrarCarrito) cerrarCarrito.addEventListener("click", cerrarVentanaCarrito);
-    if (seguirComprando) seguirComprando.addEventListener("click", cerrarVentanaCarrito);
-    if (confirmarCompra) confirmarCompra.addEventListener("click", revisarPedido);
+function registrarEventosCarrito() {
+    if (!DOM.contenidoCarrito) return;
+    DOM.contenidoCarrito.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-action]");
+        if (!btn) return;
+        const id = Number(btn.dataset.id);
+        const action = btn.dataset.action;
+        if (!Number.isFinite(id)) return;
+        if (action === "sumar")  cambiarCantidad(id, 1);
+        if (action === "restar") cambiarCantidad(id, -1);
+        if (action === "quitar") quitarDelCarrito(id);
+    });
+}
 
-    // Modal Producto
-    if (cerrarProducto) cerrarProducto.addEventListener("click", cerrarModalProducto);
-
-    if (modalMenos) {
-        modalMenos.addEventListener("click", () => {
-            const actual = obtenerCantidadValida(modalCantidad);
-            modalCantidad.value = Math.max(1, actual - 1);
-            actualizarTotalModal();
+function registrarEventosGenerales() {
+    if (DOM.buscarProducto) {
+        DOM.buscarProducto.addEventListener("input", (e) => {
+            ESTADO.busqueda = e.target.value;
+            aplicarFiltros();
         });
     }
 
-    if (modalMas) {
-        modalMas.addEventListener("click", () => {
-            const actual = obtenerCantidadValida(modalCantidad);
-            modalCantidad.value = Math.min(MAX_CANTIDAD, actual + 1);
-            actualizarTotalModal();
-        });
-    }
+    DOM.botonAbrirCarrito?.addEventListener("click", abrirCarrito);
+    DOM.cerrarCarrito?.addEventListener("click", cerrarVentanaCarrito);
+    DOM.seguirComprando?.addEventListener("click", cerrarVentanaCarrito);
+    DOM.confirmarCompra?.addEventListener("click", revisarPedido);
 
-    if (modalCantidad) {
-        modalCantidad.addEventListener("input", actualizarTotalModal);
-        modalCantidad.addEventListener("focus", () => {
-            modalCantidad.select();
-        });
-        modalCantidad.addEventListener("blur", () => {
-            obtenerCantidadValida(modalCantidad);
-            actualizarTotalModal();
-        });
-    }
+    DOM.cerrarProducto?.addEventListener("click", cerrarModalProducto);
 
-    if (modalAgregar) {
-        modalAgregar.addEventListener("click", () => {
-            const cantidad = obtenerCantidadValida(modalCantidad);
-            agregarAlCarrito(cantidad);
-            cerrarModalProducto();
-        });
-    }
+    DOM.modalMenos?.addEventListener("click", () => {
+        const n = obtenerCantidadValida(DOM.modalCantidad);
+        DOM.modalCantidad.value = String(Math.max(1, n - 1));
+        actualizarTotalModal();
+    });
 
-    // Cerrar el modal si se hace clic fuera del contenido
-    if (ventanaProducto) {
-        ventanaProducto.addEventListener("click", (e) => {
-            if (e.target === ventanaProducto) cerrarModalProducto();
-        });
-    }
+    DOM.modalMas?.addEventListener("click", () => {
+        const n = obtenerCantidadValida(DOM.modalCantidad);
+        DOM.modalCantidad.value = String(Math.min(CONFIG.MAX_CANTIDAD, n + 1));
+        actualizarTotalModal();
+    });
+
+    DOM.modalCantidad?.addEventListener("input", actualizarTotalModal);
+    DOM.modalCantidad?.addEventListener("focus", () => DOM.modalCantidad.select());
+    DOM.modalCantidad?.addEventListener("blur", () => {
+        obtenerCantidadValida(DOM.modalCantidad);
+        actualizarTotalModal();
+    });
+
+    DOM.modalAgregar?.addEventListener("click", () => {
+        const cant = obtenerCantidadValida(DOM.modalCantidad);
+        agregarAlCarrito(cant);
+        cerrarModalProducto();
+    });
+
+    DOM.ventanaProducto?.addEventListener("click", (e) => {
+        if (e.target === DOM.ventanaProducto) cerrarModalProducto();
+    });
+
+    window.addEventListener("storage", (e) => {
+        if (e.key !== CONFIG.STORAGE_KEY) return;
+        cargarCarrito();
+        renderCarrito();
+    });
 }
 
 /* =====================================================
-   11. INICIALIZACIÓN
+   14. INIT
 ===================================================== */
 function init() {
-    console.log("🚀 Iniciando tienda estática...");
-
     cargarCarrito();
-    actualizarCarrito();
-
-    const totalInicial = document.querySelectorAll(".tarjeta-producto").length;
-    if (textoResultados) {
-        textoResultados.textContent = `Mostrando ${totalInicial} elementos.`;
-    }
-
+    renderCatalogo(CATALOGO);
+    renderCarrito();
+    registrarFiltros();
     registrarEventosCatalogo();
-    registrarFiltrosCategoria();
-    registrarEventos();
+    registrarEventosCarrito();
+    registrarEventosGenerales();
 }
 
-// Arrancar la aplicación cuando el HTML esté listo
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
 } else {

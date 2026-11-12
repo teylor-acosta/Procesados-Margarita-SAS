@@ -51,14 +51,14 @@ body {
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     
-    /* FONDO CONTINUO E INTENSO: Colores más vivos */
-    background-color: #eef5f2;
+    /* FONDO CONTINUO E INTENSO: Colores más vivos y profesionales */
+    background-color: #e2e8f0;
     background-image: 
-        radial-gradient(circle at 15% 10%, rgba(74, 222, 128, 0.25) 0%, transparent 50%),
-        radial-gradient(circle at 85% 20%, rgba(37, 99, 235, 0.25) 0%, transparent 50%),
-        radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.8) 0%, transparent 60%),
-        radial-gradient(circle at 20% 70%, rgba(34, 197, 94, 0.2) 0%, transparent 50%),
-        radial-gradient(circle at 80% 90%, rgba(96, 165, 250, 0.2) 0%, transparent 50%);
+        radial-gradient(circle at 10% 10%, rgba(34, 197, 94, 0.25) 0%, transparent 50%),
+        radial-gradient(circle at 90% 20%, rgba(37, 99, 235, 0.25) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.7) 0%, transparent 60%),
+        radial-gradient(circle at 15% 80%, rgba(74, 222, 128, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 85% 90%, rgba(96, 165, 250, 0.2) 0%, transparent 50%);
     background-attachment: fixed;
     background-size: cover;
 }
@@ -439,7 +439,6 @@ nav a:hover::after {
     scroll-margin-top: 85px;
 }
 
-/* Transparente para que el fondo fluya, con padding reducido a 60px */
 .empresa,
 .servicios,
 .erp,
@@ -478,7 +477,6 @@ nav a:hover::after {
     text-transform: uppercase;
 }
 
-/* Margen reducido de 65px a 30px */
 .titulo-seccion {
     max-width: 800px;
     margin: 0 auto 30px;
