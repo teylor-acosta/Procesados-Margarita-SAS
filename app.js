@@ -115,6 +115,10 @@ app.use(require('./routes/evaluacion-capacitacion.routes'));
 app.use(require('./routes/perfil.routes'));
 app.use(require('./routes/catalogos.routes'));
 app.use(require('./routes/documentacion.routes'));
+
+app.use(require('./routes/documentos-lectura.routes'));
+app.use(require('./routes/centro-actividad.routes'));
+
 app.use(require('./routes/centro-actividad.routes'));
 
 app.use('/api/usuarios', require('./routes/crear-usuario.routes'));
