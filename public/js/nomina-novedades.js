@@ -221,7 +221,12 @@ document.addEventListener('DOMContentLoaded', () => {
     async function cargarNovedades() {
         try {
             mostrarCargando();
-            const respuesta = await fetch('/api/nomina/novedades', { cache: 'no-store' });
+            // ✅ FIX: Barra al final y credentials
+            const respuesta = await fetch('/api/nomina/novedades/', { 
+                cache: 'no-store',
+                credentials: 'include' 
+            });
+            
             if (!respuesta.ok) throw new Error('Error al consultar la API.');
 
             const resultado = await respuesta.json();
@@ -246,7 +251,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (kpiAprobadas) kpiAprobadas.textContent = estadoApp.novedades.filter(n => obtenerEstado(n) === 'APROBADA').length;
         if (kpiRechazadas) kpiRechazadas.textContent = estadoApp.novedades.filter(n => obtenerEstado(n) === 'RECHAZADA').length;
         
-        fetch('/api/nomina/novedades/kpis')
+        // ✅ FIX: Barra al final y credentials
+        fetch('/api/nomina/novedades/kpis/', { credentials: 'include' })
             .then(res => res.ok ? res.json() : null)
             .then(data => {
                 if (data && data.success && data.kpis && kpiHistorial) {
@@ -439,7 +445,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     try {
                         const res = await fetch(`/api/nomina/novedades/${btn.dataset.id}`, { 
                             method: 'DELETE',
-                            headers: { 'Content-Type': 'application/json' }
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include'
                         });
                         
                         const data = await res.json();
@@ -464,7 +471,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.stopPropagation();
                 mostrarConfirmacion('¿Estás seguro de aprobar esta novedad?', async () => {
                     try {
-                        const res = await fetch(`/api/nomina/novedades/${btn.dataset.id}/aprobar`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' } });
+                        const res = await fetch(`/api/nomina/novedades/${btn.dataset.id}/aprobar`, { 
+                            method: 'PATCH', 
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include'
+                        });
                         const data = await res.json();
                         if (!res.ok || !data.success) throw new Error(data.message || 'Error al aprobar');
                         mostrarToast('Novedad aprobada correctamente', 'success');
@@ -483,6 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     fetch(`/api/nomina/novedades/${btn.dataset.id}/rechazar`, {
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
                         body: JSON.stringify({ observacion: motivo.trim() })
                     })
                     .then(res => res.json())
@@ -514,7 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.show();
 
         try {
-            const res = await fetch(`/api/nomina/novedades/${id}`);
+            const res = await fetch(`/api/nomina/novedades/${id}`, { credentials: 'include' });
             const data = await res.json();
 
             if (!res.ok || !data.success) throw new Error(data.message || 'Error al cargar el detalle');
@@ -634,7 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function cargarTiposRegistro() {
         if (!registroTipoNovedad) return;
         try {
-            const res = await fetch('/api/nomina/novedades/tipos');
+            const res = await fetch('/api/nomina/novedades/tipos/', { credentials: 'include' });
             const data = await res.json();
             if (!res.ok || !data.success) throw new Error('Error al cargar tipos');
 
@@ -1329,9 +1341,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const fetchOptions = {
                 method: 'POST',
                 body: formData ? formData : JSON.stringify(payload),
-                headers: formData ? {} : { 'Content-Type': 'application/json' }
+                headers: formData ? {} : { 'Content-Type': 'application/json' },
+                credentials: 'include'
             };
 
+            // ✅ FIX: Barra al final
             const res = await fetch(`/api/nomina/novedades/${endpoint}`, fetchOptions);
             const data = await res.json();
 
@@ -1422,9 +1436,11 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.show();
 
         try {
-            const res = await fetch('/api/nomina/novedades/cierre-periodo/validar', {
+            // ✅ FIX: Barra al final y credentials
+            const res = await fetch('/api/nomina/novedades/cierre-periodo/validar/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify({ periodo })
             });
             const data = await res.json();
@@ -1470,9 +1486,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Cerrando...`;
             }
 
-            const res = await fetch('/api/nomina/novedades/cierre-periodo', {
+            // ✅ FIX: Barra al final y credentials
+            const res = await fetch('/api/nomina/novedades/cierre-periodo/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify({ periodo })
             });
             const data = await res.json();
