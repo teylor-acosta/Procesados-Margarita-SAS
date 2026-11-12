@@ -2,7 +2,13 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 
-const { proteger, soloAdmin, soloAuxiliar, soloSuperAdmin } = require('../middlewares/auth');
+const {
+    proteger,
+    verificarDocumentosPendientes,
+    soloAdmin,
+    soloAuxiliar,
+    soloSuperAdmin
+} = require('../middlewares/auth');
 
 // ============================================
 // RUTAS PÚBLICAS
@@ -43,9 +49,11 @@ router.get('/cambiar-password', proteger, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'cambiar-password.html'));
 });
 
-router.get('/dashboard', proteger, (req, res) => {
-    res.sendFile(path.join(__dirname, '../public', 'dashboard.html'));
-});
+router.get('/dashboard',proteger,verificarDocumentosPendientes,(req, res) => {res.sendFile(
+            path.join(__dirname, '../public', 'dashboard.html')
+        );
+    }
+);
 
 router.get('/induccion', proteger, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'induccion.html'));
@@ -67,17 +75,17 @@ router.get('/certificado', proteger, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'certificado.html'));
 });
 
-router.get('/perfil', proteger, (req, res) => {
-    res.sendFile(path.join(__dirname, '../public', 'perfil.html'));
-});
-router.get('/empleados-menu', (req, res) => {
+router.get('/perfil',proteger,verificarDocumentosPendientes,(req, res) => {
+        res.sendFile(path.join(__dirname, '../public', 'perfil.html'));
+    });
+router.get('/empleados-menu', proteger, verificarDocumentosPendientes, (req, res) => {
     res.sendFile(path.join(__dirname, '../public/empleados-menu.html'));
 });
-router.get('/empleados-inactivos', (req, res) => {
+router.get('/empleados-inactivos', proteger, verificarDocumentosPendientes, (req, res) => {
     res.sendFile(path.join(__dirname, '../public/empleados-inactivos.html'));
 });
 
-router.get('/expediente-empleado/:id', (req, res) => {
+router.get('/expediente-empleado/:id', proteger, verificarDocumentosPendientes, (req, res) => {
 
     res.sendFile(
         path.join(__dirname, '../public/expediente-empleado.html')
@@ -106,7 +114,7 @@ router.get('/reset/:token', (req, res) => {
    🔥 CENTRO ACTIVIDAD
 ========================================= */
 
-router.get('/centro-actividad', (req, res) => {
+router.get('/centro-actividad', proteger, verificarDocumentosPendientes, (req, res) => {
 
     res.sendFile(
         path.join(
@@ -122,19 +130,19 @@ router.get('/centro-actividad', (req, res) => {
 // RUTAS POR ROL
 // ============================================
 
-router.get('/admin', proteger, soloAdmin, (req, res) => {
+router.get('/admin', proteger, verificarDocumentosPendientes, soloAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'admin.html'));
 });
 
-router.get('/auxiliar', proteger, soloAuxiliar, (req, res) => {
+router.get('/auxiliar', proteger, verificarDocumentosPendientes, soloAuxiliar, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'auxiliar.html'));
 });
 
-router.get('/crear-empleado', proteger, soloSuperAdmin, (req, res) => {
+router.get('/crear-empleado', proteger, verificarDocumentosPendientes, soloSuperAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'crear-empleado.html'));
 });
 
-router.get('/empleados', proteger, soloSuperAdmin, (req, res) => {
+router.get('/empleados', proteger, verificarDocumentosPendientes, soloSuperAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'empleados.html'));
 });
 
@@ -142,11 +150,11 @@ router.get('/empleados', proteger, soloSuperAdmin, (req, res) => {
 // PANEL
 // ============================================
 
-router.get('/panel', proteger, (req, res) => {
+router.get('/panel', proteger, verificarDocumentosPendientes, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'panel.html'));
 });
 
-router.get('/recursos-humanos', proteger, soloSuperAdmin, (req, res) => {
+router.get('/recursos-humanos', proteger, verificarDocumentosPendientes, soloSuperAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'recursos-humanos.html'));
 });
 
@@ -156,7 +164,8 @@ router.get('/recursos-humanos', proteger, soloSuperAdmin, (req, res) => {
 
 router.get(
     '/capacitaciones',
-    proteger,
+proteger,
+verificarDocumentosPendientes,
     (req, res) => {
 
         res.sendFile(
@@ -171,7 +180,7 @@ router.get(
     }
 );
 
-router.get('/usuarios', proteger, soloSuperAdmin, (req, res) => {
+router.get('/usuarios', proteger, verificarDocumentosPendientes, soloSuperAdmin, (req, res) => {
 
     res.sendFile(
 
@@ -186,8 +195,9 @@ router.get('/usuarios', proteger, soloSuperAdmin, (req, res) => {
 
 router.get(
     '/gestion-organizacional',
-    proteger,
-    soloSuperAdmin,
+proteger,
+verificarDocumentosPendientes,
+soloSuperAdmin,
     (req, res) => {
 
         res.sendFile(
@@ -234,7 +244,8 @@ router.get('/usuarios-registrados', proteger, soloSuperAdmin, (req, res) => {
 
 router.get(
     '/seguimiento-general',
-    proteger,
+proteger,
+verificarDocumentosPendientes,
     (req, res) => {
 
         res.sendFile(
@@ -251,7 +262,7 @@ router.get(
    🔥 ROLES Y ACCESOS
 ========================================= */
 
-router.get('/roles-accesos', proteger, soloSuperAdmin, (req, res) => {
+router.get('/roles-accesos', proteger, verificarDocumentosPendientes, soloSuperAdmin, (req, res) => {
 
     res.sendFile(
 
@@ -270,7 +281,8 @@ router.get('/roles-accesos', proteger, soloSuperAdmin, (req, res) => {
 
 router.get(
     "/capacitacion/:id",
-    proteger,
+proteger,
+verificarDocumentosPendientes,
     (req, res) => {
 
         res.sendFile(
@@ -292,6 +304,7 @@ router.get(
 router.get(
     "/evaluacion-capacitacion",
     proteger,
+    verificarDocumentosPendientes,
     (req, res) => {
 
         res.sendFile(
@@ -310,7 +323,8 @@ router.get(
 
 router.get(
     "/administrar-curso/:id",
-    proteger,
+proteger,
+verificarDocumentosPendientes,
     (req, res) => {
 
         res.sendFile(
@@ -331,7 +345,8 @@ router.get(
 
 router.get(
     "/administrar-certificado/:id",
-    proteger,
+proteger,
+verificarDocumentosPendientes,
     (req, res) => {
 
         res.sendFile(

@@ -1,0 +1,582 @@
+
+/* =========================================
+   DOCUMENTOS OBLIGATORIOS
+   PROCESADOS MARGARITA S.A.S.
+========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --verde: #22c55e;
+    --verde-dark: #16a34a;
+    --verde-institucional: #032b1d;
+    --texto-principal: #0f172a;
+    --texto-secundario: #64748b;
+    --blanco: #ffffff;
+    --gris: #f4f7f6;
+    --borde: #e2e8f0;
+}
+
+body {
+    font-family: 'Averia Libre', sans-serif;
+    background: var(--gris);
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: var(--texto-principal);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+/* =========================================
+   FONDO GLOBAL
+========================================= */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: url('../img/Fondo.webp') center / cover no-repeat;
+    filter: blur(4px);
+    transform: scale(1.02);
+    z-index: -1;
+}
+
+/* =========================================
+   ENCABEZADO PERSONALIZADO
+========================================= */
+
+.encabezado-documentos {
+    width: 100%;
+    min-height: 105px;
+    background: var(--blanco);
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 15px 6%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+    border-bottom: 1px solid var(--borde);
+}
+
+.encabezado-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.encabezado-logo img {
+    width: 85px;
+    height: 75px;
+    object-fit: contain;
+}
+
+.encabezado-titulo h1 {
+    font-size: 25px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--verde-institucional);
+}
+
+.encabezado-titulo p {
+    font-size: 15px;
+    color: var(--texto-secundario);
+    margin: 5px 0 0;
+}
+
+/* =========================================
+   CONTENEDOR PRINCIPAL
+========================================= */
+
+.contenedor-documentos {
+    width: min(1100px, 92%);
+    margin: 45px auto;
+    padding-bottom: 40px;
+}
+
+/* =========================================
+   INTRODUCCIÓN
+========================================= */
+
+.introduccion {
+    background: var(--blanco);
+    padding: 30px;
+    border-radius: 18px;
+    border-left: 6px solid var(--verde);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+    margin-bottom: 25px;
+}
+
+.introduccion h2 {
+    font-size: 23px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.introduccion p {
+    font-size: 16px;
+    color: var(--texto-secundario);
+    line-height: 1.7;
+    margin: 0;
+}
+
+/* =========================================
+   RESUMEN
+========================================= */
+
+.resumen {
+    background: var(--verde-institucional);
+    color: var(--blanco);
+    padding: 18px 25px;
+    border-radius: 14px;
+    margin-bottom: 25px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+/* =========================================
+   LISTA DE DOCUMENTOS
+========================================= */
+
+.lista-documentos {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* =========================================
+   MENSAJE FINAL
+========================================= */
+
+.mensaje-final {
+    background: var(--blanco);
+    padding: 35px;
+    border-radius: 18px;
+    text-align: center;
+    margin-top: 30px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+}
+
+.mensaje-final h2 {
+    color: var(--verde-dark);
+    font-size: 26px;
+    margin-bottom: 12px;
+}
+
+.mensaje-final p {
+    color: var(--texto-secundario);
+    margin-bottom: 22px;
+}
+
+/* =========================================
+   BOTÓN CONTINUAR
+========================================= */
+
+.btn-continuar {
+    background: var(--verde-dark);
+    color: var(--blanco);
+    border: none;
+    padding: 13px 30px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.btn-continuar:hover {
+    background: var(--verde-institucional);
+    transform: translateY(-2px);
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .encabezado-documentos {
+        min-height: 90px;
+        padding: 12px 5%;
+        gap: 15px;
+    }
+
+    .encabezado-logo img {
+        width: 65px;
+        height: 60px;
+    }
+
+    .encabezado-titulo h1 {
+        font-size: 19px;
+    }
+
+    .encabezado-titulo p {
+        font-size: 13px;
+    }
+
+    .contenedor-documentos {
+        margin: 25px auto;
+    }
+
+    .introduccion {
+        padding: 22px;
+    }
+
+    .introduccion h2 {
+        font-size: 20px;
+    }
+
+    .introduccion p {
+        font-size: 14px;
+    }
+}
+
+
+/* =========================================
+   TARJETAS DE DOCUMENTOS
+========================================= */
+
+.tarjeta-documento {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 5px 18px rgba(0,0,0,.05);
+    transition: .25s;
+}
+
+.tarjeta-documento:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,.09);
+}
+
+.documento-aceptado {
+    border-left: 5px solid #16a34a;
+}
+
+.documento-pendiente {
+    border-left: 5px solid #f59e0b;
+}
+
+.documento-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.documento-icono {
+    width: 58px;
+    height: 58px;
+    min-width: 58px;
+    border-radius: 15px;
+    background: #fee2e2;
+    color: #dc2626;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+}
+
+.documento-titulo {
+    flex: 1;
+    min-width: 0;
+}
+
+.documento-categoria {
+    display: inline-block;
+    background: #ecfdf5;
+    color: #047857;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.documento-titulo h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #0f172a;
+}
+
+.documento-titulo p {
+    font-size: 14px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.estado-documento {
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.documento-aceptado .estado-documento {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.documento-pendiente .estado-documento {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+/* =========================================
+   INFORMACIÓN DEL DOCUMENTO
+========================================= */
+
+.documento-informacion {
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+    padding: 17px 0;
+    margin-top: 18px;
+    border-top: 1px solid #f1f5f9;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.documento-informacion span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* =========================================
+   ACCIONES
+========================================= */
+
+.documento-acciones {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn-ver-documento {
+    background: #032b1d;
+    color: white;
+    border: none;
+    border-radius: 11px;
+    padding: 12px 20px;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.btn-ver-documento:hover {
+    background: #16a34a;
+    transform: translateY(-2px);
+}
+
+.btn-ver-documento i {
+    margin-right: 7px;
+}
+
+.texto-aceptado {
+    color: #15803d;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.texto-pendiente {
+    color: #b45309;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* =========================================
+   MODAL Y VISOR PDF
+========================================= */
+
+.modal-documento {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    background: rgba(2, 20, 13, .78);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-contenido {
+    width: min(1100px, 100%);
+    height: min(850px, 95vh);
+    background: #fff;
+    border-radius: 18px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.3);
+}
+
+.modal-encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 25px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-encabezado h2 {
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.modal-encabezado p {
+    color: #64748b;
+    margin: 5px 0 0;
+    font-size: 13px;
+}
+
+.cerrar-modal {
+    border: none;
+    background: #f1f5f9;
+    color: #334155;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.cerrar-modal:hover {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.visor-pdf {
+    flex: 1;
+    min-height: 0;
+    background: #e2e8f0;
+}
+
+.visor-pdf iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.modal-pie {
+    padding: 18px 25px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.confirmacion-lectura {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #334155;
+    cursor: pointer;
+}
+
+.confirmacion-lectura input {
+    width: 19px;
+    height: 19px;
+    accent-color: #16a34a;
+}
+
+.btn-aceptar-documento {
+    background: #16a34a;
+    color: white;
+    border: none;
+    border-radius: 11px;
+    padding: 12px 20px;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-aceptar-documento:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   ERRORES
+========================================= */
+
+.alerta-error {
+    background: #fff;
+    border: 1px solid #fecaca;
+    border-left: 5px solid #dc2626;
+    padding: 22px;
+    border-radius: 14px;
+    color: #991b1b;
+}
+
+.alerta-error button {
+    background: #dc2626;
+    color: #fff;
+    border: none;
+    padding: 9px 16px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 650px) {
+
+    .tarjeta-documento {
+        padding: 18px;
+    }
+
+    .documento-cabecera {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .documento-titulo {
+        flex-basis: calc(100% - 80px);
+    }
+
+    .estado-documento {
+        margin-left: 75px;
+    }
+
+    .documento-acciones {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .modal-documento {
+        padding: 5px;
+    }
+
+    .modal-contenido {
+        height: 98vh;
+        border-radius: 12px;
+    }
+
+    .modal-pie {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .btn-aceptar-documento {
+        width: 100%;
+    }
+}
+

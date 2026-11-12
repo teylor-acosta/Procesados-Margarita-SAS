@@ -99,6 +99,7 @@ router.get(
                     d.id AS documento_id,
                     d.titulo,
                     d.descripcion,
+                    d.tipo_documento,
                     d.estado,
                     v.id AS version_id,
                     v.numero_version,
@@ -177,7 +178,23 @@ router.post(
 
             const db = req.app.get('db');
 
-            const { titulo, descripcion } = req.body;
+            const { titulo, descripcion, tipo_documento } = req.body;
+
+            const tiposPermitidos = [
+    'REGLAMENTO',
+    'POLITICAS',
+    'PROGRAMAS',
+    'MANUALES'
+];
+
+if (!tiposPermitidos.includes(tipo_documento)) {
+    eliminarArchivo(archivo);
+
+    return res.status(400).json({
+        success: false,
+        message: 'Debes seleccionar un tipo de documento válido.'
+    });
+}
 
             if (!titulo || !titulo.trim() || !req.file) {
 
@@ -194,17 +211,18 @@ router.post(
 
             await conexion.beginTransaction();
 
-            const [documento] = await conexion.query(`
+           const [documento] = await conexion.query(`
 
-                INSERT INTO documentos_lectura
-                (titulo, descripcion, estado)
+    INSERT INTO documentos_lectura
+    (titulo, descripcion, tipo_documento, estado)
 
-                VALUES (?, ?, 'ACTIVO')
+    VALUES (?, ?, ?, 'ACTIVO')
 
-            `, [
-                titulo.trim(),
-                descripcion || null
-            ]);
+`, [
+    titulo.trim(),
+    descripcion || null,
+    tipo_documento
+]);
 
             const documentoID = documento.insertId;
 
@@ -684,22 +702,16 @@ router.get(
 
             const documento = resultados[0];
 
-            if (!esSuperAdmin) {
-
-                if (
-                    documento.estado !== 'VIGENTE' ||
-                    documento.documento_estado !== 'ACTIVO' ||
-                    Number(documento.version_actual_id) !== versionID
-                ) {
-
-                    return res.status(403).json({
-                        success: false,
-                        message: 'No tienes permiso para consultar esta versión.'
-                    });
-
-                }
-
-            }
+            if (
+    documento.estado !== 'VIGENTE' ||
+    documento.documento_estado !== 'ACTIVO' ||
+    Number(documento.version_actual_id) !== versionID
+) {
+    return res.status(403).json({
+        success: false,
+        message: 'No tienes permiso para consultar esta versión.'
+    });
+}
 
             const ruta = path.resolve(
                 __dirname,
@@ -861,6 +873,7 @@ router.get(
     SELECT
         d.id AS documento_id,
         d.titulo,
+        d.tipo_documento,
 
         v.id AS version_id,
         v.numero_version,
@@ -900,6 +913,295 @@ router.get(
                 success: false,
                 message: 'No se pudo consultar el historial.'
             });
+
+        }
+
+    }
+);
+
+
+// ============================================
+// 7. SEGUIMIENTO DE LECTURA - SUPERADMIN
+// ============================================
+
+router.get(
+    '/api/documentos-lectura/seguimiento',
+    proteger,
+    soloSuperAdmin,
+    async (req, res) => {
+
+        try {
+
+            const db = req.app.get('db');
+
+            const [seguimiento] = await db.query(`
+
+                SELECT
+                    e.id AS empleado_id,
+                    e.codigo,
+                    e.nombre,
+                    e.numero_documento,
+
+                    u.ID AS usuario_id,
+                    u.Usuario AS usuario,
+
+                    d.id AS documento_id,
+                    d.titulo AS documento,
+                    d.tipo_documento,
+
+                    v.id AS version_id,
+                    v.numero_version,
+
+                    CASE
+                        WHEN a.id IS NULL THEN 'PENDIENTE'
+                        ELSE 'LEIDO'
+                    END AS estado_lectura,
+
+                    a.fecha_aceptacion
+
+                FROM empleados e
+
+                INNER JOIN usuarios u
+                    ON u.empleado_id = e.id
+
+                CROSS JOIN documentos_lectura d
+
+                INNER JOIN versiones_documentos v
+                    ON v.id = d.version_actual_id
+
+                LEFT JOIN aceptaciones_documentos a
+                    ON a.version_id = v.id
+                    AND a.empleado_id = e.id
+                    AND a.usuario_id = u.ID
+
+                WHERE e.activo = 'SI'
+                    AND d.estado = 'ACTIVO'
+                    AND v.estado = 'VIGENTE'
+
+                ORDER BY e.nombre, d.titulo
+
+            `);
+
+            const totalEmpleados = new Set(
+                seguimiento.map(item => item.empleado_id)
+            ).size;
+
+            const totalDocumentos = new Set(
+                seguimiento.map(item => item.documento_id)
+            ).size;
+
+            const leidos = seguimiento.filter(
+                item => item.estado_lectura === 'LEIDO'
+            ).length;
+
+            const pendientes = seguimiento.filter(
+                item => item.estado_lectura === 'PENDIENTE'
+            ).length;
+
+            const totalRegistros = seguimiento.length;
+
+            const progresoEmpleados = new Map();
+
+seguimiento.forEach(item => {
+
+    if (!progresoEmpleados.has(item.empleado_id)) {
+        progresoEmpleados.set(item.empleado_id, {
+            total: 0,
+            leidos: 0
+        });
+    }
+
+    const progreso = progresoEmpleados.get(item.empleado_id);
+
+    progreso.total++;
+
+    if (item.estado_lectura === 'LEIDO') {
+        progreso.leidos++;
+    }
+
+});
+
+const empleadosAlDia = new Set();
+
+progresoEmpleados.forEach((progreso, empleadoID) => {
+
+    if (
+        progreso.total === totalDocumentos &&
+        progreso.leidos === totalDocumentos
+    ) {
+        empleadosAlDia.add(empleadoID);
+    }
+
+});
+
+            const porcentaje = totalRegistros > 0
+                ? Number(((leidos / totalRegistros) * 100).toFixed(2))
+                : 0;
+
+            res.json({
+
+                success: true,
+
+                resumen: {
+                    total_empleados: totalEmpleados,
+                    total_documentos: totalDocumentos,
+                    empleados_al_dia: empleadosAlDia.size,
+                    empleados_con_pendientes:
+                        totalEmpleados - empleadosAlDia.size,
+                    total_leidos: leidos,
+                    total_pendientes: pendientes,
+                    porcentaje_cumplimiento: porcentaje
+                },
+
+                seguimiento
+
+            });
+
+        } catch (error) {
+
+            console.error(
+                'ERROR SEGUIMIENTO DOCUMENTAL:',
+                error
+            );
+
+            res.status(500).json({
+                success: false,
+                message: 'No se pudo consultar el seguimiento documental.'
+            });
+
+        }
+
+    }
+);
+
+
+// ============================================
+// ELIMINAR DOCUMENTO COMPLETAMENTE - SUPERADMIN
+// ============================================
+
+router.delete(
+    '/api/documentos-lectura/:id',
+    proteger,
+    soloSuperAdmin,
+    async (req, res) => {
+
+        let conexion;
+        let archivosEliminados = [];
+
+        try {
+            const db = req.app.get('db');
+            const documentoID = Number(req.params.id);
+
+            if (!Number.isInteger(documentoID) || documentoID <= 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Identificador de documento inválido.'
+                });
+            }
+
+            conexion = await db.getConnection();
+            await conexion.beginTransaction();
+
+            // Comprobar que el documento existe y bloquearlo.
+            const [documentos] = await conexion.query(`
+                SELECT id, titulo
+                FROM documentos_lectura
+                WHERE id = ?
+                FOR UPDATE
+            `, [documentoID]);
+
+            if (documentos.length === 0) {
+                throw new Error('El documento no existe.');
+            }
+
+            // Obtener todas las versiones y sus archivos.
+            const [versiones] = await conexion.query(`
+                SELECT id, ruta_archivo
+                FROM versiones_documentos
+                WHERE documento_id = ?
+            `, [documentoID]);
+
+            // Eliminar todas las aceptaciones del documento.
+            await conexion.query(`
+                DELETE FROM aceptaciones_documentos
+                WHERE documento_id = ?
+            `, [documentoID]);
+
+            // Desvincular la versión actual.
+            await conexion.query(`
+                UPDATE documentos_lectura
+                SET version_actual_id = NULL
+                WHERE id = ?
+            `, [documentoID]);
+
+            // Eliminar todas las versiones.
+            await conexion.query(`
+                DELETE FROM versiones_documentos
+                WHERE documento_id = ?
+            `, [documentoID]);
+
+            // Eliminar el documento.
+            await conexion.query(`
+                DELETE FROM documentos_lectura
+                WHERE id = ?
+            `, [documentoID]);
+
+            await conexion.commit();
+
+            // Eliminar los PDF físicos después de confirmar la transacción.
+            for (const version of versiones) {
+
+                if (!version.ruta_archivo) continue;
+
+                const ruta = path.resolve(
+                    __dirname,
+                    '..',
+                    version.ruta_archivo
+                );
+
+                if (
+                    ruta.startsWith(carpetaDocumentos + path.sep) &&
+                    fs.existsSync(ruta)
+                ) {
+                    try {
+                        eliminarArchivo(ruta);
+                        archivosEliminados.push(version.id);
+                    } catch (error) {
+                        console.error(
+                            'No se pudo eliminar el PDF:',
+                            ruta,
+                            error
+                        );
+                    }
+                }
+            }
+
+            res.json({
+                success: true,
+                message: 'Documento, versiones y aceptaciones eliminados correctamente.',
+                documento_id: documentoID,
+                versiones_eliminadas: versiones.length,
+                archivos_eliminados: archivosEliminados.length
+            });
+
+        } catch (error) {
+
+            if (conexion) {
+                await conexion.rollback();
+            }
+
+            console.error('ERROR ELIMINAR DOCUMENTO:', error);
+
+            res.status(400).json({
+                success: false,
+                message: error.message || 'No se pudo eliminar el documento.'
+            });
+
+        } finally {
+
+            if (conexion) {
+                conexion.release();
+            }
 
         }
 
