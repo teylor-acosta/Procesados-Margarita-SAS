@@ -12,6 +12,28 @@ const { proteger } = require('../middlewares/auth');
 const SALT_ROUNDS = 10;
 
 // ============================================
+// VALIDAR DOCUMENTOS OBLIGATORIOS PENDIENTES
+// ============================================
+
+async function tieneDocumentosPendientes(db, empleadoID) {
+
+    const [documentos] = await db.query(`
+        SELECT COUNT(*) AS pendientes
+        FROM documentos_lectura d
+        INNER JOIN versiones_documentos v
+            ON d.version_actual_id = v.id
+        LEFT JOIN aceptaciones_documentos a
+            ON a.version_id = v.id
+            AND a.empleado_id = ?
+        WHERE d.estado = 'ACTIVO'
+            AND v.estado = 'VIGENTE'
+            AND a.id IS NULL
+    `, [empleadoID]);
+
+    return documentos[0].pendientes > 0;
+}
+
+// ============================================
 // 🔥 CONFIG EMAIL (HOSTINGER — unificado con app.js)
 // ============================================
 
@@ -222,18 +244,34 @@ router.post('/api/login', async (req, res) => {
         let destino = "/dashboard";
 
         if (results2.length > 0) {
-            const total = results2[0].total || 0;
-            const aprobados = results2[0].aprobados || 0;
-            const tieneCertificado = results2[0].tiene_certificado > 0;
+    const total = results2[0].total || 0;
+    const aprobados = results2[0].aprobados || 0;
+    const tieneCertificado = results2[0].tiene_certificado > 0;
 
-            if (tieneCertificado) {
-                destino = "/dashboard";
-            } else if (aprobados < total) {
-                destino = "/induccion";
-            } else {
-                destino = "/firma";
-            }
-        }
+    if (tieneCertificado) {
+        destino = "/dashboard";
+    } else if (aprobados < total) {
+        destino = "/induccion";
+    } else {
+        destino = "/firma";
+    }
+}
+
+// =========================================
+// VALIDAR DOCUMENTOS OBLIGATORIOS
+// =========================================
+
+if (destino === "/dashboard") {
+
+    const pendientes = await tieneDocumentosPendientes(
+        db,
+        req.session.empleadoID
+    );
+
+    if (pendientes) {
+        destino = "/documentos-lectura";
+    }
+}
 
         req.session.save(() => {
             res.json({
@@ -343,6 +381,22 @@ WHERE estado = 'ACTIVO') AS total_capacitaciones,
         } else {
             redirect = "/dashboard";
         }
+
+        // =========================================
+// VALIDAR DOCUMENTOS OBLIGATORIOS
+// =========================================
+
+if (redirect === "/dashboard") {
+
+    const pendientes = await tieneDocumentosPendientes(
+        db,
+        req.session.empleadoID
+    );
+
+    if (pendientes) {
+        redirect = "/documentos-lectura";
+    }
+}
 
         res.json({
             success: true,

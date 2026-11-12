@@ -61,11 +61,53 @@ const soloAdmin = soloRol(['administrador']);
 const soloAuxiliar = soloRol(['auxiliar']);
 
 // ============================================
+// VALIDAR LECTURA OBLIGATORIA DE DOCUMENTOS
+// ============================================
+
+const verificarDocumentosPendientes = async (req, res, next) => {
+
+    try {
+
+        const db = req.app.get('db');
+        const empleadoID = req.session.empleadoID;
+
+        const [documentos] = await db.query(`
+            SELECT COUNT(*) AS pendientes
+            FROM documentos_lectura d
+            INNER JOIN versiones_documentos v
+                ON d.version_actual_id = v.id
+            LEFT JOIN aceptaciones_documentos a
+                ON a.version_id = v.id
+                AND a.empleado_id = ?
+            WHERE d.estado = 'ACTIVO'
+                AND v.estado = 'VIGENTE'
+                AND a.id IS NULL
+        `, [empleadoID]);
+
+        if (documentos[0].pendientes > 0) {
+            return res.redirect('/documentos-lectura');
+        }
+
+        next();
+
+    } catch (error) {
+
+        console.error('ERROR VALIDANDO DOCUMENTOS PENDIENTES:', error);
+
+        return res.status(500).send(
+            'No se pudo verificar la lectura de los documentos obligatorios.'
+        );
+
+    }
+};
+
+// ============================================
 // EXPORTAR
 // ============================================
 
 module.exports = {
     proteger,
+    verificarDocumentosPendientes,
     soloRol,
     soloSuperAdmin,
     soloAdmin,

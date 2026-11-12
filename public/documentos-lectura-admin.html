@@ -94,8 +94,175 @@
 
         </section>
 
+
+
+<!-- SEGUIMIENTO DE LECTURA DE DOCUMENTOS -->
+<section class="panel-documentos seguimiento-panel">
+
+    <div class="panel-titulo">
+        <div>
+            <span class="header-etiqueta">
+                <i class="fa-solid fa-users"></i>
+                CONTROL DE CUMPLIMIENTO
+            </span>
+            <h2>Seguimiento de lectura</h2>
+            <p>Consulta el cumplimiento de lectura de los empleados.</p>
+        </div>
+
+        <button class="btn-secundario" id="btnAbrirSeguimiento">
+            <i class="fa-solid fa-users-viewfinder"></i>
+            Ver seguimiento
+        </button>
+    </div>
+
+    <!-- ESTADÍSTICAS -->
+    <div class="seguimiento-indicadores">
+
+        <article class="seguimiento-card">
+            <span>Empleados activos</span>
+            <strong id="segTotalEmpleados">0</strong>
+            <i class="fa-solid fa-users"></i>
+        </article>
+
+        <article class="seguimiento-card">
+            <span>Al día</span>
+            <strong id="segEmpleadosAlDia">0</strong>
+            <i class="fa-solid fa-circle-check"></i>
+        </article>
+
+        <article class="seguimiento-card">
+            <span>Con pendientes</span>
+            <strong id="segEmpleadosPendientes">0</strong>
+            <i class="fa-solid fa-clock"></i>
+        </article>
+
+        <article class="seguimiento-card">
+            <span>Cumplimiento general</span>
+            <strong id="segPorcentaje">0%</strong>
+            <i class="fa-solid fa-chart-line"></i>
+        </article>
+
+    </div>
+
+    <!-- AVANCE GENERAL -->
+    <div class="seguimiento-progreso">
+        <div class="progreso-encabezado">
+            <strong>Avance de lectura</strong>
+            <span id="segTextoProgreso">0 de 0 aceptaciones</span>
+        </div>
+
+        <div class="progreso-barra">
+            <div id="segBarraProgreso"
+                 class="progreso-relleno"
+                 style="width: 0%">
+            </div>
+        </div>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; margin-top:15px;">
+        <button class="btn-secundario" id="btnActualizarSeguimiento">
+            <i class="fa-solid fa-rotate"></i>
+            Actualizar estadísticas
+        </button>
+    </div>
+
+</section>
+
+<!-- MODAL DE SEGUIMIENTO -->
+<div class="modal-overlay" id="modalSeguimiento">
+
+    <div class="modal-contenido modal-seguimiento-contenido">
+
+        <div class="modal-header">
+            <div>
+                <h2>Seguimiento de lectura</h2>
+                <p>Consulta el estado documental de cada empleado.</p>
+            </div>
+
+            <button class="btn-cerrar" id="cerrarModalSeguimiento">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- FILTROS -->
+        <div class="seguimiento-filtros">
+
+            <div class="campo">
+                <label for="segBuscarEmpleado">Buscar empleado</label>
+                <input type="search"
+                       id="segBuscarEmpleado"
+                       placeholder="Nombre, código o identificación">
+            </div>
+
+            <div class="campo">
+                <label for="segFiltroDocumento">Documento</label>
+                <select id="segFiltroDocumento">
+                    <option value="">Todos los documentos</option>
+                </select>
+            </div>
+
+            <div class="campo">
+                <label for="segFiltroEstado">Estado</label>
+                <select id="segFiltroEstado">
+                    <option value="">Todos los estados</option>
+                    <option value="AL_DIA">Al día</option>
+                    <option value="PENDIENTE">Con pendientes</option>
+                </select>
+            </div>
+
+        </div>
+
+        <!-- TABLA DE EMPLEADOS -->
+        <div class="tabla-contenedor">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Empleado</th>
+                        <th>Identificación</th>
+                        <th>Documentos leídos</th>
+                        <th>Documentos pendientes</th>
+                        <th>Estado</th>
+                        <th>Detalle</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tablaSeguimiento">
+                    <tr>
+                        <td colspan="6" class="estado-tabla">
+                            Cargando seguimiento documental...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <div id="seguimientoSinResultados"
+             class="estado-tabla"
+             style="display:none">
+            No se encontraron empleados.
+        </div>
+
+    </div>
+
+</div>
+
+
+
         <!-- DOCUMENTOS VIGENTES -->
         <section class="panel-documentos">
+
+            <div class="campo filtro-documentos">
+    <label for="filtroTipoDocumentos">Filtrar por tipo:</label>
+    <select id="filtroTipoDocumentos">
+        <option value="">Todas las categorías</option>
+        <option value="REGLAMENTO">Reglamento</option>
+        <option value="POLITICAS">Políticas</option>
+        <option value="PROGRAMAS">Programas</option>
+        <option value="MANUALES">Manuales</option>
+    </select>
+</div>
 
             <div class="panel-titulo">
                 <div>
@@ -114,10 +281,11 @@
                     <thead>
                         <tr>
                             <th>Documento</th>
-                            <th>Versión</th>
-                            <th>Publicación</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
+<th>Tipo</th>
+<th>Versión</th>
+<th>Fecha publicación</th>
+<th>Estado</th>
+<th>Acciones</th>
                         </tr>
                     </thead>
 
@@ -150,11 +318,23 @@
                 </span>
             </div>
 
+            <div class="campo filtro-documentos">
+    <label for="filtroTipoHistorial">Filtrar por tipo:</label>
+    <select id="filtroTipoHistorial">
+        <option value="">Todas las categorías</option>
+        <option value="REGLAMENTO">Reglamento</option>
+        <option value="POLITICAS">Políticas</option>
+        <option value="PROGRAMAS">Programas</option>
+        <option value="MANUALES">Manuales</option>
+    </select>
+</div>
+
             <div class="tabla-contenedor">
                 <table>
                     <thead>
                         <tr>
                             <th>Documento</th>
+<th>Tipo</th>
 <th>Versión</th>
 <th>Fecha publicación</th>
 <th>Publicado por</th>
@@ -167,7 +347,7 @@
 
                     <tbody id="tablaHistorial">
                         <tr>
-                            <td colspan="6" class="estado-tabla">
+                            <td colspan="9" class="estado-tabla">
                                 Cargando historial...
                             </td>
                         </tr>
@@ -210,6 +390,22 @@
                         placeholder="Ej. Reglamento Interno de Trabajo"
                         required>
                 </div>
+
+                <div class="campo">
+    <label for="tipoDocumento">Tipo de documento</label>
+
+    <select
+        id="tipoDocumento"
+        name="tipo_documento"
+        required
+    >
+        <option value="">Selecciona una categoría</option>
+        <option value="REGLAMENTO">Reglamento</option>
+        <option value="POLITICAS">Políticas</option>
+        <option value="PROGRAMAS">Programas</option>
+        <option value="MANUALES">Manuales</option>
+    </select>
+</div>
 
                 <div class="campo">
                     <label for="descripcionDocumento">
@@ -346,6 +542,7 @@
 
     <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/js/sidebar.js"></script>
     <script src="/js/documentos-lectura-admin.js"></script>
 
