@@ -1,12 +1,12 @@
 /* ============================================================
-   MIS NOVEDADES - USUARIO NORMAL (VERSIÓN PREMIUM)
+   MIS NOVEDADES - USUARIO NORMAL
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('📋 Módulo de Mis Novedades iniciado (Premium)');
 
     // --- Variables de Estado ---
-    let _guardando = false; // Bandera para evitar doble envío
+    let _guardando = false;
     
     const estadoApp = {
         novedades: [],
@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         avisoAprobacion: document.getElementById('avisoAprobacionNovedad'),
         btnGuardar: document.getElementById('btnGuardarNovedad'),
         divError: document.getElementById('errorRegistroNovedad'),
+        previsualizacionSoporte: document.getElementById('previsualizacionSoporte'),
         
         toasts: document.getElementById('contenedorToasts')
     };
@@ -52,13 +53,16 @@ document.addEventListener('DOMContentLoaded', () => {
     inicializar();
 
     async function inicializar() {
-        document.querySelectorAll('.modal').forEach((modal) => {
-            modal.addEventListener('hide.bs.modal', () => {
-                if (document.activeElement && modal.contains(document.activeElement)) {
-                    document.activeElement.blur();
-                }
+        // FIX #6: guard bootstrap
+        if (typeof bootstrap !== 'undefined') {
+            document.querySelectorAll('.modal').forEach((modal) => {
+                modal.addEventListener('hide.bs.modal', () => {
+                    if (document.activeElement && modal.contains(document.activeElement)) {
+                        document.activeElement.blur();
+                    }
+                });
             });
-        });
+        }
 
         establecerMesActual();
         configurarEventos();
@@ -82,6 +86,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (DOM.selectTipo) DOM.selectTipo.addEventListener('change', seleccionarTipoNovedad);
         if (DOM.btnGuardar) DOM.btnGuardar.addEventListener('click', guardarNovedad);
+
+        // 🔥 EVENTO PARA ABRIR EL HISTORIAL (Compatible con Admin y Auxiliar)
+        const btnVerHistorial = document.getElementById('btnVerHistorial');
+        const kpiHistorialCard = document.querySelector('.historial-kpi-clickable');
+        
+        const abrirModalHistorial = () => {
+            if (typeof bootstrap === 'undefined') return;
+            const modalElement = document.getElementById('modalHistorialNovedades');
+            if (modalElement) {
+                const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                modal.show();
+                setTimeout(() => {
+                    const btnBuscar = document.getElementById('btnBuscarHistorial');
+                    if (btnBuscar) btnBuscar.click();
+                }, 300);
+            }
+        };
+
+        if (btnVerHistorial) btnVerHistorial.addEventListener('click', abrirModalHistorial);
+        if (kpiHistorialCard) kpiHistorialCard.addEventListener('click', abrirModalHistorial);
     }
 
     /* ========================================================
@@ -90,7 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function cargarNovedades() {
         try {
             mostrarCargando();
-            const respuesta = await fetch('/api/nomina/novedades');
+            // FIX #8: credentials
+            const respuesta = await fetch('/api/nomina/novedades', { credentials: 'include' });
             if (!respuesta.ok) throw new Error('Error al consultar la API.');
 
             const resultado = await respuesta.json();
@@ -109,11 +134,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.getElementById('kpiPendientes')) document.getElementById('kpiPendientes').textContent = estadoApp.novedades.filter(n => obtenerEstado(n) === 'PENDIENTE').length;
         if (document.getElementById('kpiAprobadas')) document.getElementById('kpiAprobadas').textContent = estadoApp.novedades.filter(n => obtenerEstado(n) === 'APROBADA').length;
         if (document.getElementById('kpiRechazadas')) document.getElementById('kpiRechazadas').textContent = estadoApp.novedades.filter(n => obtenerEstado(n) === 'RECHAZADA').length;
-        if (document.getElementById('kpiHistorial')) document.getElementById('kpiHistorial').textContent = estadoApp.novedades.filter(n => obtenerEstado(n) === 'ANULADA').length;
+        
+        // FIX #14: credentials
+        fetch('/api/nomina/novedades/kpis', { credentials: 'include' })
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data && data.success && data.kpis && document.getElementById('kpiHistorial')) {
+                    document.getElementById('kpiHistorial').textContent = data.kpis.historial;
+                }
+            })
+            .catch(() => {});
     }
 
     function cargarTiposFiltro() {
         if (!DOM.filtroTipo) return;
+        // FIX #8: conservar valor actual
+        const valorActual = DOM.filtroTipo.value;
         const tipos = [...new Set(estadoApp.novedades.map(n => obtenerTipo(n)).filter(Boolean))];
         DOM.filtroTipo.innerHTML = `<option value="">Todos los tipos</option>`;
         tipos.sort().forEach(tipo => {
@@ -121,6 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
             opt.value = tipo; opt.textContent = formatearTexto(tipo);
             DOM.filtroTipo.appendChild(opt);
         });
+        DOM.filtroTipo.value = valorActual;
     }
 
     function aplicarFiltros() {
@@ -130,10 +167,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const mes = DOM.filtroMes?.value || '';
 
         estadoApp.novedadesFiltradas = estadoApp.novedades.filter(n => {
-            if (texto && !String(obtenerTipo(n)).toLowerCase().includes(texto)) return false;
+            // FIX #7: buscar por tipo, doc y empleado
+            if (texto) {
+                const tipoNom = String(obtenerTipo(n)).toLowerCase();
+                const doc = String(n.numero_documento || '').toLowerCase();
+                const emp = String(n.empleado_nombre || '').toLowerCase();
+                if (!tipoNom.includes(texto) && !doc.includes(texto) && !emp.includes(texto)) return false;
+            }
             if (tipo && obtenerTipo(n) !== tipo) return false;
             if (estado && obtenerEstado(n) !== estado) return false;
-            if (mes && !obtenerFecha(n).startsWith(mes)) return false;
+            if (mes && !String(obtenerFecha(n)).startsWith(mes)) return false;
             return true;
         });
 
@@ -145,14 +188,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (DOM.buscar) DOM.buscar.value = '';
         if (DOM.filtroTipo) DOM.filtroTipo.value = '';
         if (DOM.filtroEstado) DOM.filtroEstado.value = '';
-        establecerMesActual();
+        if (DOM.filtroMes) DOM.filtroMes.value = '';
         aplicarFiltros();
     }
 
     function establecerMesActual() {
         if (!DOM.filtroMes) return;
-        const ahora = new Date();
-        DOM.filtroMes.value = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}`;
+        DOM.filtroMes.value = '';
     }
 
     function renderizarTabla() {
@@ -166,6 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (total === 0) {
             DOM.tabla.innerHTML = '';
             if (DOM.estadoVacio) DOM.estadoVacio.style.display = 'flex';
+            renderizarPaginacion();
             return;
         }
 
@@ -173,9 +216,26 @@ document.addEventListener('DOMContentLoaded', () => {
         DOM.tabla.innerHTML = '';
         
         novedadesPagina.forEach(novedad => {
+            const categoria = (novedad.categoria || '').toUpperCase();
+            const tipo = (novedad.tipo_novedad || '').toLowerCase();
+            
+            let icono = 'fa-file-alt', colorBg = '#f1f5f9', colorText = '#475569';
+
+            if (categoria.includes('ASISTENCIA') || tipo.includes('ausencia')) { icono = 'fa-user-clock'; colorBg = '#fef3c7'; colorText = '#b45309'; }
+            else if (categoria.includes('SALUD') || tipo.includes('incapacidad')) { icono = 'fa-notes-medical'; colorBg = '#fee2e2'; colorText = '#b91c1c'; }
+            else if (categoria.includes('DESCUENTO')) { icono = 'fa-hand-holding-dollar'; colorBg = '#fce7f3'; colorText = '#be185d'; }
+            else if (categoria.includes('INGRESO') || tipo.includes('ingreso')) { icono = 'fa-money-bill-trend-up'; colorBg = '#d1fae5'; colorText = '#047857'; }
+            else if (categoria.includes('PRESTAMO') || tipo.includes('anticipo') || tipo.includes('prestamo')) { icono = 'fa-building-columns'; colorBg = '#e0e7ff'; colorText = '#4338ca'; }
+            else if (categoria.includes('TIEMPO') || tipo.includes('permiso') || tipo.includes('licencia')) { icono = 'fa-calendar-check'; colorBg = '#cffafe'; colorText = '#0e7490'; }
+            else if (tipo.includes('vacacion')) { icono = 'fa-umbrella-beach'; colorBg = '#e0f2fe'; colorText = '#0369a1'; }
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><span class="novedad-tipo">${escaparHTML(formatearTexto(obtenerTipo(novedad)))}</span></td>
+                <td>
+                    <span style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; background-color: ${colorBg}; color: ${colorText};">
+                        <i class="fas ${icono}"></i> ${escaparHTML(formatearTexto(obtenerTipo(novedad)))}
+                    </span>
+                </td>
                 <td>${formatearFecha(obtenerFecha(novedad))}</td>
                 <td>${escaparHTML(obtenerCantidad(novedad))}</td>
                 <td>${crearBadgeEstado(obtenerEstado(novedad))}</td>
@@ -206,19 +266,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ========================================================
-       LÓGICA DE REGISTRO (PREMIUM)
+       LÓGICA DE REGISTRO
        ======================================================== */
     
     async function abrirRegistroNovedad() {
+        if (!DOM.modalRegistrar || typeof bootstrap === 'undefined') return;
         limpiarFormularioNovedad();
+        // FIX #6: abrir modal inmediatamente, cargar tipos después
+        bootstrap.Modal.getOrCreateInstance(DOM.modalRegistrar).show();
         await cargarTiposRegistro();
-        const modal = bootstrap.Modal.getOrCreateInstance(DOM.modalRegistrar);
-        modal.show();
     }
 
     async function cargarTiposRegistro() {
+        if (!DOM.selectTipo) return;
         try {
-            const res = await fetch('/api/nomina/novedades/tipos');
+            // FIX #8: credentials
+            const res = await fetch('/api/nomina/novedades/tipos', { credentials: 'include' });
             const data = await res.json();
             if (!res.ok || !data.success) throw new Error('Error al cargar tipos');
             
@@ -239,15 +302,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function seleccionarTipoNovedad() {
+        if (!DOM.selectTipo) return;
         const opt = DOM.selectTipo.selectedOptions[0];
         
         if (DOM.divError) DOM.divError.style.display = 'none';
+        if (DOM.campos) DOM.campos.innerHTML = '';
+        // FIX #17: limpiar soporte al cambiar tipo
+        if (DOM.inputSoporte) DOM.inputSoporte.value = '';
+        if (DOM.previsualizacionSoporte) DOM.previsualizacionSoporte.style.display = 'none';
 
         if (!opt || !opt.value) {
-            DOM.formDinamico.style.display = 'none';
-            DOM.seccionSoporte.style.display = 'none';
-            DOM.avisoAprobacion.style.display = 'none';
-            DOM.btnGuardar.disabled = true;
+            if (DOM.formDinamico) DOM.formDinamico.style.display = 'none';
+            if (DOM.seccionSoporte) DOM.seccionSoporte.style.display = 'none';
+            if (DOM.avisoAprobacion) DOM.avisoAprobacion.style.display = 'none';
+            if (DOM.btnGuardar) DOM.btnGuardar.disabled = true;
             return;
         }
 
@@ -255,11 +323,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const categoria = (opt.dataset.categoria || '').toUpperCase();
         const nombre = (opt.dataset.nombre || '').toLowerCase();
 
-        DOM.formDinamico.style.display = 'block';
-        DOM.seccionSoporte.style.display = Number(opt.dataset.requiereSoporte) ? 'block' : 'none';
-        DOM.avisoAprobacion.style.display = Number(opt.dataset.requiereAprobacion) ? 'flex' : 'none';
-        DOM.btnGuardar.disabled = false;
-        DOM.campos.innerHTML = '';
+        if (DOM.formDinamico) DOM.formDinamico.style.display = 'block';
+        // FIX #7: soportar "1"/"true" y "0"/"false"
+        const reqSoporte = opt.dataset.requiereSoporte === '1' || opt.dataset.requiereSoporte === 'true';
+        const reqAprob   = opt.dataset.requiereAprobacion === '1' || opt.dataset.requiereAprobacion === 'true';
+        if (DOM.seccionSoporte) DOM.seccionSoporte.style.display = reqSoporte ? 'block' : 'none';
+        if (DOM.avisoAprobacion) DOM.avisoAprobacion.style.display = reqAprob ? 'flex' : 'none';
+        if (DOM.btnGuardar) DOM.btnGuardar.disabled = false;
+
+        if (!DOM.campos) return;
 
         // --- AUSENCIA ---
         if (categoria.includes('ASISTENCIA') || nombre.includes('ausencia')) {
@@ -269,23 +341,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         <label class="form-label">Tipo de ausencia *</label>
                         <select id="tipoAusencia" class="form-select"><option value="JUSTIFICADA">Justificada</option><option value="INJUSTIFICADA">Injustificada</option></select>
                     </div>
-                    <div class="col-md-3"><label class="form-label">Fecha inicio *</label><input type="date" id="fechaInicio" class="form-control"></div>
-                    <div class="col-md-3"><label class="form-label">Fecha fin *</label><input type="date" id="fechaFin" class="form-control"></div>
-                    <div class="col-md-4"><label class="form-label">Días</label><input type="number" id="cantidadDias" class="form-control" readonly></div>
-                    <div class="col-md-8"><label class="form-label">Motivo *</label><textarea id="motivo" class="form-control" rows="2"></textarea></div>
+                    <div class="col-md-3"><label class="form-label">Fecha inicio *</label><input type="date" id="fechaInicioAusencia" class="form-control"></div>
+                    <div class="col-md-3"><label class="form-label">Fecha fin *</label><input type="date" id="fechaFinAusencia" class="form-control"></div>
+                    <div class="col-md-4"><label class="form-label">Días</label><input type="number" id="cantidadDiasAusencia" class="form-control" readonly></div>
+                    <div class="col-md-8"><label class="form-label">Motivo *</label><textarea id="motivoAusencia" class="form-control" rows="2"></textarea></div>
                 </div>
             `;
-            const fIni = document.getElementById('fechaInicio');
-            const fFin = document.getElementById('fechaFin');
-            const dias = document.getElementById('cantidadDias');
-            const calc = () => {
-                if (fIni.value && fFin.value) {
-                    const d1 = new Date(fIni.value); const d2 = new Date(fFin.value);
-                    if (d2 >= d1) dias.value = Math.floor((d2 - d1) / (1000*60*60*24)) + 1;
-                }
-            };
-            fIni.addEventListener('change', calc);
-            fFin.addEventListener('change', calc);
+            configurarCalculoFechas('fechaInicioAusencia', 'fechaFinAusencia', 'cantidadDiasAusencia');
             return;
         }
 
@@ -297,23 +359,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         <label class="form-label">Tipo de incapacidad *</label>
                         <select id="tipoIncapacidad" class="form-select"><option value="ENFERMEDAD_GENERAL">Enfermedad general</option><option value="ACCIDENTE_TRABAJO">Accidente de trabajo</option></select>
                     </div>
-                    <div class="col-md-3"><label class="form-label">Fecha inicio *</label><input type="date" id="fechaInicio" class="form-control"></div>
-                    <div class="col-md-3"><label class="form-label">Fecha fin *</label><input type="date" id="fechaFin" class="form-control"></div>
-                    <div class="col-md-4"><label class="form-label">Días</label><input type="number" id="cantidadDias" class="form-control" readonly></div>
-                    <div class="col-md-8"><label class="form-label">Observación</label><textarea id="observacion" class="form-control" rows="2"></textarea></div>
+                    <div class="col-md-3"><label class="form-label">Fecha inicio *</label><input type="date" id="fechaInicioIncapacidad" class="form-control"></div>
+                    <div class="col-md-3"><label class="form-label">Fecha fin *</label><input type="date" id="fechaFinIncapacidad" class="form-control"></div>
+                    <div class="col-md-4"><label class="form-label">Días</label><input type="number" id="cantidadDiasIncapacidad" class="form-control" readonly></div>
+                    <div class="col-md-8"><label class="form-label">Observación</label><textarea id="observacionIncapacidad" class="form-control" rows="2"></textarea></div>
                 </div>
             `;
-            const fIni = document.getElementById('fechaInicio');
-            const fFin = document.getElementById('fechaFin');
-            const dias = document.getElementById('cantidadDias');
-            const calc = () => {
-                if (fIni.value && fFin.value) {
-                    const d1 = new Date(fIni.value); const d2 = new Date(fFin.value);
-                    if (d2 >= d1) dias.value = Math.floor((d2 - d1) / (1000*60*60*24)) + 1;
-                }
-            };
-            fIni.addEventListener('change', calc);
-            fFin.addEventListener('change', calc);
+            configurarCalculoFechas('fechaInicioIncapacidad', 'fechaFinIncapacidad', 'cantidadDiasIncapacidad');
             return;
         }
 
@@ -326,29 +378,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         <select id="tipoPermiso" class="form-select"><option value="REMUNERADO">Remunerado</option><option value="NO_REMUNERADO">No remunerado</option><option value="COMPENSATORIO">Compensatorio</option></select>
                     </div>
                     <div class="col-md-6"><label class="form-label">Fecha *</label><input type="date" id="fechaPermiso" class="form-control"></div>
-                    <div class="col-md-4"><label class="form-label">Hora inicio *</label><input type="time" id="horaInicio" class="form-control"></div>
-                    <div class="col-md-4"><label class="form-label">Hora fin *</label><input type="time" id="horaFin" class="form-control"></div>
-                    <div class="col-md-4"><label class="form-label">Horas totales</label><input type="number" id="cantidadHoras" class="form-control" readonly></div>
-                    <div class="col-12"><label class="form-label">Motivo *</label><textarea id="motivo" class="form-control" rows="2"></textarea></div>
+                    <div class="col-md-4"><label class="form-label">Hora inicio *</label><input type="time" id="horaInicioPermiso" class="form-control"></div>
+                    <div class="col-md-4"><label class="form-label">Hora fin *</label><input type="time" id="horaFinPermiso" class="form-control"></div>
+                    <div class="col-md-4"><label class="form-label">Horas totales</label><input type="number" id="cantidadHorasPermiso" class="form-control" readonly></div>
+                    <div class="col-12"><label class="form-label">Motivo *</label><textarea id="motivoPermiso" class="form-control" rows="2"></textarea></div>
                 </div>
             `;
-            const hIni = document.getElementById('horaInicio');
-            const hFin = document.getElementById('horaFin');
-            const cant = document.getElementById('cantidadHoras');
-            const calc = () => {
-                if (hIni.value && hFin.value) {
-                    const [h1, m1] = hIni.value.split(':').map(Number);
-                    const [h2, m2] = hFin.value.split(':').map(Number);
-                    const diff = (h2*60+m2) - (h1*60+m1);
-                    if (diff > 0) cant.value = (diff/60).toFixed(2);
-                }
-            };
-            hIni.addEventListener('change', calc);
-            hFin.addEventListener('change', calc);
+            configurarCalculoHoras('horaInicioPermiso', 'horaFinPermiso', 'cantidadHorasPermiso');
             return;
         }
 
-        // 🔥 --- LICENCIA / TIEMPO (TODAS LAS OPCIONES LEGALES) ---
+        // 🔥 --- LICENCIA / TIEMPO ---
         if (codigo.includes('LICENCIA') || nombre.includes('licencia')) {
             DOM.campos.innerHTML = `
                 <div class="row g-3">
@@ -381,17 +421,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="col-12"><label class="form-label">Motivo / Observación</label><textarea id="observacionLicencia" class="form-control" rows="2" placeholder="Explica brevemente el motivo..."></textarea></div>
                 </div>
             `;
-            const fIni = document.getElementById('fechaLicenciaInicio');
-            const fFin = document.getElementById('fechaLicenciaFin');
-            const dias = document.getElementById('diasLicencia');
-            const calc = () => {
-                if (fIni.value && fFin.value) {
-                    const d1 = new Date(fIni.value); const d2 = new Date(fFin.value);
-                    if (d2 >= d1) dias.value = Math.floor((d2 - d1) / (1000*60*60*24)) + 1;
-                }
-            };
-            fIni.addEventListener('change', calc);
-            fFin.addEventListener('change', calc);
+            configurarCalculoFechas('fechaLicenciaInicio', 'fechaLicenciaFin', 'diasLicencia');
+            return;
+        }
+
+        // 🔥 --- VACACIONES ---
+        if (codigo.includes('VACACION') || nombre.includes('vacacion')) {
+            DOM.campos.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-md-6"><label class="form-label">Fecha inicio *</label><input type="date" id="fechaInicioVacaciones" class="form-control"></div>
+                    <div class="col-md-6"><label class="form-label">Fecha fin *</label><input type="date" id="fechaFinVacaciones" class="form-control"></div>
+                    <div class="col-md-4"><label class="form-label">Días calculados</label><input type="number" id="diasVacaciones" class="form-control" readonly></div>
+                    <div class="col-md-8"><label class="form-label">Observación</label><textarea id="observacionVacaciones" class="form-control" rows="2" placeholder="Periodo de vacaciones..."></textarea></div>
+                </div>
+            `;
+            configurarCalculoFechas('fechaInicioVacaciones', 'fechaFinVacaciones', 'diasVacaciones');
             return;
         }
 
@@ -401,9 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Tipo de hora / recargo *</label>
-                        <select id="tipoHora" class="form-select">
-                            <option value="">Cargando...</option>
-                        </select>
+                        <select id="tipoHora" class="form-select"><option value="">Cargando...</option></select>
                     </div>
                     <div class="col-md-6"><label class="form-label">Fecha de trabajo *</label><input type="date" id="fechaTrabajo" class="form-control"></div>
                     <div class="col-md-4"><label class="form-label">Hora inicio *</label><input type="time" id="horaInicioExtra" class="form-control"></div>
@@ -414,10 +456,11 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             (async () => {
                 const sel = document.getElementById('tipoHora');
+                if (!sel) return;
                 try {
                     const [resHE, resRec] = await Promise.all([
-                        fetch('/api/nomina/configuracion/horas-extra'),
-                        fetch('/api/nomina/configuracion/recargos')
+                        fetch('/api/nomina/configuracion/horas-extra', { credentials: 'include' }),
+                        fetch('/api/nomina/configuracion/recargos', { credentials: 'include' })
                     ]);
                     const dataHE = await resHE.json();
                     const dataRec = await resRec.json();
@@ -438,19 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     sel.innerHTML = '<option value="">Error al cargar</option>';
                 }
             })();
-            const hIni = document.getElementById('horaInicioExtra');
-            const hFin = document.getElementById('horaFinExtra');
-            const cant = document.getElementById('horasExtraCalculadas');
-            const calc = () => {
-                if (hIni.value && hFin.value) {
-                    const [h1, m1] = hIni.value.split(':').map(Number);
-                    const [h2, m2] = hFin.value.split(':').map(Number);
-                    const diff = (h2*60+m2) - (h1*60+m1);
-                    if (diff > 0) cant.value = (diff/60).toFixed(2);
-                }
-            };
-            hIni.addEventListener('change', calc);
-            hFin.addEventListener('change', calc);
+            configurarCalculoHoras('horaInicioExtra', 'horaFinExtra', 'horasExtraCalculadas');
             return;
         }
 
@@ -480,21 +511,71 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 🔥 --- PRÉSTAMO / ANTICIPO ---
         if (codigo.includes('PRESTAMO') || codigo.includes('PRÉSTAMO') || categoria.includes('PRESTAMO') || nombre.includes('préstamo') || nombre.includes('prestamo') || nombre.includes('anticipo')) {
+            const esAnticipo = nombre.includes('anticipo');
+            if (esAnticipo && DOM.avisoAprobacion) DOM.avisoAprobacion.style.display = 'none';
+
             DOM.campos.innerHTML = `
                 <div class="row g-3">
-                    <div class="col-md-6"><label class="form-label">Monto solicitado *</label><input type="number" id="montoPrestamo" class="form-control" min="0" step="0.01"></div>
-                    <div class="col-md-6"><label class="form-label">Número de cuotas *</label><input type="number" id="cuotasPrestamo" class="form-control" min="1"></div>
-                    <div class="col-12"><label class="form-label">Observación</label><textarea id="observacionPrestamo" class="form-control" rows="2"></textarea></div>
+                    <div class="${esAnticipo ? 'col-12' : 'col-md-6'}">
+                        <label class="form-label">Monto solicitado *</label>
+                        <input type="number" id="montoPrestamo" class="form-control" min="0" step="0.01" placeholder="0.00">
+                    </div>
+                    ${!esAnticipo ? `
+                    <div class="col-md-6">
+                        <label class="form-label">Número de cuotas *</label>
+                        <input type="number" id="cuotasPrestamo" class="form-control" min="1" value="1">
+                    </div>
+                    ` : ''}
+                    <div class="col-12">
+                        <label class="form-label">Observación</label>
+                        <textarea id="observacionPrestamo" class="form-control" rows="2"></textarea>
+                    </div>
                 </div>
             `;
             return;
         }
 
-        DOM.campos.innerHTML = `<div class="alert alert-info">Formulario pendiente de configurar para esta categoría (${categoria}).</div>`;
+        DOM.campos.innerHTML = `<div class="alert alert-info">Formulario pendiente de configurar.</div>`;
+    }
+
+    // FIX #18: helper que resetea el campo si la fecha es inválida
+    function configurarCalculoFechas(idIni, idFin, idDias) {
+        const fIni = document.getElementById(idIni);
+        const fFin = document.getElementById(idFin);
+        const dias = document.getElementById(idDias);
+        if (!fIni || !fFin || !dias) return;
+        const calc = () => {
+            if (!fIni.value || !fFin.value) { dias.value = ''; return; }
+            // FIX #3: evitar desfase UTC
+            const d1 = new Date(fIni.value + 'T00:00:00');
+            const d2 = new Date(fFin.value + 'T00:00:00');
+            if (d2 >= d1) dias.value = Math.floor((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
+            else dias.value = '';
+        };
+        fIni.addEventListener('change', calc);
+        fFin.addEventListener('change', calc);
+    }
+
+    function configurarCalculoHoras(idIni, idFin, idCant) {
+        const hIni = document.getElementById(idIni);
+        const hFin = document.getElementById(idFin);
+        const cant = document.getElementById(idCant);
+        if (!hIni || !hFin || !cant) return;
+        const calc = () => {
+            if (!hIni.value || !hFin.value) { cant.value = ''; return; }
+            const [h1, m1] = hIni.value.split(':').map(Number);
+            const [h2, m2] = hFin.value.split(':').map(Number);
+            const diff = (h2 * 60 + m2) - (h1 * 60 + m1);
+            if (diff > 0) cant.value = (diff / 60).toFixed(2);
+            else cant.value = '';
+        };
+        hIni.addEventListener('change', calc);
+        hFin.addEventListener('change', calc);
     }
 
     async function guardarNovedad() {
         if (_guardando) return; 
+        if (!DOM.selectTipo) return;
 
         const opt = DOM.selectTipo.selectedOptions[0];
         if (!opt || !opt.value) return mostrarErrorModal('Selecciona un tipo de novedad.');
@@ -509,22 +590,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             _guardando = true;
-            DOM.btnGuardar.disabled = true;
-            DOM.btnGuardar.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando...`;
+            if (DOM.btnGuardar) {
+                DOM.btnGuardar.disabled = true;
+                DOM.btnGuardar.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Guardando...`;
+            }
 
             let endpoint = '';
             let payload = null;
             let formData = null;
 
-            // --- VALIDACIÓN Y CONSTRUCCIÓN ---
             if (codigo.includes('SALUD') || nombre.includes('incapacidad')) {
-                const fIni = document.getElementById('fechaInicio').value;
-                const fFin = document.getElementById('fechaFin').value;
-                const dias = document.getElementById('cantidadDias').value;
-                
-                if (!fIni || !fFin || !dias) return mostrarErrorModal('Completa las fechas de inicio y fin.');
-                if (!archivo) return mostrarErrorModal('Debes adjuntar el soporte médico (PDF o Imagen).');
-                
+                const fIni = document.getElementById('fechaInicioIncapacidad').value;
+                const fFin = document.getElementById('fechaFinIncapacidad').value;
+                const dias = document.getElementById('cantidadDiasIncapacidad').value;
+                if (!fIni || !fFin || !dias) return mostrarErrorModal('Completa las fechas.');
+                if (!archivo) return mostrarErrorModal('Adjunta el soporte médico.');
                 endpoint = 'incapacidad';
                 formData = new FormData();
                 formData.append('tipo_novedad_id', tipoNovedadId);
@@ -532,36 +612,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData.append('fecha_inicio', fIni);
                 formData.append('fecha_fin', fFin);
                 formData.append('cantidad_dias', dias);
-                formData.append('observacion', document.getElementById('observacion').value || '');
+                formData.append('observacion', document.getElementById('observacionIncapacidad').value || '');
                 formData.append('soporte', archivo);
             }
             else if (categoria.includes('ASISTENCIA') || nombre.includes('ausencia')) {
-                const fIni = document.getElementById('fechaInicio').value;
-                const fFin = document.getElementById('fechaFin').value;
-                const motivo = document.getElementById('motivo').value.trim();
-                
-                if (!fIni || !fFin) return mostrarErrorModal('Completa las fechas de inicio y fin.');
-                if (!motivo) return mostrarErrorModal('Escribe el motivo de la ausencia.');
-                
+                const fIni = document.getElementById('fechaInicioAusencia').value;
+                const fFin = document.getElementById('fechaFinAusencia').value;
+                const motivo = document.getElementById('motivoAusencia').value.trim();
+                if (!fIni || !fFin) return mostrarErrorModal('Completa las fechas.');
+                if (!motivo) return mostrarErrorModal('Escribe el motivo.');
                 endpoint = 'ausencia';
                 formData = new FormData();
                 formData.append('tipo_novedad_id', tipoNovedadId);
                 formData.append('tipo_ausencia', document.getElementById('tipoAusencia').value);
                 formData.append('fecha_inicio', fIni);
                 formData.append('fecha_fin', fFin);
-                formData.append('cantidad_dias', document.getElementById('cantidadDias').value);
+                formData.append('cantidad_dias', document.getElementById('cantidadDiasAusencia').value);
                 formData.append('motivo', motivo);
                 if (archivo) formData.append('soporte', archivo);
             }
             else if (codigo.includes('PERMISO') || nombre.includes('permiso')) {
                 const fecha = document.getElementById('fechaPermiso').value;
-                const hIni = document.getElementById('horaInicio').value;
-                const hFin = document.getElementById('horaFin').value;
-                const motivo = document.getElementById('motivo').value.trim();
-                
-                if (!fecha || !hIni || !hFin) return mostrarErrorModal('Completa la fecha y las horas.');
-                if (!motivo) return mostrarErrorModal('Escribe el motivo del permiso.');
-                
+                const hIni = document.getElementById('horaInicioPermiso').value;
+                const hFin = document.getElementById('horaFinPermiso').value;
+                const motivo = document.getElementById('motivoPermiso').value.trim();
+                if (!fecha || !hIni || !hFin) return mostrarErrorModal('Completa fecha y horas.');
+                if (!motivo) return mostrarErrorModal('Escribe el motivo.');
                 endpoint = 'permiso';
                 payload = {
                     tipo_novedad_id: tipoNovedadId,
@@ -569,20 +645,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     fecha_permiso: fecha,
                     hora_inicio: hIni,
                     hora_fin: hFin,
-                    cantidad_horas: Number(document.getElementById('cantidadHoras').value),
+                    cantidad_horas: Number(document.getElementById('cantidadHorasPermiso').value),
                     motivo: motivo
                 };
             }
-            // 🔥 LICENCIA
             else if (codigo.includes('LICENCIA') || nombre.includes('licencia')) {
                 const tipoLicencia = document.getElementById('tipoLicencia').value;
                 const fIni = document.getElementById('fechaLicenciaInicio').value;
                 const fFin = document.getElementById('fechaLicenciaFin').value;
                 const dias = document.getElementById('diasLicencia').value;
                 const obs = document.getElementById('observacionLicencia').value || '';
-                
-                if (!fIni || !fFin || !dias) return mostrarErrorModal('Completa las fechas de la licencia.');
-                
+                if (!fIni || !fFin || !dias) return mostrarErrorModal('Completa las fechas.');
                 endpoint = 'licencia';
                 payload = {
                     tipo_novedad_id: tipoNovedadId,
@@ -590,11 +663,26 @@ document.addEventListener('DOMContentLoaded', () => {
                     fecha_inicio: fIni,
                     fecha_fin: fFin,
                     cantidad_dias: Number(dias),
-                    motivo: tipoLicencia, // Enviamos el código como motivo base
+                    motivo: tipoLicencia, 
                     observacion: obs
                 };
             }
-            // 🔥 HORAS EXTRA / RECARGOS
+            else if (codigo.includes('VACACION') || nombre.includes('vacacion')) {
+                const fIni = document.getElementById('fechaInicioVacaciones').value;
+                const fFin = document.getElementById('fechaFinVacaciones').value;
+                const dias = document.getElementById('diasVacaciones').value;
+                const obs = document.getElementById('observacionVacaciones').value || '';
+                if (!fIni || !fFin || !dias) return mostrarErrorModal('Completa las fechas.');
+                endpoint = 'vacaciones';
+                payload = {
+                    tipo_novedad_id: tipoNovedadId,
+                    fecha_inicio: fIni,
+                    fecha_fin: fFin,
+                    cantidad_dias: Number(dias),
+                    motivo: 'Vacaciones', 
+                    observacion: obs
+                };
+            }
             else if (codigo.includes('HORA') || codigo.includes('RECARGO') || nombre.includes('hora extra') || nombre.includes('recargo')) {
                 const tipoHora = document.getElementById('tipoHora').value;
                 const fechaTrabajo = document.getElementById('fechaTrabajo').value;
@@ -602,11 +690,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const hFin = document.getElementById('horaFinExtra').value;
                 const horas = document.getElementById('horasExtraCalculadas').value;
                 const obs = document.getElementById('observacionExtra').value || '';
-                
-                if (!tipoHora) return mostrarErrorModal('Selecciona el tipo de hora o recargo.');
-                if (!fechaTrabajo || !hIni || !hFin) return mostrarErrorModal('Completa la fecha y las horas.');
-                if (!horas || Number(horas) <= 0) return mostrarErrorModal('Las horas calculadas no son válidas.');
-                
+                if (!tipoHora) return mostrarErrorModal('Selecciona el tipo de hora.');
+                if (!fechaTrabajo || !hIni || !hFin) return mostrarErrorModal('Completa fecha y horas.');
+                if (!horas || Number(horas) <= 0) return mostrarErrorModal('Horas inválidas.');
                 endpoint = 'horas-extra';
                 payload = {
                     tipo_novedad_id: tipoNovedadId,
@@ -618,15 +704,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     observacion: obs
                 };
             }
-            // 🔥 DESCUENTO
             else if (codigo.includes('DESCUENTO') || categoria.includes('DESCUENTO') || nombre.includes('descuento')) {
                 const concepto = document.getElementById('conceptoDescuento').value.trim();
                 const valor = document.getElementById('valorDescuento').value;
                 const obs = document.getElementById('observacionDescuento').value || '';
-                
-                if (!concepto) return mostrarErrorModal('Escribe el concepto del descuento.');
+                if (!concepto) return mostrarErrorModal('Escribe el concepto.');
                 if (!valor || Number(valor) <= 0) return mostrarErrorModal('El valor debe ser mayor a cero.');
-                
                 endpoint = 'descuento';
                 if (archivo) {
                     formData = new FormData();
@@ -636,55 +719,35 @@ document.addEventListener('DOMContentLoaded', () => {
                     formData.append('observacion', obs);
                     formData.append('soporte', archivo);
                 } else {
-                    payload = {
-                        tipo_novedad_id: tipoNovedadId,
-                        concepto: concepto,
-                        valor: Number(valor),
-                        observacion: obs
-                    };
+                    payload = { tipo_novedad_id: tipoNovedadId, concepto: concepto, valor: Number(valor), observacion: obs };
                 }
             }
-            // 🔥 INGRESO
             else if (codigo.includes('INGRESO') || categoria.includes('INGRESO') || nombre.includes('ingreso')) {
                 const concepto = document.getElementById('conceptoIngreso').value.trim();
                 const valor = document.getElementById('valorIngreso').value;
                 const obs = document.getElementById('observacionIngreso').value || '';
-                
-                if (!concepto) return mostrarErrorModal('Escribe el concepto del ingreso.');
+                if (!concepto) return mostrarErrorModal('Escribe el concepto.');
                 if (!valor || Number(valor) <= 0) return mostrarErrorModal('El valor debe ser mayor a cero.');
-                
                 endpoint = 'ingreso';
-                payload = {
-                    tipo_novedad_id: tipoNovedadId,
-                    concepto: concepto,
-                    valor: Number(valor),
-                    observacion: obs
-                };
+                payload = { tipo_novedad_id: tipoNovedadId, concepto: concepto, valor: Number(valor), observacion: obs };
             }
-            // 🔥 PRÉSTAMO
             else if (codigo.includes('PRESTAMO') || codigo.includes('PRÉSTAMO') || categoria.includes('PRESTAMO') || nombre.includes('préstamo') || nombre.includes('prestamo') || nombre.includes('anticipo')) {
                 const monto = document.getElementById('montoPrestamo').value;
-                const cuotas = document.getElementById('cuotasPrestamo').value;
+                const esAnticipo = nombre.includes('anticipo');
+                const cuotas = esAnticipo ? 1 : document.getElementById('cuotasPrestamo').value;
                 const obs = document.getElementById('observacionPrestamo').value || '';
-                
                 if (!monto || Number(monto) <= 0) return mostrarErrorModal('El monto debe ser mayor a cero.');
-                if (!cuotas || Number(cuotas) < 1) return mostrarErrorModal('Debes indicar al menos 1 cuota.');
-                
                 endpoint = 'prestamo';
-                payload = {
-                    tipo_novedad_id: tipoNovedadId,
-                    monto: Number(monto),
-                    cuotas: Number(cuotas),
-                    observacion: obs
-                };
+                payload = { tipo_novedad_id: tipoNovedadId, monto: Number(monto), cuotas: Number(cuotas), observacion: obs };
             }
             else {
                 return mostrarErrorModal('Este formulario aún no está configurado.');
             }
 
-            // --- ENVÍO ---
+            // FIX #9: credentials
             const fetchOptions = {
                 method: 'POST',
+                credentials: 'include',
                 body: formData ? formData : JSON.stringify(payload),
                 headers: formData ? {} : { 'Content-Type': 'application/json' }
             };
@@ -692,11 +755,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(`/api/nomina/novedades/${endpoint}`, fetchOptions);
             const data = await res.json();
 
-            if (!res.ok || !data.success) throw new Error(data.message || 'Error al registrar en el servidor.');
+            if (!res.ok || !data.success) throw new Error(data.message || 'Error al registrar.');
 
-            // --- ÉXITO ---
-            bootstrap.Modal.getInstance(DOM.modalRegistrar).hide();
-            mostrarToast('✅ Novedad registrada correctamente. Estado: PENDIENTE.', 'success');
+            // FIX #2: getOrCreateInstance
+            if (DOM.modalRegistrar && typeof bootstrap !== 'undefined') {
+                bootstrap.Modal.getOrCreateInstance(DOM.modalRegistrar).hide();
+            }
+            mostrarToast('✅ Novedad registrada correctamente.', 'success');
             await cargarNovedades();
 
         } catch (error) {
@@ -704,8 +769,10 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarToast(error.message, 'error');
         } finally {
             _guardando = false;
-            DOM.btnGuardar.disabled = false;
-            DOM.btnGuardar.innerHTML = `<i class="fas fa-save"></i> Registrar`;
+            if (DOM.btnGuardar) {
+                DOM.btnGuardar.disabled = false;
+                DOM.btnGuardar.innerHTML = `<i class="fas fa-save"></i> Registrar`;
+            }
         }
     }
 
@@ -715,8 +782,10 @@ document.addEventListener('DOMContentLoaded', () => {
             DOM.divError.style.display = 'block';
             DOM.divError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-        DOM.btnGuardar.disabled = false;
-        DOM.btnGuardar.innerHTML = `<i class="fas fa-save"></i> Registrar`;
+        if (DOM.btnGuardar) {
+            DOM.btnGuardar.disabled = false;
+            DOM.btnGuardar.innerHTML = `<i class="fas fa-save"></i> Registrar`;
+        }
         _guardando = false;
         return false;
     }
@@ -729,27 +798,41 @@ document.addEventListener('DOMContentLoaded', () => {
         if (DOM.btnGuardar) DOM.btnGuardar.disabled = true;
         if (DOM.divError) DOM.divError.style.display = 'none';
         if (DOM.inputSoporte) DOM.inputSoporte.value = '';
+        if (DOM.previsualizacionSoporte) DOM.previsualizacionSoporte.style.display = 'none';
     }
 
     async function verNovedad(id) {
         const modalElement = document.getElementById('modalDetalleNovedad');
-        if (!modalElement) return;
+        if (!modalElement || typeof bootstrap === 'undefined') return;
+
+        // FIX #16: guards de elementos internos
+        const elTipo = document.getElementById('detalleTipoNovedad');
+        const elCont = document.getElementById('detalleContenido');
+        const elBtn  = document.getElementById('detalleBtnSoporte');
 
         const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-        document.getElementById('detalleTipoNovedad').textContent = "Cargando...";
-        document.getElementById('detalleContenido').innerHTML = `<div class="col-12 text-center py-4"><i class="fas fa-spinner fa-spin fa-2x text-success"></i></div>`;
-        document.getElementById('detalleBtnSoporte').style.display = 'none';
+        if (elTipo) elTipo.textContent = "Cargando...";
+        if (elCont) elCont.innerHTML = `<div class="col-12 text-center py-4"><i class="fas fa-spinner fa-spin fa-2x text-success"></i></div>`;
+        if (elBtn)  elBtn.style.display = 'none';
         modal.show();
 
         try {
-            const res = await fetch(`/api/nomina/novedades/${id}`);
+            // FIX #8: credentials
+            const res = await fetch(`/api/nomina/novedades/${id}`, { credentials: 'include' });
             const data = await res.json();
             if (!res.ok || !data.success) throw new Error('Error al cargar');
 
-            const n = data.novedad;
-            document.getElementById('detalleTipoNovedad').textContent = n.tipo_novedad || 'Detalle';
+            const n = data.novedad || {};
+            if (elTipo) elTipo.textContent = n.tipo_novedad || 'Detalle';
 
-            document.getElementById('detalleContenido').innerHTML = `
+            // FIX #1: cantidad 0 válida
+            const cantTxt = (n.cantidad_dias != null && n.cantidad_dias !== '')
+                ? n.cantidad_dias + ' días'
+                : (n.cantidad_horas != null && n.cantidad_horas !== '')
+                    ? n.cantidad_horas + ' horas'
+                    : 'N/A';
+
+            if (elCont) elCont.innerHTML = `
                 <div class="col-md-6">
                     <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
                         <small style="color: #64748b; font-weight: 700; text-transform: uppercase;">Estado</small>
@@ -758,8 +841,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="col-md-6">
                     <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
+                        <small style="color: #64748b; font-weight: 700; text-transform: uppercase;">Cantidad</small>
+                        <div style="font-weight: 600; color: #334155;">${escaparHTML(cantTxt)}</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
                         <small style="color: #64748b; font-weight: 700; text-transform: uppercase;">Fechas</small>
                         <div style="font-weight: 600; color: #334155;">${formatearFecha(n.fecha_inicio)} al ${formatearFecha(n.fecha_fin)}</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px;">
+                        <small style="color: #64748b; font-weight: 700; text-transform: uppercase;">Registrada</small>
+                        <div style="font-weight: 600; color: #334155;">${formatearFechaHora(n.fecha_creacion)}</div>
                     </div>
                 </div>
                 <div class="col-12">
@@ -770,34 +865,51 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
 
-            if (data.soportes && data.soportes.length > 0) {
-                const btnSoporte = document.getElementById('detalleBtnSoporte');
-                btnSoporte.href = data.soportes[0].ruta_archivo;
-                btnSoporte.style.display = 'inline-flex';
+            // FIX #11: validar ruta del soporte
+            if (data.soportes && data.soportes.length > 0 && elBtn) {
+                const ruta = data.soportes[0].ruta_archivo || data.soportes[0].url || '';
+                if (ruta) {
+                    elBtn.href = ruta;
+                    elBtn.style.display = 'inline-flex';
+                    if (data.soportes.length > 1) {
+                        elBtn.textContent = `Ver soporte (1 de ${data.soportes.length})`;
+                    }
+                }
             }
 
         } catch (error) {
-            document.getElementById('detalleContenido').innerHTML = `<div class="col-12"><div class="alert alert-danger">Error al cargar detalle: ${escaparHTML(error.message)}</div></div>`;
+            if (elCont) elCont.innerHTML = `<div class="col-12"><div class="alert alert-danger">Error al cargar detalle: ${escaparHTML(error.message)}</div></div>`;
         }
     }
 
     function exportarCSV() {
         if (!estadoApp.novedadesFiltradas.length) return mostrarToast('No hay datos para exportar', 'warning');
+        // FIX #4: escapar comillas internas
+        const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
         let csv = "Tipo,Fecha,Cantidad,Estado\n";
         estadoApp.novedadesFiltradas.forEach(n => {
-            csv += `"${obtenerTipo(n)}","${obtenerFecha(n)}","${obtenerCantidad(n)}","${obtenerEstado(n)}"\n`;
+            csv += [esc(obtenerTipo(n)), esc(obtenerFecha(n)), esc(obtenerCantidad(n)), esc(obtenerEstado(n))].join(',') + '\n';
         });
         const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url; a.download = `mis_novedades_${new Date().getTime()}.csv`;
+        document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
+        // FIX #10: revocar URL
+        URL.revokeObjectURL(url);
         mostrarToast('Archivo CSV descargado correctamente', 'success');
     }
 
     function mostrarCargando() { if (DOM.skeleton) DOM.skeleton.style.display = 'flex'; }
     function ocultarCargando() { if (DOM.skeleton) DOM.skeleton.style.display = 'none'; }
-    function mostrarError(msg) { if (DOM.tabla) DOM.tabla.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4"><i class="fas fa-triangle-exclamation"></i> ${msg}</td></tr>`; }
+    // FIX #4: ocultar skeleton en error
+    function mostrarError(msg) { 
+        ocultarCargando();
+        if (DOM.estadoVacio) DOM.estadoVacio.style.display = 'none';
+        if (DOM.tabla) DOM.tabla.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4"><i class="fas fa-triangle-exclamation"></i> ${escaparHTML(msg)}</td></tr>`; 
+    }
     
     function crearBadgeEstado(estado) {
         const map = {
@@ -813,12 +925,39 @@ document.addEventListener('DOMContentLoaded', () => {
     function obtenerTipo(n) { return n.tipo_novedad || n.tipo || ''; }
     function obtenerEstado(n) { return String(n.estado || 'PENDIENTE').toUpperCase(); }
     function obtenerFecha(n) { return n.fecha_inicio || ''; }
-    function obtenerCantidad(n) { return n.cantidad_dias ? n.cantidad_dias + ' días' : (n.cantidad_horas ? n.cantidad_horas + ' hrs' : '-'); }
+    
+    // FIX #2: permitir cantidad 0
+    function obtenerCantidad(n) {
+        if (n.cantidad_dias != null && n.cantidad_dias !== '') return n.cantidad_dias + ' días';
+        if (n.cantidad_horas != null && n.cantidad_horas !== '') return n.cantidad_horas + ' hrs';
+        return '-';
+    }
     function obtenerFechaRegistro(n) { return n.fecha_creacion || ''; }
-    function formatearFecha(f) { return f ? new Date(f).toLocaleDateString('es-CO') : '-'; }
-    function formatearFechaHora(f) { return f ? new Date(f).toLocaleString('es-CO') : '-'; }
-    function formatearTexto(t) { return t ? String(t).toLowerCase().replace(/_/g, ' ') : ''; }
-    function escaparHTML(v) { const d = document.createElement('div'); d.textContent = v ?? ''; return d.innerHTML; }
+
+    // FIX #3: evitar desfase UTC en fechas 'YYYY-MM-DD'
+    function formatearFecha(f) {
+        if (!f) return '-';
+        const str = String(f);
+        const d = new Date(str.length === 10 ? str + 'T00:00:00' : str);
+        return isNaN(d.getTime()) ? str : d.toLocaleDateString('es-CO');
+    }
+    function formatearFechaHora(f) {
+        if (!f) return '-';
+        const str = String(f);
+        const d = new Date(str.length === 10 ? str + 'T00:00:00' : str);
+        return isNaN(d.getTime()) ? str : d.toLocaleString('es-CO');
+    }
+
+    // FIX #16: capitalizar
+    function formatearTexto(t) { 
+        return t ? String(t).toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : ''; 
+    }
+
+    // FIX #21: escaparHTML sin crear div
+    function escaparHTML(v) {
+        return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
     function debounce(fn, w) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), w); }; }
 
     function mostrarToast(mensaje, tipo = 'success') {

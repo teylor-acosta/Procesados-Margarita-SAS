@@ -1,1164 +1,468 @@
-/* ============================================================
-   NOVEDADES - PROCESADOS MARGARITA
-   Rutas del módulo de novedades de nómina
-   ============================================================ */
+// ============================================================
+// routes/nomina-novedades.routes.js
+// BACKEND - NÓMINA NOVEDADES
+// ============================================================
 
 const express = require('express');
+const router = express.Router();
 const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 
-const router = express.Router();
-
-/* ============================================================
-   CONFIGURACIÓN DE SOPORTES DE NOVEDADES
-   ============================================================ */
-
-const carpetaSoportesNovedades = path.join(__dirname, '../public/uploads/nomina/novedades/soportes');
-
-if (!fs.existsSync(carpetaSoportesNovedades)) {
-    fs.mkdirSync(carpetaSoportesNovedades, { recursive: true });
-}
-
-/* ============================================================
-   MULTER
-   ============================================================ */
-
-const storageSoportes = multer.diskStorage({
-    destination(req, file, cb) {
-        cb(null, carpetaSoportesNovedades);
+// ------------------------------------------------------------
+// MULTER
+// ------------------------------------------------------------
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const dir = path.join(__dirname, '..', 'uploads', 'novedades');
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        cb(null, dir);
     },
-    filename(req, file, cb) {
-        const extension = path.extname(file.originalname).toLowerCase();
-        const nombreArchivo = `soporte_${Date.now()}_${Math.round(Math.random() * 100000)}${extension}`;
-        cb(null, nombreArchivo);
+    filename: (req, file, cb) => {
+        const unique = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, unique + path.extname(file.originalname));
     }
 });
 
-const uploadSoporte = multer({
-    storage: storageSoportes,
+const upload = multer({
+    storage,
     limits: { fileSize: 10 * 1024 * 1024 },
-    fileFilter(req, file, cb) {
-        const tiposPermitidos = ['application/pdf', 'image/jpeg', 'image/png'];
-        if (tiposPermitidos.includes(file.mimetype)) {
-            cb(null, true);
-        } else {
-            cb(new Error('El soporte debe ser PDF, JPG o PNG.'));
-        }
+    fileFilter: (req, file, cb) => {
+        const permitidos = /jpeg|jpg|png|pdf|doc|docx/i;
+        if (permitidos.test(path.extname(file.originalname))) return cb(null, true);
+        cb(new Error('Formato de archivo no permitido'));
     }
 });
 
-const { proteger } = require('../middlewares/auth');
-
-/* ============================================================
-   HELPERS DE RESPUESTA
-   ============================================================ */
-
-const responderOk = (res, data = {}, status = 200) => res.status(status).json({ success: true, ...data });
-const responderError = (res, message, status = 500, extra = {}) => res.status(status).json({ success: false, message, ...extra });
-
-/* ============================================================
-   🔥 HELPER: DETERMINAR SI EL USUARIO VE TODAS LAS NOVEDADES
-   Admin y Super Admin ven todo. Cualquier otro rol solo ve lo suyo.
-   ============================================================ */
-
-const ROLES_ACCESO_TOTAL = ['admin', 'super admin', 'superadmin', 'administrador', 'super administrador'];
-
-function tieneAccesoTotal(rol) {
-    if (!rol) return false;
-    const limpio = String(rol).toLowerCase().trim().replace(/\s+/g, ' ');
-    return ROLES_ACCESO_TOTAL.includes(limpio);
+// ------------------------------------------------------------
+// Helpers de sesión y roles
+// ------------------------------------------------------------
+function getDB(req) {
+    return req.app.get('db');
 }
 
-/* ============================================================
-   HELPER: REGISTRAR AUDITORÍA
-   ============================================================ */
+function getRol(req) {
+    return String((req.session && req.session.rol) || '').toUpperCase();
+}
 
-async function registrarHistorial(connection, { novedadId, estadoAnterior, estadoNuevo, usuarioId, comentario }) {
-    try {
-        await connection.query(
-            `INSERT INTO nomina_novedades_historial (novedad_id, estado_anterior, estado_nuevo, usuario_id, comentario, fecha_cambio) 
-             VALUES (?, ?, ?, ?, ?, NOW())`,
-            [novedadId, estadoAnterior || null, estadoNuevo, usuarioId || null, comentario || null]
-        );
-    } catch (error) {
-        console.error('⚠️ No se pudo registrar historial:', error.message);
+function esAdmin(req) {
+    const rol = getRol(req);
+    return rol.includes('ADMIN') || rol.includes('SUPER');
+}
+
+function sesionValida(req) {
+    return !!(req.session && req.session.usuarioID);
+}
+
+function soloAdmin(req, res, next) {
+    if (!sesionValida(req)) {
+        return res.status(401).json({ success: false, message: 'Sesión no válida' });
     }
+    if (!esAdmin(req)) {
+        return res.status(403).json({ success: false, message: 'No autorizado' });
+    }
+    next();
 }
 
-/* ============================================================
-   HELPER: GENERAR CSV
-   ============================================================ */
+function requiereSesion(req, res, next) {
+    if (!sesionValida(req)) {
+        return res.status(401).json({ success: false, message: 'Sesión no válida' });
+    }
+    next();
+}
 
-const escapeCsv = (valor) => {
-    if (valor === null || valor === undefined) return '';
-    return `"${String(valor).replace(/"/g, '""')}"`;
-};
-
-const generarCSV = (filas, columnas) => {
-    const encabezado = columnas.map((c) => escapeCsv(c.titulo)).join(',');
-    const cuerpo = filas.map((fila) => columnas.map((c) => escapeCsv(fila[c.campo])).join(',')).join('\n');
-    return '\uFEFF' + encabezado + '\n' + cuerpo;
-};
-
-/* ============================================================
-   RUTA: PÁGINA PRINCIPAL HTML
-   ============================================================ */
-
-router.get('/nomina/novedades', proteger, (req, res) => {
-    // Convertimos el rol a minúsculas para evitar errores
-    const rol = (req.session.rol || '').toLowerCase().trim();
+function normalizarBody(body) {
+    const b = body || {};
     
-    if (rol === 'auxiliar') {
-        res.sendFile(path.join(__dirname, '../public/mis-novedades.html'));
-    } else {
-        res.sendFile(path.join(__dirname, '../public/nomina-novedades.html'));
+    // Concatenar tipo_detalle en motivo
+    let motivoFinal = b.motivo || b.concepto || '';
+    const detalle = b.tipo_detalle || b.tipo_ausencia || b.tipo_incapacidad || b.tipo_permiso || b.tipo_licencia || b.tipo_hora;
+    if (detalle) motivoFinal = `[${detalle}] ${motivoFinal}`.trim();
+
+    // Concatenar valor y cuotas en observacion
+    let obsFinal = b.observacion || '';
+    if (b.valor || b.monto) obsFinal = `Valor: $${b.valor || b.monto} | ${obsFinal}`.trim();
+    if (b.cuotas && b.cuotas > 1) obsFinal = `Cuotas: ${b.cuotas} | ${obsFinal}`.trim();
+
+    return {
+        tipo_novedad_id: b.tipo_novedad_id ? Number(b.tipo_novedad_id) : null,
+        empleado_id: b.empleado_id ? Number(b.empleado_id) : null,
+        fecha_inicio: b.fecha_inicio || b.fecha_permiso || b.fecha_trabajo || null,
+        fecha_fin: b.fecha_fin || null,
+        hora_inicio: b.hora_inicio || null,
+        hora_fin: b.hora_fin || null,
+        cantidad_dias: b.cantidad_dias ? Number(b.cantidad_dias) : null,
+        cantidad_horas: b.cantidad_horas ? Number(b.cantidad_horas) : null,
+        motivo: motivoFinal || null,
+        observacion: obsFinal || null
+    };
+}
+
+async function crearNovedad(req, data, soportes = []) {
+    const db = getDB(req);
+    
+    const [result] = await db.query(`
+        INSERT INTO nomina_novedades
+        (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin,
+         hora_inicio, hora_fin, cantidad_dias, cantidad_horas,
+         motivo, observacion, estado, usuario_creacion, fecha_creacion)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDIENTE', ?, NOW())
+    `, [
+        data.empleado_id, data.tipo_novedad_id, data.fecha_inicio, data.fecha_fin,
+        data.hora_inicio, data.hora_fin, data.cantidad_dias, data.cantidad_horas,
+        data.motivo, data.observacion, req.session.usuarioID
+    ]);
+
+    const novedadId = result.insertId;
+
+    for (const s of soportes) {
+        await db.query(`
+            INSERT INTO nomina_novedades_soportes
+            (novedad_id, nombre_archivo, ruta_archivo, tipo)
+            VALUES (?, ?, ?, ?)
+        `, [novedadId, s.originalname, `/uploads/novedades/${s.filename}`, s.mimetype]);
     }
-});
 
-/* ============================================================
-   RUTA: LISTAR NOVEDADES ACTIVAS
-   ============================================================ */
+    await db.query(`
+        INSERT INTO nomina_novedades_historial
+        (novedad_id, estado_anterior, estado_nuevo, usuario_id, fecha_registro)
+        VALUES (?, NULL, 'PENDIENTE', ?, NOW())
+    `, [novedadId, req.session.usuarioID]);
 
-router.get('/api/nomina/novedades', proteger, async (req, res) => {
-    try {
-        const db = req.app.get('db');
-        const rol = req.session.rol;
-        const empleadoID = req.session.empleadoID;
+    return novedadId;
+}
 
-        let sql = `
-            SELECT n.id, n.empleado_id,
-                   e.nombre AS empleado_nombre, e.numero_documento,
-                   n.tipo_novedad_id, t.nombre AS tipo_novedad, t.codigo AS codigo_novedad, t.categoria,
-                   n.fecha_inicio, n.fecha_fin, n.hora_inicio, n.hora_fin,
-                   n.cantidad_dias, n.cantidad_horas, n.motivo, n.observacion,
-                   n.estado, n.observacion_rechazo,
-                   n.usuario_creacion, n.usuario_revision,
-                   n.fecha_creacion, n.fecha_revision
-            FROM nomina_novedades n
-            INNER JOIN empleados e ON e.id = n.empleado_id
-            INNER JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
-            WHERE (
-                n.estado = 'PENDIENTE'
-                OR (n.estado IN ('APROBADA', 'RECHAZADA') AND n.fecha_revision IS NOT NULL AND n.fecha_revision >= DATE_SUB(NOW(), INTERVAL 14 DAY))
-            )
-        `;
-
-        const parametros = [];
-
-        // 🔥 SOLO Admin / Super Admin ven todas. El resto ve solo sus novedades.
-        if (!tieneAccesoTotal(rol)) {
-            sql += ` AND n.empleado_id = ? `;
-            parametros.push(empleadoID);
-        }
-
-        sql += ` ORDER BY n.fecha_creacion DESC `;
-
-        const [novedades] = await db.query(sql, parametros);
-        res.json({ success: true, rol, novedades });
-
-    } catch (error) {
-        console.error('ERROR LISTANDO NOVEDADES:', error);
-        responderError(res, 'Error al consultar las novedades', 500);
+async function verificarPassword(db, userId, password) {
+    const [rows] = await db.query(`SELECT password_hash FROM usuarios WHERE id = ? LIMIT 1`, [userId]);
+    if (!rows.length) return false;
+    const hash = rows[0].password_hash;
+    if (typeof hash === 'string' && hash.startsWith('$2')) {
+        try {
+            const bcrypt = require('bcrypt');
+            return await bcrypt.compare(password, hash);
+        } catch (e) { return false; }
     }
-});
+    return String(hash) === String(password);
+}
 
-/* ============================================================
-   RUTA: HISTORIAL / VENCIDAS
-   ============================================================ */
+// ============================================================
+// 🔹 HISTORIAL
+// ============================================================
 
-router.get('/api/nomina/novedades/historial', proteger, async (req, res) => {
+router.get('/historial', requiereSesion, async (req, res) => {
     try {
-        const db = req.app.get('db');
-        const rol = req.session.rol;
-        const empleadoID = req.session.empleadoID;
-
+        const db = getDB(req);
         const { buscar, tipo, estado, tipo_fecha, fecha, mes, ano, desde, hasta } = req.query;
 
         let sql = `
-            SELECT n.id, n.empleado_id, e.nombre AS empleado_nombre, e.numero_documento,
-                   n.tipo_novedad_id, t.nombre AS tipo_novedad, t.codigo AS codigo_novedad, t.categoria,
-                   n.fecha_inicio, n.fecha_fin, n.hora_inicio, n.hora_fin,
-                   n.cantidad_dias, n.cantidad_horas, n.motivo, n.observacion,
-                   n.estado, n.observacion_rechazo, n.usuario_creacion, n.usuario_revision,
-                   n.fecha_creacion, n.fecha_revision
+            SELECT n.*, e.nombre AS empleado_nombre,
+                   e.numero_documento, t.nombre AS tipo_novedad, t.categoria,
+                   n.id AS id_historial
             FROM nomina_novedades n
-            INNER JOIN empleados e ON e.id = n.empleado_id
-            INNER JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
-            WHERE n.estado IN ('APROBADA', 'RECHAZADA')
-              AND n.fecha_revision IS NOT NULL
-              AND n.fecha_revision < DATE_SUB(NOW(), INTERVAL 14 DAY)
+            LEFT JOIN empleados e ON e.id = n.empleado_id
+            LEFT JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
+            WHERE n.estado = 'EN_HISTORIAL'
         `;
-
-        const parametros = [];
-
-        // 🔥 Filtro por rol
-        if (!tieneAccesoTotal(rol)) {
-            sql += ` AND n.empleado_id = ? `;
-            parametros.push(empleadoID);
-        }
-
-        if (buscar && buscar.trim() !== '') {
-            sql += ` AND (e.nombre LIKE ? OR e.numero_documento LIKE ? OR t.nombre LIKE ?) `;
-            const texto = `%${buscar.trim()}%`;
-            parametros.push(texto, texto, texto);
-        }
-
-        if (tipo) { sql += ` AND n.tipo_novedad_id = ? `; parametros.push(tipo); }
-        if (estado && ['APROBADA', 'RECHAZADA'].includes(estado)) { sql += ` AND n.estado = ? `; parametros.push(estado); }
-        if (tipo_fecha === 'dia' && fecha) { sql += ` AND DATE(n.fecha_revision) = ? `; parametros.push(fecha); }
-        if (tipo_fecha === 'mes' && mes) { sql += ` AND DATE_FORMAT(n.fecha_revision, '%Y-%m') = ? `; parametros.push(mes); }
-        if (tipo_fecha === 'ano' && ano) { sql += ` AND YEAR(n.fecha_revision) = ? `; parametros.push(ano); }
-        if (tipo_fecha === 'rango' && desde && hasta) { sql += ` AND DATE(n.fecha_revision) BETWEEN ? AND ? `; parametros.push(desde, hasta); }
-
-        sql += ` ORDER BY n.fecha_revision DESC `;
-
-        const [novedades] = await db.query(sql, parametros);
-        res.json({ success: true, novedades });
-
-    } catch (error) {
-        console.error('ERROR CONSULTANDO HISTORIAL:', error);
-        responderError(res, 'Error al consultar el historial', 500);
-    }
-});
-
-/* ============================================================
-   RUTA: TIPOS DE NOVEDAD ACTIVOS
-   ============================================================ */
-
-router.get('/api/nomina/novedades/tipos', proteger, async (req, res) => {
-    try {
-        const db = req.app.get('db');
-        const [tipos] = await db.query(`
-            SELECT id, nombre, codigo, categoria, descripcion, permite_empleado, requiere_soporte, requiere_aprobacion
-            FROM nomina_novedades_tipos WHERE activo = 1 ORDER BY categoria ASC, nombre ASC
-        `);
-        res.json({ success: true, tipos });
-    } catch (error) {
-        console.error('ERROR CARGANDO TIPOS:', error);
-        responderError(res, 'Error al cargar los tipos de novedad', 500);
-    }
-});
-
-/* ============================================================
-   KPIs PARA EL DASHBOARD
-   ============================================================ */
-
-router.get('/api/nomina/novedades/kpis', proteger, async (req, res) => {
-    try {
-        const db = req.app.get('db');
-        const rol = req.session.rol;
-        const empleadoID = req.session.empleadoID;
-
-        // 🔥 Solo Admin / Super Admin cuentan todo
-        const filtroAuxiliar = !tieneAccesoTotal(rol) ? ' AND empleado_id = ? ' : '';
-        const paramsAux = !tieneAccesoTotal(rol) ? [empleadoID] : [];
-
-        const [pendientes] = await db.query(`SELECT COUNT(*) AS total FROM nomina_novedades WHERE estado = 'PENDIENTE' ${filtroAuxiliar}`, paramsAux);
-        const [aprobadas] = await db.query(`SELECT COUNT(*) AS total FROM nomina_novedades WHERE estado = 'APROBADA' AND fecha_revision >= DATE_SUB(NOW(), INTERVAL 14 DAY) ${filtroAuxiliar}`, paramsAux);
-        const [rechazadas] = await db.query(`SELECT COUNT(*) AS total FROM nomina_novedades WHERE estado = 'RECHAZADA' AND fecha_revision >= DATE_SUB(NOW(), INTERVAL 14 DAY) ${filtroAuxiliar}`, paramsAux);
-        const [historial] = await db.query(`SELECT COUNT(*) AS total FROM nomina_novedades WHERE estado IN ('APROBADA', 'RECHAZADA') AND fecha_revision < DATE_SUB(NOW(), INTERVAL 14 DAY) ${filtroAuxiliar}`, paramsAux);
-
-        return responderOk(res, {
-            kpis: {
-                pendientes: Number(pendientes[0].total || 0),
-                aprobadas: Number(aprobadas[0].total || 0),
-                rechazadas: Number(rechazadas[0].total || 0),
-                historial: Number(historial[0].total || 0)
-            }
-        });
-
-    } catch (error) {
-        console.error('ERROR KPIs:', error);
-        return responderError(res, 'No fue posible obtener los indicadores.', 500);
-    }
-});
-
-/* ============================================================
-   DETALLE DE NOVEDAD
-   ============================================================ */
-
-router.get('/api/nomina/novedades/:id', proteger, async (req, res) => {
-    try {
-        const db = req.app.get('db');
-        const novedadId = Number(req.params.id);
-        const rol = req.session.rol;
-        const empleadoID = req.session.empleadoID;
-
-        const [rows] = await db.query(`
-            SELECT n.*, 
-                   e.nombre AS empleado_nombre, e.numero_documento, 
-                   t.nombre AS tipo_novedad, t.codigo AS codigo_novedad, t.categoria
-            FROM nomina_novedades n
-            INNER JOIN empleados e ON e.id = n.empleado_id
-            INNER JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
-            WHERE n.id = ? LIMIT 1
-        `, [novedadId]);
-
-        if (!rows.length) return responderError(res, 'Novedad no encontrada.', 404);
-
-        const novedad = rows[0];
-
-        // 🔥 Validar que el usuario pueda ver esta novedad
-        if (!tieneAccesoTotal(rol) && Number(novedad.empleado_id) !== Number(empleadoID)) {
-            return responderError(res, 'Novedad no encontrada.', 404);
-        }
-
-        let soportes = [];
-        try {
-            const [s] = await db.query(
-                `SELECT id, nombre_archivo, nombre_original, extension, tipo_mime, ruta_archivo, fecha_subida 
-                 FROM nomina_novedades_soportes WHERE novedad_id = ? ORDER BY fecha_subida DESC`, 
-                [novedadId]
-            );
-            soportes = s;
-        } catch (e) {}
-
-        let historial = [];
-        try {
-            const [h] = await db.query(
-                `SELECT id, estado_anterior, estado_nuevo, usuario_id, comentario, fecha_cambio 
-                 FROM nomina_novedades_historial WHERE novedad_id = ? ORDER BY fecha_cambio ASC`, 
-                [novedadId]
-            );
-            historial = h;
-        } catch (e) {}
-
-        return responderOk(res, { novedad, soportes, historial });
-
-    } catch (error) {
-        console.error('ERROR DETALLE NOVEDAD:', error);
-        return responderError(res, 'No fue posible obtener el detalle.', 500);
-    }
-});
-
-/* ============================================================
-   APROBAR NOVEDAD
-   ============================================================ */
-
-router.patch('/api/nomina/novedades/:id/aprobar', proteger, async (req, res) => {
-    const db = req.app.get('db');
-    let connection = null;
-
-    try {
-        const novedadId = Number(req.params.id);
-        const usuarioId = req.session.usuarioID;
-
-        connection = await db.getConnection();
-        await connection.beginTransaction();
-
-        const [rows] = await connection.query(`SELECT id, estado FROM nomina_novedades WHERE id = ? FOR UPDATE`, [novedadId]);
-
-        if (!rows.length) throw new Error('Novedad no encontrada.');
-        const estadoActual = rows[0].estado;
-
-        if (estadoActual === 'APROBADA') throw new Error('La novedad ya está aprobada.');
-        if (['RECHAZADA', 'ANULADA'].includes(estadoActual)) throw new Error(`No se puede aprobar una novedad en estado ${estadoActual}.`);
-
-        await connection.query(`
-            UPDATE nomina_novedades 
-            SET estado = 'APROBADA', usuario_revision = ?, fecha_revision = NOW(), observacion_rechazo = NULL 
-            WHERE id = ?
-        `, [usuarioId, novedadId]);
-
-        await registrarHistorial(connection, {
-            novedadId, estadoAnterior: estadoActual, estadoNuevo: 'APROBADA', usuarioId, comentario: req.body?.comentario || 'Aprobación manual'
-        });
-
-        await connection.commit();
-        return responderOk(res, { message: 'Novedad aprobada correctamente.', novedad_id: novedadId });
-
-    } catch (error) {
-        if (connection) try { await connection.rollback(); } catch (_) {}
-        return responderError(res, error.message || 'No fue posible aprobar la novedad.', 400);
-    } finally {
-        if (connection) connection.release();
-    }
-});
-
-/* ============================================================
-   RECHAZAR NOVEDAD
-   ============================================================ */
-
-router.patch('/api/nomina/novedades/:id/rechazar', proteger, async (req, res) => {
-    const observacion = String(req.body?.observacion || '').trim();
-    if (!observacion) return responderError(res, 'Debes indicar la observación del rechazo.', 400);
-
-    const db = req.app.get('db');
-    let connection = null;
-
-    try {
-        const novedadId = Number(req.params.id);
-        const usuarioId = req.session.usuarioID;
-
-        connection = await db.getConnection();
-        await connection.beginTransaction();
-
-        const [rows] = await connection.query(`SELECT id, estado FROM nomina_novedades WHERE id = ? FOR UPDATE`, [novedadId]);
-        if (!rows.length) throw new Error('Novedad no encontrada.');
-        const estadoActual = rows[0].estado;
-
-        if (estadoActual === 'RECHAZADA') throw new Error('La novedad ya está rechazada.');
-        if (estadoActual === 'ANULADA') throw new Error('No se puede rechazar una novedad anulada.');
-
-        await connection.query(`
-            UPDATE nomina_novedades 
-            SET estado = 'RECHAZADA', usuario_revision = ?, fecha_revision = NOW(), observacion_rechazo = ? 
-            WHERE id = ?
-        `, [usuarioId, observacion, novedadId]);
-
-        await registrarHistorial(connection, {
-            novedadId, estadoAnterior: estadoActual, estadoNuevo: 'RECHAZADA', usuarioId, comentario: observacion
-        });
-
-        await connection.commit();
-        return responderOk(res, { message: 'Novedad rechazada correctamente.', novedad_id: novedadId });
-
-    } catch (error) {
-        if (connection) try { await connection.rollback(); } catch (_) {}
-        return responderError(res, error.message || 'No fue posible rechazar la novedad.', 400);
-    } finally {
-        if (connection) connection.release();
-    }
-});
-
-/* ============================================================
-   ANULAR NOVEDAD
-   ============================================================ */
-
-router.patch('/api/nomina/novedades/:id/anular', proteger, async (req, res) => {
-    const db = req.app.get('db');
-    let connection = null;
-
-    try {
-        const novedadId = Number(req.params.id);
-        const usuarioId = req.session.usuarioID;
-        const motivo = String(req.body?.motivo || '').trim();
-
-        if (!motivo) return responderError(res, 'Debes indicar el motivo de la anulación.', 400);
-
-        connection = await db.getConnection();
-        await connection.beginTransaction();
-
-        const [rows] = await connection.query(`SELECT id, estado FROM nomina_novedades WHERE id = ? FOR UPDATE`, [novedadId]);
-        if (!rows.length) throw new Error('Novedad no encontrada.');
-        const estadoActual = rows[0].estado;
-
-        if (estadoActual === 'ANULADA') throw new Error('La novedad ya está anulada.');
-
-        await connection.query(`
-            UPDATE nomina_novedades 
-            SET estado = 'ANULADA', usuario_revision = ?, fecha_revision = NOW(), observacion_rechazo = ? 
-            WHERE id = ?
-        `, [usuarioId, motivo, novedadId]);
-
-        await registrarHistorial(connection, {
-            novedadId, estadoAnterior: estadoActual, estadoNuevo: 'ANULADA', usuarioId, comentario: motivo
-        });
-
-        await connection.commit();
-        return responderOk(res, { message: 'Novedad anulada correctamente.', novedad_id: novedadId });
-
-    } catch (error) {
-        if (connection) try { await connection.rollback(); } catch (_) {}
-        return responderError(res, error.message || 'No fue posible anular la novedad.', 400);
-    } finally {
-        if (connection) connection.release();
-    }
-});
-
-/* ============================================================
-   VALIDAR CIERRE DE PERÍODO
-   ============================================================ */
-
-router.post('/api/nomina/novedades/cierre-periodo/validar', proteger, async (req, res) => {
-    const periodo = String(req.body?.periodo || '').trim();
-    if (!/^\d{4}-\d{2}$/.test(periodo)) {
-        return responderError(res, 'El período debe tener el formato YYYY-MM.', 400);
-    }
-
-    try {
-        const db = req.app.get('db');
-        const [pendientes] = await db.query(`
-            SELECT id, empleado_id, tipo_novedad_id, estado 
-            FROM nomina_novedades 
-            WHERE DATE_FORMAT(fecha_inicio, '%Y-%m') = ? AND estado = 'PENDIENTE'
-        `, [periodo]);
-
-        return responderOk(res, {
-            periodo,
-            puede_cerrar: pendientes.length === 0,
-            pendientes
-        });
-
-    } catch (error) {
-        console.error('ERROR VALIDANDO CIERRE:', error);
-        return responderError(res, 'No fue posible validar el cierre.', 500);
-    }
-});
-
-/* ============================================================
-   EJECUTAR CIERRE DE PERÍODO
-   ============================================================ */
-
-router.post('/api/nomina/novedades/cierre-periodo', proteger, async (req, res) => {
-    const periodo = String(req.body?.periodo || '').trim();
-    if (!/^\d{4}-\d{2}$/.test(periodo)) {
-        return responderError(res, 'El período debe tener el formato YYYY-MM.', 400);
-    }
-
-    const db = req.app.get('db');
-    let connection = null;
-
-    try {
-        const usuarioId = req.session.usuarioID;
-        connection = await db.getConnection();
-        await connection.beginTransaction();
-
-        const [pendientes] = await connection.query(`
-            SELECT COUNT(*) AS total 
-            FROM nomina_novedades 
-            WHERE DATE_FORMAT(fecha_inicio, '%Y-%m') = ? AND estado = 'PENDIENTE'
-        `, [periodo]);
-
-        if (Number(pendientes[0].total) > 0) {
-            throw new Error('No se puede cerrar el período: existen novedades pendientes.');
-        }
-
-        await connection.query(`
-            UPDATE nomina_novedades 
-            SET estado = 'PROCESADA' 
-            WHERE DATE_FORMAT(fecha_inicio, '%Y-%m') = ? AND estado = 'APROBADA'
-        `, [periodo]);
-
-        await connection.query(`
-            INSERT INTO nomina_cierres_nomina (periodo, usuario_id, fecha_cierre) 
-            VALUES (?, ?, NOW()) 
-            ON DUPLICATE KEY UPDATE usuario_id = VALUES(usuario_id), fecha_cierre = VALUES(fecha_cierre)
-        `, [periodo, usuarioId]);
-
-        await connection.commit();
-        return responderOk(res, { message: 'Período cerrado correctamente.', periodo });
-
-    } catch (error) {
-        if (connection) try { await connection.rollback(); } catch (_) {}
-        return responderError(res, error.message || 'No fue posible cerrar el período.', 400);
-    } finally {
-        if (connection) connection.release();
-    }
-});
-
-/* ============================================================
-   EXPORTAR NOVEDADES A CSV
-   ============================================================ */
-
-router.get('/api/nomina/novedades/exportar', proteger, async (req, res) => {
-    try {
-        const db = req.app.get('db');
-        const rol = req.session.rol;
-        const empleadoID = req.session.empleadoID;
-        const filtros = [];
         const params = [];
 
-        if (!tieneAccesoTotal(rol)) { filtros.push('n.empleado_id = ?'); params.push(empleadoID); }
-        if (req.query.estado) { filtros.push('n.estado = ?'); params.push(req.query.estado); }
-        if (req.query.tipo) { filtros.push('n.tipo_novedad_id = ?'); params.push(req.query.tipo); }
-        if (req.query.mes) { filtros.push("DATE_FORMAT(n.fecha_inicio, '%Y-%m') = ?"); params.push(req.query.mes); }
+        if (!esAdmin(req)) {
+            sql += ` AND n.empleado_id = ?`;
+            params.push(req.session.empleadoID);
+        }
 
-        const where = filtros.length ? 'WHERE ' + filtros.join(' AND ') : '';
+        if (buscar) {
+            sql += ` AND (e.nombre LIKE ? OR e.numero_documento LIKE ? OR t.nombre LIKE ?)`;
+            const like = `%${buscar}%`;
+            params.push(like, like, like);
+        }
+        if (tipo) { sql += ` AND n.tipo_novedad_id = ?`; params.push(tipo); }
+        if (estado) { sql += ` AND n.estado = ?`; params.push(estado); }
+        
+        if (tipo_fecha === 'dia' && fecha) { sql += ` AND DATE(n.fecha_inicio) = ?`; params.push(fecha); }
+        else if (tipo_fecha === 'mes' && mes) { sql += ` AND DATE_FORMAT(n.fecha_inicio, '%Y-%m') = ?`; params.push(mes); }
+        else if (tipo_fecha === 'ano' && ano) { sql += ` AND YEAR(n.fecha_inicio) = ?`; params.push(ano); }
+        else if (tipo_fecha === 'rango' && desde && hasta) { sql += ` AND DATE(n.fecha_inicio) BETWEEN ? AND ?`; params.push(desde, hasta); }
 
-        const [rows] = await db.query(`
-            SELECT n.id, e.nombre AS empleado, e.numero_documento, t.nombre AS tipo_novedad, t.categoria,
-                   n.fecha_inicio, n.fecha_fin, n.cantidad_dias, n.cantidad_horas, n.estado,
-                   n.observacion_rechazo, n.fecha_creacion, n.fecha_revision
-            FROM nomina_novedades n
-            INNER JOIN empleados e ON e.id = n.empleado_id
-            INNER JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
-            ${where} ORDER BY n.fecha_creacion DESC
-        `, params);
+        sql += ` ORDER BY n.fecha_creacion DESC`;
 
-        const columnas = [
-            { titulo: 'ID', campo: 'id' }, { titulo: 'Empleado', campo: 'empleado' },
-            { titulo: 'Documento', campo: 'numero_documento' }, { titulo: 'Tipo', campo: 'tipo_novedad' },
-            { titulo: 'Categoría', campo: 'categoria' }, { titulo: 'Fecha inicio', campo: 'fecha_inicio' },
-            { titulo: 'Fecha fin', campo: 'fecha_fin' }, { titulo: 'Días', campo: 'cantidad_dias' },
-            { titulo: 'Horas', campo: 'cantidad_horas' }, { titulo: 'Estado', campo: 'estado' },
-            { titulo: 'Observación', campo: 'observacion_rechazo' }, { titulo: 'Creación', campo: 'fecha_creacion' }
-        ];
-
-        const csv = generarCSV(rows, columnas);
-        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-        res.setHeader('Content-Disposition', `attachment; filename="novedades_${new Date().toISOString().slice(0, 10)}.csv"`);
-        return res.send(csv);
-
-    } catch (error) {
-        console.error('ERROR EXPORTANDO:', error);
-        return responderError(res, 'No fue posible exportar las novedades.', 500);
+        const [rows] = await db.query(sql, params);
+        res.json({ success: true, novedades: rows });
+    } catch (err) {
+        console.error('Error GET /historial:', err);
+        res.status(500).json({ success: false, message: err.message });
     }
 });
 
-/* ============================================================
-   EXPORTAR HISTORIAL A CSV
-   ============================================================ */
-
-router.get('/api/nomina/novedades/historial/exportar', proteger, async (req, res) => {
+router.get('/historial/exportar', requiereSesion, async (req, res) => {
     try {
-        const db = req.app.get('db');
-        const rol = req.session.rol;
-        const empleadoID = req.session.empleadoID;
-        
-        const filtros = [
-            `n.estado IN ('APROBADA', 'RECHAZADA')`, 
-            `n.fecha_revision IS NOT NULL`, 
-            `n.fecha_revision < DATE_SUB(NOW(), INTERVAL 14 DAY)`
-        ];
+        const db = getDB(req);
+        let sql = `
+            SELECT n.id, e.nombre AS empleado_nombre, e.numero_documento, t.nombre AS tipo_novedad,
+                   n.fecha_inicio, n.fecha_fin, n.cantidad_dias, n.cantidad_horas, n.estado, n.fecha_creacion
+            FROM nomina_novedades n
+            LEFT JOIN empleados e ON e.id = n.empleado_id
+            LEFT JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
+            WHERE n.estado = 'EN_HISTORIAL'
+        `;
         const params = [];
+        if (!esAdmin(req)) {
+            sql += ` AND n.empleado_id = ?`;
+            params.push(req.session.empleadoID);
+        }
+        sql += ` ORDER BY n.fecha_creacion DESC`;
 
-        if (!tieneAccesoTotal(rol)) { filtros.push('n.empleado_id = ?'); params.push(empleadoID); }
-        if (req.query.estado) { filtros.push('n.estado = ?'); params.push(req.query.estado); }
-        if (req.query.tipo) { filtros.push('n.tipo_novedad_id = ?'); params.push(req.query.tipo); }
-
-        const where = 'WHERE ' + filtros.join(' AND ');
-
-        const [rows] = await db.query(`
-            SELECT n.id, e.nombre AS empleado, e.numero_documento, t.nombre AS tipo_novedad,
-                   n.fecha_inicio, n.fecha_fin, n.cantidad_dias, n.cantidad_horas, n.estado,
-                   n.observacion_rechazo, n.fecha_revision
-            FROM nomina_novedades n
-            INNER JOIN empleados e ON e.id = n.empleado_id
-            INNER JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
-            ${where} ORDER BY n.fecha_revision DESC
-        `, params);
-
-        const columnas = [
-            { titulo: 'ID', campo: 'id' }, { titulo: 'Empleado', campo: 'empleado' },
-            { titulo: 'Documento', campo: 'numero_documento' }, { titulo: 'Tipo', campo: 'tipo_novedad' },
-            { titulo: 'Fecha inicio', campo: 'fecha_inicio' }, { titulo: 'Fecha fin', campo: 'fecha_fin' },
-            { titulo: 'Días', campo: 'cantidad_dias' }, { titulo: 'Horas', campo: 'cantidad_horas' },
-            { titulo: 'Estado', campo: 'estado' }, { titulo: 'Observación', campo: 'observacion_rechazo' },
-            { titulo: 'Fecha revisión', campo: 'fecha_revision' }
-        ];
-
-        const csv = generarCSV(rows, columnas);
+        const [rows] = await db.query(sql, params);
+        const cols = ['ID', 'Empleado', 'Documento', 'Tipo', 'Inicio', 'Fin', 'Días', 'Horas', 'Estado', 'Registro'];
+        let csv = '\uFEFF' + cols.join(';') + '\n';
+        rows.forEach(r => {
+            csv += [r.id, r.empleado_nombre || '', r.numero_documento || '', r.tipo_novedad || '', r.fecha_inicio || '', r.fecha_fin || '', r.cantidad_dias || '', r.cantidad_horas || '', r.estado || '', r.fecha_creacion || ''].map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(';') + '\n';
+        });
         res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-        res.setHeader('Content-Disposition', `attachment; filename="historial_novedades_${new Date().toISOString().slice(0, 10)}.csv"`);
-        return res.send(csv);
-
-    } catch (error) {
-        console.error('ERROR EXPORTANDO HISTORIAL:', error);
-        return responderError(res, 'No fue posible exportar el historial.', 500);
-    }
+        res.setHeader('Content-Disposition', `attachment; filename="historial_${new Date().toISOString().slice(0,10)}.csv"`);
+        res.send(csv);
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
-/* ============================================================
-   CREAR NOVEDAD - INCAPACIDAD
-   ============================================================ */
-
-router.post('/api/nomina/novedades/incapacidad', proteger, uploadSoporte.single('soporte'), async (req, res) => {
-    const db = req.app.get('db');
-    let connection = null;
-
+router.put('/historial/:id/restaurar', requiereSesion, async (req, res) => {
     try {
-        const usuarioId = req.session.usuarioID;
-        const empleadoId = req.session.empleadoID;
-
-        if (!usuarioId || !empleadoId) {
-            if (req.file) fs.unlinkSync(req.file.path);
-            return responderError(res, 'La sesión del usuario no es válida.', 401);
+        const db = getDB(req);
+        if (!esAdmin(req)) {
+            const [nov] = await db.query(`SELECT empleado_id FROM nomina_novedades WHERE id = ?`, [req.params.id]);
+            if (!nov.length || Number(nov[0].empleado_id) !== Number(req.session.empleadoID)) return res.status(403).json({ success: false, message: 'No autorizado' });
         }
-
-        const { tipo_novedad_id, tipo_incapacidad, fecha_inicio, fecha_fin, cantidad_dias, observacion } = req.body;
-
-        if (!tipo_novedad_id) return responderError(res, 'No se recibió el tipo de novedad.', 400);
-        if (!tipo_incapacidad) return responderError(res, 'Debes seleccionar el tipo de incapacidad.', 400);
-        if (!fecha_inicio) return responderError(res, 'Debes indicar la fecha de inicio.', 400);
-        if (!fecha_fin) return responderError(res, 'Debes indicar la fecha de finalización.', 400);
-        if (!cantidad_dias || Number(cantidad_dias) <= 0) return responderError(res, 'La cantidad de días no es válida.', 400);
-        if (!req.file) return responderError(res, 'Debes adjuntar el soporte médico.', 400);
-
-        connection = await db.getConnection();
-        await connection.beginTransaction();
-
-        const [resultadoNovedad] = await connection.query(`
-            INSERT INTO nomina_novedades (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion, estado, usuario_creacion, fecha_creacion)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'APROBADA', ?, NOW())
-        `, [empleadoId, tipo_novedad_id, fecha_inicio, fecha_fin, cantidad_dias, 'Incapacidad', observacion || null, usuarioId]);
-
-        const novedadId = resultadoNovedad.insertId;
-
-        await connection.query(`
-            INSERT INTO nomina_novedades_incapacidades (novedad_id, empleado_id, tipo_incapacidad, fecha_inicio, fecha_fin, cantidad_dias, observacion, usuario_id, fecha_registro)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
-        `, [novedadId, empleadoId, tipo_incapacidad, fecha_inicio, fecha_fin, cantidad_dias, observacion || null, usuarioId]);
-
-        const extension = path.extname(req.file.originalname).replace('.', '').toLowerCase();
-        const rutaArchivo = `/uploads/nomina/novedades/soportes/${req.file.filename}`;
-
-        await connection.query(`
-            INSERT INTO nomina_novedades_soportes (novedad_id, nombre_archivo, nombre_original, extension, tipo_mime, ruta_archivo, usuario_id, fecha_subida)
-            VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
-        `, [novedadId, req.file.filename, req.file.originalname, extension, req.file.mimetype, rutaArchivo, usuarioId]);
-
-        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'APROBADA', usuarioId, comentario: 'Creación (incapacidad)' });
-
-        await connection.commit();
-        return responderOk(res, { message: 'La incapacidad fue registrada correctamente.', novedad_id: novedadId }, 201);
-
-    } catch (error) {
-        console.error('ERROR REGISTRANDO INCAPACIDAD:', error);
-        if (connection) try { await connection.rollback(); } catch (e) {}
-        if (req.file) try { if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path); } catch (e) {}
-        return responderError(res, error.message || 'No fue posible registrar la incapacidad.', 500);
-    } finally {
-        if (connection) connection.release();
-    }
-});
-
-/* ============================================================
-   CREAR NOVEDAD - PERMISO
-   ============================================================ */
-
-router.post('/api/nomina/novedades/permiso', proteger, async (req, res) => {
-    const db = req.app.get('db');
-    let connection = null;
-
-    try {
-        const usuarioId = req.session.usuarioID;
-        const empleadoId = req.session.empleadoID;
-
-        if (!usuarioId || !empleadoId) return responderError(res, 'La sesión del usuario no es válida.', 401);
-
-        const { tipo_novedad_id, tipo_permiso, fecha_permiso, hora_inicio, hora_fin, cantidad_horas, motivo, observacion } = req.body;
-
-        if (!tipo_novedad_id) return responderError(res, 'No se recibió el tipo de novedad.', 400);
-        if (!['REMUNERADO', 'NO_REMUNERADO', 'COMPENSATORIO'].includes(tipo_permiso)) return responderError(res, 'El tipo de permiso no es válido.', 400);
-        if (!fecha_permiso) return responderError(res, 'Debes indicar la fecha del permiso.', 400);
-        if (!hora_inicio || !hora_fin) return responderError(res, 'Debes indicar la hora de inicio y finalización.', 400);
-        if (!cantidad_horas || Number(cantidad_horas) <= 0) return responderError(res, 'La cantidad de horas no es válida.', 400);
-        if (!motivo || !motivo.trim()) return responderError(res, 'Debes indicar el motivo del permiso.', 400);
-
-        connection = await db.getConnection();
-        await connection.beginTransaction();
-
-        const [resultadoNovedad] = await connection.query(`
-            INSERT INTO nomina_novedades (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, cantidad_dias, cantidad_horas, motivo, observacion, estado, usuario_creacion, fecha_creacion)
-            VALUES (?, ?, ?, ?, 1, ?, ?, ?, 'PENDIENTE', ?, NOW())
-        `, [empleadoId, tipo_novedad_id, fecha_permiso, fecha_permiso, cantidad_horas, motivo, observacion || null, usuarioId]);
-
-        const novedadId = resultadoNovedad.insertId;
-
-        await connection.query(`
-            INSERT INTO nomina_novedades_permisos (novedad_id, empleado_id, tipo_permiso, fecha_permiso, hora_inicio, hora_fin, cantidad_horas, motivo, observacion, usuario_id, fecha_registro)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-        `, [novedadId, empleadoId, tipo_permiso, fecha_permiso, hora_inicio, hora_fin, cantidad_horas, motivo, observacion || null, usuarioId]);
-
-        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'PENDIENTE', usuarioId, comentario: 'Creación (permiso)' });
-
-        await connection.commit();
-        return responderOk(res, { message: 'El permiso fue registrado correctamente.', novedad_id: novedadId }, 201);
-
-    } catch (error) {
-        console.error('ERROR REGISTRANDO PERMISO:', error);
-        if (connection) try { await connection.rollback(); } catch (e) {}
-        return responderError(res, error.message || 'No fue posible registrar el permiso.', 500);
-    } finally {
-        if (connection) connection.release();
-    }
-});
-
-/* ============================================================
-   CREAR NOVEDAD - AUSENCIA
-   ============================================================ */
-
-router.post('/api/nomina/novedades/ausencia', proteger, uploadSoporte.single('soporte'), async (req, res) => {
-    const db = req.app.get('db');
-    let connection = null;
-
-    try {
-        const usuarioId = req.session.usuarioID;
-        const empleadoId = req.session.empleadoID;
-
-        if (!usuarioId || !empleadoId) {
-            if (req.file) fs.unlinkSync(req.file.path);
-            return responderError(res, 'La sesión del usuario no es válida.', 401);
-        }
-
-        const { tipo_novedad_id, tipo_ausencia, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion } = req.body;
-
-        if (!tipo_novedad_id) return responderError(res, 'No se recibió el tipo de novedad.', 400);
-        if (!['JUSTIFICADA', 'INJUSTIFICADA'].includes(tipo_ausencia)) return responderError(res, 'El tipo de ausencia no es válido.', 400);
-        if (!fecha_inicio || !fecha_fin) return responderError(res, 'Debes indicar el rango de fechas.', 400);
-        if (!cantidad_dias || Number(cantidad_dias) <= 0) return responderError(res, 'La cantidad de días no es válida.', 400);
-        if (!motivo || !motivo.trim()) return responderError(res, 'Debes indicar el motivo.', 400);
-
-        if (tipo_ausencia === 'JUSTIFICADA' && !req.file) return responderError(res, 'Debes adjuntar el soporte para una ausencia justificada.', 400);
-        if (tipo_ausencia === 'INJUSTIFICADA' && req.file) fs.unlinkSync(req.file.path);
-
-        connection = await db.getConnection();
-        await connection.beginTransaction();
-
-        const [resultadoNovedad] = await connection.query(`
-            INSERT INTO nomina_novedades (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion, estado, usuario_creacion, fecha_creacion)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'PENDIENTE', ?, NOW())
-        `, [empleadoId, tipo_novedad_id, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion || null, usuarioId]);
-
-        const novedadId = resultadoNovedad.insertId;
-
-        await connection.query(`
-            INSERT INTO nomina_novedades_ausencias (novedad_id, empleado_id, tipo_ausencia, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion, usuario_id, fecha_registro)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-        `, [novedadId, empleadoId, tipo_ausencia, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion || null, usuarioId]);
-
-        if (tipo_ausencia === 'JUSTIFICADA' && req.file) {
-            const extension = path.extname(req.file.originalname).replace('.', '').toLowerCase();
-            const rutaArchivo = `/uploads/nomina/novedades/soportes/${req.file.filename}`;
-            await connection.query(`
-                INSERT INTO nomina_novedades_soportes (novedad_id, nombre_archivo, nombre_original, extension, tipo_mime, ruta_archivo, usuario_id, fecha_subida)
-                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
-            `, [novedadId, req.file.filename, req.file.originalname, extension, req.file.mimetype, rutaArchivo, usuarioId]);
-        }
-
-        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'PENDIENTE', usuarioId, comentario: 'Creación (ausencia)' });
-
-        await connection.commit();
-        return responderOk(res, { message: 'La ausencia fue registrada correctamente.', novedad_id: novedadId }, 201);
-
-    } catch (error) {
-        console.error('ERROR REGISTRANDO AUSENCIA:', error);
-        if (connection) try { await connection.rollback(); } catch (e) {}
-        if (req.file) try { if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path); } catch (e) {}
-        return responderError(res, error.message || 'No fue posible registrar la ausencia.', 500);
-    } finally {
-        if (connection) connection.release();
-    }
-});
-
-/* ============================================================
-   CREAR NOVEDAD - LICENCIA
-   ============================================================ */
-
-router.post('/api/nomina/novedades/licencia', proteger, async (req, res) => {
-    const db = req.app.get('db');
-    let connection = null;
-
-    try {
-        const usuarioId = req.session.usuarioID;
-        if (!usuarioId) return responderError(res, 'La sesión no es válida.', 401);
-
-        const { tipo_novedad_id, empleado_id, tipo_licencia, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion } = req.body;
-
-        if (!tipo_novedad_id) return responderError(res, 'No se recibió el tipo de novedad.', 400);
-        if (!tipo_licencia) return responderError(res, 'El tipo de licencia es obligatorio.', 400);
+        await db.query(`UPDATE nomina_novedades SET estado = 'PENDIENTE', observacion_rechazo = NULL WHERE id = ?`, [req.params.id]);
+        await db.query(`
+            INSERT INTO nomina_novedades_historial 
+            (novedad_id, estado_anterior, estado_nuevo, observacion, usuario_id, fecha_registro) 
+            VALUES (?, 'EN_HISTORIAL', 'PENDIENTE', 'Restaurada', ?, NOW())
+        `, [req.params.id, req.session.usuarioID]);
         
-        // 🔥 SE ELIMINÓ LA RESTRICCIÓN (Antes solo dejaba MATERNIDAD y PATERNIDAD)
-        // Ahora acepta LUTO, CITA_MEDICA, VOTO, etc.
-        
-        if (!fecha_inicio || !fecha_fin) return responderError(res, 'Debes indicar el rango de fechas.', 400);
-        if (!cantidad_dias || Number(cantidad_dias) <= 0) return responderError(res, 'La cantidad de días no es válida.', 400);
-
-        // 🔥 Si es Admin/Super Admin puede elegir empleado; si no, usa el de la sesión
-        const rolLimpio = String(req.session.rol || '').toLowerCase().trim().replace(/\s+/g, ' ');
-        const esAdmin = ROLES_ACCESO_TOTAL.includes(rolLimpio);
-
-        const empleadoFinal = esAdmin
-            ? Number(empleado_id || req.session.empleadoID)
-            : Number(req.session.empleadoID);
-
-        if (!empleadoFinal) return responderError(res, 'No se pudo determinar el empleado.', 400);
-
-        // Si el frontend envía observación pero no motivo, usamos la observación como motivo principal
-        const motivoFinal = motivo || observacion || 'Licencia/Permiso legal';
-        const observacionFinal = observacion || null;
-
-        connection = await db.getConnection();
-        await connection.beginTransaction();
-
-        const [resultadoNovedad] = await connection.query(`
-            INSERT INTO nomina_novedades (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion, estado, usuario_creacion, usuario_revision, fecha_creacion, fecha_revision)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 'APROBADA', ?, ?, NOW(), NOW())
-        `, [empleadoFinal, tipo_novedad_id, fecha_inicio, fecha_fin, cantidad_dias, motivoFinal, observacionFinal, usuarioId, usuarioId]);
-
-        const novedadId = resultadoNovedad.insertId;
-
-        await connection.query(`
-            INSERT INTO nomina_novedades_licencias (novedad_id, empleado_id, tipo_licencia, fecha_inicio, fecha_fin, cantidad_dias, motivo, observacion, usuario_id, fecha_registro)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-        `, [novedadId, empleadoFinal, tipo_licencia, fecha_inicio, fecha_fin, cantidad_dias, motivoFinal, observacionFinal, usuarioId]);
-
-        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'APROBADA', usuarioId, comentario: `Creación (${tipo_licencia})` });
-
-        await connection.commit();
-        return responderOk(res, { message: 'La licencia fue registrada y aprobada.', novedad_id: novedadId }, 201);
-
-    } catch (error) {
-        if (connection) try { await connection.rollback(); } catch (_) {}
-        return responderError(res, error.message || 'No fue posible registrar la licencia.', 500);
-    } finally {
-        if (connection) connection.release();
-    }
+        res.json({ success: true, message: 'Restaurada' });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
-/* ============================================================
-   CREAR NOVEDAD - HORAS EXTRA / RECARGOS
-   ============================================================ */
-
-router.post('/api/nomina/novedades/horas-extra', proteger, async (req, res) => {
-    const db = req.app.get('db');
-    let connection = null;
-
+router.delete('/historial/:id', requiereSesion, async (req, res) => {
     try {
-        const usuarioId = req.session.usuarioID;
-        const empleadoId = req.session.empleadoID;
+        const db = getDB(req);
+        const { password } = req.body;
+        if (!password) return res.status(400).json({ success: false, message: 'Ingresa tu contraseña' });
 
-        if (!usuarioId || !empleadoId) return responderError(res, 'La sesión no es válida.', 401);
-
-        const { tipo_novedad_id, tipo_hora, fecha_trabajo, hora_inicio, hora_fin, cantidad_horas, observacion } = req.body;
-
-        if (!tipo_novedad_id) return responderError(res, 'No se recibió el tipo de novedad.', 400);
-        if (!tipo_hora) return responderError(res, 'Debes seleccionar el tipo de hora o recargo.', 400);
-        if (!fecha_trabajo) return responderError(res, 'Debes indicar la fecha de trabajo.', 400);
-        if (!hora_inicio || !hora_fin) return responderError(res, 'Debes indicar la hora de inicio y fin.', 400);
-        if (!cantidad_horas || Number(cantidad_horas) <= 0) return responderError(res, 'La cantidad de horas no es válida.', 400);
-
-        connection = await db.getConnection();
-        await connection.beginTransaction();
-
-        const [inicioHora, inicioMinuto] = hora_inicio.split(':').map(Number);
-        const [finHora, finMinuto] = hora_fin.split(':').map(Number);
-        const minutosInicio = (inicioHora * 60) + inicioMinuto;
-        const minutosFin = (finHora * 60) + finMinuto;
-
-        if (minutosFin <= minutosInicio) throw new Error('La hora de finalización debe ser posterior a la de inicio.');
-
-        const horasCalculadas = (minutosFin - minutosInicio) / 60;
-
-        if (Math.abs(horasCalculadas - Number(cantidad_horas)) > 0.01) {
-            throw new Error('La cantidad de horas enviada no coincide con las horas de inicio y fin.');
+        if (!esAdmin(req)) {
+            const [nov] = await db.query(`SELECT empleado_id FROM nomina_novedades WHERE id = ?`, [req.params.id]);
+            if (!nov.length || Number(nov[0].empleado_id) !== Number(req.session.empleadoID)) return res.status(403).json({ success: false, message: 'No autorizado' });
         }
 
-        const [resultadoNovedad] = await connection.query(`
-            INSERT INTO nomina_novedades (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, hora_inicio, hora_fin, cantidad_dias, cantidad_horas, motivo, observacion, estado, usuario_creacion, fecha_creacion)
-            VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, 'PENDIENTE', ?, NOW())
-        `, [empleadoId, tipo_novedad_id, fecha_trabajo, fecha_trabajo, hora_inicio, hora_fin, horasCalculadas, tipo_hora, observacion || null, usuarioId]);
+        const passOk = await verificarPassword(db, req.session.usuarioID, password);
+        if (!passOk) return res.status(403).json({ success: false, message: 'Contraseña incorrecta' });
 
-        const novedadId = resultadoNovedad.insertId;
-
-        await connection.query(`
-            INSERT INTO nomina_novedades_horas_extra (novedad_id, empleado_id, tipo_hora, fecha_trabajo, hora_inicio, hora_fin, cantidad_horas, observacion, usuario_id, fecha_registro)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-        `, [novedadId, empleadoId, tipo_hora, fecha_trabajo, hora_inicio, hora_fin, horasCalculadas, observacion || null, usuarioId]);
-
-        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'PENDIENTE', usuarioId, comentario: 'Creación (horas extra)' });
-
-        await connection.commit();
-        return responderOk(res, { message: 'Horas extra registradas correctamente.', novedad_id: novedadId, cantidad_horas: horasCalculadas }, 201);
-
-    } catch (error) {
-        if (connection) try { await connection.rollback(); } catch (_) {}
-        return responderError(res, error.message || 'No fue posible registrar las horas extra.', 400);
-    } finally {
-        if (connection) connection.release();
-    }
+        const [soportes] = await db.query(`SELECT ruta_archivo FROM nomina_novedades_soportes WHERE novedad_id = ?`, [req.params.id]);
+        for (const s of soportes) {
+            const filePath = path.join(__dirname, '..', s.ruta_archivo);
+            if (fs.existsSync(filePath)) { try { fs.unlinkSync(filePath); } catch (e) {} }
+        }
+        await db.query(`DELETE FROM nomina_novedades_soportes WHERE novedad_id = ?`, [req.params.id]);
+        await db.query(`DELETE FROM nomina_novedades_historial WHERE novedad_id = ?`, [req.params.id]);
+        await db.query(`DELETE FROM nomina_novedades WHERE id = ?`, [req.params.id]);
+        res.json({ success: true, message: 'Eliminado definitivamente' });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
-/* ============================================================
-   CREAR NOVEDAD - DESCUENTO
-   ============================================================ */
+// ============================================================
+// 🔹 NOVEDADES (CRUD)
+// ============================================================
 
-router.post('/api/nomina/novedades/descuento', proteger, uploadSoporte.single('soporte'), async (req, res) => {
-    const db = req.app.get('db');
-    let connection = null;
-
+router.get('/', requiereSesion, async (req, res) => {
     try {
-        const usuarioId = req.session.usuarioID;
-        const empleadoId = req.session.empleadoID;
-
-        if (!usuarioId || !empleadoId) {
-            if (req.file) fs.unlinkSync(req.file.path);
-            return responderError(res, 'La sesión no es válida.', 401);
-        }
-
-        const { tipo_novedad_id, concepto, valor, observacion } = req.body;
-
-        if (!tipo_novedad_id || !concepto || !valor) {
-            throw new Error('Faltan datos obligatorios del descuento.');
-        }
-
-        connection = await db.getConnection();
-        await connection.beginTransaction();
-
-        const [resultadoNovedad] = await connection.query(`
-            INSERT INTO nomina_novedades (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, motivo, observacion, estado, usuario_creacion, fecha_creacion)
-            VALUES (?, ?, CURDATE(), CURDATE(), ?, ?, 'PENDIENTE', ?, NOW())
-        `, [empleadoId, tipo_novedad_id, concepto, observacion || null, usuarioId]);
-
-        const novedadId = resultadoNovedad.insertId;
-        
-        if (req.file) {
-            const extension = path.extname(req.file.originalname).replace('.', '').toLowerCase();
-            const rutaArchivo = `/uploads/nomina/novedades/soportes/${req.file.filename}`;
-            await connection.query(`
-                INSERT INTO nomina_novedades_soportes (novedad_id, nombre_archivo, nombre_original, extension, tipo_mime, ruta_archivo, usuario_id, fecha_subida)
-                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
-            `, [novedadId, req.file.filename, req.file.originalname, extension, req.file.mimetype, rutaArchivo, usuarioId]);
-        }
-
-        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'PENDIENTE', usuarioId, comentario: 'Creación (descuento)' });
-
-        await connection.commit();
-        return responderOk(res, { message: 'Descuento registrado correctamente.', novedad_id: novedadId }, 201);
-
-    } catch (error) {
-        if (connection) try { await connection.rollback(); } catch (_) {}
-        if (req.file) try { if (fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path); } catch (e) {}
-        return responderError(res, error.message || 'No fue posible registrar el descuento.', 500);
-    } finally {
-        if (connection) connection.release();
-    }
+        const db = getDB(req);
+        let sql = `
+            SELECT n.*, e.nombre AS empleado_nombre, e.numero_documento, t.nombre AS tipo_novedad, t.categoria, n.id AS id_historial
+            FROM nomina_novedades n
+            LEFT JOIN empleados e ON e.id = n.empleado_id
+            LEFT JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
+            WHERE n.estado <> 'EN_HISTORIAL'
+        `;
+        const params = [];
+        if (!esAdmin(req)) { sql += ` AND n.empleado_id = ?`; params.push(req.session.empleadoID); }
+        sql += ` ORDER BY n.fecha_creacion DESC`;
+        const [rows] = await db.query(sql, params);
+        res.json(rows);
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
-/* ============================================================
-   CREAR NOVEDAD - INGRESO
-   ============================================================ */
-
-router.post('/api/nomina/novedades/ingreso', proteger, async (req, res) => {
-    const db = req.app.get('db');
-    let connection = null;
-
+router.get('/kpis', requiereSesion, async (req, res) => {
     try {
-        const usuarioId = req.session.usuarioID;
-        const empleadoId = req.session.empleadoID;
-
-        if (!usuarioId || !empleadoId) return responderError(res, 'La sesión no es válida.', 401);
-
-        const { tipo_novedad_id, concepto, valor, observacion } = req.body;
-
-        if (!tipo_novedad_id || !concepto || !valor) {
-            throw new Error('Faltan datos obligatorios del ingreso.');
-        }
-
-        connection = await db.getConnection();
-        await connection.beginTransaction();
-
-        const [resultadoNovedad] = await connection.query(`
-            INSERT INTO nomina_novedades (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, motivo, observacion, estado, usuario_creacion, fecha_creacion)
-            VALUES (?, ?, CURDATE(), CURDATE(), ?, ?, 'PENDIENTE', ?, NOW())
-        `, [empleadoId, tipo_novedad_id, concepto, observacion || null, usuarioId]);
-
-        const novedadId = resultadoNovedad.insertId;
-
-        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'PENDIENTE', usuarioId, comentario: 'Creación (ingreso)' });
-
-        await connection.commit();
-        return responderOk(res, { message: 'Ingreso registrado correctamente.', novedad_id: novedadId }, 201);
-
-    } catch (error) {
-        if (connection) try { await connection.rollback(); } catch (_) {}
-        return responderError(res, error.message || 'No fue posible registrar el ingreso.', 500);
-    } finally {
-        if (connection) connection.release();
-    }
+        const db = getDB(req);
+        let sql = `SELECT estado, COUNT(*) AS total FROM nomina_novedades`;
+        const params = [];
+        if (!esAdmin(req)) { sql += ` WHERE empleado_id = ?`; params.push(req.session.empleadoID); }
+        sql += ` GROUP BY estado`;
+        const [rows] = await db.query(sql, params);
+        const kpis = { pendientes: 0, aprobadas: 0, rechazadas: 0, historial: 0 };
+        rows.forEach(r => {
+            if (r.estado === 'PENDIENTE') kpis.pendientes = r.total;
+            if (r.estado === 'APROBADA') kpis.aprobadas = r.total;
+            if (r.estado === 'RECHAZADA') kpis.rechazadas = r.total;
+            if (r.estado === 'EN_HISTORIAL') kpis.historial = r.total;
+        });
+        res.json({ success: true, kpis });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
-/* ============================================================
-   CREAR NOVEDAD - PRÉSTAMO
-   ============================================================ */
-
-router.post('/api/nomina/novedades/prestamo', proteger, async (req, res) => {
-    const db = req.app.get('db');
-    let connection = null;
-
+router.get('/tipos', requiereSesion, async (req, res) => {
     try {
-        const usuarioId = req.session.usuarioID;
-        const empleadoId = req.session.empleadoID;
-
-        if (!usuarioId || !empleadoId) return responderError(res, 'La sesión no es válida.', 401);
-
-        const { tipo_novedad_id, monto, cuotas, observacion } = req.body;
-
-        if (!tipo_novedad_id || !monto || !cuotas) {
-            throw new Error('Faltan datos obligatorios del préstamo.');
-        }
-
-        connection = await db.getConnection();
-        await connection.beginTransaction();
-
-        const [resultadoNovedad] = await connection.query(`
-            INSERT INTO nomina_novedades (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin, motivo, observacion, estado, usuario_creacion, fecha_creacion)
-            VALUES (?, ?, CURDATE(), CURDATE(), 'Solicitud de préstamo', ?, 'PENDIENTE', ?, NOW())
-        `, [empleadoId, tipo_novedad_id, observacion || null, usuarioId]);
-
-        const novedadId = resultadoNovedad.insertId;
-
-        await registrarHistorial(connection, { novedadId, estadoAnterior: null, estadoNuevo: 'PENDIENTE', usuarioId, comentario: 'Creación (préstamo)' });
-
-        await connection.commit();
-        return responderOk(res, { message: 'Préstamo registrado correctamente.', novedad_id: novedadId }, 201);
-
-    } catch (error) {
-        if (connection) try { await connection.rollback(); } catch (_) {}
-        return responderError(res, error.message || 'No fue posible registrar el préstamo.', 500);
-    } finally {
-        if (connection) connection.release();
-    }
+        const db = getDB(req);
+        const [rows] = await db.query(`SELECT id, nombre, codigo, categoria, descripcion, permite_empleado, requiere_soporte, requiere_aprobacion FROM nomina_novedades_tipos WHERE activo = 1 ORDER BY categoria, nombre`);
+        res.json({ success: true, tipos: rows });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
-/* ============================================================
-   CONFIGURACIÓN: TIPOS DE HORAS EXTRA
-   ============================================================ */
-
-router.get('/api/nomina/configuracion/horas-extra', proteger, async (req, res) => {
+router.get('/:id', requiereSesion, async (req, res) => {
     try {
-        const db = req.app.get('db');
+        const db = getDB(req);
         const [rows] = await db.query(`
-            SELECT id, codigo, nombre, descripcion, porcentaje_recargo, factor_pago, formula, 
-                   limite_diario, limite_semanal, fecha_inicio, fecha_fin, activo
-            FROM nomina_tipos_horas_extra WHERE activo = 1 ORDER BY id ASC
-        `);
-        res.json({ ok: true, data: rows });
-    } catch (error) {
-        return responderError(res, 'No fue posible cargar las horas extra.', 500);
-    }
+            SELECT n.*, e.nombre AS empleado_nombre, e.numero_documento, t.nombre AS tipo_novedad, n.id AS id_historial
+            FROM nomina_novedades n
+            LEFT JOIN empleados e ON e.id = n.empleado_id
+            LEFT JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
+            WHERE n.id = ?
+        `, [req.params.id]);
+        if (!rows.length) return res.status(404).json({ success: false, message: 'No encontrada' });
+        if (!esAdmin(req) && Number(rows[0].empleado_id) !== Number(req.session.empleadoID)) return res.status(403).json({ success: false, message: 'No autorizado' });
+        const [soportes] = await db.query(`SELECT * FROM nomina_novedades_soportes WHERE novedad_id = ?`, [req.params.id]);
+        const [historial] = await db.query(`SELECT * FROM nomina_novedades_historial WHERE novedad_id = ? ORDER BY fecha_registro ASC`, [req.params.id]);
+        res.json({ success: true, novedad: rows[0], soportes, historial });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
-/* ============================================================
-   CONFIGURACIÓN: TIPOS DE RECARGOS
-   ============================================================ */
+// ============================================================
+// 🔹 POST
+// ============================================================
 
-router.get('/api/nomina/configuracion/recargos', proteger, async (req, res) => {
+function forzarEmpleadoPropio(req, data) {
+    if (!esAdmin(req)) data.empleado_id = req.session.empleadoID;
+    return data;
+}
+
+router.post('/ausencia', requiereSesion, upload.single('soporte'), async (req, res) => {
+    try { const id = await crearNovedad(req, forzarEmpleadoPropio(req, normalizarBody(req.body)), req.file ? [req.file] : []); res.json({ success: true, id }); } 
+    catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+router.post('/incapacidad', requiereSesion, upload.single('soporte'), async (req, res) => {
+    try { const id = await crearNovedad(req, forzarEmpleadoPropio(req, normalizarBody(req.body)), req.file ? [req.file] : []); res.json({ success: true, id }); } 
+    catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+router.post('/permiso', requiereSesion, async (req, res) => {
+    try { const id = await crearNovedad(req, forzarEmpleadoPropio(req, normalizarBody(req.body))); res.json({ success: true, id }); } 
+    catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+router.post('/licencia', requiereSesion, async (req, res) => {
+    try { const id = await crearNovedad(req, forzarEmpleadoPropio(req, normalizarBody(req.body))); res.json({ success: true, id }); } 
+    catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+router.post('/vacaciones', requiereSesion, async (req, res) => {
     try {
-        const db = req.app.get('db');
-        const [rows] = await db.query(`
-            SELECT id, codigo, nombre, descripcion, porcentaje_recargo, factor_pago, formula, 
-                   fecha_inicio, fecha_fin, activo
-            FROM nomina_tipos_recargos WHERE activo = 1 ORDER BY id ASC
-        `);
-        res.json({ ok: true, data: rows });
-    } catch (error) {
-        return responderError(res, 'No fue posible cargar los recargos.', 500);
-    }
+        const data = forzarEmpleadoPropio(req, normalizarBody(req.body));
+        if (!data.motivo) data.motivo = 'Vacaciones';
+        const id = await crearNovedad(req, data); res.json({ success: true, id }); 
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
-/* ============================================================
-   ELIMINAR NOVEDAD (Físicamente de la base de datos)
-   ============================================================ */
+router.post('/horas-extra', requiereSesion, async (req, res) => {
+    try { const id = await crearNovedad(req, forzarEmpleadoPropio(req, normalizarBody(req.body))); res.json({ success: true, id }); } 
+    catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
 
-router.delete('/api/nomina/novedades/:id', proteger, async (req, res) => {
-    const db = req.app.get('db');
+router.post('/descuento', requiereSesion, upload.single('soporte'), async (req, res) => {
+    try { const id = await crearNovedad(req, forzarEmpleadoPropio(req, normalizarBody(req.body)), req.file ? [req.file] : []); res.json({ success: true, id }); } 
+    catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+router.post('/ingreso', requiereSesion, async (req, res) => {
+    try { const id = await crearNovedad(req, forzarEmpleadoPropio(req, normalizarBody(req.body))); res.json({ success: true, id }); } 
+    catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+router.post('/prestamo', requiereSesion, async (req, res) => {
+    try { const id = await crearNovedad(req, forzarEmpleadoPropio(req, normalizarBody(req.body))); res.json({ success: true, id }); } 
+    catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+// ============================================================
+// 🔹 PATCH (Solo Admin)
+// ============================================================
+
+router.patch('/:id/aprobar', soloAdmin, async (req, res) => {
     try {
-        const novedadId = Number(req.params.id);
-        
-        await db.query('DELETE FROM nomina_novedades WHERE id = ?', [novedadId]);
-        
-        return responderOk(res, { message: 'Novedad eliminada permanentemente.' });
-    } catch (error) {
-        console.error('ERROR ELIMINANDO NOVEDAD:', error);
-        return responderError(res, 'No fue posible eliminar la novedad.', 500);
-    }
+        const db = getDB(req);
+        const [actual] = await db.query(`SELECT estado FROM nomina_novedades WHERE id = ?`, [req.params.id]);
+        if (!actual.length) return res.status(404).json({ success: false, message: 'No encontrada' });
+        await db.query(`UPDATE nomina_novedades SET estado = 'APROBADA', usuario_revision = ?, fecha_revision = NOW() WHERE id = ?`, [req.session.usuarioID, req.params.id]);
+        await db.query(`
+            INSERT INTO nomina_novedades_historial 
+            (novedad_id, estado_anterior, estado_nuevo, usuario_id, fecha_registro) 
+            VALUES (?, ?, 'APROBADA', ?, NOW())
+        `, [req.params.id, actual[0].estado, req.session.usuarioID]);
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
-/* ============================================================
-   EXPORT
-   ============================================================ */
+router.patch('/:id/rechazar', soloAdmin, async (req, res) => {
+    try {
+        const db = getDB(req);
+        const { observacion } = req.body;
+        const [actual] = await db.query(`SELECT estado FROM nomina_novedades WHERE id = ?`, [req.params.id]);
+        if (!actual.length) return res.status(404).json({ success: false, message: 'No encontrada' });
+        await db.query(`UPDATE nomina_novedades SET estado = 'RECHAZADA', observacion_rechazo = ?, usuario_revision = ?, fecha_revision = NOW() WHERE id = ?`, [observacion || null, req.session.usuarioID, req.params.id]);
+        await db.query(`
+            INSERT INTO nomina_novedades_historial 
+            (novedad_id, estado_anterior, estado_nuevo, observacion, usuario_id, fecha_registro) 
+            VALUES (?, ?, 'RECHAZADA', ?, ?, NOW())
+        `, [req.params.id, actual[0].estado, observacion || null, req.session.usuarioID]);
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+// ============================================================
+// 🔹 DELETE (Solo Admin)
+// ============================================================
+
+router.delete('/:id', soloAdmin, async (req, res) => {
+    try {
+        const db = getDB(req);
+        const [actual] = await db.query(`SELECT estado FROM nomina_novedades WHERE id = ?`, [req.params.id]);
+        if (!actual.length) return res.status(404).json({ success: false, message: 'No encontrada' });
+        await db.query(`UPDATE nomina_novedades SET estado = 'EN_HISTORIAL' WHERE id = ?`, [req.params.id]);
+        await db.query(`
+            INSERT INTO nomina_novedades_historial 
+            (novedad_id, estado_anterior, estado_nuevo, usuario_id, fecha_registro) 
+            VALUES (?, ?, 'EN_HISTORIAL', ?, NOW())
+        `, [req.params.id, actual[0].estado, req.session.usuarioID]);
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+// ============================================================
+// 🔹 CIERRE DE PERÍODO (Solo Admin)
+// ============================================================
+
+router.post('/cierre-periodo/validar', soloAdmin, async (req, res) => {
+    try {
+        const db = getDB(req);
+        const [rows] = await db.query(`SELECT id FROM nomina_novedades WHERE estado = 'PENDIENTE' AND DATE_FORMAT(fecha_inicio, '%Y-%m') = ?`, [req.body.periodo]);
+        res.json({ success: true, pendientes: rows });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+router.post('/cierre-periodo', soloAdmin, async (req, res) => {
+    try {
+        const db = getDB(req);
+        const [result] = await db.query(`UPDATE nomina_novedades SET estado = 'PROCESADA' WHERE estado = 'APROBADA' AND DATE_FORMAT(fecha_inicio, '%Y-%m') = ?`, [req.body.periodo]);
+        res.json({ success: true, actualizadas: result.affectedRows });
+    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
 
 module.exports = router;

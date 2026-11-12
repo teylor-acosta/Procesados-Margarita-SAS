@@ -121,7 +121,8 @@ app.use((req, res, next) => {
     next();
 });
 
-// Servir recursos estáticos sin abrir HTML directamente
+
+ // Servir recursos estáticos sin abrir HTML directamente
 app.use(express.static(
     path.join(__dirname, 'public'),
     { index: false }
@@ -147,6 +148,7 @@ app.use(
         path.join(__dirname, 'uploads')
     )
 );
+
 
 
 // ============================================

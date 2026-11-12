@@ -47,10 +47,20 @@ body {
     font-family: 'Averia Libre', cursive;
     color: var(--texto);
     overflow-x: hidden;
-    background: var(--blanco);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    
+    /* FONDO CONTINUO E INTENSO: Colores más vivos */
+    background-color: #eef5f2;
+    background-image: 
+        radial-gradient(circle at 15% 10%, rgba(74, 222, 128, 0.25) 0%, transparent 50%),
+        radial-gradient(circle at 85% 20%, rgba(37, 99, 235, 0.25) 0%, transparent 50%),
+        radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.8) 0%, transparent 60%),
+        radial-gradient(circle at 20% 70%, rgba(34, 197, 94, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 80% 90%, rgba(96, 165, 250, 0.2) 0%, transparent 50%);
+    background-attachment: fixed;
+    background-size: cover;
 }
 
 img {
@@ -79,20 +89,15 @@ button:focus-visible {
 
 .hero {
     position: relative;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     width: 100%;
     min-height: 100vh;
     min-height: 100svh;
-
     padding: 130px 8% 80px;
-
     isolation: isolate;
     overflow: hidden;
-
     background:
         linear-gradient(
             115deg,
@@ -103,49 +108,29 @@ button:focus-visible {
         url("../img/Fondo.webp") center / cover no-repeat;
 }
 
-/* Iluminación ambiental */
-
 .hero::before {
     content: "";
-
     position: absolute;
     inset: 0;
-
     background:
-        radial-gradient(
-            circle at 18% 30%,
-            rgba(34, 197, 94, 0.17),
-            transparent 35%
-        ),
-        radial-gradient(
-            circle at 85% 75%,
-            rgba(37, 99, 235, 0.17),
-            transparent 38%
-        );
-
+        radial-gradient(circle at 18% 30%, rgba(34, 197, 94, 0.17), transparent 35%),
+        radial-gradient(circle at 85% 75%, rgba(37, 99, 235, 0.17), transparent 38%);
     z-index: -1;
     pointer-events: none;
 }
 
-/* Brillo decorativo */
-
 .hero::after {
     content: "";
-
     position: absolute;
     right: -130px;
     bottom: -250px;
-
     width: 500px;
     height: 500px;
-
     border-radius: 50%;
     border: 1px solid rgba(255, 255, 255, 0.09);
-
     box-shadow:
         0 0 0 45px rgba(255, 255, 255, 0.018),
         0 0 0 90px rgba(255, 255, 255, 0.012);
-
     pointer-events: none;
     z-index: -1;
 }
@@ -158,21 +143,15 @@ button:focus-visible {
     position: fixed;
     top: 0;
     left: 0;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     width: 100%;
     padding: 20px 8%;
-
     gap: 25px;
-
     z-index: 999;
-
     background: rgba(1, 35, 24, 0.12);
     border-bottom: 1px solid transparent;
-
     transition:
         background var(--transicion),
         box-shadow var(--transicion),
@@ -181,24 +160,18 @@ button:focus-visible {
         backdrop-filter var(--transicion);
 }
 
-/* Marca */
-
 .logo-container {
     display: flex;
     align-items: center;
     gap: 15px;
-
     flex-shrink: 0;
 }
 
 .logo-container img {
     display: block;
-
     width: 64px;
     height: 64px;
-
     object-fit: contain;
-
     transition:
         transform var(--transicion-suave),
         filter var(--transicion);
@@ -211,33 +184,24 @@ button:focus-visible {
 
 .logo-text h2 {
     color: #ffffff;
-
     font-size: 23px;
     font-weight: 700;
     line-height: 1.25;
-
     transition: color var(--transicion);
 }
 
 .logo-text span {
     display: block;
-
     color: rgba(255, 255, 255, 0.78);
-
     font-size: 13px;
     line-height: 1.5;
-
     transition: color var(--transicion);
 }
-
-/* Navegación */
 
 nav ul {
     display: flex;
     align-items: center;
-
     gap: clamp(18px, 2.5vw, 38px);
-
     list-style: none;
 }
 
@@ -247,39 +211,27 @@ nav ul li {
 
 nav a {
     position: relative;
-
     display: inline-block;
-
     padding: 8px 0;
-
     color: #ffffff;
     text-decoration: none;
-
     font-size: 15px;
     font-weight: 600;
-
     transition:
         color var(--transicion),
         transform var(--transicion);
 }
 
-/* Línea animada bajo cada enlace */
-
 nav a::after {
     content: "";
-
     position: absolute;
     left: 0;
     bottom: 1px;
-
     width: 100%;
     height: 2px;
-
     background: var(--verde);
-
     transform: scaleX(0);
     transform-origin: right;
-
     transition: transform var(--transicion);
 }
 
@@ -292,33 +244,20 @@ nav a:hover::after {
     transform-origin: left;
 }
 
-/* Botón de inicio de sesión */
-
 .btn-login {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     flex-shrink: 0;
-
     padding: 13px 25px;
-
     color: #ffffff;
-    background: linear-gradient(
-        135deg,
-        var(--verde),
-        var(--verde-dark)
-    );
-
+    background: linear-gradient(135deg, var(--verde), var(--verde-dark));
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 40px;
-
     text-decoration: none;
     font-size: 14px;
     font-weight: 700;
-
     box-shadow: 0 5px 18px rgba(22, 163, 74, 0.22);
-
     transition:
         background var(--transicion),
         box-shadow var(--transicion),
@@ -327,15 +266,8 @@ nav a:hover::after {
 
 .btn-login:hover {
     color: #ffffff;
-
-    background: linear-gradient(
-        135deg,
-        var(--verde-dark),
-        var(--verde-hover)
-    );
-
+    background: linear-gradient(135deg, var(--verde-dark), var(--verde-hover));
     box-shadow: 0 9px 24px rgba(22, 163, 74, 0.34);
-
     transform: translateY(-3px);
 }
 
@@ -343,19 +275,13 @@ nav a:hover::after {
     transform: scale(0.97);
 }
 
-/* Navbar al desplazarse */
-
 .navbar.scrolled {
     padding-top: 12px;
     padding-bottom: 12px;
-
     background: rgba(255, 255, 255, 0.96);
-
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-
     border-bottom-color: rgba(226, 232, 240, 0.9);
-
     box-shadow: 0 8px 28px rgba(15, 23, 42, 0.09);
 }
 
@@ -386,66 +312,46 @@ nav a:hover::after {
 .hero-content {
     position: relative;
     z-index: 2;
-
     width: 100%;
     max-width: 920px;
-
     margin: auto;
-
     text-align: center;
-
     animation: aparecerHero 0.9s ease both;
 }
 
 .hero-logo {
     display: block;
-
     width: 150px;
     max-height: 150px;
-
     object-fit: contain;
-
     margin: 0 auto 28px;
-
     filter: drop-shadow(0 10px 28px rgba(0, 0, 0, 0.23));
-
     animation: aparecerLogo 1s ease both;
 }
 
 .hero h1 {
     margin-bottom: 24px;
-
     color: #ffffff;
-
     font-size: clamp(38px, 5vw, 64px);
     font-weight: 700;
     line-height: 1.13;
-
     letter-spacing: -1.4px;
-
     text-wrap: balance;
 }
 
 .hero p {
     max-width: 800px;
-
     margin: 0 auto 35px;
-
     color: rgba(255, 255, 255, 0.89);
-
     font-size: clamp(17px, 1.7vw, 21px);
     line-height: 1.85;
-
     text-wrap: pretty;
 }
-
-/* Botones de portada */
 
 .hero-buttons {
     display: flex;
     justify-content: center;
     align-items: center;
-
     flex-wrap: wrap;
     gap: 16px;
 }
@@ -455,17 +361,12 @@ nav a:hover::after {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     min-height: 54px;
-
     padding: 15px 30px;
-
     border-radius: 50px;
-
     text-decoration: none;
     font-size: 15px;
     font-weight: 700;
-
     transition:
         color var(--transicion),
         background var(--transicion),
@@ -476,51 +377,31 @@ nav a:hover::after {
 
 .btn-primary {
     color: #ffffff;
-
-    background: linear-gradient(
-        135deg,
-        var(--verde),
-        var(--verde-dark)
-    );
-
+    background: linear-gradient(135deg, var(--verde), var(--verde-dark));
     border: 1px solid transparent;
-
     box-shadow: 0 8px 25px rgba(22, 163, 74, 0.23);
 }
 
 .btn-primary:hover {
     color: #ffffff;
-
-    background: linear-gradient(
-        135deg,
-        var(--verde-dark),
-        var(--verde-hover)
-    );
-
+    background: linear-gradient(135deg, var(--verde-dark), var(--verde-hover));
     box-shadow: 0 12px 32px rgba(22, 163, 74, 0.32);
-
     transform: translateY(-4px);
 }
 
 .btn-secondary {
     color: #ffffff;
-
     background: rgba(255, 255, 255, 0.045);
-
     border: 1px solid rgba(255, 255, 255, 0.65);
-
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
 }
 
 .btn-secondary:hover {
     color: var(--texto);
-
     background: #ffffff;
     border-color: #ffffff;
-
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
-
     transform: translateY(-4px);
 }
 
@@ -534,31 +415,17 @@ nav a:hover::after {
 ========================================================== */
 
 @keyframes aparecerHero {
-    from {
-        opacity: 0;
-        transform: translateY(28px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes aparecerLogo {
-    from {
-        opacity: 0;
-        transform: translateY(-12px) scale(0.94);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+    from { opacity: 0; transform: translateY(-12px) scale(0.94); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* ==========================================================
-   6. ESTILOS COMUNES DE SECCIONES
+   6. ESTILOS COMUNES DE SECCIONES (ESPACIOS REDUCIDOS)
 ========================================================== */
 
 .empresa,
@@ -570,6 +437,22 @@ nav a:hover::after {
 .galeria,
 .estadisticas {
     scroll-margin-top: 85px;
+}
+
+/* Transparente para que el fondo fluya, con padding reducido a 60px */
+.empresa,
+.servicios,
+.erp,
+.proceso,
+.valores,
+.porque,
+.galeria {
+    padding: 60px 8%;
+    background: transparent !important;
+}
+
+.estadisticas {
+    padding: 60px 8%;
 }
 
 .empresa,
@@ -588,41 +471,32 @@ nav a:hover::after {
 .titulo-seccion > span,
 .titulo-estadisticas > span {
     display: inline-block;
-
     color: var(--verde-dark);
-
     font-size: 13px;
     font-weight: 700;
-
     letter-spacing: 2px;
     text-transform: uppercase;
 }
 
+/* Margen reducido de 65px a 30px */
 .titulo-seccion {
     max-width: 800px;
-
-    margin: 0 auto 65px;
-
+    margin: 0 auto 30px;
     text-align: center;
 }
 
 .titulo-seccion h2 {
     margin: 17px 0;
-
     color: var(--texto);
-
     font-size: clamp(30px, 4vw, 46px);
     font-weight: 700;
     line-height: 1.25;
-
     letter-spacing: -0.7px;
-
     text-wrap: balance;
 }
 
 .titulo-seccion p {
     color: var(--texto-secundario);
-
     font-size: 17px;
     line-height: 1.85;
 }
@@ -632,22 +506,15 @@ nav a:hover::after {
 ========================================================== */
 
 .empresa {
-    padding: 110px 8%;
-
     color: #2c3e50;
-    background: #ffffff;
 }
 
 .empresa-container {
     display: grid;
-
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.3fr);
-
     align-items: center;
-
     max-width: 1500px;
     margin: auto;
-
     gap: 70px;
 }
 
@@ -655,118 +522,78 @@ nav a:hover::after {
     display: flex;
     align-items: center;
     justify-content: center;
-
     min-width: 0;
 }
 
 .empresa-img img {
     display: block;
-
     width: 100%;
     max-width: 430px;
-
     object-fit: contain;
-
     border-radius: 24px;
-
     filter: drop-shadow(0 15px 25px rgba(15, 23, 42, 0.07));
-
-    transition:
-        transform var(--transicion-suave),
-        filter var(--transicion-suave);
+    transition: transform var(--transicion-suave), filter var(--transicion-suave);
 }
 
 .empresa-img img:hover {
     transform: scale(1.035);
-
     filter: drop-shadow(0 22px 30px rgba(15, 23, 42, 0.13));
 }
 
 .empresa-info h2 {
     margin: 18px 0;
-
     color: var(--texto);
-
     font-size: clamp(30px, 3.5vw, 42px);
     line-height: 1.3;
-
     letter-spacing: -0.6px;
 }
 
 .empresa-info p {
     color: #555;
-
     font-size: 17px;
     line-height: 1.9;
 }
 
-/* Tarjetas de empresa */
-
 .empresa-cards {
     display: grid;
-
     grid-template-columns: repeat(2, minmax(0, 1fr));
-
     align-items: stretch;
-
     gap: 24px;
-    margin-top: 35px;
+    margin-top: 25px;
 }
 
 .mini-card {
     position: relative;
-
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-
     min-width: 0;
-    min-height: 340px;
-
+    min-height: 300px;
     padding: 30px;
-
     background: #ffffff;
-
     border: 1px solid var(--borde);
     border-radius: 22px;
-
     box-shadow: var(--sombra-card);
-
     overflow: hidden;
-
-    transition:
-        transform var(--transicion-suave),
-        box-shadow var(--transicion),
-        border-color var(--transicion);
+    transition: transform var(--transicion-suave), box-shadow var(--transicion), border-color var(--transicion);
 }
 
 .mini-card::before {
     content: "";
-
     position: absolute;
     top: 0;
     left: 0;
-
     width: 100%;
     height: 4px;
-
-    background: linear-gradient(
-        90deg,
-        var(--verde),
-        var(--azul)
-    );
-
+    background: linear-gradient(90deg, var(--verde), var(--azul));
     transform: scaleX(0);
     transform-origin: left;
-
     transition: transform var(--transicion-suave);
 }
 
 .mini-card:hover {
     transform: translateY(-7px);
-
     border-color: rgba(34, 197, 94, 0.3);
-
     box-shadow: var(--sombra-hover);
 }
 
@@ -776,14 +603,9 @@ nav a:hover::after {
 
 .mini-card i {
     margin-bottom: 20px;
-
     color: var(--verde-dark);
-
     font-size: 39px;
-
-    transition:
-        transform var(--transicion),
-        color var(--transicion);
+    transition: transform var(--transicion), color var(--transicion);
 }
 
 .mini-card:hover i {
@@ -793,19 +615,15 @@ nav a:hover::after {
 
 .mini-card h4 {
     margin-bottom: 14px;
-
     color: var(--texto);
-
     font-size: 24px;
     line-height: 1.35;
 }
 
 .mini-card p {
     color: #5b6472;
-
     font-size: 15px;
     line-height: 1.85;
-
     text-align: left;
 }
 
@@ -813,72 +631,42 @@ nav a:hover::after {
    8. SERVICIOS
 ========================================================== */
 
-.servicios {
-    padding: 110px 8%;
-
-    background: #f8fafc;
-}
-
 .servicios-grid {
     display: grid;
-
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-
     max-width: 1400px;
     margin: auto;
-
     gap: 28px;
 }
 
 .servicio-card {
     position: relative;
-
     padding: 38px 30px;
-
     background: #ffffff;
-
     border: 1px solid var(--borde);
     border-radius: 21px;
-
     box-shadow: var(--sombra-card);
-
     text-align: center;
-
     overflow: hidden;
-
-    transition:
-        transform var(--transicion-suave),
-        box-shadow var(--transicion),
-        border-color var(--transicion);
+    transition: transform var(--transicion-suave), box-shadow var(--transicion), border-color var(--transicion);
 }
 
 .servicio-card::before {
     content: "";
-
     position: absolute;
     top: 0;
     left: 0;
-
     width: 100%;
     height: 4px;
-
-    background: linear-gradient(
-        90deg,
-        var(--verde),
-        var(--azul)
-    );
-
+    background: linear-gradient(90deg, var(--verde), var(--azul));
     transform: scaleX(0);
     transform-origin: left;
-
     transition: transform var(--transicion-suave);
 }
 
 .servicio-card:hover {
     transform: translateY(-9px);
-
     border-color: rgba(34, 197, 94, 0.28);
-
     box-shadow: var(--sombra-hover);
 }
 
@@ -888,16 +676,10 @@ nav a:hover::after {
 
 .servicio-card i {
     display: inline-block;
-
     margin-bottom: 22px;
-
     color: var(--verde-dark);
-
     font-size: 50px;
-
-    transition:
-        transform var(--transicion),
-        color var(--transicion);
+    transition: transform var(--transicion), color var(--transicion);
 }
 
 .servicio-card:hover i {
@@ -907,16 +689,13 @@ nav a:hover::after {
 
 .servicio-card h3 {
     margin-bottom: 15px;
-
     color: var(--texto);
-
     font-size: 23px;
     line-height: 1.35;
 }
 
 .servicio-card p {
     color: var(--texto-secundario);
-
     font-size: 15px;
     line-height: 1.85;
 }
@@ -925,77 +704,44 @@ nav a:hover::after {
    9. MÓDULOS ERP
 ========================================================== */
 
-.erp {
-    padding: 110px 8%;
-
-    background: #ffffff;
-}
-
 .erp-grid {
     display: grid;
-
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-
     max-width: 1400px;
     margin: auto;
-
     gap: 26px;
 }
 
 .erp-card {
     position: relative;
     isolation: isolate;
-
     min-width: 0;
-
     padding: 32px 26px;
-
     background: #ffffff;
-
     border: 1px solid var(--borde);
     border-radius: 20px;
-
     text-align: center;
-
     overflow: hidden;
-
-    transition:
-        transform var(--transicion-suave),
-        box-shadow var(--transicion),
-        border-color var(--transicion);
+    transition: transform var(--transicion-suave), box-shadow var(--transicion), border-color var(--transicion);
 }
-
-/* Línea de color lateral */
 
 .erp-card::before {
     content: "";
-
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
-
     width: 4px;
-
-    background: linear-gradient(
-        180deg,
-        var(--verde),
-        var(--azul)
-    );
-
+    background: linear-gradient(180deg, var(--verde), var(--azul));
     transform: scaleY(0);
     transform-origin: top;
-
     transition: transform var(--transicion-suave);
-
     z-index: -1;
 }
 
 .erp-card:hover {
     transform: translateY(-8px);
-
     border-color: rgba(34, 197, 94, 0.25);
-
     box-shadow: var(--sombra-hover);
 }
 
@@ -1005,16 +751,10 @@ nav a:hover::after {
 
 .erp-card i {
     display: inline-block;
-
     margin-bottom: 19px;
-
     color: var(--verde-dark);
-
     font-size: 47px;
-
-    transition:
-        transform var(--transicion),
-        color var(--transicion);
+    transition: transform var(--transicion), color var(--transicion);
 }
 
 .erp-card:hover i {
@@ -1024,134 +764,97 @@ nav a:hover::after {
 
 .erp-card h3 {
     margin-bottom: 13px;
-
     color: var(--texto);
-
     font-size: 22px;
     line-height: 1.4;
 }
 
 .erp-card p {
     color: var(--texto-secundario);
-
     font-size: 15px;
     line-height: 1.85;
 }
 
 /* ==========================================================
-   10. ESTADÍSTICAS
+   10. ESTADÍSTICAS (Fondo oscuro restaurado)
 ========================================================== */
 
 .estadisticas {
-    padding: 110px 8%;
-
     color: #ffffff;
-
     background:
-        linear-gradient(
-            115deg,
-            rgba(1, 38, 25, 0.91),
-            rgba(10, 25, 35, 0.88)
-        ),
+        linear-gradient(115deg, rgba(1, 38, 25, 0.91), rgba(10, 25, 35, 0.88)),
         url("../img/Fondo.webp") center / cover no-repeat;
-
     background-attachment: fixed;
 }
 
 .estadisticas-container {
     position: relative;
     z-index: 2;
-
     max-width: 1300px;
     margin: auto;
 }
 
 .titulo-estadisticas {
-    margin-bottom: 60px;
-
+    margin-bottom: 40px;
     text-align: center;
 }
 
 .titulo-estadisticas span {
     color: #7cff9b;
-
     font-size: 13px;
     font-weight: 700;
-
     letter-spacing: 2px;
     text-transform: uppercase;
 }
 
 .titulo-estadisticas h2 {
     margin: 18px 0;
-
     color: #ffffff;
-
     font-size: clamp(30px, 4vw, 46px);
     line-height: 1.3;
 }
 
 .titulo-estadisticas p {
     max-width: 800px;
-
     margin: auto;
-
     color: rgba(255, 255, 255, 0.82);
-
     font-size: 16px;
     line-height: 1.85;
 }
 
 .estadisticas-grid {
     display: grid;
-
     grid-template-columns: repeat(4, minmax(0, 1fr));
-
     gap: 22px;
 }
 
 .estadistica {
     padding: 32px 20px;
-
     background: rgba(255, 255, 255, 0.075);
-
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 22px;
-
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-
     text-align: center;
-
-    transition:
-        transform var(--transicion-suave),
-        background var(--transicion),
-        border-color var(--transicion),
-        box-shadow var(--transicion);
+    transition: transform var(--transicion-suave), background var(--transicion), border-color var(--transicion), box-shadow var(--transicion);
 }
 
 .estadistica:hover {
     transform: translateY(-7px);
-
     background: rgba(255, 255, 255, 0.13);
-
     border-color: rgba(124, 255, 155, 0.35);
-
     box-shadow: 0 14px 32px rgba(0, 0, 0, 0.13);
 }
 
 .estadistica h3 {
     margin-bottom: 10px;
-
     color: #7cff9b;
-
     font-size: clamp(34px, 4vw, 51px);
     line-height: 1.2;
 }
 
 .estadistica span {
     color: rgba(255, 255, 255, 0.9);
-
     font-size: 15px;
     letter-spacing: 0.5px;
 }
@@ -1160,54 +863,31 @@ nav a:hover::after {
    11. PROCESO — LÍNEA DE TIEMPO
 ========================================================== */
 
-.proceso {
-    padding: 110px 8%;
-
-    background: #ffffff;
-}
-
 .timeline {
     position: relative;
-
     display: grid;
-
     grid-template-columns: repeat(4, minmax(0, 1fr));
-
     max-width: 1400px;
-    margin: 75px auto 0;
-
+    margin: 50px auto 0;
     gap: 25px;
 }
 
-/* Línea conectora */
-
 .timeline::before {
     content: "";
-
     position: absolute;
     top: 53px;
-
     left: 8%;
     width: 84%;
     height: 3px;
-
-    background: linear-gradient(
-        90deg,
-        var(--verde),
-        #86efac
-    );
-
+    background: linear-gradient(90deg, var(--verde), #86efac);
     border-radius: 10px;
-
     z-index: 0;
 }
 
 .timeline-item {
     position: relative;
     z-index: 1;
-
     min-width: 0;
-
     text-align: center;
 }
 
@@ -1215,48 +895,27 @@ nav a:hover::after {
     display: flex;
     align-items: center;
     justify-content: center;
-
     width: 108px;
     height: 108px;
-
     margin: auto;
-
     background: #ffffff;
-
     border: 4px solid var(--verde);
     border-radius: 50%;
-
-    box-shadow:
-        0 10px 28px rgba(15, 23, 42, 0.09),
-        0 0 0 7px rgba(34, 197, 94, 0.07);
-
-    transition:
-        transform var(--transicion-suave),
-        background var(--transicion),
-        border-color var(--transicion),
-        box-shadow var(--transicion);
+    box-shadow: 0 10px 28px rgba(15, 23, 42, 0.09), 0 0 0 7px rgba(34, 197, 94, 0.07);
+    transition: transform var(--transicion-suave), background var(--transicion), border-color var(--transicion), box-shadow var(--transicion);
 }
 
 .timeline-item:hover .timeline-icon {
     background: var(--verde-dark);
-
     border-color: var(--verde-dark);
-
     transform: translateY(-4px) scale(1.045);
-
-    box-shadow:
-        0 15px 32px rgba(22, 163, 74, 0.2),
-        0 0 0 9px rgba(34, 197, 94, 0.09);
+    box-shadow: 0 15px 32px rgba(22, 163, 74, 0.2), 0 0 0 9px rgba(34, 197, 94, 0.09);
 }
 
 .timeline-icon i {
     color: var(--verde-dark);
-
     font-size: 39px;
-
-    transition:
-        color var(--transicion),
-        transform var(--transicion);
+    transition: color var(--transicion), transform var(--transicion);
 }
 
 .timeline-item:hover .timeline-icon i {
@@ -1266,18 +925,14 @@ nav a:hover::after {
 
 .timeline-item h3 {
     margin-top: 27px;
-
     color: var(--texto);
-
     font-size: 22px;
     line-height: 1.4;
 }
 
 .timeline-item p {
     margin-top: 12px;
-
     color: var(--texto-secundario);
-
     font-size: 15px;
     line-height: 1.85;
 }
@@ -1286,46 +941,27 @@ nav a:hover::after {
    12. VALORES
 ========================================================== */
 
-.valores {
-    padding: 110px 8%;
-
-    background: #ffffff;
-}
-
 .valores-grid {
     display: grid;
-
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
-
     max-width: 1400px;
-    margin: 60px auto 0;
-
+    margin: 40px auto 0;
     gap: 25px;
 }
 
 .valor-card {
     padding: 36px 27px;
-
     background: #ffffff;
-
     border: 1px solid var(--borde);
     border-radius: 22px;
-
     box-shadow: var(--sombra-card);
-
     text-align: center;
-
-    transition:
-        transform var(--transicion-suave),
-        box-shadow var(--transicion),
-        border-color var(--transicion);
+    transition: transform var(--transicion-suave), box-shadow var(--transicion), border-color var(--transicion);
 }
 
 .valor-card:hover {
     transform: translateY(-8px);
-
     border-color: rgba(34, 197, 94, 0.3);
-
     box-shadow: var(--sombra-hover);
 }
 
@@ -1333,20 +969,13 @@ nav a:hover::after {
     display: flex;
     align-items: center;
     justify-content: center;
-
     width: 82px;
     height: 82px;
-
     margin: 0 auto 22px;
-
     background: var(--verde-light);
-
     border: 1px solid rgba(34, 197, 94, 0.08);
     border-radius: 50%;
-
-    transition:
-        transform var(--transicion),
-        background var(--transicion);
+    transition: transform var(--transicion), background var(--transicion);
 }
 
 .valor-card:hover .valor-icono {
@@ -1356,9 +985,7 @@ nav a:hover::after {
 
 .valor-icono i {
     color: var(--verde-dark);
-
     font-size: 34px;
-
     transition: transform var(--transicion);
 }
 
@@ -1368,15 +995,12 @@ nav a:hover::after {
 
 .valor-card h3 {
     margin-bottom: 14px;
-
     color: var(--texto);
-
     font-size: 22px;
 }
 
 .valor-card p {
     color: var(--texto-secundario);
-
     font-size: 15px;
     line-height: 1.85;
 }
@@ -1385,78 +1009,53 @@ nav a:hover::after {
    13. ¿POR QUÉ ELEGIRNOS?
 ========================================================== */
 
-.porque {
-    padding: 120px 8%;
-
-    background: #f8fafc;
-}
-
 .porque-container {
     display: grid;
-
     grid-template-columns: repeat(2, minmax(0, 1fr));
-
     align-items: center;
-
     max-width: 1400px;
     margin: auto;
-
     gap: 70px;
 }
 
 .porque-imagen {
     position: relative;
-
     min-width: 0;
 }
 
 .porque-imagen img {
     display: block;
-
     width: 100%;
-
     border: 1px solid rgba(226, 232, 240, 0.8);
     border-radius: 28px;
-
     box-shadow: 0 24px 55px rgba(15, 23, 42, 0.13);
-
-    transition:
-        transform var(--transicion-suave),
-        box-shadow var(--transicion);
+    transition: transform var(--transicion-suave), box-shadow var(--transicion);
 }
 
 .porque-imagen:hover img {
     transform: scale(1.025);
-
     box-shadow: 0 30px 65px rgba(15, 23, 42, 0.17);
 }
 
 .porque-info > span {
     color: var(--verde-dark);
-
     font-size: 13px;
     font-weight: 700;
-
     letter-spacing: 2px;
     text-transform: uppercase;
 }
 
 .porque-info h2 {
     margin: 20px 0;
-
     color: var(--texto);
-
     font-size: clamp(30px, 3.5vw, 45px);
     line-height: 1.3;
-
     letter-spacing: -0.6px;
 }
 
 .porque-info > p {
-    margin-bottom: 35px;
-
+    margin-bottom: 25px;
     color: var(--texto-secundario);
-
     font-size: 16px;
     line-height: 1.9;
 }
@@ -1464,23 +1063,16 @@ nav a:hover::after {
 .beneficio {
     display: flex;
     align-items: flex-start;
-
     gap: 17px;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .beneficio > i {
     flex-shrink: 0;
-
     margin-top: 3px;
-
     color: var(--verde-dark);
-
     font-size: 25px;
-
-    transition:
-        transform var(--transicion),
-        color var(--transicion);
+    transition: transform var(--transicion), color var(--transicion);
 }
 
 .beneficio:hover > i {
@@ -1490,15 +1082,12 @@ nav a:hover::after {
 
 .beneficio h4 {
     margin-bottom: 6px;
-
     color: var(--texto);
-
     font-size: 18px;
 }
 
 .beneficio p {
     color: var(--texto-secundario);
-
     font-size: 15px;
     line-height: 1.8;
 }
@@ -1507,21 +1096,12 @@ nav a:hover::after {
    14. GALERÍA
 ========================================================== */
 
-.galeria {
-    padding: 110px 8%;
-
-    background: #ffffff;
-}
-
 .galeria-grid {
     display: grid;
-
     grid-template-columns: repeat(3, minmax(0, 1fr));
     grid-auto-rows: 270px;
-
     max-width: 1500px;
-    margin: 60px auto 0;
-
+    margin: 40px auto 0;
     gap: 22px;
 }
 
@@ -1531,50 +1111,30 @@ nav a:hover::after {
 
 .foto {
     position: relative;
-
     min-width: 0;
     min-height: 0;
-
     overflow: hidden;
-
     background: #e2e8f0;
-
     border: 1px solid rgba(226, 232, 240, 0.75);
     border-radius: 22px;
-
     isolation: isolate;
 }
 
 .foto img {
     display: block;
-
     width: 100%;
     height: 100%;
-
     object-fit: cover;
-
-    transition:
-        transform 0.75s cubic-bezier(0.2, 0.8, 0.2, 1),
-        filter var(--transicion-suave);
+    transition: transform 0.75s cubic-bezier(0.2, 0.8, 0.2, 1), filter var(--transicion-suave);
 }
 
 .foto::before {
     content: "";
-
     position: absolute;
     inset: 0;
-
-    background: linear-gradient(
-        to top,
-        rgba(0, 0, 0, 0.78) 0%,
-        rgba(0, 0, 0, 0.35) 42%,
-        transparent 78%
-    );
-
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.35) 42%, transparent 78%);
     opacity: 0;
-
     transition: opacity var(--transicion-suave);
-
     z-index: 1;
     pointer-events: none;
 }
@@ -1588,35 +1148,22 @@ nav a:hover::after {
     opacity: 1;
 }
 
-/* Información de cada foto */
-
 .foto-info {
     position: absolute;
-
     right: 18px;
     bottom: 18px;
     left: 18px;
-
     z-index: 2;
-
     padding: 20px;
-
     background: rgba(255, 255, 255, 0.15);
-
     border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: 17px;
-
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-
     opacity: 0;
     transform: translateY(18px);
-
-    transition:
-        opacity var(--transicion),
-        transform var(--transicion-suave);
+    transition: opacity var(--transicion), transform var(--transicion-suave);
 }
 
 .foto:hover .foto-info {
@@ -1628,22 +1175,14 @@ nav a:hover::after {
     display: flex;
     align-items: center;
     justify-content: center;
-
     width: 48px;
     height: 48px;
-
     margin-bottom: 13px;
-
     color: #ffffff;
     background: var(--verde-dark);
-
     border-radius: 50%;
-
     font-size: 21px;
-
-    transition:
-        transform var(--transicion),
-        background var(--transicion);
+    transition: transform var(--transicion), background var(--transicion);
 }
 
 .foto:hover .foto-info i {
@@ -1653,16 +1192,13 @@ nav a:hover::after {
 
 .foto-info h4 {
     margin-bottom: 7px;
-
     color: #ffffff;
-
     font-size: 21px;
     line-height: 1.35;
 }
 
 .foto-info span {
     color: rgba(255, 255, 255, 0.93);
-
     font-size: 14px;
     line-height: 1.7;
 }
@@ -1672,35 +1208,19 @@ nav a:hover::after {
 ========================================================== */
 
 .cta {
-    padding: 90px 8%;
-
+    padding: 70px 8%;
     color: #ffffff;
-
     text-align: center;
-
-    background: linear-gradient(
-        125deg,
-        #198754 0%,
-        #16a34a 38%,
-        #2563eb 100%
-    );
-
+    background: linear-gradient(125deg, #198754 0%, #16a34a 38%, #2563eb 100%);
     overflow: hidden;
     isolation: isolate;
 }
 
 .cta::before {
     content: "";
-
     position: absolute;
     inset: 0;
-
-    background: radial-gradient(
-        circle at 90% 15%,
-        rgba(255, 255, 255, 0.15),
-        transparent 35%
-    );
-
+    background: radial-gradient(circle at 90% 15%, rgba(255, 255, 255, 0.15), transparent 35%);
     z-index: -1;
     pointer-events: none;
 }
@@ -1712,32 +1232,24 @@ nav a:hover::after {
 
 .cta span {
     display: inline-block;
-
     color: rgba(255, 255, 255, 0.9);
-
     font-size: 13px;
     font-weight: 700;
-
     letter-spacing: 2px;
     text-transform: uppercase;
 }
 
 .cta h2 {
     margin: 18px 0;
-
     color: #ffffff;
-
     font-size: clamp(32px, 4.5vw, 51px);
     line-height: 1.25;
-
     text-wrap: balance;
 }
 
 .cta p {
-    margin-bottom: 35px;
-
+    margin-bottom: 25px;
     color: rgba(255, 255, 255, 0.9);
-
     font-size: 18px;
     line-height: 1.85;
 }
@@ -1746,39 +1258,24 @@ nav a:hover::after {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
     gap: 11px;
-
     min-height: 54px;
-
     padding: 16px 32px;
-
     color: #198754;
     background: #ffffff;
-
     border: 1px solid rgba(255, 255, 255, 0.75);
     border-radius: 50px;
-
     text-decoration: none;
-
     font-size: 15px;
     font-weight: 700;
-
     box-shadow: 0 7px 22px rgba(0, 0, 0, 0.12);
-
-    transition:
-        color var(--transicion),
-        background var(--transicion),
-        box-shadow var(--transicion),
-        transform var(--transicion);
+    transition: color var(--transicion), background var(--transicion), box-shadow var(--transicion), transform var(--transicion);
 }
 
 .cta-button:hover {
     color: #ffffff;
     background: #064e3b;
-
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
-
     transform: translateY(-4px);
 }
 
@@ -1796,35 +1293,25 @@ nav a:hover::after {
 
 .footer {
     padding-top: 70px;
-
     color: #ffffff;
-
     background: #1b1f24;
 }
 
 .footer-container {
     display: grid;
-
     grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
-
     max-width: 1400px;
     margin: auto;
-
     padding: 0 8% 55px;
-
     gap: 38px;
 }
 
 .footer-logo {
     display: block;
-
     width: 110px;
     max-height: 100px;
-
     object-fit: contain;
-
     margin-bottom: 18px;
-
     transition: transform var(--transicion);
 }
 
@@ -1835,15 +1322,12 @@ nav a:hover::after {
 .footer h3,
 .footer h4 {
     margin-bottom: 18px;
-
     color: #ffffff;
-
     font-size: 19px;
 }
 
 .footer p {
     color: #c9c9c9;
-
     font-size: 14px;
     line-height: 1.9;
 }
@@ -1855,22 +1339,15 @@ nav a:hover::after {
 
 .footer li {
     margin-bottom: 12px;
-
     color: #c9c9c9;
-
     font-size: 14px;
 }
 
 .footer a {
     display: inline-block;
-
     color: #c9c9c9;
-
     text-decoration: none;
-
-    transition:
-        color var(--transicion),
-        transform var(--transicion);
+    transition: color var(--transicion), transform var(--transicion);
 }
 
 .footer a:hover {
@@ -1880,13 +1357,9 @@ nav a:hover::after {
 
 .footer-bottom {
     padding: 23px 20px;
-
     color: #a8b0b9;
-
     background: rgba(0, 0, 0, 0.12);
-
     border-top: 1px solid rgba(255, 255, 255, 0.09);
-
     text-align: center;
     font-size: 13px;
 }
@@ -1896,67 +1369,18 @@ nav a:hover::after {
 ========================================================== */
 
 @media (max-width: 1100px) {
-    .navbar {
-        padding-left: 5%;
-        padding-right: 5%;
-        gap: 18px;
-    }
-
-    nav ul {
-        gap: 19px;
-    }
-
-    nav a {
-        font-size: 14px;
-    }
-
-    .logo-container {
-        gap: 10px;
-    }
-
-    .logo-container img {
-        width: 54px;
-        height: 54px;
-    }
-
-    .logo-text h2 {
-        font-size: 20px;
-    }
-
-    .btn-login {
-        padding: 12px 18px;
-    }
-
-    .empresa,
-    .servicios,
-    .erp,
-    .proceso,
-    .valores,
-    .porque,
-    .galeria,
-    .estadisticas {
-        padding-left: 5%;
-        padding-right: 5%;
-    }
-
-    .empresa-container,
-    .porque-container {
-        gap: 42px;
-    }
-
-    .empresa-cards {
-        gap: 16px;
-    }
-
-    .mini-card {
-        padding: 24px;
-    }
-
-    .footer-container {
-        gap: 25px;
-        padding-left: 5%;
-        padding-right: 5%;
-    }
+    .navbar { padding-left: 5%; padding-right: 5%; gap: 18px; }
+    nav ul { gap: 19px; }
+    nav a { font-size: 14px; }
+    .logo-container { gap: 10px; }
+    .logo-container img { width: 54px; height: 54px; }
+    .logo-text h2 { font-size: 20px; }
+    .btn-login { padding: 12px 18px; }
+    .empresa, .servicios, .erp, .proceso, .valores, .porque, .galeria, .estadisticas { padding-left: 5%; padding-right: 5%; }
+    .empresa-container, .porque-container { gap: 42px; }
+    .empresa-cards { gap: 16px; }
+    .mini-card { padding: 24px; }
+    .footer-container { gap: 25px; padding-left: 5%; padding-right: 5%; }
 }
 
 /* ==========================================================
@@ -1964,92 +1388,25 @@ nav a:hover::after {
 ========================================================== */
 
 @media (max-width: 900px) {
-    .navbar {
-        padding: 15px 5%;
-        gap: 14px;
-    }
-
-    .navbar:not(.scrolled) {
-        background: rgba(1, 35, 24, 0.88);
-
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-    }
-
-    .logo-container img {
-        width: 48px;
-        height: 48px;
-    }
-
-    .logo-text h2 {
-        font-size: 18px;
-    }
-
-    .logo-text span {
-        font-size: 11px;
-    }
-
-    nav ul {
-        gap: 14px;
-    }
-
-    nav a {
-        font-size: 13px;
-    }
-
-    .btn-login {
-        padding: 11px 15px;
-        font-size: 13px;
-    }
-
-    .empresa-container,
-    .porque-container {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 40px;
-    }
-
-    .empresa-img img {
-        max-width: 360px;
-    }
-
-    .empresa-info {
-        text-align: center;
-    }
-
-    .empresa-cards {
-        text-align: left;
-    }
-
-    .estadisticas-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .timeline {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        row-gap: 45px;
-    }
-
-    .timeline::before {
-        display: none;
-    }
-
-    .porque-info {
-        text-align: center;
-    }
-
-    .beneficio {
-        text-align: left;
-    }
-
-    .galeria-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        grid-auto-rows: 250px;
-    }
-
-    .footer-container {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        text-align: left;
-    }
+    .navbar { padding: 15px 5%; gap: 14px; }
+    .navbar:not(.scrolled) { background: rgba(1, 35, 24, 0.88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .logo-container img { width: 48px; height: 48px; }
+    .logo-text h2 { font-size: 18px; }
+    .logo-text span { font-size: 11px; }
+    nav ul { gap: 14px; }
+    nav a { font-size: 13px; }
+    .btn-login { padding: 11px 15px; font-size: 13px; }
+    .empresa-container, .porque-container { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+    .empresa-img img { max-width: 360px; }
+    .empresa-info { text-align: center; }
+    .empresa-cards { text-align: left; }
+    .estadisticas-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .timeline { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 45px; }
+    .timeline::before { display: none; }
+    .porque-info { text-align: center; }
+    .beneficio { text-align: left; }
+    .galeria-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 250px; }
+    .footer-container { grid-template-columns: repeat(2, minmax(0, 1fr)); text-align: left; }
 }
 
 /* ==========================================================
@@ -2057,329 +1414,58 @@ nav a:hover::after {
 ========================================================== */
 
 @media (max-width: 768px) {
-    html {
-        scroll-padding-top: 20px;
-    }
-
-    .hero {
-        min-height: 100svh;
-        height: auto;
-
-        padding: 150px 24px 65px;
-    }
-
-    /* Navbar compacta */
-
-    .navbar,
-    .navbar.scrolled {
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-
-        gap: 10px;
-
-        padding: 12px 16px;
-    }
-
-    .logo-container {
-        justify-content: center;
-        gap: 10px;
-
-        text-align: left;
-    }
-
-    .logo-container img {
-        width: 42px;
-        height: 42px;
-    }
-
-    .logo-text h2 {
-        font-size: 17px;
-    }
-
-    .logo-text span {
-        font-size: 11px;
-    }
-
-    /* Menú horizontal adaptable */
-
-    nav {
-        width: 100%;
-    }
-
-    nav ul {
-        justify-content: center;
-        flex-wrap: wrap;
-
-        gap: 5px 18px;
-    }
-
-    nav a {
-        padding: 4px 0;
-
-        font-size: 12px;
-    }
-
-    .btn-login {
-        display: none;
-    }
-
-    /* Portada */
-
-    .hero-content {
-        max-width: 100%;
-        margin-top: 25px;
-    }
-
-    .hero-logo {
-        width: 105px;
-        max-height: 105px;
-
-        margin-bottom: 22px;
-    }
-
-    .hero h1 {
-        margin-bottom: 20px;
-
-        font-size: clamp(34px, 7vw, 48px);
-        line-height: 1.18;
-
-        letter-spacing: -0.6px;
-    }
-
-    .hero p {
-        margin-bottom: 28px;
-
-        font-size: 16px;
-        line-height: 1.8;
-    }
-
-    .hero-buttons {
-        flex-direction: column;
-        align-items: center;
-
-        gap: 12px;
-    }
-
-    .btn-primary,
-    .btn-secondary {
-        width: 100%;
-        max-width: 320px;
-
-        min-height: 50px;
-
-        padding: 14px 20px;
-    }
-
-    /* Secciones */
-
-    .empresa,
-    .servicios,
-    .erp,
-    .proceso,
-    .valores,
-    .porque,
-    .galeria,
-    .estadisticas {
-        padding: 75px 6%;
-    }
-
-    .titulo-seccion {
-        margin-bottom: 40px;
-    }
-
-    .titulo-seccion h2,
-    .titulo-estadisticas h2 {
-        font-size: 31px;
-    }
-
-    .titulo-seccion p,
-    .titulo-estadisticas p {
-        font-size: 15px;
-    }
-
-    .empresa-info h2,
-    .porque-info h2 {
-        font-size: 30px;
-    }
-
-    .empresa-info p {
-        font-size: 15px;
-    }
-
-    /* Tarjetas */
-
-    .empresa-cards {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 18px;
-    }
-
-    .mini-card {
-        min-height: 0;
-        padding: 25px;
-    }
-
-    .mini-card h4 {
-        font-size: 22px;
-    }
-
-    .mini-card p {
-        font-size: 15px;
-        line-height: 1.8;
-    }
-
-    .servicios-grid,
-    .erp-grid,
-    .valores-grid {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 18px;
-    }
-
-    .servicio-card,
-    .erp-card,
-    .valor-card {
-        padding: 28px 23px;
-    }
-
-    /* Estadísticas */
-
-    .estadisticas {
-        background-attachment: scroll;
-    }
-
-    .estadisticas-grid {
-        gap: 14px;
-    }
-
-    .estadistica {
-        padding: 25px 15px;
-        border-radius: 17px;
-    }
-
-    .estadistica h3 {
-        font-size: 34px;
-    }
-
-    .estadistica span {
-        font-size: 13px;
-    }
-
-    /* Proceso */
-
-    .timeline {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 38px;
-        margin-top: 45px;
-    }
-
-    .timeline-item {
-        max-width: 420px;
-        margin: auto;
-    }
-
-    .timeline-icon {
-        width: 88px;
-        height: 88px;
-    }
-
-    .timeline-icon i {
-        font-size: 32px;
-    }
-
-    .timeline-item h3 {
-        margin-top: 20px;
-        font-size: 21px;
-    }
-
-    /* Galería */
-
-    .galeria-grid {
-        grid-template-columns: minmax(0, 1fr);
-        grid-auto-rows: 260px;
-
-        margin-top: 35px;
-        gap: 17px;
-    }
-
-    .grande {
-        grid-column: auto;
-    }
-
-    .foto-info {
-        right: 12px;
-        bottom: 12px;
-        left: 12px;
-
-        padding: 15px;
-
-        opacity: 1;
-        transform: none;
-
-        background: rgba(0, 0, 0, 0.48);
-
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-    }
-
-    .foto::before {
-        opacity: 1;
-    }
-
-    .foto-info i {
-        width: 39px;
-        height: 39px;
-
-        margin-bottom: 9px;
-
-        font-size: 17px;
-    }
-
-    .foto-info h4 {
-        font-size: 18px;
-    }
-
-    .foto-info span {
-        font-size: 13px;
-    }
-
-    /* CTA */
-
-    .cta {
-        padding: 70px 6%;
-    }
-
-    .cta h2 {
-        font-size: 32px;
-    }
-
-    .cta p {
-        font-size: 16px;
-    }
-
-    .cta-button {
-        max-width: 100%;
-        padding: 15px 24px;
-    }
-
-    /* Footer */
-
-    .footer {
-        padding-top: 50px;
-    }
-
-    .footer-container {
-        grid-template-columns: minmax(0, 1fr);
-
-        gap: 28px;
-        padding: 0 7% 35px;
-
-        text-align: center;
-    }
-
-    .footer-logo {
-        margin-left: auto;
-        margin-right: auto;
-    }
+    html { scroll-padding-top: 20px; }
+    .hero { min-height: 100svh; height: auto; padding: 150px 24px 65px; }
+    .navbar, .navbar.scrolled { flex-direction: column; justify-content: center; align-items: center; gap: 10px; padding: 12px 16px; }
+    .logo-container { justify-content: center; gap: 10px; text-align: left; }
+    .logo-container img { width: 42px; height: 42px; }
+    .logo-text h2 { font-size: 17px; }
+    .logo-text span { font-size: 11px; }
+    nav { width: 100%; }
+    nav ul { justify-content: center; flex-wrap: wrap; gap: 5px 18px; }
+    nav a { padding: 4px 0; font-size: 12px; }
+    .btn-login { display: none; }
+    .hero-content { max-width: 100%; margin-top: 25px; }
+    .hero-logo { width: 105px; max-height: 105px; margin-bottom: 22px; }
+    .hero h1 { margin-bottom: 20px; font-size: clamp(34px, 7vw, 48px); line-height: 1.18; letter-spacing: -0.6px; }
+    .hero p { margin-bottom: 28px; font-size: 16px; line-height: 1.8; }
+    .hero-buttons { flex-direction: column; align-items: center; gap: 12px; }
+    .btn-primary, .btn-secondary { width: 100%; max-width: 320px; min-height: 50px; padding: 14px 20px; }
+    .empresa, .servicios, .erp, .proceso, .valores, .porque, .galeria, .estadisticas { padding: 50px 6%; }
+    .titulo-seccion { margin-bottom: 30px; }
+    .titulo-seccion h2, .titulo-estadisticas h2 { font-size: 31px; }
+    .titulo-seccion p, .titulo-estadisticas p { font-size: 15px; }
+    .empresa-info h2, .porque-info h2 { font-size: 30px; }
+    .empresa-info p { font-size: 15px; }
+    .empresa-cards { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+    .mini-card { min-height: 0; padding: 25px; }
+    .mini-card h4 { font-size: 22px; }
+    .mini-card p { font-size: 15px; line-height: 1.8; }
+    .servicios-grid, .erp-grid, .valores-grid { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+    .servicio-card, .erp-card, .valor-card { padding: 28px 23px; }
+    .estadisticas-grid { gap: 14px; }
+    .estadistica { padding: 25px 15px; border-radius: 17px; }
+    .estadistica h3 { font-size: 34px; }
+    .estadistica span { font-size: 13px; }
+    .timeline { grid-template-columns: minmax(0, 1fr); gap: 38px; margin-top: 35px; }
+    .timeline-item { max-width: 420px; margin: auto; }
+    .timeline-icon { width: 88px; height: 88px; }
+    .timeline-icon i { font-size: 32px; }
+    .timeline-item h3 { margin-top: 20px; font-size: 21px; }
+    .galeria-grid { grid-template-columns: minmax(0, 1fr); grid-auto-rows: 260px; margin-top: 30px; gap: 17px; }
+    .grande { grid-column: auto; }
+    .foto-info { right: 12px; bottom: 12px; left: 12px; padding: 15px; opacity: 1; transform: none; background: rgba(0, 0, 0, 0.48); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+    .foto::before { opacity: 1; }
+    .foto-info i { width: 39px; height: 39px; margin-bottom: 9px; font-size: 17px; }
+    .foto-info h4 { font-size: 18px; }
+    .foto-info span { font-size: 13px; }
+    .cta { padding: 60px 6%; }
+    .cta h2 { font-size: 32px; }
+    .cta p { font-size: 16px; }
+    .cta-button { max-width: 100%; padding: 15px 24px; }
+    .footer { padding-top: 50px; }
+    .footer-container { grid-template-columns: minmax(0, 1fr); gap: 28px; padding: 0 7% 35px; text-align: center; }
+    .footer-logo { margin-left: auto; margin-right: auto; }
 }
 
 /* ==========================================================
@@ -2387,129 +1473,32 @@ nav a:hover::after {
 ========================================================== */
 
 @media (max-width: 480px) {
-    .hero {
-        padding: 145px 18px 50px;
-    }
-
-    .navbar,
-    .navbar.scrolled {
-        gap: 8px;
-        padding: 10px 12px;
-    }
-
-    .logo-container {
-        gap: 8px;
-    }
-
-    .logo-container img {
-        width: 36px;
-        height: 36px;
-    }
-
-    .logo-text h2 {
-        font-size: 16px;
-    }
-
-    .logo-text span {
-        font-size: 10px;
-    }
-
-    nav ul {
-        gap: 3px 14px;
-    }
-
-    nav a {
-        font-size: 11px;
-    }
-
-    .hero-logo {
-        width: 85px;
-        max-height: 85px;
-    }
-
-    .hero h1 {
-        font-size: 34px;
-    }
-
-    .hero p {
-        font-size: 15px;
-        line-height: 1.8;
-    }
-
-    .empresa,
-    .servicios,
-    .erp,
-    .proceso,
-    .valores,
-    .porque,
-    .galeria,
-    .estadisticas {
-        padding: 60px 18px;
-    }
-
-    .titulo-seccion h2,
-    .titulo-estadisticas h2 {
-        font-size: 27px;
-    }
-
-    .empresa-info h2,
-    .porque-info h2 {
-        font-size: 27px;
-    }
-
-    .mini-card {
-        padding: 22px;
-        border-radius: 17px;
-    }
-
-    .mini-card i {
-        font-size: 34px;
-    }
-
-    .mini-card h4 {
-        font-size: 20px;
-    }
-
-    .servicio-card,
-    .erp-card,
-    .valor-card {
-        padding: 25px 19px;
-        border-radius: 17px;
-    }
-
-    .estadisticas-grid {
-        grid-template-columns: minmax(0, 1fr);
-    }
-
-    .estadistica {
-        padding: 22px 15px;
-    }
-
-    .estadistica h3 {
-        font-size: 36px;
-    }
-
-    .galeria-grid {
-        grid-auto-rows: 230px;
-    }
-
-    .cta {
-        padding: 60px 20px;
-    }
-
-    .cta h2 {
-        font-size: 28px;
-    }
-
-    .cta p {
-        font-size: 15px;
-    }
-
-    .cta-button {
-        width: 100%;
-        padding: 14px 17px;
-        font-size: 14px;
-    }
+    .hero { padding: 145px 18px 50px; }
+    .navbar, .navbar.scrolled { gap: 8px; padding: 10px 12px; }
+    .logo-container { gap: 8px; }
+    .logo-container img { width: 36px; height: 36px; }
+    .logo-text h2 { font-size: 16px; }
+    .logo-text span { font-size: 10px; }
+    nav ul { gap: 3px 14px; }
+    nav a { font-size: 11px; }
+    .hero-logo { width: 85px; max-height: 85px; }
+    .hero h1 { font-size: 34px; }
+    .hero p { font-size: 15px; line-height: 1.8; }
+    .empresa, .servicios, .erp, .proceso, .valores, .porque, .galeria, .estadisticas { padding: 40px 18px; }
+    .titulo-seccion h2, .titulo-estadisticas h2 { font-size: 27px; }
+    .empresa-info h2, .porque-info h2 { font-size: 27px; }
+    .mini-card { padding: 22px; border-radius: 17px; }
+    .mini-card i { font-size: 34px; }
+    .mini-card h4 { font-size: 20px; }
+    .servicio-card, .erp-card, .valor-card { padding: 25px 19px; border-radius: 17px; }
+    .estadisticas-grid { grid-template-columns: minmax(0, 1fr); }
+    .estadistica { padding: 22px 15px; }
+    .estadistica h3 { font-size: 36px; }
+    .galeria-grid { grid-auto-rows: 230px; }
+    .cta { padding: 50px 20px; }
+    .cta h2 { font-size: 28px; }
+    .cta p { font-size: 15px; }
+    .cta-button { width: 100%; padding: 14px 17px; font-size: 14px; }
 }
 
 /* ==========================================================
@@ -2517,16 +1506,13 @@ nav a:hover::after {
 ========================================================== */
 
 @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
+    *, *::before, *::after {
         scroll-behavior: auto !important;
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
 }
-
 
 :root {
     --azul-profundo: #0b2345;
@@ -2539,231 +1525,96 @@ nav a:hover::after {
     --verde-suave: #dcfce9;
 }
 
-/* SECCIONES CLARAS CON MÁS COLOR */
-
-.empresa,
-.servicios,
-.erp,
-.proceso,
-.valores,
-.porque,
-.galeria {
-    background:
-        radial-gradient(
-            ellipse at 0% 0%,
-            rgba(40, 120, 255, 0.15),
-            transparent 42%
-        ),
-        radial-gradient(
-            ellipse at 100% 100%,
-            rgba(18, 199, 106, 0.15),
-            transparent 42%
-        ),
-        linear-gradient(
-            135deg,
-            #a9f3ad 0%,
-            #f0f6ff 48%,
-            #9fc6f3 100%
-        );
-}
-
 /* DETALLES DE COLOR EN LOS TÍTULOS */
 
-.empresa h2,
-.servicios h2,
-.erp h2,
-.proceso h2,
-.valores h2,
-.porque h2,
-.galeria h2 {
+.empresa h2, .servicios h2, .erp h2, .proceso h2, .valores h2, .porque h2, .galeria h2 {
     color: var(--azul-profundo);
     text-shadow: 0 3px 15px rgba(21, 94, 239, 0.08);
 }
 
-.empresa h2::after,
-.servicios h2::after,
-.erp h2::after,
-.proceso h2::after,
-.valores h2::after,
-.porque h2::after,
-.galeria h2::after {
-    background: linear-gradient(
-        90deg,
-        #155eef 0%,
-        #2878ff 40%,
-        #12c76a 100%
-    );
+.empresa h2::after, .servicios h2::after, .erp h2::after, .proceso h2::after, .valores h2::after, .porque h2::after, .galeria h2::after {
+    background: linear-gradient(90deg, #155eef 0%, #2878ff 40%, #12c76a 100%);
     height: 5px;
     box-shadow: 0 3px 12px rgba(18, 199, 106, 0.25);
 }
 
 /* TARJETAS MÁS VIVAS */
 
-.mini-card,
-.servicio-card,
-.erp-card,
-.valor-card {
-    background:
-        radial-gradient(
-            circle at 100% 0%,
-            rgba(40, 120, 255, 0.12),
-            transparent 48%
-        ),
-        linear-gradient(
-            145deg,
-            #d4f7da 0%,
-            #f0f6ff 65%,
-            #c1dcff 100%
-        );
-
+.mini-card, .servicio-card, .erp-card, .valor-card {
+    background: radial-gradient(circle at 100% 0%, rgba(40, 120, 255, 0.12), transparent 48%), linear-gradient(145deg, #d4f7da 0%, #f0f6ff 65%, #c1dcff 100%);
     border: 1px solid rgba(21, 94, 239, 0.19);
-    box-shadow:
-        0 10px 28px rgba(11, 35, 69, 0.08),
-        0 2px 8px rgba(21, 94, 239, 0.04);
+    box-shadow: 0 10px 28px rgba(11, 35, 69, 0.08), 0 2px 8px rgba(21, 94, 239, 0.04);
 }
 
-.mini-card::before,
-.servicio-card::before,
-.erp-card::before,
-.valor-card::before {
+.mini-card::before, .servicio-card::before, .erp-card::before, .valor-card::before {
     height: 5px;
-    background: linear-gradient(
-        90deg,
-        #155eef,
-        #2878ff,
-        #12c76a
-    );
+    background: linear-gradient(90deg, #155eef, #2878ff, #12c76a);
 }
 
-.mini-card:hover,
-.servicio-card:hover,
-.erp-card:hover,
-.valor-card:hover {
+.mini-card:hover, .servicio-card:hover, .erp-card:hover, .valor-card:hover {
     border-color: rgba(18, 199, 106, 0.65);
-    box-shadow:
-        0 20px 42px rgba(11, 35, 69, 0.14),
-        0 6px 18px rgba(18, 199, 106, 0.12);
+    box-shadow: 0 20px 42px rgba(11, 35, 69, 0.14), 0 6px 18px rgba(18, 199, 106, 0.12);
 }
 
 /* TÍTULOS E ICONOS DE LAS TARJETAS */
 
-.mini-card h3,
-.servicio-card h3,
-.erp-card h3,
-.valor-card h3 {
+.mini-card h3, .servicio-card h3, .erp-card h3, .valor-card h3 {
     color: #12345a;
 }
 
-.mini-card:hover h3,
-.servicio-card:hover h3,
-.erp-card:hover h3,
-.valor-card:hover h3 {
+.mini-card:hover h3, .servicio-card:hover h3, .erp-card:hover h3, .valor-card:hover h3 {
     color: #07834c;
 }
 
-.servicio-card i,
-.erp-card i,
-.valor-card i,
-.mini-card i {
+.servicio-card i, .erp-card i, .valor-card i, .mini-card i {
     color: #155eef;
-    transition:
-        color 0.3s ease,
-        transform 0.3s ease,
-        filter 0.3s ease;
+    transition: color 0.3s ease, transform 0.3s ease, filter 0.3s ease;
 }
 
-.servicio-card:hover i,
-.erp-card:hover i,
-.valor-card:hover i,
-.mini-card:hover i {
+.servicio-card:hover i, .erp-card:hover i, .valor-card:hover i, .mini-card:hover i {
     color: #079455;
     transform: translateY(-3px) scale(1.13);
     filter: drop-shadow(0 4px 8px rgba(18, 199, 106, 0.25));
 }
 
-/* ==========================================================
-   BOTONES MÁS INTENSOS
-   - Transición SOLO azul → verde
-   - Margen blanco alrededor
-   - Letras blancas
-========================================================== */
+/* BOTONES MÁS INTENSOS */
 
-.btn-primary,
-.btn-secondary,
-.btn-login {
+.btn-primary, .btn-secondary, .btn-login {
     color: #ffffff !important;
-
-    background: linear-gradient(
-        90deg,
-        #155eef 0%,
-        #1765d8 45%,
-        #12c76a 100%
-    );
+    background: linear-gradient(90deg, #155eef 0%, #1765d8 45%, #12c76a 100%);
     background-size: 200% 100%;
     background-position: 0% 50%;
-
-    /* Margen blanco alrededor del botón */
     border: 2px solid #ffffff;
     outline: 2px solid rgba(255, 255, 255, 0.35);
     outline-offset: 2px;
-
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-
     box-shadow: 0 6px 18px rgba(21, 94, 239, 0.23);
-
-    transition:
-        background-position 0.6s ease,
-        transform 0.3s ease,
-        box-shadow 0.3s ease,
-        color 0.3s ease,
-        border-color 0.3s ease,
-        outline-color 0.3s ease;
+    transition: background-position 0.6s ease, transform 0.3s ease, box-shadow 0.3s ease, color 0.3s ease, border-color 0.3s ease, outline-color 0.3s ease;
 }
 
-.btn-primary:hover,
-.btn-secondary:hover,
-.btn-login:hover {
+.btn-primary:hover, .btn-secondary:hover, .btn-login:hover {
     color: #ffffff !important;
-
     background-position: 100% 50%;
-
     border-color: #ffffff;
     outline-color: rgba(255, 255, 255, 0.6);
-
-    box-shadow:
-        0 10px 25px rgba(21, 94, 239, 0.3),
-        0 4px 14px rgba(18, 199, 106, 0.25);
-
+    box-shadow: 0 10px 25px rgba(21, 94, 239, 0.3), 0 4px 14px rgba(18, 199, 106, 0.25);
     transform: translateY(-3px);
 }
 
-.btn-primary:active,
-.btn-secondary:active,
-.btn-login:active {
+.btn-primary:active, .btn-secondary:active, .btn-login:active {
     color: #ffffff !important;
     transform: scale(0.97);
 }
 
-/* ==========================================================
-   PROCESO Y ELEMENTOS CIRCULARES
-========================================================== */
+/* PROCESO Y ELEMENTOS CIRCULARES */
 
 .timeline-icon {
-    background: linear-gradient(
-        135deg,
-        #155eef,
-        #2878ff 48%,
-        #12c76a
-    );
+    background: linear-gradient(135deg, #155eef, #2878ff 48%, #12c76a);
     color: #ffffff;
-    box-shadow:
-        0 8px 20px rgba(21, 94, 239, 0.24),
-        0 3px 10px rgba(18, 199, 106, 0.15);
+    box-shadow: 0 8px 20px rgba(21, 94, 239, 0.24), 0 3px 10px rgba(18, 199, 106, 0.15);
 }
 
-/* ==========================================================
-   GALERÍA CON MÁS PROFUNDIDAD
-========================================================== */
+/* GALERÍA CON MÁS PROFUNDIDAD */
 
 .foto {
     border: 1px solid rgba(21, 94, 239, 0.15);
@@ -2771,68 +1622,28 @@ nav a:hover::after {
 }
 
 .foto:hover {
-    box-shadow:
-        0 18px 38px rgba(11, 35, 69, 0.2),
-        0 5px 15px rgba(18, 199, 106, 0.12);
+    box-shadow: 0 18px 38px rgba(11, 35, 69, 0.2), 0 5px 15px rgba(18, 199, 106, 0.12);
 }
 
 .foto-info {
-    background: linear-gradient(
-        125deg,
-        rgba(11, 35, 69, 0.97),
-        rgba(16, 75, 135, 0.96),
-        rgba(5, 96, 58, 0.96)
-    );
+    background: linear-gradient(125deg, rgba(11, 35, 69, 0.97), rgba(16, 75, 135, 0.96), rgba(5, 96, 58, 0.96));
     color: #ffffff;
 }
 
-/* ==========================================================
-   LLAMADO A LA ACCIÓN
-========================================================== */
+/* LLAMADO A LA ACCIÓN */
 
 .cta {
-    background:
-        radial-gradient(
-            circle at 0% 0%,
-            rgba(40, 120, 255, 0.35),
-            transparent 40%
-        ),
-        radial-gradient(
-            circle at 100% 100%,
-            rgba(18, 199, 106, 0.28),
-            transparent 40%
-        ),
-        linear-gradient(
-            120deg,
-            #0b2345,
-            #104b87 55%,
-            #05603a
-        );
+    background: radial-gradient(circle at 0% 0%, rgba(40, 120, 255, 0.35), transparent 40%), radial-gradient(circle at 100% 100%, rgba(18, 199, 106, 0.28), transparent 40%), linear-gradient(120deg, #0b2345, #104b87 55%, #05603a);
     color: #ffffff;
 }
 
-.cta h2,
-.cta h3,
-.cta p {
+.cta h2, .cta h3, .cta p {
     color: #ffffff;
 }
 
-/* ==========================================================
-   ENLACES Y DETALLES
-========================================================== */
+/* ENFOQUE VISIBLE */
 
-/* Comentado para no pisar el degradado del menú.
-   Si quieres el menú en verde sólido al hover, descomenta: */
-/* .navbar a:hover {
-    color: #12c76a;
-} */
-
-/* ==========================================================
-   ENFOQUE VISIBLE
-========================================================== */
-
-a:focus-visible,
-button:focus-visible {
+a:focus-visible, button:focus-visible {
     outline: 3px solid #12c76a;
     outline-offset: 4px;
 }
