@@ -25,6 +25,44 @@ router.get('/nomina/configuracion', (req, res) => {
     );
 });
 
+/* =========================================================
+   💰 MÓDULO DE NÓMINA
+   ========================================================= */
+
+// Helper: ¿es admin?
+function esAdminSesion(req) {
+    const rol = String((req.session && req.session.rol) || '').toUpperCase();
+    return rol.includes('ADMIN') || rol.includes('SUPER');
+}
+
+router.get('/nomina', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/nomina.html'));
+});
+
+router.get('/nomina/configuracion', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/nomina-configuracion.html'));
+});
+
+// 🔥 Vista de Novedades (solo admin/super admin)
+router.get('/nomina/novedades', (req, res) => {
+    // Si no hay sesión → al login
+    if (!req.session || !req.session.usuarioID) {
+        return res.redirect('/login');
+    }
+    // Si NO es admin → a sus propias novedades
+    if (!esAdminSesion(req)) {
+        return res.redirect('/mis-novedades');
+    }
+    res.sendFile(path.join(__dirname, '../public/nomina-novedades.html'));
+});
+
+// 🔥 Vista de Mis Novedades (todos los usuarios)
+router.get('/mis-novedades', (req, res) => {
+    if (!req.session || !req.session.usuarioID) {
+        return res.redirect('/login');
+    }
+    res.sendFile(path.join(__dirname, '../public/mis-novedades.html'));
+});
 
 /* =========================================================
    📋 OBTENER PARÁMETROS GENERALES
@@ -197,8 +235,6 @@ router.put(
    📅 VALIDAR FECHAS
    ================================================= */
 
-const fechaNuevaTexto = String(fecha_inicio).substring(0, 10);
-
 const fechaActualTexto = String(actual.fecha_inicio).substring(0, 10);
 
 const fechaNueva = new Date(
@@ -248,18 +284,6 @@ if (fechaNueva <= fechaActual) {
 
             /* =================================================
                🔒 CERRAR VIGENCIA ANTERIOR
-               
-               Ejemplo:
-
-               Actual:
-               01/01/2026
-
-               Nueva:
-               01/09/2026
-
-               Entonces la anterior queda:
-
-               01/01/2026 → 31/08/2026
                ================================================= */
 
             const fechaFinAnterior =
@@ -400,10 +424,6 @@ if (fechaNueva <= fechaActual) {
 
 /* =========================================================
    📊 OBTENER HISTORIAL DE UN PARÁMETRO
-   =========================================================
-
-   Esta ruta nos va a servir después para mostrar el historial
-   de cambios de cada parámetro.
    ========================================================= */
 
 router.get(
@@ -659,11 +679,6 @@ router.put(
 
         // =================================================
         // 🧮 CONVERTIR PORCENTAJE A FACTOR
-        //
-        // 25%  → 1.25
-        // 75%  → 1.75
-        // 115% → 2.15
-        // 165% → 2.65
         // =================================================
 
         const factorPago =
@@ -882,14 +897,6 @@ router.put(
 
             // =================================================
             // ➕ CREAR NUEVA VIGENCIA
-            //
-            // IMPORTANTE:
-            // Nombre, tipo_jornada y tipo_dia
-            // vienen del registro anterior.
-            //
-            // El usuario NO puede modificarlos.
-            //
-            // hora_inicio y hora_fin ya NO se utilizan.
             // =================================================
 
             await connection.query(`
@@ -936,13 +943,8 @@ router.put(
 
             `, [
 
-                // Código original
                 actual.codigo,
-
-                // Nombre original
                 actual.nombre,
-
-                // Descripción
                 descripcion !== undefined
                     ? (
                         descripcion === null ||
@@ -951,20 +953,10 @@ router.put(
                             : String(descripcion).trim()
                     )
                     : actual.descripcion,
-
-                // Tipo de jornada original
                 actual.tipo_jornada,
-
-                // Tipo de día original
                 actual.tipo_dia,
-
-                // 25 → 0.2500
                 porcentaje / 100,
-
-                // 25 → 1.2500
                 factorPago,
-
-                // Fórmula original
                 formula !== undefined
                     ? (
                         formula === null ||
@@ -973,19 +965,11 @@ router.put(
                             : String(formula).trim()
                     )
                     : actual.formula,
-
-                // Switch
                 requiere_autorizacion
                     ? 1
                     : 0,
-
-                // Límite diario
                 limiteDiario,
-
-                // Límite semanal
                 limiteSemanal,
-
-                // Nueva vigencia
                 fechaNueva
 
             ]);
@@ -2427,10 +2411,6 @@ router.post(
 
             // =================================================
 // CREAR MATERIAL
-//
-// El código NO lo ingresa el usuario.
-// Primero usamos un código temporal para obtener
-// el ID generado por MySQL.
 // =================================================
 
 const codigoTemporal =
@@ -2482,10 +2462,6 @@ const materialId =
 
 // =================================================
 // GENERAR CÓDIGO AUTOMÁTICO
-//
-// ID 1  → MAT-001
-// ID 2  → MAT-002
-// ID 15 → MAT-015
 // =================================================
 
 const codigo =
@@ -2886,8 +2862,6 @@ router.put(
 
             // =================================================
             // ACTUALIZAR INFORMACIÓN DEL MATERIAL
-            //
-            // El código NO se modifica.
             // =================================================
 
             await connection.query(`

@@ -1,5 +1,5 @@
 /* ============================================================
-   NÓMINA - NOVEDADES
+   NÓMINA - NOVEDADES (PRINCIPAL) - 
    PROCESADOS MARGARITA
    ============================================================ */
 
@@ -8,21 +8,21 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('📋 Módulo de Novedades iniciado');
 
     /* ========================================================
-       FIX DE ACCESIBILIDAD (aria-hidden en modales)
+       FIX DE ACCESIBIDAD 
        ======================================================== */
-    document.querySelectorAll('.modal').forEach((modal) => {
-        modal.addEventListener('hide.bs.modal', () => {
-            if (document.activeElement && modal.contains(document.activeElement)) {
-                document.activeElement.blur();
-            }
+    if (typeof bootstrap !== 'undefined') {
+        document.querySelectorAll('.modal').forEach((modal) => {
+            modal.addEventListener('hide.bs.modal', () => {
+                if (document.activeElement && modal.contains(document.activeElement)) {
+                    document.activeElement.blur();
+                }
+            });
         });
-    });
-
+    }
 
     /* ========================================================
        ELEMENTOS DEL DOM - ACCIONES PRINCIPALES
        ======================================================== */
-
     const btnRegistrar = document.getElementById('btnRegistrarNovedad');
     const btnRefrescar = document.getElementById('btnRefrescarNovedades');
     const btnCerrarPeriodo = document.getElementById('btnCerrarPeriodo');
@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ========================================================
        ELEMENTOS DEL DOM - FILTROS Y TABLA
        ======================================================== */
-
     const buscarNovedad = document.getElementById('buscarNovedad');
     const filtroTipo = document.getElementById('filtroTipo');
     const filtroEstado = document.getElementById('filtroEstado');
@@ -53,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ========================================================
        ELEMENTOS DEL DOM - KPIs
        ======================================================== */
-
     const kpiPendientes = document.getElementById('kpiPendientes');
     const kpiAprobadas = document.getElementById('kpiAprobadas');
     const kpiRechazadas = document.getElementById('kpiRechazadas');
@@ -63,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ========================================================
        ELEMENTOS DEL DOM - MODAL REGISTRO
        ======================================================== */
-
     const modalRegistrarNovedad = document.getElementById('modalRegistrarNovedad');
     const registroTipoNovedad = document.getElementById('registroTipoNovedad');
     const informacionTipoNovedad = document.getElementById('informacionTipoNovedad');
@@ -80,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ========================================================
        ELEMENTOS DEL DOM - DRAG & DROP
        ======================================================== */
-
     const zonaDragDropSoporte = document.getElementById('zonaDragDropSoporte');
     const previsualizacionSoporte = document.getElementById('previsualizacionSoporte');
     const soporteNombreArchivo = document.getElementById('soporteNombreArchivo');
@@ -88,45 +84,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnQuitarSoporte = document.getElementById('btnQuitarSoporte');
 
     /* ========================================================
-       ELEMENTOS DEL DOM - HISTORIAL
-       ======================================================== */
-
-    const historialBuscar = document.getElementById('historialBuscar');
-    const historialTipo = document.getElementById('historialTipo');
-    const historialEstado = document.getElementById('historialEstado');
-    const historialTipoFecha = document.getElementById('historialTipoFecha');
-    const historialFechaDia = document.getElementById('historialFechaDia');
-    const historialFechaMes = document.getElementById('historialFechaMes');
-    const historialFechaAno = document.getElementById('historialFechaAno');
-    const historialFechaRango = document.getElementById('historialFechaRango');
-    const historialDia = document.getElementById('historialDia');
-    const historialMes = document.getElementById('historialMes');
-    const historialAno = document.getElementById('historialAno');
-    const historialDesde = document.getElementById('historialDesde');
-    const historialHasta = document.getElementById('historialHasta');
-    const btnBuscarHistorial = document.getElementById('btnBuscarHistorial');
-    const btnLimpiarHistorial = document.getElementById('btnLimpiarHistorial');
-    const btnExportarHistorial = document.getElementById('btnExportarHistorial');
-    const historialCargando = document.getElementById('historialCargando');
-    const historialEstadoVacio = document.getElementById('historialEstadoVacio');
-    const historialTablaWrapper = document.getElementById('historialTablaWrapper');
-    const tablaHistorialNovedades = document.getElementById('tablaHistorialNovedades');
-    const contadorHistorial = document.getElementById('contadorHistorial');
-
-    /* ========================================================
        ELEMENTOS DEL DOM - MODALES Y TOASTS
        ======================================================== */
-
     const modalConfirmacion = document.getElementById('modalConfirmacion');
     const modalConfirmacionMensaje = document.getElementById('modalConfirmacionMensaje');
     const btnConfirmarAccion = document.getElementById('btnConfirmarAccion');
     const contenedorToasts = document.getElementById('contenedorToasts');
 
-
     /* ========================================================
        ESTADO LOCAL
        ======================================================== */
-
     const estadoApp = {
         novedades: [],
         novedadesFiltradas: [],
@@ -138,9 +105,16 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /* ========================================================
+       EXPONER FUNCIONES GLOBALES
+       ======================================================== */
+    window.mostrarToast = mostrarToast;
+    window.mostrarConfirmacion = mostrarConfirmacion;
+    window.verNovedad = verNovedad;
+    window.cargarNovedades = cargarNovedades;
+
+    /* ========================================================
        INICIO
        ======================================================== */
-
     inicializar();
 
     async function inicializar() {
@@ -149,13 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
         await cargarNovedades();
     }
 
-    /* ========================================================
-       CONFIGURAR EVENTOS
-       ======================================================== */
-
     function configurarEventos() {
         if (btnRegistrar) btnRegistrar.addEventListener('click', abrirRegistroNovedad);
-        
         if (btnRefrescar) {
             btnRefrescar.addEventListener('click', () => {
                 mostrarToast('Actualizando datos...', 'info');
@@ -217,25 +186,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (btnConfirmarAccion) {
             btnConfirmarAccion.addEventListener('click', () => {
-                if (typeof estadoApp.confirmCallback === 'function') estadoApp.confirmCallback();
-                bootstrap.Modal.getInstance(modalConfirmacion)?.hide();
+                const cb = estadoApp.confirmCallback;
+                estadoApp.confirmCallback = null;
+                if (typeof cb === 'function') cb();
+                if (modalConfirmacion) {
+                    bootstrap.Modal.getOrCreateInstance(modalConfirmacion).hide();
+                }
             });
         }
 
-        if (historialTipoFecha) historialTipoFecha.addEventListener('change', cambiarTipoFechaHistorial);
-        if (btnBuscarHistorial) btnBuscarHistorial.addEventListener('click', buscarHistorial);
-        if (btnLimpiarHistorial) btnLimpiarHistorial.addEventListener('click', limpiarFiltrosHistorial);
-        if (btnExportarHistorial) btnExportarHistorial.addEventListener('click', () => window.open('/api/nomina/novedades/historial/exportar', '_blank'));
+        // 🔥 ABRIR MODAL DE HISTORIAL
+        const btnVerHistorial = document.getElementById('btnVerHistorial');
+        const kpiHistorialCard = document.querySelector('.historial-kpi-clickable');
+        
+        const abrirModalHistorial = () => {
+            const modalElement = document.getElementById('modalHistorialNovedades');
+            if (modalElement) {
+                const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                modal.show();
+                setTimeout(() => {
+                    const btnBuscar = document.getElementById('btnBuscarHistorial');
+                    if (btnBuscar) btnBuscar.click();
+                }, 300);
+            }
+        };
+
+        if (btnVerHistorial) btnVerHistorial.addEventListener('click', abrirModalHistorial);
+        if (kpiHistorialCard) kpiHistorialCard.addEventListener('click', abrirModalHistorial);
     }
 
     /* ========================================================
-       CARGAR NOVEDADES DESDE LA API
+       CARGAR NOVEDADES
        ======================================================== */
-
     async function cargarNovedades() {
         try {
             mostrarCargando();
-            const respuesta = await fetch('/api/nomina/novedades');
+            const respuesta = await fetch('/api/nomina/novedades', { cache: 'no-store' });
             if (!respuesta.ok) throw new Error('Error al consultar la API.');
 
             const resultado = await respuesta.json();
@@ -259,7 +245,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (kpiPendientes) kpiPendientes.textContent = estadoApp.novedades.filter(n => obtenerEstado(n) === 'PENDIENTE').length;
         if (kpiAprobadas) kpiAprobadas.textContent = estadoApp.novedades.filter(n => obtenerEstado(n) === 'APROBADA').length;
         if (kpiRechazadas) kpiRechazadas.textContent = estadoApp.novedades.filter(n => obtenerEstado(n) === 'RECHAZADA').length;
-        if (kpiHistorial) kpiHistorial.textContent = estadoApp.novedades.filter(n => obtenerEstado(n) === 'ANULADA').length;
+        
+        fetch('/api/nomina/novedades/kpis')
+            .then(res => res.ok ? res.json() : null)
+            .then(data => {
+                if (data && data.success && data.kpis && kpiHistorial) {
+                    kpiHistorial.textContent = data.kpis.historial;
+                }
+            })
+            .catch(() => { /* silencioso */ });
     }
 
     function cargarTiposFiltro() {
@@ -318,22 +312,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (buscarNovedad) buscarNovedad.value = '';
         if (filtroTipo) filtroTipo.value = '';
         if (filtroEstado) filtroEstado.value = '';
-        establecerMesActual();
+        if (filtroMes) filtroMes.value = '';
+        if (ordenarNovedades) ordenarNovedades.value = 'fecha_desc';
+        estadoApp.ordenActual = 'fecha_desc';
         aplicarFiltros();
     }
 
     function establecerMesActual() {
         if (!filtroMes) return;
-        const ahora = new Date();
-        const año = ahora.getFullYear();
-        const mes = String(ahora.getMonth() + 1).padStart(2, '0');
-        filtroMes.value = `${año}-${mes}`;
+        filtroMes.value = '';
     }
 
     /* ========================================================
-       RENDERIZAR TABLA Y PAGINACIÓN
+       RENDERIZAR TABLA Y PAGINACIÓN 
        ======================================================== */
-
     function renderizarTabla() {
         if (!tablaNovedades) return;
         ocultarCargando();
@@ -356,6 +348,19 @@ document.addEventListener('DOMContentLoaded', () => {
         tablaNovedades.innerHTML = '';
         
         novedadesPagina.forEach(novedad => {
+            const categoria = (novedad.categoria || '').toUpperCase();
+            const tipo = (novedad.tipo_novedad || '').toLowerCase();
+            
+            let icono = 'fa-file-alt', colorBg = '#f1f5f9', colorText = '#475569';
+
+            if (categoria.includes('ASISTENCIA') || tipo.includes('ausencia')) { icono = 'fa-user-clock'; colorBg = '#fef3c7'; colorText = '#b45309'; }
+            else if (categoria.includes('SALUD') || tipo.includes('incapacidad')) { icono = 'fa-notes-medical'; colorBg = '#fee2e2'; colorText = '#b91c1c'; }
+            else if (categoria.includes('DESCUENTO')) { icono = 'fa-hand-holding-dollar'; colorBg = '#fce7f3'; colorText = '#be185d'; }
+            else if (categoria.includes('INGRESO') || tipo.includes('ingreso')) { icono = 'fa-money-bill-trend-up'; colorBg = '#d1fae5'; colorText = '#047857'; }
+            else if (categoria.includes('PRESTAMO') || tipo.includes('anticipo') || tipo.includes('prestamo')) { icono = 'fa-building-columns'; colorBg = '#e0e7ff'; colorText = '#4338ca'; }
+            else if (categoria.includes('TIEMPO') || tipo.includes('permiso') || tipo.includes('licencia')) { icono = 'fa-calendar-check'; colorBg = '#cffafe'; colorText = '#0e7490'; }
+            else if (tipo.includes('vacacion')) { icono = 'fa-umbrella-beach'; colorBg = '#e0f2fe'; colorText = '#0369a1'; }
+
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>
@@ -364,7 +369,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         <small>${escaparHTML(novedad.numero_documento || '')}</small>
                     </div>
                 </td>
-                <td><span class="novedad-tipo">${escaparHTML(formatearTexto(obtenerTipo(novedad)))}</span></td>
+                <td>
+                    <span style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; background-color: ${colorBg}; color: ${colorText};">
+                        <i class="fas ${icono}"></i> ${escaparHTML(formatearTexto(obtenerTipo(novedad)))}
+                    </span>
+                </td>
                 <td>${formatearFecha(obtenerFecha(novedad))}</td>
                 <td>${escaparHTML(obtenerCantidad(novedad))}</td>
                 <td>${crearBadgeEstado(obtenerEstado(novedad))}</td>
@@ -386,9 +395,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* ========================================================
-       ACCIONES EN LA TABLA (Aprobar / Rechazar / Ver / Eliminar)
+       ACCIONES EN LA TABLA 
        ======================================================== */
-
     function crearAcciones(n) {
         const estado = obtenerEstado(n);
         let html = `
@@ -396,8 +404,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button type="button" class="novedad-accion-btn detalle btn-ver-novedad" data-id="${n.id}" title="Ver detalle">
                     <i class="fas fa-eye"></i>
                 </button>
-                <button type="button" class="novedad-accion-btn rechazar btn-eliminar-novedad" data-id="${n.id}" title="Eliminar registro">
-                    <i class="fas fa-trash"></i>
+                <button type="button" class="novedad-accion-btn eliminar-historial btn-eliminar-novedad" data-id="${n.id}" title="Enviar al historial">
+                    <i class="fas fa-box-archive"></i>
                 </button>
         `;
 
@@ -416,25 +424,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function agregarEventosAcciones() {
         document.querySelectorAll('.btn-ver-novedad').forEach(btn => {
-            btn.addEventListener('click', () => verNovedad(btn.dataset.id));
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation(); 
+                verNovedad(btn.dataset.id);
+            });
         });
         
         document.querySelectorAll('.btn-eliminar-novedad').forEach(btn => {
-            btn.addEventListener('click', () => {
-                mostrarConfirmacion('¿Estás seguro de ELIMINAR permanentemente esta novedad? Esta acción no se puede deshacer.', async () => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                mostrarConfirmacion('¿Estás seguro de enviar esta novedad al historial? Podrás restaurarla o eliminarla definitivamente desde ahí.', async () => {
                     try {
-                        const res = await fetch(`/api/nomina/novedades/${btn.dataset.id}`, { method: 'DELETE' });
+                        const res = await fetch(`/api/nomina/novedades/${btn.dataset.id}`, { 
+                            method: 'DELETE',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                        
                         const data = await res.json();
-                        if (!res.ok || !data.success) throw new Error(data.message || 'Error al eliminar');
-                        mostrarToast('Novedad eliminada correctamente', 'success');
+                        
+                        if (!res.ok || !data.success) {
+                            throw new Error(data.message || 'Error al eliminar');
+                        }
+                        
+                        mostrarToast('Novedad enviada al historial correctamente', 'success');
                         await cargarNovedades();
-                    } catch (error) { mostrarToast(error.message, 'error'); }
+                        
+                    } catch (error) { 
+                        mostrarToast(error.message, 'error'); 
+                    }
                 });
             });
         });
 
         document.querySelectorAll('.btn-aprobar-novedad').forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 mostrarConfirmacion('¿Estás seguro de aprobar esta novedad?', async () => {
                     try {
                         const res = await fetch(`/api/nomina/novedades/${btn.dataset.id}/aprobar`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' } });
@@ -448,7 +475,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         document.querySelectorAll('.btn-rechazar-novedad').forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 const motivo = prompt('Indica el motivo del rechazo:');
                 if (motivo && motivo.trim()) {
                     fetch(`/api/nomina/novedades/${btn.dataset.id}/rechazar`, {
@@ -559,8 +588,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <li style="margin-bottom: 12px; padding-left: 15px; position: relative;">
                             <div style="position: absolute; left: -6px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: #16a34a; border: 2px solid #fff;"></div>
                             <div style="font-weight: 700; font-size: 13px; color: #0f172a;">${h.estado_nuevo}</div>
-                            <div style="font-size: 12px; color: #64748b;">${formatearFechaHora(h.fecha_cambio)}</div>
-                            ${h.comentario ? `<div style="font-size: 12px; color: #94a3b8; font-style: italic;">"${h.comentario}"</div>` : ''}
+                            <div style="font-size: 12px; color: #64748b;">${formatearFechaHora(h.fecha_registro)}</div>
+                            ${h.observacion ? `<div style="font-size: 12px; color: #94a3b8; font-style: italic;">"${h.observacion}"</div>` : ''}
                         </li>
                     `;
                 });
@@ -573,6 +602,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const btnSoporte = document.getElementById('detalleBtnSoporte');
                 btnSoporte.href = soportes[0].ruta_archivo;
                 btnSoporte.style.display = 'inline-flex';
+                if (soportes.length > 1) {
+                    btnSoporte.textContent = `Ver soporte (1 de ${soportes.length})`;
+                }
             }
 
         } catch (error) {
@@ -588,7 +620,6 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ========================================================
        MODAL DE REGISTRO Y FORMULARIOS DINÁMICOS
        ======================================================== */
-
     async function abrirRegistroNovedad() {
         limpiarFormularioNovedad();
         await cargarTiposRegistro();
@@ -601,6 +632,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function cargarTiposRegistro() {
+        if (!registroTipoNovedad) return;
         try {
             const res = await fetch('/api/nomina/novedades/tipos');
             const data = await res.json();
@@ -624,6 +656,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function seleccionarTipoNovedad() {
+        if (!registroTipoNovedad) return;
         const opt = registroTipoNovedad.selectedOptions[0];
         
         if (!opt || !opt.value) {
@@ -632,6 +665,7 @@ document.addEventListener('DOMContentLoaded', () => {
             seccionSoporteNovedad.style.display = 'none';
             avisoAprobacionNovedad.style.display = 'none';
             btnGuardarNovedad.disabled = true;
+            camposNovedad.innerHTML = ''; 
             return;
         }
 
@@ -647,16 +681,22 @@ document.addEventListener('DOMContentLoaded', () => {
         seccionSoporteNovedad.style.display = Number(opt.dataset.requiereSoporte) ? 'block' : 'none';
         avisoAprobacionNovedad.style.display = Number(opt.dataset.requiereAprobacion) ? 'flex' : 'none';
 
-        camposNovedad.innerHTML = '';
+        camposNovedad.innerHTML = ''; 
         btnGuardarNovedad.disabled = true;
 
-        // Validación de permisos (ajustada para reconocer la Licencia por su nombre)
-        if (!permiteEmpleado && !['LICENCIA', 'PRESTAMOS', 'INGRESOS', 'DESCUENTOS'].includes(categoria) && !nombre.toLowerCase().includes('licencia')) {
+        const categoriasPermitidas = ['LICENCIA', 'PRESTAMOS', 'INGRESOS', 'DESCUENTOS', 'VACACIONES'];
+        const nombreLower = nombre.toLowerCase();
+        const esPermitida = !!permiteEmpleado 
+            || categoriasPermitidas.includes(categoria)
+            || nombreLower.includes('licencia')
+            || nombreLower.includes('vacacion');
+
+        if (!esPermitida) {
             camposNovedad.innerHTML = `<div class="alert alert-warning"><i class="fas fa-lock"></i> Este tipo de novedad no puede ser registrado directamente por un empleado.</div>`;
             return;
         }
 
-        if (categoria === 'ASISTENCIA' || codigo === 'AUSENCIA' || nombre.toLowerCase().includes('ausencia')) {
+        if (categoria === 'ASISTENCIA' || codigo === 'AUSENCIA' || nombreLower.includes('ausencia')) {
             camposNovedad.innerHTML = `
                 <div class="row g-3">
                     <div class="col-12">
@@ -680,7 +720,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (codigo === 'SALUD' || nombre.toLowerCase().includes('incapacidad')) {
+        if (codigo === 'SALUD' || nombreLower.includes('incapacidad')) {
             camposNovedad.innerHTML = `
                 <div class="row g-3">
                     <div class="col-md-6">
@@ -698,7 +738,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (codigo === 'HORAS_EXTRA' || nombre.toLowerCase().includes('hora')) {
+        if (codigo === 'HORAS_EXTRA' || nombreLower.includes('hora')) {
             camposNovedad.innerHTML = `
                 <div class="row g-3">
                     <div class="col-md-6"><label class="form-label">Tipo de hora <span class="text-danger">*</span></label><select id="tipoHoraExtra" class="form-select"><option value="">Cargando...</option></select></div>
@@ -714,7 +754,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (codigo === 'PERMISO' || nombre.toLowerCase().includes('permiso')) {
+        if (codigo === 'PERMISO' || nombreLower.includes('permiso')) {
             camposNovedad.innerHTML = `
                 <div class="row g-3">
                     <div class="col-md-6">
@@ -734,7 +774,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (codigo === 'LICENCIA' || nombre.toLowerCase().includes('licencia')) {
+        if (codigo === 'LICENCIA' || nombreLower.includes('licencia')) {
             camposNovedad.innerHTML = `
                 <div class="row g-3">
                     <div class="col-12">
@@ -778,36 +818,97 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (categoria === 'DESCUENTOS' || nombre.toLowerCase().includes('descuento')) {
+        if (codigo === 'VACACIONES' || nombreLower.includes('vacacion')) {
             camposNovedad.innerHTML = `
                 <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Empleado <span class="text-danger">*</span></label>
+                        <input type="text" id="buscarEmpleadoVacaciones" class="form-control" placeholder="Buscar empleado..." autocomplete="off">
+                        <div id="resultadosEmpleadoVacaciones" class="list-group" style="position: absolute; z-index: 1000; width: 95%; display:none;"></div>
+                        <input type="hidden" id="empleadoVacaciones">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Fecha de inicio <span class="text-danger">*</span></label>
+                        <input type="date" id="fechaInicioVacaciones" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Fecha de fin <span class="text-danger">*</span></label>
+                        <input type="date" id="fechaFinVacaciones" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Días hábiles</label>
+                        <input type="number" id="cantidadDiasVacaciones" class="form-control" readonly>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label">Observación</label>
+                        <textarea id="observacionVacaciones" class="form-control" rows="2" placeholder="Periodo de vacaciones..."></textarea>
+                    </div>
+                </div>
+            `;
+            configurarBuscadorEmpleado('Vacaciones');
+            const fIni = document.getElementById('fechaInicioVacaciones');
+            const fFin = document.getElementById('fechaFinVacaciones');
+            const cantDias = document.getElementById('cantidadDiasVacaciones');
+            const calcFechas = () => {
+                if (fIni.value && fFin.value) {
+                    const d1 = new Date(fIni.value + 'T00:00:00'); 
+                    const d2 = new Date(fFin.value + 'T00:00:00');
+                    if (d2 >= d1) cantDias.value = Math.floor((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
+                }
+            };
+            fIni.addEventListener('change', calcFechas);
+            fFin.addEventListener('change', calcFechas);
+            btnGuardarNovedad.disabled = false;
+            return;
+        }
+
+        if (categoria === 'DESCUENTOS' || nombreLower.includes('descuento')) {
+            camposNovedad.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Empleado <span class="text-danger">*</span></label>
+                        <input type="text" id="buscarEmpleadoDescuento" class="form-control" placeholder="Buscar empleado..." autocomplete="off">
+                        <div id="resultadosEmpleadoDescuento" class="list-group" style="position: absolute; z-index: 1000; width: 95%; display:none;"></div>
+                        <input type="hidden" id="empleadoDescuento">
+                    </div>
                     <div class="col-md-6"><label class="form-label">Concepto <span class="text-danger">*</span></label><input type="text" id="conceptoDescuento" class="form-control" placeholder="Ej. Libranza, Embargo..."></div>
                     <div class="col-md-6"><label class="form-label">Valor a descontar <span class="text-danger">*</span></label><input type="number" id="valorDescuento" class="form-control" placeholder="0.00"></div>
                     <div class="col-12"><label class="form-label">Observación</label><textarea id="observacionDescuento" class="form-control" rows="2"></textarea></div>
                 </div>
             `;
+            configurarBuscadorEmpleado('Descuento');
             seccionSoporteNovedad.style.display = 'block';
             btnGuardarNovedad.disabled = false;
             return;
         }
 
-        if (categoria === 'INGRESOS' || nombre.toLowerCase().includes('ingreso')) {
+        if (categoria === 'INGRESOS' || nombreLower.includes('ingreso')) {
             camposNovedad.innerHTML = `
                 <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Empleado <span class="text-danger">*</span></label>
+                        <input type="text" id="buscarEmpleadoIngreso" class="form-control" placeholder="Buscar empleado..." autocomplete="off">
+                        <div id="resultadosEmpleadoIngreso" class="list-group" style="position: absolute; z-index: 1000; width: 95%; display:none;"></div>
+                        <input type="hidden" id="empleadoIngreso">
+                    </div>
                     <div class="col-md-6"><label class="form-label">Concepto <span class="text-danger">*</span></label><input type="text" id="conceptoIngreso" class="form-control" placeholder="Ej. Bonificación, Comisión..."></div>
                     <div class="col-md-6"><label class="form-label">Valor del ingreso <span class="text-danger">*</span></label><input type="number" id="valorIngreso" class="form-control" placeholder="0.00"></div>
                     <div class="col-12"><label class="form-label">Observación</label><textarea id="observacionIngreso" class="form-control" rows="2"></textarea></div>
                 </div>
             `;
+            configurarBuscadorEmpleado('Ingreso');
             btnGuardarNovedad.disabled = false;
             return;
         }
 
-        if (categoria === 'PRESTAMOS' || nombre.toLowerCase().includes('préstamo') || nombre.toLowerCase().includes('anticipo')) {
+        if (categoria === 'PRESTAMOS' || nombreLower.includes('préstamo') || nombreLower.includes('anticipo')) {
+            const esAnticipo = nombreLower.includes('anticipo');
             camposNovedad.innerHTML = `
                 <div class="row g-3">
                     <div class="col-md-6"><label class="form-label">Monto solicitado <span class="text-danger">*</span></label><input type="number" id="montoPrestamo" class="form-control" placeholder="0.00"></div>
+                    ${!esAnticipo ? `
                     <div class="col-md-6"><label class="form-label">Número de cuotas <span class="text-danger">*</span></label><input type="number" id="cuotasPrestamo" class="form-control" value="1" min="1"></div>
+                    ` : ''}
                     <div class="col-12"><label class="form-label">Observación</label><textarea id="observacionPrestamo" class="form-control" rows="2"></textarea></div>
                 </div>
             `;
@@ -818,10 +919,13 @@ document.addEventListener('DOMContentLoaded', () => {
         camposNovedad.innerHTML = `<div class="alert alert-info">Formulario pendiente por implementar.</div>`;
     }
 
-
     /* ========================================================
        CONFIGURADORES DE FORMULARIOS
        ======================================================== */
+    function normalizarEmpleados(data) {
+        const arr = data?.empleados || data?.data || data;
+        return Array.isArray(arr) ? arr : [];
+    }
 
     function configurarFormularioAusencia() {
         const inputEmpleado = document.getElementById('empleadoAusencia');
@@ -831,7 +935,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         fetch('/api/empleados', { credentials: 'include' })
             .then(res => res.json())
-            .then(data => empleadosData = data.empleados || data.data || data)
+            .then(data => empleadosData = normalizarEmpleados(data))
             .catch(console.error);
 
         inputEmpleado.addEventListener('input', function () {
@@ -911,7 +1015,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         fetch('/api/empleados', { credentials: 'include' })
             .then(res => res.json())
-            .then(data => empleadosData = data.empleados || data.data || data);
+            .then(data => empleadosData = normalizarEmpleados(data))
+            .catch(console.error);
 
         inputEmp.addEventListener('input', function() {
             const text = this.value.toLowerCase();
@@ -1001,12 +1106,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             sel.innerHTML = `<option value="">Selecciona...</option>`;
             
-            if (he.length > 0) {
+            if (Array.isArray(he) && he.length > 0) {
                 const group = document.createElement('optgroup'); group.label = 'Horas Extra';
                 he.forEach(t => { const o = document.createElement('option'); o.value = t.codigo; o.textContent = t.nombre; group.appendChild(o); });
                 sel.appendChild(group);
             }
-            if (rec.length > 0) {
+            if (Array.isArray(rec) && rec.length > 0) {
                 const group = document.createElement('optgroup'); group.label = 'Recargos';
                 rec.forEach(t => { const o = document.createElement('option'); o.value = t.codigo; o.textContent = t.nombre; group.appendChild(o); });
                 sel.appendChild(group);
@@ -1032,13 +1137,49 @@ document.addEventListener('DOMContentLoaded', () => {
         hFin.addEventListener('change', calc);
     }
 
+    function configurarBuscadorEmpleado(prefix) {
+        const inputEmp = document.getElementById(`buscarEmpleado${prefix}`);
+        const listaEmp = document.getElementById(`resultadosEmpleado${prefix}`);
+        const idEmp = document.getElementById(`empleado${prefix}`);
+        
+        if (!inputEmp) return;
+
+        let empleadosData = [];
+
+        fetch('/api/empleados', { credentials: 'include' })
+            .then(res => res.json())
+            .then(data => empleadosData = normalizarEmpleados(data))
+            .catch(console.error);
+
+        inputEmp.addEventListener('input', function() {
+            const text = this.value.toLowerCase();
+            idEmp.value = '';
+            if(!text) { listaEmp.style.display = 'none'; return; }
+            
+            const res = empleadosData.filter(e => {
+                const nom = e.nombre_completo || e.nombre || `${e.nombres || ''} ${e.apellidos || ''}`.trim();
+                const doc = e.numero_documento || e.documento || '';
+                return nom.toLowerCase().includes(text) || doc.includes(text);
+            });
+            
+            listaEmp.innerHTML = '';
+            res.slice(0,5).forEach(e => {
+                const nom = e.nombre_completo || e.nombre || `${e.nombres || ''} ${e.apellidos || ''}`.trim();
+                const btn = document.createElement('button');
+                btn.type = 'button'; btn.className = 'list-group-item list-group-item-action';
+                btn.textContent = nom;
+                btn.onclick = () => { inputEmp.value = nom; idEmp.value = e.id; listaEmp.style.display = 'none'; };
+                listaEmp.appendChild(btn);
+            });
+            listaEmp.style.display = 'block';
+        });
+    }
 
     /* ========================================================
-       GUARDAR NOVEDAD (ENVÍO AL BACKEND)
+       GUARDAR NOVEDAD
        ======================================================== */
-
     async function guardarNovedad() {
-        const opt = registroTipoNovedad.selectedOptions[0];
+        const opt = registroTipoNovedad?.selectedOptions[0];
         if (!opt || !opt.value) return mostrarToast('Selecciona un tipo de novedad', 'error');
 
         const codigo = (opt.dataset.codigo || '').toUpperCase();
@@ -1112,6 +1253,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     observacion: null
                 };
             }
+            else if (codigo === 'VACACIONES' || nombre.toLowerCase().includes('vacacion')) {
+                const empId = document.getElementById('empleadoVacaciones').value;
+                if (!empId) throw new Error('Debes buscar y seleccionar un empleado de la lista.');
+                
+                const fIni = document.getElementById('fechaInicioVacaciones').value;
+                const fFin = document.getElementById('fechaFinVacaciones').value;
+                const dias = document.getElementById('cantidadDiasVacaciones').value;
+                
+                if (!fIni || !fFin || !dias) throw new Error('Completa las fechas de las vacaciones.');
+
+                endpoint = 'vacaciones';
+                payload = {
+                    tipo_novedad_id: tipoNovedadId,
+                    empleado_id: Number(empId),
+                    fecha_inicio: fIni,
+                    fecha_fin: fFin,
+                    cantidad_dias: Number(dias),
+                    motivo: 'Vacaciones',
+                    observacion: document.getElementById('observacionVacaciones').value
+                };
+            }
             else if (codigo === 'HORAS_EXTRA' || nombre.toLowerCase().includes('hora')) {
                 endpoint = 'horas-extra';
                 payload = {
@@ -1125,18 +1287,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
             }
             else if (categoria === 'DESCUENTOS') {
+                const empId = document.getElementById('empleadoDescuento').value;
+                if (!empId) throw new Error('Selecciona un empleado de la lista.');
+
                 endpoint = 'descuento';
                 formData = new FormData();
                 formData.append('tipo_novedad_id', tipoNovedadId);
+                formData.append('empleado_id', empId);
                 formData.append('concepto', document.getElementById('conceptoDescuento').value);
                 formData.append('valor', document.getElementById('valorDescuento').value);
                 formData.append('observacion', document.getElementById('observacionDescuento').value);
                 if (archivo) formData.append('soporte', archivo);
             }
             else if (categoria === 'INGRESOS') {
+                const empId = document.getElementById('empleadoIngreso').value;
+                if (!empId) throw new Error('Selecciona un empleado de la lista.');
+
                 endpoint = 'ingreso';
                 payload = {
                     tipo_novedad_id: tipoNovedadId,
+                    empleado_id: Number(empId),
                     concepto: document.getElementById('conceptoIngreso').value,
                     valor: Number(document.getElementById('valorIngreso').value),
                     observacion: document.getElementById('observacionIngreso').value
@@ -1144,10 +1314,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             else if (categoria === 'PRESTAMOS') {
                 endpoint = 'prestamo';
+                const esAnticipo = nombre.toLowerCase().includes('anticipo');
                 payload = {
                     tipo_novedad_id: tipoNovedadId,
                     monto: Number(document.getElementById('montoPrestamo').value),
-                    cuotas: Number(document.getElementById('cuotasPrestamo').value),
+                    cuotas: esAnticipo ? 1 : Number(document.getElementById('cuotasPrestamo').value),
                     observacion: document.getElementById('observacionPrestamo').value
                 };
             }
@@ -1166,7 +1337,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!res.ok || !data.success) throw new Error(data.message || 'Error al registrar.');
 
-            bootstrap.Modal.getInstance(document.getElementById('modalRegistrarNovedad')).hide();
+            const modalReg = document.getElementById('modalRegistrarNovedad');
+            if (modalReg) bootstrap.Modal.getOrCreateInstance(modalReg).hide();
             mostrarToast('Novedad registrada correctamente', 'success');
             await cargarNovedades();
 
@@ -1178,11 +1350,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
     /* ========================================================
        DRAG & DROP DE SOPORTES
        ======================================================== */
-
     function configurarDragAndDrop() {
         if (!zonaDragDropSoporte || !soporteNovedad) return;
 
@@ -1190,8 +1360,19 @@ document.addEventListener('DOMContentLoaded', () => {
         zonaDragDropSoporte.addEventListener('dragover', (e) => { e.preventDefault(); zonaDragDropSoporte.classList.add('arrastrando'); });
         zonaDragDropSoporte.addEventListener('dragleave', () => zonaDragDropSoporte.classList.remove('arrastrando'));
         zonaDragDropSoporte.addEventListener('drop', (e) => {
-            e.preventDefault(); zonaDragDropSoporte.classList.remove('arrastrando');
-            if (e.dataTransfer.files.length > 0) { soporteNovedad.files = e.dataTransfer.files; actualizarPrevisualizacion(); }
+            e.preventDefault(); 
+            zonaDragDropSoporte.classList.remove('arrastrando');
+            if (e.dataTransfer.files.length > 0) {
+                try {
+                    const dt = new DataTransfer();
+                    for (const f of e.dataTransfer.files) dt.items.add(f);
+                    soporteNovedad.files = dt.files;
+                    actualizarPrevisualizacion();
+                } catch (err) {
+                    console.warn('No se pudo asignar archivo:', err);
+                    mostrarToast('Tu navegador no soporta arrastrar archivos. Usa el botón de seleccionar.', 'warning');
+                }
+            }
         });
 
         soporteNovedad.addEventListener('change', actualizarPrevisualizacion);
@@ -1200,16 +1381,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function actualizarPrevisualizacion() {
         const f = soporteNovedad?.files?.[0];
-        if (!f) { previsualizacionSoporte.style.display = 'none'; return; }
+        if (!f) { if (previsualizacionSoporte) previsualizacionSoporte.style.display = 'none'; return; }
         
         if (f.size > 5 * 1024 * 1024) {
             mostrarToast('El archivo supera el límite de 5 MB.', 'error');
-            soporteNovedad.value = ''; previsualizacionSoporte.style.display = 'none'; return;
+            soporteNovedad.value = ''; 
+            if (previsualizacionSoporte) previsualizacionSoporte.style.display = 'none'; 
+            return;
         }
 
         if (soporteNombreArchivo) soporteNombreArchivo.textContent = f.name;
         if (soporteTamanoArchivo) soporteTamanoArchivo.textContent = (f.size / 1024 / 1024).toFixed(2) + ' MB';
-        previsualizacionSoporte.style.display = 'flex';
+        if (previsualizacionSoporte) previsualizacionSoporte.style.display = 'flex';
     }
 
     function limpiarFormularioNovedad() {
@@ -1223,139 +1406,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btnGuardarNovedad) btnGuardarNovedad.disabled = true;
     }
 
-
-    /* ========================================================
-       HISTORIAL DE NOVEDADES
-       ======================================================== */
-
-    function cambiarTipoFechaHistorial() {
-        const tipo = historialTipoFecha?.value || '';
-        
-        if (historialFechaDia) historialFechaDia.style.display = 'none';
-        if (historialFechaMes) historialFechaMes.style.display = 'none';
-        if (historialFechaAno) historialFechaAno.style.display = 'none';
-        if (historialFechaRango) historialFechaRango.style.display = 'none';
-
-        if (tipo === 'dia') historialFechaDia.style.display = 'block';
-        if (tipo === 'mes') historialFechaMes.style.display = 'block';
-        if (tipo === 'ano') historialFechaAno.style.display = 'block';
-        if (tipo === 'rango') historialFechaRango.style.display = 'grid';
-    }
-
-    async function buscarHistorial() {
-        try {
-            const params = new URLSearchParams();
-            
-            if (historialBuscar?.value) params.append('buscar', historialBuscar.value.trim());
-            if (historialTipo?.value) params.append('tipo', historialTipo.value);
-            if (historialEstado?.value) params.append('estado', historialEstado.value);
-            
-            const tipoFecha = historialTipoFecha?.value;
-            if (tipoFecha) {
-                params.append('tipo_fecha', tipoFecha);
-                if (tipoFecha === 'dia' && historialDia?.value) params.append('fecha', historialDia.value);
-                if (tipoFecha === 'mes' && historialMes?.value) params.append('mes', historialMes.value);
-                if (tipoFecha === 'ano' && historialAno?.value) params.append('ano', historialAno.value);
-                if (tipoFecha === 'rango') {
-                    if (historialDesde?.value) params.append('desde', historialDesde.value);
-                    if (historialHasta?.value) params.append('hasta', historialHasta.value);
-                }
-            }
-
-            if (historialCargando) historialCargando.style.display = 'block';
-            if (historialEstadoVacio) historialEstadoVacio.style.display = 'none';
-            if (historialTablaWrapper) historialTablaWrapper.style.display = 'none';
-
-            const res = await fetch(`/api/nomina/novedades/historial?${params.toString()}`);
-            const data = await res.json();
-
-            if (!res.ok || !data.success) throw new Error(data.message || 'Error al consultar historial');
-
-            renderizarHistorial(data.novedades || []);
-
-        } catch (error) {
-            console.error('Error historial:', error);
-            if (historialEstadoVacio) {
-                historialEstadoVacio.style.display = 'flex';
-                historialEstadoVacio.innerHTML = `<div class="alert alert-danger">No se pudo cargar el historial: ${escaparHTML(error.message)}</div>`;
-            }
-        } finally {
-            if (historialCargando) historialCargando.style.display = 'none';
-        }
-    }
-
-    function renderizarHistorial(lista) {
-        if (!tablaHistorialNovedades) return;
-
-        tablaHistorialNovedades.innerHTML = '';
-
-        if (!lista.length) {
-            if (historialTablaWrapper) historialTablaWrapper.style.display = 'none';
-            if (historialEstadoVacio) {
-                historialEstadoVacio.style.display = 'flex';
-                historialEstadoVacio.innerHTML = `
-                    <div class="novedades-empty-icon"><i class="fas fa-clock-rotate-left"></i></div>
-                    <h3>No hay novedades en el historial</h3>
-                    <p>No se encontraron novedades con los filtros seleccionados.</p>
-                `;
-            }
-            return;
-        }
-
-        if (historialEstadoVacio) historialEstadoVacio.style.display = 'none';
-        if (historialTablaWrapper) historialTablaWrapper.style.display = 'block';
-        
-        if (contadorHistorial) contadorHistorial.textContent = `${lista.length} novedades`;
-
-        lista.forEach(n => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>
-                    <strong>${escaparHTML(n.empleado_nombre || '-')}</strong><br>
-                    <small>${escaparHTML(n.numero_documento || '')}</small>
-                </td>
-                <td>${escaparHTML(n.tipo_novedad || '-')}</td>
-                <td>${formatearFecha(n.fecha_revision || n.fecha_creacion)}</td>
-                <td>${escaparHTML(n.cantidad_dias ? n.cantidad_dias + ' días' : (n.cantidad_horas ? n.cantidad_horas + ' horas' : '-'))}</td>
-                <td>${crearBadgeEstado(n.estado)}</td>
-                <td>${formatearFechaHora(n.fecha_creacion)}</td>
-                <td>
-                    <button type="button" class="novedad-accion-btn detalle btn-ver-historial" data-id="${n.id}">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                </td>
-            `;
-            tablaHistorialNovedades.appendChild(tr);
-        });
-    }
-
-    function limpiarFiltrosHistorial() {
-        if (historialBuscar) historialBuscar.value = '';
-        if (historialTipo) historialTipo.value = '';
-        if (historialEstado) historialEstado.value = '';
-        if (historialTipoFecha) historialTipoFecha.value = '';
-        if (historialDia) historialDia.value = '';
-        if (historialMes) historialMes.value = '';
-        if (historialAno) historialAno.value = '';
-        if (historialDesde) historialDesde.value = '';
-        if (historialHasta) historialHasta.value = '';
-        
-        cambiarTipoFechaHistorial();
-        if (historialTablaWrapper) historialTablaWrapper.style.display = 'none';
-        if (historialEstadoVacio) historialEstadoVacio.style.display = 'flex';
-    }
-
-
     /* ========================================================
        CIERRE DE PERÍODO
        ======================================================== */
-
     async function abrirCierrePeriodo() {
         const modalElement = document.getElementById('modalCierrePeriodo');
         const body = document.getElementById('cierrePeriodoBody');
         const periodo = filtroMes?.value || new Date().toISOString().slice(0, 7);
 
-        if (!modalElement) return;
+        if (!modalElement || !body) return;
 
         body.innerHTML = `<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-2x text-primary"></i><p class="mt-2">Validando pendientes...</p></div>`;
         
@@ -1372,6 +1431,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!res.ok || !data.success) throw new Error(data.message);
 
+            const btnConfirmar = document.getElementById('btnConfirmarCierrePeriodo');
+            
+            if (btnConfirmar) btnConfirmar.onclick = null;
+
             if (data.pendientes && data.pendientes.length > 0) {
                 body.innerHTML = `
                     <div class="alert alert-danger">
@@ -1379,7 +1442,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p class="mb-0">Existen ${data.pendientes.length} novedades pendientes de aprobación. Debes resolverlas antes de cerrar.</p>
                     </div>
                 `;
-                document.getElementById('btnConfirmarCierrePeriodo').disabled = true;
+                if (btnConfirmar) btnConfirmar.disabled = true;
             } else {
                 body.innerHTML = `
                     <div class="alert alert-success">
@@ -1387,8 +1450,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p class="mb-0">No hay novedades pendientes para el período ${periodo}. Al cerrar, las aprobadas pasarán a estado PROCESADA.</p>
                     </div>
                 `;
-                document.getElementById('btnConfirmarCierrePeriodo').disabled = false;
-                document.getElementById('btnConfirmarCierrePeriodo').onclick = () => ejecutarCierrePeriodo(periodo);
+                if (btnConfirmar) {
+                    btnConfirmar.disabled = false;
+                    btnConfirmar.onclick = () => ejecutarCierrePeriodo(periodo);
+                }
             }
 
         } catch (error) {
@@ -1397,10 +1462,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function ejecutarCierrePeriodo(periodo) {
+        const btn = document.getElementById('btnConfirmarCierrePeriodo');
+        
         try {
-            const btn = document.getElementById('btnConfirmarCierrePeriodo');
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Cerrando...`;
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Cerrando...`;
+            }
 
             const res = await fetch('/api/nomina/novedades/cierre-periodo', {
                 method: 'POST',
@@ -1411,31 +1479,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!res.ok || !data.success) throw new Error(data.message);
 
-            bootstrap.Modal.getInstance(document.getElementById('modalCierrePeriodo')).hide();
+            const modalCierre = document.getElementById('modalCierrePeriodo');
+            if (modalCierre) bootstrap.Modal.getOrCreateInstance(modalCierre).hide();
             mostrarToast(`Período ${periodo} cerrado exitosamente`, 'success');
             await cargarNovedades();
 
         } catch (error) {
             mostrarToast(error.message, 'error');
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fas fa-lock"></i> Cerrar período`;
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fas fa-lock"></i> Cerrar período`;
+            }
         }
     }
 
-
     /* ========================================================
-       EXPORTACIÓN A CSV
+       EXPORTACIÓN A CSV 
        ======================================================== */
-
     function exportarCSV() {
         if (!estadoApp.novedadesFiltradas.length) {
             mostrarToast('No hay datos para exportar', 'warning');
             return;
         }
 
-        const columnas = ['ID', 'Empleado', 'Documento', 'Tipo', 'Fecha Inicio', 'Fecha Fin', 'Cantidad', 'Estado', 'Registro'];
-        const filas = estadoApp.novedadesFiltradas.map(n => [
-            n.id,
+        const columnas = [
+            'Empleado', 'Documento', 'Tipo de Novedad', 'Fecha Inicio', 'Fecha Fin', 'Cantidad', 'Estado', 'Observación'
+        ];
+
+        const tiposPermitidos = ['HORAS EXTRA', 'RECARGO', 'AUSENCIA', 'INCAPACIDAD', 'LICENCIA', 'VACACIONES'];
+        
+        const novedadesParaExportar = estadoApp.novedadesFiltradas.filter(n => {
+            const tipo = obtenerTipo(n).toUpperCase();
+            return tiposPermitidos.some(permitido => tipo.includes(permitido));
+        });
+
+        if (!novedadesParaExportar.length) {
+            mostrarToast('No hay novedades de los tipos exportables (Horas Extra, Recargo, Ausencia, Incapacidad, Licencia, Vacaciones).', 'warning');
+            return;
+        }
+
+        const filas = novedadesParaExportar.map(n => [
             obtenerEmpleado(n),
             n.numero_documento || '',
             obtenerTipo(n),
@@ -1443,21 +1526,22 @@ document.addEventListener('DOMContentLoaded', () => {
             n.fecha_fin || '',
             obtenerCantidad(n),
             obtenerEstado(n),
-            formatearFecha(n.fecha_creacion)
+            n.observacion || n.motivo || ''
         ]);
 
-        let csvContent = "\uFEFF"; // BOM para Excel
-        csvContent += columnas.join(";") + "\n";
+        let csvContent = "\uFEFF"; 
+        csvContent += columnas.join(";") + "\n"; 
 
         filas.forEach(row => {
-            csvContent += row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(";") + "\n";
+            const filaLimpia = row.map(cell => `"${String(cell).replace(/"/g, '""')}"`);
+            csvContent += filaLimpia.join(";") + "\n";
         });
 
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `novedades_${new Date().getTime()}.csv`;
+        link.download = `Reporte_Nomina_${new Date().getTime()}.csv`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -1466,11 +1550,9 @@ document.addEventListener('DOMContentLoaded', () => {
         mostrarToast('Archivo exportado correctamente', 'success');
     }
 
-
     /* ========================================================
        SISTEMA DE TOASTS Y MODAL DE CONFIRMACIÓN
        ======================================================== */
-
     function mostrarToast(mensaje, tipo = 'success') {
         if (!contenedorToasts) return;
 
@@ -1509,11 +1591,9 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.show();
     }
 
-
     /* ========================================================
        UTILIDADES DE FORMATO Y SEGURIDAD
        ======================================================== */
-
     function mostrarCargando() {
         if (tablaSkeleton) tablaSkeleton.style.display = 'flex';
         if (tablaNovedades) tablaNovedades.innerHTML = '';
@@ -1549,14 +1629,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function formatearFecha(f) {
         if (!f) return '-';
-        const d = new Date(f);
-        return isNaN(d.getTime()) ? f : d.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const str = String(f);
+        const d = new Date(str.length === 10 ? str + 'T00:00:00' : str);
+        if (isNaN(d.getTime())) return str;
+        
+        return d.toLocaleDateString('es-CO', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        }).replace('.', '');
     }
 
     function formatearFechaHora(f) {
         if (!f) return '-';
-        const d = new Date(f);
-        return isNaN(d.getTime()) ? f : d.toLocaleString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        const str = String(f);
+        const d = new Date(str.length === 10 ? str + 'T00:00:00' : str);
+        if (isNaN(d.getTime())) return str;
+        
+        return d.toLocaleString('es-CO', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        }).replace('.', '').replace(',', ' ·');
     }
 
     function formatearTexto(t) {
@@ -1565,9 +1662,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function escaparHTML(val) {
-        const div = document.createElement('div');
-        div.textContent = val ?? '';
-        return div.innerHTML;
+        return String(val ?? '').replace(/[&<>"']/g, c => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[c]));
     }
 
     function debounce(fn, wait) {
