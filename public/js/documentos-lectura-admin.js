@@ -13,12 +13,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const tablaDocumentos = document.getElementById('tablaDocumentos');
     const tablaHistorial = document.getElementById('tablaHistorial');
+    const filtroTipoHistorial = document.getElementById('filtroTipoHistorial');
+    filtroTipoHistorial.addEventListener('change', () => {
+    const tipoSeleccionado = filtroTipoHistorial.value;
+
+    const filas = tablaHistorial.querySelectorAll('tr[data-tipo]');
+
+    filas.forEach(fila => {
+        const tipoDocumento = fila.dataset.tipo;
+
+        fila.style.display =
+            tipoSeleccionado === '' || tipoDocumento === tipoSeleccionado
+                ? ''
+                : 'none';
+    });
+});
+    const filtroTipoDocumentos = document.getElementById('filtroTipoDocumentos');
 
     const archivoDocumento = document.getElementById('archivoDocumento');
     const archivoVersion = document.getElementById('archivoVersion');
 
     let documentosActuales = [];
 
+    filtroTipoDocumentos.addEventListener('change', () => {
+    const tipoSeleccionado = filtroTipoDocumentos.value;
+
+    const filas = tablaDocumentos.querySelectorAll('tr[data-tipo]');
+
+    filas.forEach(fila => {
+        const tipoDocumento = fila.dataset.tipo;
+
+        fila.style.display =
+            tipoSeleccionado === '' || tipoDocumento === tipoSeleccionado
+                ? ''
+                : 'none';
+    });
+});
+
+
+    function mostrarAlerta(titulo, mensaje, icono = 'success') {
+    return Swal.fire({
+        title: titulo,
+        text: mensaje,
+        icon: icono,
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#087B49',
+        background: '#ffffff',
+        color: '#172033',
+        allowOutsideClick: false,
+        customClass: {
+            popup: 'alerta-erp'
+        }
+    });
+}
 
     // ==========================================
     // SEGURIDAD Y UTILIDADES DE PRESENTACIÓN
@@ -196,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tablaDocumentos.innerHTML = `
             <tr>
-                <td colspan="5" class="estado-tabla">
+                <td colspan="6" class="estado-tabla">
                     Cargando documentos...
                 </td>
             </tr>
@@ -217,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 tablaDocumentos.innerHTML = `
                     <tr>
-                        <td colspan="5" class="estado-tabla">
+                        <td colspan="6" class="estado-tabla">
                             <i class="fa-regular fa-folder-open"></i>
                             <br><br>
                             Todavía no hay documentos publicados.
@@ -231,17 +278,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
             tablaDocumentos.innerHTML = documentosActuales.map(documento => `
 
-                <tr>
+                <tr data-tipo="${escaparHTML(documento.tipo_documento || '')}">
 
                     <td>
-                        <span class="nombre-documento">
-                            ${escaparHTML(documento.titulo)}
-                        </span>
+    <span class="nombre-documento">
+        ${escaparHTML(documento.titulo)}
+    </span>
 
-                        <span class="subtexto">
-                            ${escaparHTML(documento.descripcion || 'Sin descripción')}
-                        </span>
-                    </td>
+    <span class="subtexto">
+        ${escaparHTML(documento.descripcion || 'Sin descripción')}
+    </span>
+</td>
+
+<td>
+    <span class="estado-badge">
+        ${escaparHTML(documento.tipo_documento || 'Sin categoría')}
+    </span>
+</td>
 
                     <td>
                         V.${escaparHTML(documento.numero_version)}
@@ -300,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             tablaDocumentos.innerHTML = `
                 <tr>
-                    <td colspan="5" class="estado-tabla">
+                    <td colspan="6" class="estado-tabla">
                         ${escaparHTML(error.message)}
                     </td>
                 </tr>
@@ -319,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tablaHistorial.innerHTML = `
             <tr>
-                <td colspan="6" class="estado-tabla">
+                <td colspan="9" class="estado-tabla">
                     Cargando historial...
                 </td>
             </tr>
@@ -338,13 +391,13 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
             document.getElementById('totalVersiones').textContent =
-                historicas.length;
+                historicas.lengtno ;
 
             if (historial.length === 0) {
 
                 tablaHistorial.innerHTML = `
                     <tr>
-                        <td colspan="6" class="estado-tabla">
+                        <td colspan="9" class="estado-tabla">
                             Todavía no existen versiones registradas.
                         </td>
                     </tr>
@@ -371,61 +424,75 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 return `
 
-                    <tr>
+    <tr data-tipo="${escaparHTML(version.tipo_documento || '')}">
 
-                        <td>
-                            <span class="nombre-documento">
-                                ${escaparHTML(version.titulo)}
-                            </span>
-                        </td>
+        <td>
+            <span class="nombre-documento">
+                ${escaparHTML(version.titulo)}
+            </span>
+        </td>
 
-                        <td>
-                            V.${escaparHTML(version.numero_version)}
-                        </td>
-
-                        <td>
-                            ${formatearFecha(version.fecha_publicacion)}
-                        </td>
-
-                        <td>
-                            ${escaparHTML(version.publicado_por || 'No disponible')}
-                        </td>
-
-                        <td>
-                            <span class="estado-badge ${clase}">
-                                ${texto}
-                            </span>
-                        </td>
-
-                        <td>
-    <div class="acciones-tabla">
-
-        <button
-            class="btn-accion"
-            data-accion="ver"
-            data-version="${Number(version.version_id)}"
-            title="Consultar PDF"
-        >
-            <i class="fa-solid fa-eye"></i>
-        </button>
-
-        ${version.estado === 'BORRADOR' ? `
-            <button
-                class="btn-accion btn-version"
-                data-accion="publicar"
-                data-version="${Number(version.version_id)}"
-                title="Publicar versión"
-            >
-                <i class="fa-solid fa-cloud-arrow-up"></i>
-            </button>
-        ` : ''}
-
-    </div>
+        <td>
+    <span class="estado-badge">
+        ${escaparHTML(version.tipo_documento || 'Sin categoría')}
+    </span>
 </td>
 
-                    </tr>
+<td>
+    V.${escaparHTML(version.numero_version)}
+</td>
 
-                `;
+        <td>
+            ${formatearFecha(version.fecha_publicacion)}
+        </td>
+
+        <td>
+            ${escaparHTML(version.publicado_por || 'No disponible')}
+        </td>
+
+        <td>
+            ${escaparHTML(version.retirado_por || '—')}
+        </td>
+
+        <td>
+            ${formatearFecha(version.fecha_retiro)}
+        </td>
+
+        <td>
+            <span class="estado-badge ${clase}">
+                ${texto}
+            </span>
+        </td>
+
+        <td>
+            <div class="acciones-tabla">
+
+                <button
+                    class="btn-accion"
+                    data-accion="ver"
+                    data-version="${Number(version.version_id)}"
+                    title="Consultar PDF"
+                >
+                    <i class="fa-solid fa-eye"></i>
+                </button>
+
+                ${version.estado === 'BORRADOR' ? `
+                    <button
+                        class="btn-accion btn-version"
+                        data-accion="publicar"
+                        data-version="${Number(version.version_id)}"
+                        title="Publicar versión"
+                    >
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </button>
+                ` : ''}
+
+            </div>
+        </td>
+
+    </tr>
+
+`;
 
             }).join('');
 
@@ -435,7 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             tablaHistorial.innerHTML = `
                 <tr>
-                    <td colspan="6" class="estado-tabla">
+                    <td colspan="9" class="estado-tabla">
                         ${escaparHTML(error.message)}
                     </td>
                 </tr>

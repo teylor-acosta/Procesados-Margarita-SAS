@@ -99,6 +99,7 @@ router.get(
                     d.id AS documento_id,
                     d.titulo,
                     d.descripcion,
+                    d.tipo_documento,
                     d.estado,
                     v.id AS version_id,
                     v.numero_version,
@@ -177,7 +178,23 @@ router.post(
 
             const db = req.app.get('db');
 
-            const { titulo, descripcion } = req.body;
+            const { titulo, descripcion, tipo_documento } = req.body;
+
+            const tiposPermitidos = [
+    'REGLAMENTO',
+    'POLITICAS',
+    'PROGRAMAS',
+    'MANUALES'
+];
+
+if (!tiposPermitidos.includes(tipo_documento)) {
+    eliminarArchivo(archivo);
+
+    return res.status(400).json({
+        success: false,
+        message: 'Debes seleccionar un tipo de documento válido.'
+    });
+}
 
             if (!titulo || !titulo.trim() || !req.file) {
 
@@ -194,17 +211,18 @@ router.post(
 
             await conexion.beginTransaction();
 
-            const [documento] = await conexion.query(`
+           const [documento] = await conexion.query(`
 
-                INSERT INTO documentos_lectura
-                (titulo, descripcion, estado)
+    INSERT INTO documentos_lectura
+    (titulo, descripcion, tipo_documento, estado)
 
-                VALUES (?, ?, 'ACTIVO')
+    VALUES (?, ?, ?, 'ACTIVO')
 
-            `, [
-                titulo.trim(),
-                descripcion || null
-            ]);
+`, [
+    titulo.trim(),
+    descripcion || null,
+    tipo_documento
+]);
 
             const documentoID = documento.insertId;
 
@@ -861,6 +879,7 @@ router.get(
     SELECT
         d.id AS documento_id,
         d.titulo,
+        d.tipo_documento,
 
         v.id AS version_id,
         v.numero_version,

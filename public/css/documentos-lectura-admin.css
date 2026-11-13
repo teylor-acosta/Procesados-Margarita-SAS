@@ -598,3 +598,77 @@ td {
 .btn-publicar {
     font-size: 14px;
 }
+
+
+/* ==========================================
+   FILTROS DE DOCUMENTOS
+========================================== */
+
+.filtro-documentos {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 0 0 22px;
+}
+
+.filtro-documentos label {
+    font-family: 'Averia Libre', cursive;
+    font-size: 14px;
+    font-weight: 700;
+    color: #26364a;
+}
+
+.filtro-documentos select {
+    width: 260px;
+    max-width: 100%;
+    padding: 12px 40px 12px 15px;
+
+    font-family: 'Averia Libre', cursive;
+    font-size: 14px;
+    font-weight: 400;
+
+    color: #26364a;
+    background-color: #f8fafc;
+    border: 1px solid #dce5e9;
+    border-radius: 10px;
+
+    cursor: pointer;
+    outline: none;
+
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                background-color 0.2s ease;
+
+    appearance: none;
+
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23087B49' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+}
+
+.filtro-documentos select:hover {
+    border-color: #087b49;
+    background-color: #ffffff;
+}
+
+.filtro-documentos select:focus {
+    border-color: #087b49;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(8, 123, 73, 0.12);
+}
+
+.filtro-documentos select option {
+    color: #26364a;
+    background: #ffffff;
+}
+
+@media (max-width: 576px) {
+    .filtro-documentos select {
+        width: 100%;
+    }
+
+    .filtro-documentos {
+        align-items: stretch;
+    }
+}

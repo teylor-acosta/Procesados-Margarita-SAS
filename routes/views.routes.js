@@ -2,7 +2,13 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 
-const { proteger, soloAdmin, soloAuxiliar, soloSuperAdmin } = require('../middlewares/auth');
+const {
+    proteger,
+    soloAdmin,
+    soloAuxiliar,
+    soloSuperAdmin,
+    soloAdminGeneral
+} = require('../middlewares/auth');
 
 // ============================================
 // RUTAS PÚBLICAS
@@ -130,11 +136,11 @@ router.get('/auxiliar', proteger, soloAuxiliar, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'auxiliar.html'));
 });
 
-router.get('/crear-empleado', proteger, soloSuperAdmin, (req, res) => {
+router.get('/crear-empleado', proteger, soloAdminGeneral, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'crear-empleado.html'));
 });
 
-router.get('/empleados', proteger, soloSuperAdmin, (req, res) => {
+router.get('/empleados', proteger, soloAdminGeneral, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'empleados.html'));
 });
 
@@ -146,7 +152,7 @@ router.get('/panel', proteger, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'panel.html'));
 });
 
-router.get('/recursos-humanos', proteger, soloSuperAdmin, (req, res) => {
+router.get('/recursos-humanos', proteger, soloAdminGeneral, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'recursos-humanos.html'));
 });
 
@@ -171,7 +177,7 @@ router.get(
     }
 );
 
-router.get('/usuarios', proteger, soloSuperAdmin, (req, res) => {
+router.get('/usuarios', proteger, soloAdminGeneral, (req, res) => {
 
     res.sendFile(
 
@@ -187,7 +193,7 @@ router.get('/usuarios', proteger, soloSuperAdmin, (req, res) => {
 router.get(
     '/gestion-organizacional',
     proteger,
-    soloSuperAdmin,
+    soloAdminGeneral,
     (req, res) => {
 
         res.sendFile(
@@ -203,7 +209,7 @@ router.get(
    🔥 CREAR USUARIO
 ========================================= */
 
-router.get('/crear-usuario', proteger, soloSuperAdmin, (req, res) => {
+router.get('/crear-usuario', proteger, soloAdminGeneral, (req, res) => {
 
     res.sendFile(
 
@@ -219,7 +225,7 @@ router.get('/crear-usuario', proteger, soloSuperAdmin, (req, res) => {
    🔥 USUARIOS REGISTRADOS
 ========================================= */
 
-router.get('/usuarios-registrados', proteger, soloSuperAdmin, (req, res) => {
+router.get('/usuarios-registrados', proteger, soloAdminGeneral, (req, res) => {
 
     res.sendFile(
 
@@ -251,7 +257,7 @@ router.get(
    🔥 ROLES Y ACCESOS
 ========================================= */
 
-router.get('/roles-accesos', proteger, soloSuperAdmin, (req, res) => {
+router.get('/roles-accesos', proteger, soloAdminGeneral, (req, res) => {
 
     res.sendFile(
 
@@ -355,7 +361,7 @@ router.get(
 router.get(
     '/documentos-lectura-admin',
     proteger,
-    soloSuperAdmin,
+    soloAdminGeneral,
     (req, res) => {
 
         res.sendFile(
