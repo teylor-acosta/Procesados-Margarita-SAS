@@ -101,8 +101,31 @@ app.use((req, res, next) => {
 // STATIC
 // ============================================
 
+// Bloquear acceso directo a páginas HTML,
+// permitiendo únicamente fragmentos autorizados.
+app.use((req, res, next) => {
+
+    const ruta = req.path.toLowerCase();
+
+    const archivosPermitidos = [
+        '/components/sidebar.html'
+    ];
+
+    if (
+        ruta.endsWith('.html') &&
+        !archivosPermitidos.includes(ruta)
+    ) {
+        return res.status(404).send('Página no encontrada');
+    }
+
+    next();
+});
+
+
+ // Servir recursos estáticos sin abrir HTML directamente
 app.use(express.static(
-    path.join(__dirname, 'public')
+    path.join(__dirname, 'public'),
+    { index: false }
 ));
 
 app.use(
@@ -125,6 +148,7 @@ app.use(
         path.join(__dirname, 'uploads')
     )
 );
+
 
 
 // ============================================

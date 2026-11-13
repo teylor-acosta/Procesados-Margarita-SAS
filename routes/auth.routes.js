@@ -248,46 +248,14 @@ router.post('/api/login', async (req, res) => {
     const aprobados = results2[0].aprobados || 0;
     const tieneCertificado = results2[0].tiene_certificado > 0;
 
-    if (tieneCertificado) {
-        destino = "/dashboard";
-    } else if (aprobados < total) {
-        destino = "/induccion";
-    } else {
-        destino = "/firma";
-    }
-}
-
-// =========================================
-// VALIDAR LECTURA OBLIGATORIA DE DOCUMENTOS
-// =========================================
-
-let redirect = "/dashboard";
-
-if (parseInt(u.cambio_password) === 1) {
-    redirect = "/cambiar-password";
-} else if (!completo) {
-    redirect = "/induccion";
-} else if (completo && !tieneCertificado) {
-    redirect = "/firma";
-} else {
-    redirect = "/dashboard";
-}
-
-// =========================================
-// VALIDAR DOCUMENTOS OBLIGATORIOS
-// =========================================
-
-if (redirect === "/dashboard") {
-
-    const pendientes = await tieneDocumentosPendientes(
-        db,
-        req.session.empleadoID
-    );
-
-    if (pendientes) {
-        redirect = "/documentos-lectura";
-    }
-}
+            if (tieneCertificado) {
+                destino = "/dashboard";
+            } else if (aprobados < total) {
+                destino = "/induccion";
+            } else {
+                destino = "/firma";
+            }
+        }
 
         req.session.save(() => {
             res.json({
@@ -397,6 +365,22 @@ WHERE estado = 'ACTIVO') AS total_capacitaciones,
         } else {
             redirect = "/dashboard";
         }
+
+        // =========================================
+// VALIDAR DOCUMENTOS OBLIGATORIOS
+// =========================================
+
+if (redirect === "/dashboard") {
+
+    const pendientes = await tieneDocumentosPendientes(
+        db,
+        req.session.empleadoID
+    );
+
+    if (pendientes) {
+        redirect = "/documentos-lectura";
+    }
+}
 
         res.json({
             success: true,

@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const modalDocumento = document.getElementById('modalDocumento');
     const modalVersion = document.getElementById('modalVersion');
+    const modalSeguimiento = document.getElementById('modalSeguimiento');
 
     const formDocumento = document.getElementById('formDocumento');
     const formVersion = document.getElementById('formVersion');
@@ -35,37 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let documentosActuales = [];
 
-    filtroTipoDocumentos.addEventListener('change', () => {
-    const tipoSeleccionado = filtroTipoDocumentos.value;
-
-    const filas = tablaDocumentos.querySelectorAll('tr[data-tipo]');
-
-    filas.forEach(fila => {
-        const tipoDocumento = fila.dataset.tipo;
-
-        fila.style.display =
-            tipoSeleccionado === '' || tipoDocumento === tipoSeleccionado
-                ? ''
-                : 'none';
-    });
-});
-
-
-    function mostrarAlerta(titulo, mensaje, icono = 'success') {
-    return Swal.fire({
-        title: titulo,
-        text: mensaje,
-        icon: icono,
-        confirmButtonText: 'Aceptar',
-        confirmButtonColor: '#087B49',
-        background: '#ffffff',
-        color: '#172033',
-        allowOutsideClick: false,
-        customClass: {
-            popup: 'alerta-erp'
-        }
-    });
-}
 
     // ==========================================
     // SEGURIDAD Y UTILIDADES DE PRESENTACIÓN
@@ -154,11 +124,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('cerrarModalVersion')
         .addEventListener('click', () => cerrarModal(modalVersion));
+        // MODAL DE SEGUIMIENTO DOCUMENTAL
+
+document.getElementById('btnAbrirSeguimiento')
+    .addEventListener('click', () => {
+        abrirModal(modalSeguimiento);
+    });
+
+document.getElementById('cerrarModalSeguimiento')
+    .addEventListener('click', () => {
+        cerrarModal(modalSeguimiento);
+    });
 
     document.getElementById('cancelarVersion')
         .addEventListener('click', () => cerrarModal(modalVersion));
 
-    [modalDocumento, modalVersion].forEach(modal => {
+    [modalDocumento, modalVersion, modalSeguimiento].forEach(modal => {
 
         modal.addEventListener('click', event => {
 
@@ -233,6 +214,425 @@ document.addEventListener('DOMContentLoaded', () => {
             archivo.name;
 
     });
+
+
+
+    // ==========================================
+    // CARGAR SEGUIMIENTO DOCUMENTAL
+    // ==========================================
+
+    async function cargarSeguimiento() {
+
+        tablaSeguimiento.innerHTML = `
+            <tr>
+                <td colspan="6" class="estado-tabla">
+                    Consultando empleados y documentos...
+                </td>
+            </tr>
+        `;
+
+        try {
+
+            const datos = await respuestaAPI(
+                '/api/documentos-lectura/seguimiento'
+            );
+
+            datosSeguimiento = datos.seguimiento || [];
+            resumenSeguimiento = datos.resumen || {};
+
+            // ACTUALIZAR INDICADORES
+
+            document.getElementById('segTotalEmpleados').textContent =
+                resumenSeguimiento.total_empleados || 0;
+
+            document.getElementById('segEmpleadosAlDia').textContent =
+                resumenSeguimiento.empleados_al_dia || 0;
+
+            document.getElementById('segEmpleadosPendientes').textContent =
+                resumenSeguimiento.empleados_con_pendientes || 0;
+
+            const porcentaje =
+                Number(resumenSeguimiento.porcentaje_cumplimiento || 0);
+
+            document.getElementById('segPorcentaje').textContent =
+                `${porcentaje.toLocaleString('es-CO')}%`;
+
+            // ACTUALIZAR BARRA DE PROGRESO
+
+            document.getElementById('segBarraProgreso').style.width =
+                `${Math.min(100, Math.max(0, porcentaje))}%`;
+
+            document.getElementById('segTextoProgreso').textContent =
+                `${resumenSeguimiento.total_leidos || 0} de ${
+                    (resumenSeguimiento.total_leidos || 0) +
+                    (resumenSeguimiento.total_pendientes || 0)
+                } aceptaciones`;
+
+            // CARGAR DOCUMENTOS EN EL FILTRO
+
+            const documentos = [
+                ...new Map(
+                    datosSeguimiento.map(item => [
+                        item.documento_id,
+                        {
+                            id: item.documento_id,
+                            titulo: item.documento
+                        }
+                    ])
+                ).values()
+            ];
+
+            filtroSeguimientoDocumento.innerHTML = `
+                <option value="">Todos los documentos</option>
+                ${documentos.map(documento => `
+                    <option value="${Number(documento.id)}">
+                        ${escaparHTML(documento.titulo)}
+                    </option>
+                `).join('')}
+            `;
+
+            // DIBUJAR TABLA
+
+            renderizarSeguimiento();
+
+        } catch (error) {
+
+            console.error('ERROR SEGUIMIENTO:', error);
+
+            tablaSeguimiento.innerHTML = `
+                <tr>
+                    <td colspan="6" class="estado-tabla">
+                        ${escaparHTML(error.message)}
+                    </td>
+                </tr>
+            `;
+
+        }
+
+    }
+
+
+    
+    // ==========================================
+    // RENDERIZAR SEGUIMIENTO AGRUPADO POR EMPLEADO
+    // ==========================================
+
+    function renderizarSeguimiento() {
+
+        const busqueda = filtroBuscarEmpleado.value
+            .trim()
+            .toLowerCase();
+
+        const documentoSeleccionado =
+            filtroSeguimientoDocumento.value;
+
+        const estadoSeleccionado =
+            filtroSeguimientoEstado.value;
+
+        // AGRUPAR DOCUMENTOS POR EMPLEADO
+
+        const empleados = new Map();
+
+        datosSeguimiento.forEach(item => {
+
+            if (!empleados.has(item.empleado_id)) {
+
+                empleados.set(item.empleado_id, {
+                    empleado_id: item.empleado_id,
+                    nombre: item.nombre,
+                    codigo: item.codigo,
+                    numero_documento: item.numero_documento,
+                    documentos: []
+                });
+
+            }
+
+            empleados.get(item.empleado_id).documentos.push(item);
+
+        });
+
+        // APLICAR FILTROS A LOS EMPLEADOS
+
+        const filtrados = [...empleados.values()].filter(empleado => {
+
+            const coincideBusqueda = [
+                empleado.nombre,
+                empleado.codigo,
+                empleado.numero_documento
+            ].some(valor =>
+                String(valor || '').toLowerCase().includes(busqueda)
+            );
+
+            const documentosLeidos = empleado.documentos.filter(
+                doc => doc.estado_lectura === 'LEIDO'
+            ).length;
+
+            const documentosPendientes = empleado.documentos.filter(
+                doc => doc.estado_lectura === 'PENDIENTE'
+            ).length;
+
+            const alDia = documentosPendientes === 0;
+
+            const coincideEstado =
+                !estadoSeleccionado ||
+                (estadoSeleccionado === 'AL_DIA' && alDia) ||
+                (estadoSeleccionado === 'PENDIENTE' && !alDia);
+
+            const coincideDocumento =
+                !documentoSeleccionado ||
+                empleado.documentos.some(doc =>
+                    String(doc.documento_id) === documentoSeleccionado
+                );
+
+            return coincideBusqueda &&
+                coincideEstado &&
+                coincideDocumento;
+
+        });
+
+        // VALIDAR RESULTADOS
+
+        if (filtrados.length === 0) {
+
+            tablaSeguimiento.innerHTML = '';
+
+            document.getElementById(
+                'seguimientoSinResultados'
+            ).style.display = 'block';
+
+            return;
+
+        }
+
+        document.getElementById(
+            'seguimientoSinResultados'
+        ).style.display = 'none';
+
+        // DIBUJAR UNA FILA POR EMPLEADO
+
+        tablaSeguimiento.innerHTML = filtrados.map(empleado => {
+
+            const totalLeidos = empleado.documentos.filter(
+                doc => doc.estado_lectura === 'LEIDO'
+            ).length;
+
+            const totalPendientes = empleado.documentos.filter(
+                doc => doc.estado_lectura === 'PENDIENTE'
+            ).length;
+
+            const alDia = totalPendientes === 0;
+
+            return `
+                <tr class="fila-empleado-seguimiento">
+
+                    <td>
+                        <span class="nombre-empleado">
+                            ${escaparHTML(empleado.nombre)}
+                        </span>
+
+                        <span class="subtexto">
+                            Código: ${escaparHTML(empleado.codigo)}
+                        </span>
+                    </td>
+
+                    <td>
+                        ${escaparHTML(empleado.numero_documento)}
+                    </td>
+
+                    <td>
+                        <span class="contador-leidos">
+                            ${totalLeidos}
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="contador-pendientes">
+                            ${totalPendientes}
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="estado-lectura ${
+                            alDia ? 'leido' : 'pendiente'
+                        }">
+                            <i class="fa-solid ${
+                                alDia ? 'fa-circle-check' : 'fa-clock'
+                            }"></i>
+
+                            ${alDia ? 'Al día' : 'Con pendientes'}
+                        </span>
+                    </td>
+
+                    <td>
+                        <button
+                            type="button"
+                            class="btn-ver-detalle"
+                            data-empleado="${Number(empleado.empleado_id)}"
+                        >
+                            <i class="fa-solid fa-chevron-down"></i>
+                            Ver detalle
+                        </button>
+                    </td>
+
+                </tr>
+            `;
+
+        }).join('');
+
+        // GUARDAR EMPLEADOS PARA CONSULTAR SU DETALLE
+
+        window.empleadosSeguimientoActual = filtrados;
+
+    }
+
+
+    // ==========================================
+    // MOSTRAR DOCUMENTOS DE UN EMPLEADO
+    // ==========================================
+
+    tablaSeguimiento.addEventListener('click', event => {
+
+        const boton = event.target.closest('.btn-ver-detalle');
+
+        if (!boton) return;
+
+        const empleadoID = Number(boton.dataset.empleado);
+
+        const empleado = (
+            window.empleadosSeguimientoActual || []
+        ).find(item => Number(item.empleado_id) === empleadoID);
+
+        if (!empleado) return;
+
+        const fila = boton.closest('tr');
+
+        const filaDetalle = fila.nextElementSibling;
+
+        // CERRAR DETALLE SI YA ESTÁ ABIERTO
+
+        if (
+            filaDetalle &&
+            filaDetalle.classList.contains('fila-detalle-empleado')
+        ) {
+
+            filaDetalle.remove();
+
+            boton.innerHTML = `
+                <i class="fa-solid fa-chevron-down"></i>
+                Ver detalle
+            `;
+
+            return;
+
+        }
+
+        // CONSTRUIR DETALLE DE DOCUMENTOS
+
+        const contenido = empleado.documentos.map(doc => {
+
+            const leido = doc.estado_lectura === 'LEIDO';
+
+            return `
+                <tr>
+
+                    <td>
+                        ${escaparHTML(doc.documento)}
+                    </td>
+
+                    <td>
+                        V.${escaparHTML(doc.numero_version)}
+                    </td>
+
+                    <td>
+                        <span class="estado-lectura ${
+                            leido ? 'leido' : 'pendiente'
+                        }">
+                            ${leido ? 'Leído' : 'Pendiente'}
+                        </span>
+                    </td>
+
+                    <td>
+                        ${leido
+                            ? formatearFecha(doc.fecha_aceptacion)
+                            : '—'
+                        }
+                    </td>
+
+                </tr>
+            `;
+
+        }).join('');
+
+        const detalle = document.createElement('tr');
+
+        detalle.className = 'fila-detalle-empleado';
+
+        detalle.innerHTML = `
+            <td colspan="6">
+
+                <div class="contenido-detalle-empleado">
+
+                    <h4>
+                        <i class="fa-solid fa-file-circle-check"></i>
+                        Documentos de ${escaparHTML(empleado.nombre)}
+                    </h4>
+
+                    <table class="tabla-detalle-documentos">
+
+                        <thead>
+                            <tr>
+                                <th>Documento</th>
+                                <th>Versión</th>
+                                <th>Estado</th>
+                                <th>Fecha de aceptación</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            ${contenido}
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </td>
+        `;
+
+        fila.after(detalle);
+
+        boton.innerHTML = `
+            <i class="fa-solid fa-chevron-up"></i>
+            Ocultar detalle
+        `;
+
+    });
+
+
+    // ==========================================
+    // EVENTOS DE FILTRADO
+    // ==========================================
+
+    filtroBuscarEmpleado.addEventListener(
+        'input',
+        renderizarSeguimiento
+    );
+
+    filtroSeguimientoDocumento.addEventListener(
+        'change',
+        renderizarSeguimiento
+    );
+
+    filtroSeguimientoEstado.addEventListener(
+        'change',
+        renderizarSeguimiento
+    );
+
+    btnActualizarSeguimiento.addEventListener(
+        'click',
+        cargarSeguimiento
+    );
+
 
 
     // ==========================================
@@ -340,6 +740,15 @@ document.addEventListener('DOMContentLoaded', () => {
         <i class="fa-solid fa-box-archive"></i>
     </button>
 
+    <button
+    class="btn-accion btn-eliminar-documento"
+    data-accion="eliminar"
+    data-documento="${Number(documento.documento_id)}"
+    title="Eliminar definitivamente"
+>
+    <i class="fa-solid fa-trash"></i>
+</button>
+
 </div>
                     </td>
 
@@ -391,7 +800,7 @@ document.addEventListener('DOMContentLoaded', () => {
             );
 
             document.getElementById('totalVersiones').textContent =
-                historicas.lengtno ;
+                historicas.length;
 
             if (historial.length === 0) {
 
@@ -563,6 +972,65 @@ document.addEventListener('DOMContentLoaded', () => {
             abrirModal(modalVersion);
 
         }
+
+
+// ==========================================
+// ELIMINAR DOCUMENTO DEFINITIVAMENTE
+// ==========================================
+
+if (accion === 'eliminar') {
+
+    const documentoID = Number(boton.dataset.documento);
+
+    if (!documentoID) return;
+
+    const confirmar = await Swal.fire({
+        title: '¿Eliminar documento definitivamente?',
+        text: 'Se eliminarán el documento, todas sus versiones, las aceptaciones de lectura y sus archivos PDF. Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#64748b',
+        reverseButtons: true
+    });
+
+    if (!confirmar.isConfirmed) return;
+
+    try {
+
+        const datos = await respuestaAPI(
+            `/api/documentos-lectura/${documentoID}`,
+            {
+                method: 'DELETE'
+            }
+        );
+
+        await Swal.fire({
+            title: 'Documento eliminado',
+            text: datos.message,
+            icon: 'success',
+            confirmButtonColor: '#087B49'
+        });
+
+        await cargarTodo();
+
+    } catch (error) {
+
+        console.error('ERROR ELIMINAR DOCUMENTO:', error);
+
+        Swal.fire({
+            title: 'Error',
+            text: error.message,
+            icon: 'error',
+            confirmButtonColor: '#087B49'
+        });
+
+    }
+
+}
+
         // ==========================================
 // RETIRAR VERSIÓN VIGENTE
 // ==========================================
@@ -775,13 +1243,12 @@ if (accion === 'publicar') {
     // ==========================================
 
     async function cargarTodo() {
-
-        await Promise.all([
-            cargarDocumentos(),
-            cargarHistorial()
-        ]);
-
-    }
+    await Promise.all([
+        cargarDocumentos(),
+        cargarHistorial(),
+        cargarSeguimiento()
+    ]);
+}
 
     document.getElementById('btnActualizar')
         .addEventListener('click', cargarTodo);

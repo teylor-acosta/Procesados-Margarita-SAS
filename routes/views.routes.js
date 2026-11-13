@@ -4,6 +4,7 @@ const path = require('path');
 
 const {
     proteger,
+    verificarDocumentosPendientes,
     soloAdmin,
     soloAuxiliar,
     soloSuperAdmin,
@@ -49,9 +50,11 @@ router.get('/cambiar-password', proteger, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'cambiar-password.html'));
 });
 
-router.get('/dashboard', proteger, (req, res) => {
-    res.sendFile(path.join(__dirname, '../public', 'dashboard.html'));
-});
+router.get('/dashboard',proteger,verificarDocumentosPendientes,(req, res) => {res.sendFile(
+            path.join(__dirname, '../public', 'dashboard.html')
+        );
+    }
+);
 
 router.get('/induccion', proteger, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'induccion.html'));
@@ -73,17 +76,17 @@ router.get('/certificado', proteger, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'certificado.html'));
 });
 
-router.get('/perfil', proteger, (req, res) => {
-    res.sendFile(path.join(__dirname, '../public', 'perfil.html'));
-});
-router.get('/empleados-menu', (req, res) => {
+router.get('/perfil',proteger,verificarDocumentosPendientes,(req, res) => {
+        res.sendFile(path.join(__dirname, '../public', 'perfil.html'));
+    });
+router.get('/empleados-menu', proteger, verificarDocumentosPendientes, (req, res) => {
     res.sendFile(path.join(__dirname, '../public/empleados-menu.html'));
 });
-router.get('/empleados-inactivos', (req, res) => {
+router.get('/empleados-inactivos', proteger, verificarDocumentosPendientes, (req, res) => {
     res.sendFile(path.join(__dirname, '../public/empleados-inactivos.html'));
 });
 
-router.get('/expediente-empleado/:id', (req, res) => {
+router.get('/expediente-empleado/:id', proteger, verificarDocumentosPendientes, (req, res) => {
 
     res.sendFile(
         path.join(__dirname, '../public/expediente-empleado.html')
@@ -112,7 +115,7 @@ router.get('/reset/:token', (req, res) => {
    🔥 CENTRO ACTIVIDAD
 ========================================= */
 
-router.get('/centro-actividad', (req, res) => {
+router.get('/centro-actividad', proteger, verificarDocumentosPendientes, (req, res) => {
 
     res.sendFile(
         path.join(
@@ -128,11 +131,11 @@ router.get('/centro-actividad', (req, res) => {
 // RUTAS POR ROL
 // ============================================
 
-router.get('/admin', proteger, soloAdmin, (req, res) => {
+router.get('/admin', proteger, verificarDocumentosPendientes, soloAdmin, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'admin.html'));
 });
 
-router.get('/auxiliar', proteger, soloAuxiliar, (req, res) => {
+router.get('/auxiliar', proteger, verificarDocumentosPendientes, soloAuxiliar, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'auxiliar.html'));
 });
 
@@ -148,7 +151,7 @@ router.get('/empleados', proteger, soloAdminGeneral, (req, res) => {
 // PANEL
 // ============================================
 
-router.get('/panel', proteger, (req, res) => {
+router.get('/panel', proteger, verificarDocumentosPendientes, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'panel.html'));
 });
 
@@ -162,7 +165,8 @@ router.get('/recursos-humanos', proteger, soloAdminGeneral, (req, res) => {
 
 router.get(
     '/capacitaciones',
-    proteger,
+proteger,
+verificarDocumentosPendientes,
     (req, res) => {
 
         res.sendFile(
@@ -240,7 +244,8 @@ router.get('/usuarios-registrados', proteger, soloAdminGeneral, (req, res) => {
 
 router.get(
     '/seguimiento-general',
-    proteger,
+proteger,
+verificarDocumentosPendientes,
     (req, res) => {
 
         res.sendFile(
@@ -276,7 +281,8 @@ router.get('/roles-accesos', proteger, soloAdminGeneral, (req, res) => {
 
 router.get(
     "/capacitacion/:id",
-    proteger,
+proteger,
+verificarDocumentosPendientes,
     (req, res) => {
 
         res.sendFile(
@@ -298,6 +304,7 @@ router.get(
 router.get(
     "/evaluacion-capacitacion",
     proteger,
+    verificarDocumentosPendientes,
     (req, res) => {
 
         res.sendFile(
@@ -316,7 +323,8 @@ router.get(
 
 router.get(
     "/administrar-curso/:id",
-    proteger,
+proteger,
+verificarDocumentosPendientes,
     (req, res) => {
 
         res.sendFile(
@@ -337,7 +345,8 @@ router.get(
 
 router.get(
     "/administrar-certificado/:id",
-    proteger,
+proteger,
+verificarDocumentosPendientes,
     (req, res) => {
 
         res.sendFile(
