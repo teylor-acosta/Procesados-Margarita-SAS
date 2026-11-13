@@ -37,53 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let documentosActuales = [];
 
 
-// ==========================================
-// ELEMENTOS DEL SEGUIMIENTO DOCUMENTAL
-// ==========================================
-
-const tablaSeguimiento = document.getElementById('tablaSeguimiento');
-
-const filtroBuscarEmpleado = document.getElementById('segBuscarEmpleado');
-const filtroSeguimientoDocumento = document.getElementById('segFiltroDocumento');
-const filtroSeguimientoEstado = document.getElementById('segFiltroEstado');
-const btnActualizarSeguimiento = document.getElementById('btnActualizarSeguimiento');
-
-let datosSeguimiento = [];
-let resumenSeguimiento = {};
-
-
-    filtroTipoDocumentos.addEventListener('change', () => {
-    const tipoSeleccionado = filtroTipoDocumentos.value;
-
-    const filas = tablaDocumentos.querySelectorAll('tr[data-tipo]');
-
-    filas.forEach(fila => {
-        const tipoDocumento = fila.dataset.tipo;
-
-        fila.style.display =
-            tipoSeleccionado === '' || tipoDocumento === tipoSeleccionado
-                ? ''
-                : 'none';
-    });
-});
-
-
-    function mostrarAlerta(titulo, mensaje, icono = 'success') {
-    return Swal.fire({
-        title: titulo,
-        text: mensaje,
-        icon: icono,
-        confirmButtonText: 'Aceptar',
-        confirmButtonColor: '#087B49',
-        background: '#ffffff',
-        color: '#172033',
-        allowOutsideClick: false,
-        customClass: {
-            popup: 'alerta-erp'
-        }
-    });
-}
-
     // ==========================================
     // SEGURIDAD Y UTILIDADES DE PRESENTACIÓN
     // ==========================================
@@ -847,7 +800,7 @@ document.getElementById('cerrarModalSeguimiento')
             );
 
             document.getElementById('totalVersiones').textContent =
-                historicas.length ;
+                historicas.length;
 
             if (historial.length === 0) {
 

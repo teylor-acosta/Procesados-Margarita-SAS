@@ -57,7 +57,12 @@ const soloRol = (rolesPermitidos) => {
 // ============================================
 
 const soloSuperAdmin = soloRol(['superadmin']);
+
 const soloAdmin = soloRol(['administrador']);
+
+// Permitir acceso a SuperAdmin y Administrador
+const soloAdminGeneral = soloRol(['superadmin', 'administrador']);
+
 const soloAuxiliar = soloRol(['auxiliar']);
 
 // ============================================
@@ -111,5 +116,6 @@ module.exports = {
     soloRol,
     soloSuperAdmin,
     soloAdmin,
+    soloAdminGeneral,
     soloAuxiliar
 };

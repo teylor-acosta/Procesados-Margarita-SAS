@@ -248,30 +248,14 @@ router.post('/api/login', async (req, res) => {
     const aprobados = results2[0].aprobados || 0;
     const tieneCertificado = results2[0].tiene_certificado > 0;
 
-    if (tieneCertificado) {
-        destino = "/dashboard";
-    } else if (aprobados < total) {
-        destino = "/induccion";
-    } else {
-        destino = "/firma";
-    }
-}
-
-// =========================================
-// VALIDAR DOCUMENTOS OBLIGATORIOS
-// =========================================
-
-if (destino === "/dashboard") {
-
-    const pendientes = await tieneDocumentosPendientes(
-        db,
-        req.session.empleadoID
-    );
-
-    if (pendientes) {
-        destino = "/documentos-lectura";
-    }
-}
+            if (tieneCertificado) {
+                destino = "/dashboard";
+            } else if (aprobados < total) {
+                destino = "/induccion";
+            } else {
+                destino = "/firma";
+            }
+        }
 
         req.session.save(() => {
             res.json({
