@@ -98,6 +98,23 @@ app.use((req, res, next) => {
 
 
 // ============================================
+// 🧹 SILENCIAR PETICIONES INTERNAS DE CHROME DEVTOOLS
+// ============================================
+// Evita el error CSP de com.chrome.devtools.json en consola.
+// No afecta a la aplicación.
+
+app.use((req, res, next) => {
+
+    if (req.path.startsWith('/.well-known/appspecific')) {
+        return res.status(204).end();
+    }
+
+    next();
+
+});
+
+
+// ============================================
 // STATIC
 // ============================================
 
@@ -270,6 +287,33 @@ app.use(
 app.use(
     require('./routes/nomina-novedades.routes')
 );
+
+app.use(
+    require('./routes/produccion.routes')
+);
+
+app.get('/nomina/produccion', (req, res) => {
+
+    const rutaVista = path.join(
+        __dirname,
+        'public',
+        'produccion.html'
+    );
+
+    if (!fs.existsSync(rutaVista)) {
+
+        console.log('⚠️ No existe la vista:', rutaVista);
+
+        return res.status(404).send(
+            'Vista de liquidación por producción no encontrada. ' +
+            'Verifica que el archivo exista en public/produccion.html'
+        );
+
+    }
+
+    res.sendFile(rutaVista);
+
+});
 
 
 // ============================================
