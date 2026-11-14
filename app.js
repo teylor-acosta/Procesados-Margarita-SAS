@@ -292,6 +292,11 @@ app.use(
     require('./routes/produccion.routes')
 );
 
+// 👇 AGREGADO — MÓDULO HISTORIAL Y REPORTES
+app.use(
+    require('./routes/reportes.routes')
+);
+
 app.get('/nomina/produccion', (req, res) => {
 
     const rutaVista = path.join(
