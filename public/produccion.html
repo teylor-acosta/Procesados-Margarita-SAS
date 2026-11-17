@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f172a">
+    <title>Liquidación por Producción - Procesados Margarita</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="stylesheet" href="/css/style1.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/nomina.css">
+    <link rel="stylesheet" href="/css/produccion.css">
+</head>
+
+<body data-pagina="nomina" data-theme="light">
+
+    <!-- SIDEBAR del ERP -->
+    <div id="sidebarContainer"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- NAVBAR del ERP -->
+    <nav class="navbar-custom">
+        <div class="navbar-left">
+            <i class="fas fa-bars menu-toggle" id="btnOpenSidebar"></i>
+            <span class="empresa-nombre">Liquidación por Producción</span>
+        </div>
+        <div class="navbar-right">
+            <button type="button" class="prod-theme-toggle" id="btnThemeToggle" aria-label="Cambiar tema" title="Cambiar tema claro/oscuro">
+                <i class="fas fa-moon" id="iconTheme"></i>
+            </button>
+            <a href="/nomina" class="prod-btn-volver">
+                <i class="fas fa-arrow-left"></i> Volver a Nómina
+            </a>
+        </div>
+    </nav>
+
+    <main class="prod-page">
+
+        <!-- Encabezado -->
+        <section class="prod-header">
+            <div class="prod-header__icon">
+                <i class="fas fa-industry"></i>
+            </div>
+            <div>
+                <h1>Liquidación por Producción</h1>
+                <p>Cálculo quincenal para colaboradores con vinculación independiente, según los kilos producidos por material.</p>
+            </div>
+        </section>
+
+        <!-- Stepper con barra de progreso -->
+        <div class="prod-stepper-wrap">
+            <div class="prod-stepper-progress" aria-hidden="true">
+                <div class="prod-stepper-progress__bar" id="stepperProgressBar"></div>
+            </div>
+            <ol class="prod-stepper" aria-label="Pasos del proceso">
+                <li class="prod-stepper__item prod-stepper__item--active" data-step="1">
+                    <span class="prod-stepper__index">1</span>
+                    <div class="prod-stepper__body">
+                        <strong>Colaborador</strong>
+                        <span>Selección de independiente</span>
+                    </div>
+                </li>
+                <li class="prod-stepper__item" data-step="2">
+                    <span class="prod-stepper__index">2</span>
+                    <div class="prod-stepper__body">
+                        <strong>Periodo</strong>
+                        <span>Quincena a liquidar</span>
+                    </div>
+                </li>
+                <li class="prod-stepper__item" data-step="3">
+                    <span class="prod-stepper__index">3</span>
+                    <div class="prod-stepper__body">
+                        <strong>Producción</strong>
+                        <span>Kilos por material</span>
+                    </div>
+                </li>
+                <li class="prod-stepper__item" data-step="4">
+                    <span class="prod-stepper__index">4</span>
+                    <div class="prod-stepper__body">
+                        <strong>Liquidación</strong>
+                        <span>Resumen y confirmación</span>
+                    </div>
+                </li>
+            </ol>
+        </div>
+
+        <!-- Grid principal -->
+        <div class="prod-grid">
+
+            <!-- Columna izquierda -->
+            <div class="prod-main">
+
+                <!-- PASO 1: COLABORADOR -->
+                <section class="prod-card prod-animate-in" id="cardPaso1" style="--prod-delay: 0ms;">
+                    <header class="prod-card__header">
+                        <div class="prod-card__icon prod-card__icon--blue" aria-hidden="true">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <h2>Colaborador</h2>
+                            <p>Selecciona el colaborador independiente a liquidar.</p>
+                        </div>
+                        <span class="prod-card__status" id="statusPaso1"></span>
+                    </header>
+
+                    <div class="prod-card__body">
+                        <div class="prod-field">
+                            <label for="selColaborador">
+                                Colaborador con vinculación independiente
+                                <span class="prod-required">*</span>
+                            </label>
+
+                            <!-- Select con búsqueda custom -->
+                            <div class="prod-search-select" id="searchSelectColaborador">
+                                <button type="button" class="prod-search-select__trigger" id="btnOpenColaborador" aria-haspopup="listbox" aria-expanded="false">
+                                    <i class="fas fa-user prod-search-select__icon"></i>
+                                    <span class="prod-search-select__label" id="lblColaborador">Cargando colaboradores…</span>
+                                    <i class="fas fa-chevron-down prod-search-select__chevron"></i>
+                                </button>
+
+                                <div class="prod-search-select__panel" id="panelColaboradorSelect" hidden>
+                                    <div class="prod-search-select__search">
+                                        <i class="fas fa-magnifying-glass"></i>
+                                        <input type="text" id="inpBuscarColaborador" placeholder="Buscar por nombre o documento…" autocomplete="off">
+                                    </div>
+                                    <ul class="prod-search-select__list" id="listaColaboradores" role="listbox"></ul>
+                                    <div class="prod-search-select__empty" id="emptyColaboradores" hidden>
+                                        <i class="fas fa-user-slash"></i>
+                                        <p>No se encontraron colaboradores</p>
+                                    </div>
+                                </div>
+
+                                <!-- Select nativo oculto para mantener compatibilidad -->
+                                <select id="selColaborador" required class="prod-visually-hidden" tabindex="-1" aria-hidden="true">
+                                    <option value="">Cargando colaboradores…</option>
+                                </select>
+                            </div>
+
+                            <small id="detalleColaborador" class="prod-help" role="status"></small>
+                        </div>
+
+                        <!-- Skeleton mientras carga -->
+                        <div class="prod-skeleton-wrap" id="skeletonColaborador">
+                            <div class="prod-skeleton prod-skeleton--line" style="width: 60%;"></div>
+                            <div class="prod-skeleton prod-skeleton--box"></div>
+                        </div>
+
+                        <div class="prod-info-panel" id="panelColaborador" hidden>
+                            <div class="prod-info-row">
+                                <span class="prod-info-label">Contrato</span>
+                                <strong id="infoContrato">—</strong>
+                            </div>
+                            <div class="prod-info-row">
+                                <span class="prod-info-label">Documento</span>
+                                <strong id="infoDocumento">—</strong>
+                            </div>
+                            <div class="prod-info-row">
+                                <span class="prod-info-label">Vinculación</span>
+                                <span class="prod-tag prod-tag--indigo" id="infoVinculacion">—</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PASO 2: PERIODO -->
+                <section class="prod-card prod-animate-in" id="cardPaso2" style="--prod-delay: 80ms;">
+                    <header class="prod-card__header">
+                        <div class="prod-card__icon prod-card__icon--violet" aria-hidden="true">
+                            <i class="fas fa-calendar-days"></i>
+                        </div>
+                        <div>
+                            <h2>Periodo de nómina</h2>
+                            <p>Define el rango de fechas de la quincena a liquidar.</p>
+                        </div>
+                        <span class="prod-card__status" id="statusPaso2"></span>
+                    </header>
+
+                    <div class="prod-card__body">
+                        <div class="prod-grid-two">
+                            <div class="prod-field">
+                                <label for="inpPeriodoInicio">Inicio del periodo</label>
+                                <input type="date" id="inpPeriodoInicio" class="prod-input">
+                                <small class="prod-field-error" id="errPeriodoInicio" hidden></small>
+                            </div>
+                            <div class="prod-field">
+                                <label for="inpPeriodoFin">Fin del periodo</label>
+                                <input type="date" id="inpPeriodoFin" class="prod-input">
+                                <small class="prod-field-error" id="errPeriodoFin" hidden></small>
+                            </div>
+                        </div>
+
+                        <div class="prod-quick-periods" role="group" aria-label="Atajos de periodo">
+                            <button type="button" class="prod-chip" data-quick="q1">Quincena 1 (1 – 15)</button>
+                            <button type="button" class="prod-chip" data-quick="q2">Quincena 2 (16 – fin de mes)</button>
+                            <button type="button" class="prod-chip" data-quick="mes">Mes completo</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PASO 3: PRODUCCIÓN -->
+                <section class="prod-card prod-animate-in" id="cardPaso3" style="--prod-delay: 160ms;">
+                    <header class="prod-card__header">
+                        <div class="prod-card__icon prod-card__icon--amber" aria-hidden="true">
+                            <i class="fas fa-boxes-stacked"></i>
+                        </div>
+                        <div>
+                            <h2>Detalle de producción</h2>
+                            <p>Kilos producidos por material en el periodo seleccionado.</p>
+                        </div>
+                        <span class="prod-card__status" id="statusPaso3"></span>
+                    </header>
+
+                    <div class="prod-card__body">
+                        <div class="prod-notice">
+                            <i class="fas fa-circle-info"></i>
+                            <p>Los kilos se cargan automáticamente. Si el colaborador no tiene registros, puedes agregarlos manualmente.</p>
+                        </div>
+
+                        <div class="prod-table-wrap">
+                            <table id="tblProduccion" class="prod-table">
+                                <thead>
+                                    <tr>
+                                        <th>Material</th>
+                                        <th class="text-end" style="width: 130px;">Kilos producidos</th>
+                                        <th class="text-end" style="width: 130px;">Tarifa por kg</th>
+                                        <th class="text-end">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="prod-table-empty">
+                                        <td colspan="4">
+                                            <div class="prod-empty">
+                                                <i class="fas fa-box-open"></i>
+                                                <p>Selecciona un colaborador y un periodo para cargar la producción.</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td><strong>Total kilos producidos</strong></td>
+                                        <td class="text-end"><strong id="celdaTotalKilos">0 kg</strong></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <div class="prod-actions" style="display: flex; gap: 10px; margin-top: 15px;">
+                            <button type="button" class="prod-btn prod-btn--outline" id="btnRecargarProduccion">
+                                <i class="fas fa-rotate"></i> Recargar producción
+                            </button>
+                            
+                            <!-- 🔥 BOTÓN MANUAL -->
+                            <button type="button" class="prod-btn prod-btn--primary" id="btnAgregarMaterialManual" style="background: #12c76a; color: white;">
+                                <i class="fas fa-plus"></i> Agregar material manual
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Columna derecha -->
+            <aside class="prod-side">
+
+                <section class="prod-receipt prod-animate-in" id="cardReceipt" style="--prod-delay: 240ms;">
+                    <div class="prod-receipt__header">
+                        <span class="prod-receipt__eyebrow">Resumen de liquidación</span>
+                        <h2>Total a pagar</h2>
+                        <div class="prod-receipt__amount" id="resumenTotal">$ 0</div>
+                        <span class="prod-receipt__period" id="resumenPeriodo">Sin periodo seleccionado</span>
+                    </div>
+
+                    <div class="prod-receipt__body">
+                        <div class="prod-receipt__row">
+                            <span>Colaborador</span>
+                            <strong id="resumenColaborador">—</strong>
+                        </div>
+                        <div class="prod-receipt__row">
+                            <span>Total kilos</span>
+                            <strong id="resumenKilos">0 kg</strong>
+                        </div>
+                        <div class="prod-receipt__row">
+                            <span>Materiales liquidados</span>
+                            <strong id="resumenMateriales">0</strong>
+                        </div>
+                        <div class="prod-receipt__divider"></div>
+                        <div class="prod-receipt__row prod-receipt__row--muted">
+                            <span>Base de cálculo</span>
+                            <span>Kilos × tarifa</span>
+                        </div>
+                    </div>
+
+                    <div class="prod-receipt__footer">
+                        <label class="prod-confirm-check">
+                            <input type="checkbox" id="chkConfirmo">
+                            <span>Confirmo que los kilos son correctos</span>
+                        </label>
+
+                        <button type="button" class="prod-btn prod-btn--primary prod-btn--block" id="btnGenerarLiquidacion" disabled>
+                            <i class="fas fa-check"></i> Generar liquidación
+                        </button>
+                        <button type="button" class="prod-btn prod-btn--ghost prod-btn--block" id="btnLimpiar">
+                            <i class="fas fa-eraser"></i> Limpiar formulario
+                        </button>
+                    </div>
+                </section>
+
+                <section class="prod-card prod-card--compact prod-animate-in" style="--prod-delay: 320ms;">
+                    <header class="prod-card__header prod-card__header--tight">
+                        <div class="prod-card__icon prod-card__icon--slate" aria-hidden="true">
+                            <i class="fas fa-shield-halved"></i>
+                        </div>
+                        <div><h3>Reglas del cálculo</h3></div>
+                    </header>
+                    <ul class="prod-rules">
+                        <li>Aplica solo a contratos con vinculación <strong>INDEPENDIENTE</strong>.</li>
+                        <li>La tarifa por kg se toma de la configuración vigente de materiales.</li>
+                        <li>Se liquida únicamente la producción dentro del periodo.</li>
+                        <li>Al guardar, la tarifa del momento queda registrada para auditoría.</li>
+                    </ul>
+                </section>
+
+            </aside>
+        </div>
+
+        <!-- Historial -->
+        <section class="prod-card prod-card--history prod-animate-in" id="cardHistorial" style="--prod-delay: 400ms;">
+            <header class="prod-card__header">
+                <div class="prod-card__icon prod-card__icon--emerald" aria-hidden="true">
+                    <i class="fas fa-clock-rotate-left"></i>
+                </div>
+                <div>
+                    <h2>Historial de liquidaciones</h2>
+                    <p>Últimas 100 liquidaciones registradas.</p>
+                </div>
+                <div class="prod-card__header-actions">
+                    <button type="button" class="prod-btn prod-btn--ghost prod-btn--sm" id="btnExportarCSV">
+                        <i class="fas fa-file-csv"></i> Exportar CSV
+                    </button>
+                    <button type="button" class="prod-btn prod-btn--ghost prod-btn--sm" id="btnRefreshHistorial">
+                        <i class="fas fa-rotate"></i> Refrescar
+                    </button>
+                </div>
+            </header>
+            <div class="prod-card__body">
+                <!-- Skeleton historial -->
+                <div id="skeletonHistorial" class="prod-skeleton-list" hidden>
+                    <div class="prod-skeleton prod-skeleton--row"></div>
+                    <div class="prod-skeleton prod-skeleton--row"></div>
+                    <div class="prod-skeleton prod-skeleton--row"></div>
+                </div>
+
+                <ul id="listaHistorial" class="prod-history" aria-live="polite">
+                    <li class="prod-history__empty">
+                        <i class="fas fa-file-invoice"></i>
+                        <p>Aún no hay liquidaciones registradas.</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================ -->
+    <!-- MODAL · CONFIRMAR LIQUIDACIÓN                 -->
+    <!-- ============================================ -->
+    <div class="prod-modal" id="modalConfirmar" hidden role="dialog" aria-modal="true" aria-labelledby="modalConfirmarTitle">
+        <div class="prod-modal__backdrop" data-close-modal></div>
+        <div class="prod-modal__dialog">
+            <header class="prod-modal__header">
+                <div class="prod-modal__icon prod-modal__icon--primary">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <div>
+                    <h3 id="modalConfirmarTitle">Confirmar liquidación</h3>
+                    <p>Revisa el resumen antes de guardar. Esta acción no se puede deshacer.</p>
+                </div>
+                <button type="button" class="prod-modal__close" data-close-modal aria-label="Cerrar">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </header>
+
+            <div class="prod-modal__body">
+                <div class="prod-summary">
+                    <div class="prod-summary__row">
+                        <span>Colaborador</span>
+                        <strong id="modalColaborador">—</strong>
+                    </div>
+                    <div class="prod-summary__row">
+                        <span>Periodo</span>
+                        <strong id="modalPeriodo">—</strong>
+                    </div>
+                    <div class="prod-summary__row">
+                        <span>Total kilos</span>
+                        <strong id="modalKilos">0 kg</strong>
+                    </div>
+                    <div class="prod-summary__divider"></div>
+                    <div class="prod-summary__row prod-summary__row--total">
+                        <span>TOTAL A PAGAR</span>
+                        <strong id="modalTotal">$ 0</strong>
+                    </div>
+                </div>
+
+                <div class="prod-summary-detail" id="modalDetalle"></div>
+            </div>
+
+            <footer class="prod-modal__footer">
+                <button type="button" class="prod-btn prod-btn--ghost" data-close-modal>
+                    <i class="fas fa-xmark"></i> Cancelar
+                </button>
+                <button type="button" class="prod-btn prod-btn--primary" id="btnConfirmarGuardar">
+                    <i class="fas fa-check"></i> Sí, guardar liquidación
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL · DETALLE LIQUIDACIÓN                   -->
+    <!-- ============================================ -->
+    <div class="prod-modal" id="modalDetalle" hidden role="dialog" aria-modal="true" aria-labelledby="modalDetalleTitle">
+        <div class="prod-modal__backdrop" data-close-modal></div>
+        <div class="prod-modal__dialog">
+            <header class="prod-modal__header">
+                <div class="prod-modal__icon prod-modal__icon--emerald">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <div>
+                    <h3 id="modalDetalleTitle">Detalle de liquidación</h3>
+                    <p id="modalDetalleSubtitle">—</p>
+                </div>
+                <button type="button" class="prod-modal__close" data-close-modal aria-label="Cerrar">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </header>
+            <div class="prod-modal__body">
+                <div class="prod-summary">
+                    <div class="prod-summary__row">
+                        <span>Colaborador</span>
+                        <strong id="detColaborador">—</strong>
+                    </div>
+                    <div class="prod-summary__row">
+                        <span>Periodo</span>
+                        <strong id="detPeriodo">—</strong>
+                    </div>
+                    <div class="prod-summary__row">
+                        <span>Fecha de generación</span>
+                        <strong id="detFecha">—</strong>
+                    </div>
+                    <div class="prod-summary__row">
+                        <span>Total kilos</span>
+                        <strong id="detKilos">0 kg</strong>
+                    </div>
+                    <div class="prod-summary__divider"></div>
+                    <div class="prod-summary__row prod-summary__row--total">
+                        <span>TOTAL</span>
+                        <strong id="detTotal">$ 0</strong>
+                    </div>
+                </div>
+                <div class="prod-summary-detail" id="detDetalle"></div>
+            </div>
+            <footer class="prod-modal__footer">
+                <button type="button" class="prod-btn prod-btn--ghost" data-close-modal>
+                    <i class="fas fa-xmark"></i> Cerrar
+                </button>
+                <button type="button" class="prod-btn prod-btn--outline" id="btnImprimirDetalle">
+                    <i class="fas fa-print"></i> Imprimir
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- 🔥 MODAL · AGREGAR MATERIAL MANUAL -->
+    <div class="prod-modal" id="modalAgregarMaterial" hidden role="dialog" aria-modal="true">
+        <div class="prod-modal__backdrop" data-close-modal></div>
+        <div class="prod-modal__dialog">
+            <header class="prod-modal__header">
+                <div class="prod-modal__icon prod-modal__icon--primary" style="background: #dcfce7; color: #12c76a;">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <div>
+                    <h3>Agregar material manual</h3>
+                    <p>Úsalo si el colaborador no tiene producción registrada.</p>
+                </div>
+                <button type="button" class="prod-modal__close" data-close-modal aria-label="Cerrar">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </header>
+            <div class="prod-modal__body">
+                <div class="prod-field">
+                    <label for="selMaterialManual">Material</label>
+                    <select id="selMaterialManual" class="prod-select">
+                        <option value="">Selecciona un material</option>
+                    </select>
+                </div>
+                <div class="prod-field">
+                    <label for="inpKilosManual">Kilos producidos</label>
+                    <input type="number" id="inpKilosManual" class="prod-input" min="0" step="0.01" placeholder="Ej: 50">
+                </div>
+            </div>
+            <footer class="prod-modal__footer">
+                <button type="button" class="prod-btn prod-btn--ghost" data-close-modal>Cancelar</button>
+                <button type="button" class="prod-btn prod-btn--primary" id="btnConfirmarMaterialManual" style="background: #12c76a;">
+                    <i class="fas fa-check"></i> Agregar a la tabla
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="prod-toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sidebar.js"></script>
+    <script src="/js/nomina.js"></script>
+    <script src="/js/produccion.js"></script>
+
+</body>
+</html>

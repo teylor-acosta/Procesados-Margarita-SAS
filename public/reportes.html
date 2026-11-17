@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f172a">
+    <title>Historial y Reportes - Procesados Margarita</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Estilos del ERP -->
+    <link rel="stylesheet" href="/css/style1.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+
+    <!-- Estilos propios de Reportes -->
+    <link rel="stylesheet" href="/css/reportes.css">
+</head>
+
+<body data-pagina="nomina-reportes">
+
+    <!-- =========================================================
+         SIDEBAR GLOBAL
+         ========================================================= -->
+    <div id="sidebarContainer"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- =========================================================
+         NAVBAR GLOBAL
+         ========================================================= -->
+    <nav class="navbar-custom">
+        <div class="navbar-left">
+            <i class="fas fa-bars menu-toggle" id="btnOpenSidebar"></i>
+            <span class="empresa-nombre">Historial y Reportes</span>
+        </div>
+        <div class="acciones-navbar">
+            <a href="/nomina" class="btn-light">
+                <i class="fas fa-arrow-left"></i> Volver a Nómina
+            </a>
+        </div>
+    </nav>
+
+    <!-- =========================================================
+         CONTENEDOR DE TOASTS
+         ========================================================= -->
+    <div id="contenedorToasts" class="rep-toasts" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- =========================================================
+         CONTENIDO PRINCIPAL
+         ========================================================= -->
+    <main class="rep-container">
+
+        <!-- =================================================
+             HEADER
+             ================================================= -->
+        <section class="rep-header">
+            <div class="rep-header-info">
+                <span class="rep-overline">GESTIÓN DE NÓMINA</span>
+                <h1>Historial y Reportes</h1>
+                <p>
+                    Consulta el historial consolidado de todos los módulos de nómina
+                    y exporta los datos a formato CSV.
+                </p>
+            </div>
+
+            <div class="rep-header-actions">
+                <button type="button" id="btnRefrescar" class="btn-rep-secondary">
+                    <i class="fas fa-rotate"></i>
+                    <span>Refrescar</span>
+                </button>
+
+                <button type="button" id="btnExportarActual" class="btn-rep-primary">
+                    <i class="fas fa-file-export"></i>
+                    <span>Exportar actual</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- =================================================
+             KPIs
+             ================================================= -->
+        <section class="rep-kpi-grid">
+
+            <article class="rep-kpi rep-kpi--blue">
+                <div class="rep-kpi-info">
+                    <span class="rep-kpi-label">Novedades</span>
+                    <strong id="kpiNovedades" class="rep-kpi-value">0</strong>
+                    <small id="kpiNovedadesSub" class="rep-kpi-sub">Sin datos</small>
+                </div>
+                <div class="rep-kpi-icon">
+                    <i class="fas fa-file-pen"></i>
+                </div>
+            </article>
+
+            <article class="rep-kpi rep-kpi--green">
+                <div class="rep-kpi-info">
+                    <span class="rep-kpi-label">Préstamos activos</span>
+                    <strong id="kpiPrestamos" class="rep-kpi-value">0</strong>
+                    <small id="kpiPrestamosSub" class="rep-kpi-sub">Saldo: $0</small>
+                </div>
+                <div class="rep-kpi-icon">
+                    <i class="fas fa-hand-holding-dollar"></i>
+                </div>
+            </article>
+
+            <article class="rep-kpi rep-kpi--amber">
+                <div class="rep-kpi-info">
+                    <span class="rep-kpi-label">Producción mes</span>
+                    <strong id="kpiProduccion" class="rep-kpi-value">0</strong>
+                    <small id="kpiProduccionSub" class="rep-kpi-sub">$0 pagados</small>
+                </div>
+                <div class="rep-kpi-icon">
+                    <i class="fas fa-industry"></i>
+                </div>
+            </article>
+
+            <article class="rep-kpi rep-kpi--violet">
+                <div class="rep-kpi-info">
+                    <span class="rep-kpi-label">Descuentos mes</span>
+                    <strong id="kpiDescuentos" class="rep-kpi-value">0</strong>
+                    <small id="kpiDescuentosSub" class="rep-kpi-sub">$0 descontados</small>
+                </div>
+                <div class="rep-kpi-icon">
+                    <i class="fas fa-money-check-dollar"></i>
+                </div>
+            </article>
+
+        </section>
+
+        <!-- =================================================
+             PANEL PRINCIPAL
+             ================================================= -->
+        <section class="rep-panel">
+
+            <!-- =========================================
+                 TABS
+                 ========================================= -->
+            <div class="rep-tabs" role="tablist" aria-label="Secciones de reportes">
+
+                <button type="button" class="rep-tab active" role="tab" data-tab="novedades" aria-selected="true">
+                    <i class="fas fa-file-pen"></i>
+                    <span>Novedades</span>
+                </button>
+
+                <button type="button" class="rep-tab" role="tab" data-tab="prestamos" aria-selected="false">
+                    <i class="fas fa-hand-holding-dollar"></i>
+                    <span>Préstamos</span>
+                </button>
+
+                <button type="button" class="rep-tab" role="tab" data-tab="movimientos" aria-selected="false">
+                    <i class="fas fa-money-bill-transfer"></i>
+                    <span>Movimientos</span>
+                </button>
+
+                <button type="button" class="rep-tab" role="tab" data-tab="produccion" aria-selected="false">
+                    <i class="fas fa-industry"></i>
+                    <span>Producción</span>
+                </button>
+
+                <button type="button" class="rep-tab" role="tab" data-tab="descuentos" aria-selected="false">
+                    <i class="fas fa-money-check-dollar"></i>
+                    <span>Descuentos</span>
+                </button>
+
+                <!-- =========================================
+                     TAB RESERVADA: LIQUIDACIÓN DE NÓMINA
+                     (Módulo en desarrollo por otro equipo)
+                     ========================================= -->
+                <button
+                    type="button"
+                    class="rep-tab rep-tab--locked"
+                    role="tab"
+                    data-tab="liquidacion"
+                    aria-selected="false"
+                    title="Este módulo está en desarrollo"
+                    disabled
+                >
+                    <i class="fas fa-calculator"></i>
+                    <span>Liquidación de nómina</span>
+                    <span class="rep-tab-badge">En desarrollo</span>
+                </button>
+
+            </div>
+
+            <!-- =========================================
+                 FILTROS
+                 ========================================= -->
+            <div class="rep-filtros">
+
+                <div class="rep-filtros-grid">
+
+                    <div class="rep-filtro rep-filtro--busqueda">
+                        <div class="rep-input-wrapper">
+                            <i class="fas fa-magnifying-glass"></i>
+                            <input
+                                type="text"
+                                id="filtroBuscar"
+                                class="form-control"
+                                placeholder="Buscar por nombre, documento..."
+                                autocomplete="off"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="rep-filtro">
+                        <select id="filtroEstado" class="form-control">
+                            <option value="">Todos los estados</option>
+                            <option value="PENDIENTE">Pendiente</option>
+                            <option value="APROBADA">Aprobada</option>
+                            <option value="RECHAZADA">Rechazada</option>
+                            <option value="EN_HISTORIAL">En historial</option>
+                            <option value="ACTIVO">Activo</option>
+                            <option value="PAGADO">Pagado</option>
+                            <option value="ANULADO">Anulado</option>
+                            <option value="CANCELADO">Cancelado</option>
+                        </select>
+                    </div>
+
+                    <div class="rep-filtro">
+                        <select id="filtroTipo" class="form-control">
+                            <option value="">Todos los tipos</option>
+                        </select>
+                    </div>
+
+                    <div class="rep-filtro">
+                        <select id="filtroTipoFecha" class="form-control" title="Filtrar por fecha">
+                            <option value="">Sin filtro de fecha</option>
+                            <option value="DIA">Día</option>
+                            <option value="MES">Mes</option>
+                            <option value="ANO">Año</option>
+                            <option value="RANGO">Rango</option>
+                        </select>
+                    </div>
+
+                    <div class="rep-filtro rep-filtro--limpiar">
+                        <button type="button" id="btnLimpiar" class="btn-rep-secondary w-100">
+                            <i class="fas fa-filter-circle-xmark"></i>
+                            <span>Limpiar</span>
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Filtros de fecha expandibles -->
+                <div id="contenedorFecha" class="rep-filtros-fecha" style="display: none;">
+
+                    <div id="campoDia" class="rep-fecha-campo" style="display: none;">
+                        <label for="fechaDia" class="rep-fecha-label">Día</label>
+                        <input type="date" id="fechaDia" class="form-control">
+                    </div>
+
+                    <div id="campoMes" class="rep-fecha-campo" style="display: none;">
+                        <label for="fechaMes" class="rep-fecha-label">Mes</label>
+                        <input type="month" id="fechaMes" class="form-control">
+                    </div>
+
+                    <div id="campoAno" class="rep-fecha-campo" style="display: none;">
+                        <label for="fechaAno" class="rep-fecha-label">Año</label>
+                        <input type="number" id="fechaAno" class="form-control" placeholder="2026" min="2000" max="2100">
+                    </div>
+
+                    <div id="campoRango" class="rep-fecha-campo rep-fecha-campo--rango" style="display: none;">
+                        <div>
+                            <label for="fechaDesde" class="rep-fecha-label">Desde</label>
+                            <input type="date" id="fechaDesde" class="form-control">
+                        </div>
+                        <div>
+                            <label for="fechaHasta" class="rep-fecha-label">Hasta</label>
+                            <input type="date" id="fechaHasta" class="form-control">
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =========================================
+                 TABLA
+                 ========================================= -->
+            <div class="rep-tabla-wrapper">
+
+                <div id="tablaSkeleton" class="rep-skeleton" style="display: none;" aria-hidden="true">
+                    <div class="rep-skeleton-row"></div>
+                    <div class="rep-skeleton-row"></div>
+                    <div class="rep-skeleton-row"></div>
+                </div>
+
+                <div class="rep-tabla-scroll">
+                    <table class="rep-table">
+                        <thead id="tablaHead"></thead>
+                        <tbody id="tablaBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="estadoVacio" class="rep-empty" style="display: none;">
+                    <div class="rep-empty-icon">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <h3>Sin datos</h3>
+                    <p>No hay registros que coincidan con los filtros seleccionados.</p>
+                </div>
+
+            </div>
+
+            <!-- =========================================
+                 FOOTER DEL PANEL
+                 ========================================= -->
+            <div class="rep-footer">
+                <span id="contadorResultados" class="rep-contador">0 registros</span>
+                <button type="button" id="btnExportarTabla" class="btn-rep-secondary">
+                    <i class="fas fa-file-csv"></i>
+                    <span>Exportar CSV</span>
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- =========================================================
+         MODAL GENÉRICO DE DETALLE
+         ========================================================= -->
+    <div class="modal fade" id="modalDetalleReporte" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content rep-modal">
+                <div class="modal-header">
+                    <div>
+                        <span class="rep-overline">DETALLE</span>
+                        <h5 class="modal-title" id="detalleTitulo">Detalle del registro</h5>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="detalleContenido">
+                    <!-- Dinámico -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-rep-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         SCRIPTS
+         ========================================================= -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sidebar.js"></script>
+    <script src="/js/reportes.js"></script>
+
+</body>
+
+</html>
