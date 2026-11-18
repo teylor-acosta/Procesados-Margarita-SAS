@@ -106,7 +106,7 @@ router.get('/api/nomina/reportes/kpis', requiereSesion, async (req, res) => {
             WHERE DATE_FORMAT(fecha_descuento, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
         `);
 
-        // NUEVO: KPI DE GASTOS DIARIOS
+        // KPI DE GASTOS DIARIOS
         const [gastos] = await conn.query(`
             SELECT
                 COUNT(*) AS total,
@@ -387,7 +387,7 @@ router.get('/api/nomina/reportes/descuentos', requiereSesion, async (req, res) =
 });
 
 // ============================================================
-// REPORTE 6: GASTOS DIARIOS (NUEVO)
+// REPORTE 6: GASTOS DIARIOS (ACTUALIZADO CON ORIGEN Y NOVEDAD_ID)
 // ============================================================
 router.get('/api/nomina/reportes/gastos', requiereSesion, async (req, res) => {
     const db = getDB(req);
@@ -406,6 +406,8 @@ router.get('/api/nomina/reportes/gastos', requiereSesion, async (req, res) => {
                 g.monto, 
                 DATE_FORMAT(g.fecha_registro, '%Y-%m-%d') AS fecha_registro, 
                 g.prestamo_id,
+                g.origen,
+                g.novedad_id,
                 e.nombre AS empleado_nombre
             FROM gastos_diarios g
             LEFT JOIN nomina_prestamos p ON p.id = g.prestamo_id
@@ -620,7 +622,7 @@ router.get('/api/nomina/reportes/exportar/:tipo', requiereSesion, async (req, re
         }
 
         // ----------------------------------------------------
-        // GASTOS DIARIOS (NUEVO)
+        // GASTOS DIARIOS (ACTUALIZADO CON ORIGEN Y NOVEDAD_ID)
         // ----------------------------------------------------
         else if (tipo === 'gastos') {
             columnas = [
@@ -631,6 +633,8 @@ router.get('/api/nomina/reportes/exportar/:tipo', requiereSesion, async (req, re
                     g.id, g.codigo_gasto, g.nombre_gasto, 
                     DATE_FORMAT(g.fecha_registro, '%Y-%m-%d') AS fecha_registro, 
                     g.prestamo_id,
+                    g.origen,
+                    g.novedad_id,
                     g.monto,
                     e.nombre AS empleado_nombre
                 FROM gastos_diarios g
@@ -645,11 +649,19 @@ router.get('/api/nomina/reportes/exportar/:tipo', requiereSesion, async (req, re
             }
             sql += construirFiltroFecha('g.fecha_registro', tipo_fecha, fecha, mes, ano, desde, hasta, params);
             sql += ` ORDER BY g.fecha_registro DESC, g.id DESC`;
-            mapear = r => [
-                r.id, r.codigo_gasto, r.nombre_gasto, r.fecha_registro,
-                r.prestamo_id ? `Préstamo #${r.prestamo_id} (${r.empleado_nombre || ''})` : 'Ninguno',
-                r.monto
-            ];
+            mapear = r => {
+                let vinculo = 'Ninguno';
+                if (r.origen === 'NOVEDAD' || r.novedad_id) {
+                    vinculo = r.novedad_id ? `Novedad #${r.novedad_id}` : 'Novedad';
+                } else if (r.prestamo_id) {
+                    vinculo = `Préstamo #${r.prestamo_id} (${r.empleado_nombre || ''})`;
+                }
+                return [
+                    r.id, r.codigo_gasto, r.nombre_gasto, r.fecha_registro,
+                    vinculo,
+                    r.monto
+                ];
+            };
         }
 
         else {

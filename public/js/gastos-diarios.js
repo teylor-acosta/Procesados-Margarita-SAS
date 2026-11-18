@@ -29,7 +29,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // Listener para el botón de Exportar
     document.getElementById('btnExportar').addEventListener('click', exportarCSV);
 
-    // Listener para el formulario del modal
+    // Listener para el formulario principal de Excel (#form-excel)
+    const formExcel = document.getElementById('form-excel');
+    const inputArchivoExcel = document.getElementById('archivoExcel');
+
+    if (inputArchivoExcel) {
+        inputArchivoExcel.addEventListener('change', (e) => {
+            const labelNombre = document.getElementById('nombre-archivo-excel');
+            if (labelNombre && e.target.files[0]) {
+                labelNombre.textContent = e.target.files[0].name;
+            }
+        });
+    }
+
+    if (formExcel) {
+        formExcel.addEventListener('submit', procesarExcel);
+    }
+
+    // Listener para el formulario del modal (por si se usa en otra vista)
     const formExcelModal = document.getElementById('form-excel-modal');
     if (formExcelModal) {
         formExcelModal.addEventListener('submit', procesarExcelModal);
@@ -139,8 +156,12 @@ function renderizarTabla(gastos) {
         const monto = parseFloat(gasto.monto || 0);
         total += monto;
 
+        // Badge de vínculo: Novedad (azul), Préstamo (amarillo/warning) o Ninguno
         let vinculoBadge = `<span class="badge badge-soft-secondary rounded-pill px-3 py-2">Ninguno</span>`;
-        if (gasto.prestamo_id) {
+        if (gasto.origen === 'NOVEDAD' || gasto.novedad_id) {
+            const etiquetaNovedad = gasto.novedad_id ? `Novedad #${gasto.novedad_id}` : 'Novedad';
+            vinculoBadge = `<span class="badge bg-primary text-white rounded-pill px-3 py-2"><i class="fas fa-file-alt me-1"></i>${etiquetaNovedad}</span>`;
+        } else if (gasto.prestamo_id) {
             vinculoBadge = `<span class="badge badge-soft-warning rounded-pill px-3 py-2"><i class="fas fa-link me-1"></i>Préstamo #${gasto.prestamo_id}</span>`;
         }
 
@@ -187,6 +208,8 @@ async function registrarGasto(evento) {
         monto: parseFloat(montoInput),
         fecha_registro: document.getElementById('fechaGasto').value,
         prestamo_id: document.getElementById('vincularPrestamo').value || null,
+        origen: 'MANUAL',
+        novedad_id: null,
         id: Date.now()
     };
 
@@ -327,6 +350,81 @@ async function exportarCSV() {
         console.error('Error al exportar:', error);
         mostrarNotificacion('No se pudo descargar el archivo. Revisa la consola.', 'error');
     }
+}
+
+// =====================================================================
+// LÓGICA DE IMPORTACIÓN DESDE EXCEL (Tarjeta principal #form-excel)
+// =====================================================================
+async function procesarExcel(evento) {
+    evento.preventDefault();
+
+    const inputFile = document.getElementById('archivoExcel');
+    const archivo = inputFile?.files[0];
+    const progressContainer = document.getElementById('excel-progress-container');
+    const progressBar = document.getElementById('excel-progress');
+    const mensajeDiv = document.getElementById('mensaje-excel');
+
+    if (!archivo) {
+        mostrarNotificacion('Selecciona un archivo Excel primero.', 'warning');
+        return;
+    }
+
+    progressContainer?.classList.remove('d-none');
+    if (progressBar) progressBar.style.width = '15%';
+    if (mensajeDiv) mensajeDiv.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Leyendo archivo...';
+
+    const reader = new FileReader();
+
+    reader.onload = async (e) => {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+            if (progressBar) progressBar.style.width = '60%';
+            if (mensajeDiv) mensajeDiv.innerHTML = `<i class="fas fa-spinner fa-spin me-1"></i> ${jsonData.length} registros encontrados. Enviando...`;
+
+            const response = await fetch(`${API_URL}/importar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ gastos: jsonData })
+            });
+
+            if (!response.ok) throw new Error('Error al importar');
+
+            if (progressBar) {
+                progressBar.style.width = '100%';
+                progressBar.classList.remove('progress-bar-animated');
+                progressBar.classList.add('bg-success');
+            }
+            if (mensajeDiv) mensajeDiv.innerHTML = `<i class="fas fa-check-circle text-success me-1"></i> "${archivo.name}" importado.`;
+            mostrarNotificacion('Datos importados con éxito.', 'success');
+
+            cargarGastos(document.getElementById('filtroFecha').value);
+        } catch (error) {
+            console.error(error);
+            if (progressBar) progressBar.classList.add('bg-danger');
+            if (mensajeDiv) mensajeDiv.innerHTML = `<i class="fas fa-times-circle text-danger me-1"></i> Error al procesar.`;
+            mostrarNotificacion('Error al importar el Excel.', 'error');
+        } finally {
+            if (inputFile) inputFile.value = '';
+            const labelNombre = document.getElementById('nombre-archivo-excel');
+            if (labelNombre) labelNombre.textContent = 'Haz clic o arrastra tu Excel aquí';
+            setTimeout(() => {
+                progressContainer?.classList.add('d-none');
+                if (progressBar) {
+                    progressBar.style.width = '0%';
+                    progressBar.classList.remove('bg-success', 'bg-danger');
+                    progressBar.classList.add('bg-info', 'progress-bar-animated');
+                }
+                if (mensajeDiv) mensajeDiv.innerHTML = '';
+            }, 4000);
+        }
+    };
+
+    reader.readAsArrayBuffer(archivo);
 }
 
 // =====================================================================

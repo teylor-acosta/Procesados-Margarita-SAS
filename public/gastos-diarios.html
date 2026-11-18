@@ -150,6 +150,17 @@
             align-items: center;
             gap: 5px;
         }
+        .badge-novedad {
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
         .badge-nada {
             background: #f1f5f9;
             color: #64748b;
@@ -404,7 +415,7 @@
                         <form id="form-excel" class="flex-grow-1 d-flex flex-column">
                             <div class="excel-drop-zone mb-3 flex-grow-1 d-flex flex-column justify-content-center">
                                 <i class="fas fa-cloud-upload-alt excel-icon"></i>
-                                <span class="fw-bold text-dark mb-1">Haz clic o arrastra tu Excel aquí</span>
+                                <span class="fw-bold text-dark mb-1" id="nombre-archivo-excel">Haz clic o arrastra tu Excel aquí</span>
                                 <span class="text-muted small">Formatos: .xlsx, .xls</span>
                                 <input type="file" id="archivoExcel" accept=".xlsx, .xls" required>
                             </div>

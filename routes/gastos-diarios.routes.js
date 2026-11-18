@@ -25,7 +25,9 @@ router.get('/api/gastos-diarios', async (req, res) => {
                 nombre_gasto, 
                 monto, 
                 DATE_FORMAT(fecha_registro, '%Y-%m-%d') AS fecha_registro, 
-                prestamo_id 
+                prestamo_id,
+                origen,
+                novedad_id
             FROM gastos_diarios 
             WHERE fecha_registro = ?
             ORDER BY id DESC
@@ -52,25 +54,31 @@ router.post('/api/gastos-diarios', async (req, res) => {
         nombre_gasto,
         monto,
         fecha_registro,
-        prestamo_id
+        prestamo_id,
+        origen,
+        novedad_id
     } = req.body;
 
-    // Validaciones básicas
     if (!codigo_gasto || !nombre_gasto || !monto || !fecha_registro) {
         return res.status(400).json({ ok: false, mensaje: 'Faltan campos obligatorios.' });
     }
 
     try {
+        const origenFinal = origen || (novedad_id ? 'NOVEDAD' : 'MANUAL');
+        const novedadFinal = novedad_id || null;
+
         const [result] = await db.query(`
             INSERT INTO gastos_diarios 
-            (codigo_gasto, nombre_gasto, monto, fecha_registro, prestamo_id) 
-            VALUES (?, ?, ?, ?, ?)
+            (codigo_gasto, nombre_gasto, monto, fecha_registro, prestamo_id, origen, novedad_id, created_at, updated_at) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
         `, [
             codigo_gasto,
             nombre_gasto,
             monto,
             fecha_registro,
-            prestamo_id || null
+            prestamo_id || null,
+            origenFinal,
+            novedadFinal
         ]);
 
         res.status(201).json({
@@ -164,11 +172,13 @@ router.post('/api/gastos-diarios/importar', async (req, res) => {
             g.nombre_gasto || g.Nombre || g.nombre || 'Sin nombre',
             parseFloat(g.monto || g.Monto || g.valor || 0),
             g.fecha_registro || g.Fecha || g.fecha || new Date().toISOString().split('T')[0],
-            g.prestamo_id || null
+            g.prestamo_id || null,
+            'EXCEL',
+            null
         ]);
 
         await connection.query(
-            `INSERT INTO gastos_diarios (codigo_gasto, nombre_gasto, monto, fecha_registro, prestamo_id) VALUES ?`,
+            `INSERT INTO gastos_diarios (codigo_gasto, nombre_gasto, monto, fecha_registro, prestamo_id, origen, novedad_id) VALUES ?`,
             [values]
         );
 
@@ -188,7 +198,7 @@ router.post('/api/gastos-diarios/importar', async (req, res) => {
 });
 
 // =========================================================
-// 6. EXPORTAR GASTOS A CSV (CORREGIDO)
+// 6. EXPORTAR GASTOS A CSV
 // =========================================================
 router.get('/api/gastos-diarios/exportar', async (req, res) => {
     const db = req.app.get('db');
@@ -206,26 +216,25 @@ router.get('/api/gastos-diarios/exportar', async (req, res) => {
                 nombre_gasto, 
                 monto, 
                 DATE_FORMAT(fecha_registro, '%Y-%m-%d') AS fecha_registro, 
-                prestamo_id 
+                prestamo_id,
+                origen,
+                novedad_id
             FROM gastos_diarios 
             WHERE fecha_registro = ?
             ORDER BY id DESC
         `, [fecha]);
 
-        // --- CONSTRUCCIÓN DEL CSV ---
-        // Usamos coma (,) como separador estándar para Excel
-        let csv = '\uFEFF'; // BOM para UTF-8 (acentos)
-        csv += 'ID,Codigo,Descripcion,Monto,Fecha,Prestamo_ID\n';
+        let csv = '\uFEFF';
+        csv += 'ID,Codigo,Descripcion,Monto,Fecha,Origen,Prestamo_ID,Novedad_ID\n';
         
         rows.forEach(r => {
-            // Limpiamos comillas dobles dentro del texto para evitar errores
             const codigo = String(r.codigo_gasto || '').replace(/"/g, '""');
             const nombre = String(r.nombre_gasto || '').replace(/"/g, '""');
+            const origen = String(r.origen || 'MANUAL').replace(/"/g, '""');
             
-            csv += `${r.id},"${codigo}","${nombre}",${r.monto},${r.fecha_registro},${r.prestamo_id || ''}\n`;
+            csv += `${r.id},"${codigo}","${nombre}",${r.monto},${r.fecha_registro},"${origen}",${r.prestamo_id || ''},${r.novedad_id || ''}\n`;
         });
 
-        // --- ENCABEZADOS DE DESCARGA ---
         res.setHeader('Content-Type', 'text/csv; charset=utf-8');
         res.setHeader('Content-Disposition', `attachment; filename="gastos_${fecha}.csv"`);
         

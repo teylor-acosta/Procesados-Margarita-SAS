@@ -216,9 +216,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 { 
                     key: 'prestamo_id', 
                     label: 'Vínculo',
-                    formatter: (v, r) => v 
-                        ? `<span class="rep-badge rep-badge--warning"><i class="fas fa-link"></i> Préstamo #${v} ${r.empleado_nombre ? `(${r.empleado_nombre})` : ''}</span>` 
-                        : '<span class="rep-badge rep-badge--secondary">Ninguno</span>'
+                    formatter: (v, r) => {
+                        if (r.origen === 'NOVEDAD' || r.novedad_id) {
+                            const etiquetaNovedad = r.novedad_id ? `Novedad #${r.novedad_id}` : 'Novedad';
+                            return `<span class="rep-badge-novedad"><i class="fas fa-file-alt"></i> ${escapeHTML(etiquetaNovedad)}</span>`;
+                        }
+                        if (v) {
+                            return `<span class="rep-badge-prestamo"><i class="fas fa-link"></i> Préstamo #${escapeHTML(v)} ${r.empleado_nombre ? `(${escapeHTML(r.empleado_nombre)})` : ''}</span>`;
+                        }
+                        return '<span class="rep-badge rep-badge--secondary">Ninguno</span>';
+                    }
                 },
                 { key: 'monto', label: 'Monto', formatter: v => formatearMoneda(v) }
             ]
@@ -751,9 +758,9 @@ document.addEventListener('DOMContentLoaded', () => {
        HOOK PARA "LIQUIDACIÓN DE NÓMINA" (FUTURO)
        =========================================================
        Cuando el compañero termine el módulo, solo debe:
-       1. En reportes.html quitar el disabled del tab
-       2. Añadir CONFIG_TABS.liquidacion (ver bloque reservado arriba)
-       3. ¡Listo! Este JS ya maneja todo automáticamente.
+1. En reportes.html quitar el disabled del tab
+2. Añadir CONFIG_TABS.liquidacion (ver bloque reservado arriba)
+3. ¡Listo! Este JS ya maneja todo automáticamente.
        ========================================================= */
 
 });

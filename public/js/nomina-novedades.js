@@ -478,7 +478,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                         const data = await res.json();
                         if (!res.ok || !data.success) throw new Error(data.message || 'Error al aprobar');
-                        mostrarToast('Novedad aprobada correctamente', 'success');
+                        
+                        // ✅ NUEVO: Validar si se creó un gasto diario
+                        let mensajeExito = 'Novedad aprobada correctamente';
+                        if (data.gastoCreado) {
+                            mensajeExito = '✅ Novedad aprobada y registrada en Gastos Diarios';
+                        }
+                        
+                        mostrarToast(mensajeExito, 'success');
                         await cargarNovedades();
                     } catch (error) { mostrarToast(error.message, 'error'); }
                 });
@@ -662,6 +669,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 opt.dataset.permiteEmpleado = t.permite_empleado;
                 opt.dataset.requiereSoporte = t.requiere_soporte;
                 opt.dataset.requiereAprobacion = t.requiere_aprobacion;
+                opt.dataset.generaGasto = t.genera_gasto || 0; // <-- NUEVO CAMPO AGREGADO
                 registroTipoNovedad.appendChild(opt);
             });
         } catch (error) { mostrarToast(error.message, 'error'); }
@@ -685,13 +693,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const categoria = (opt.dataset.categoria || '').toUpperCase();
         const nombre = opt.dataset.nombre || '';
         const permiteEmpleado = Number(opt.dataset.permiteEmpleado);
+        const generaGasto = Number(opt.dataset.generaGasto || 0); // <-- LEER NUEVO CAMPO
 
         registroTipoNombre.textContent = nombre;
         registroTipoDescripcion.textContent = opt.dataset.descripcion || 'Sin descripción.';
         informacionTipoNovedad.style.display = 'block';
         formularioNovedadDinamico.style.display = 'block';
         seccionSoporteNovedad.style.display = Number(opt.dataset.requiereSoporte) ? 'block' : 'none';
-        avisoAprobacionNovedad.style.display = Number(opt.dataset.requiereAprobacion) ? 'flex' : 'none';
+        
+        // ✅ NUEVO: Lógica visual para el aviso de gastos
+        if (generaGasto === 1) {
+            avisoAprobacionNovedad.style.display = 'flex';
+            avisoAprobacionNovedad.innerHTML = `<i class="fas fa-money-bill-transfer me-2"></i>
+                Esta novedad es de tipo financiero. Al ser aprobada, se registrará automáticamente en <strong>Gastos Diarios</strong>.`;
+        } else if (Number(opt.dataset.requiereAprobacion)) {
+            avisoAprobacionNovedad.style.display = 'flex';
+            avisoAprobacionNovedad.innerHTML = `<i class="fas fa-info-circle me-2"></i>
+                Esta novedad quedará en estado <strong>PENDIENTE</strong> hasta que sea revisada.`;
+        } else {
+            avisoAprobacionNovedad.style.display = 'none';
+        }
 
         camposNovedad.innerHTML = ''; 
         btnGuardarNovedad.disabled = true;
