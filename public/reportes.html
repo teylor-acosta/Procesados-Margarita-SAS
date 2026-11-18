@@ -88,9 +88,9 @@
         </section>
 
         <!-- =================================================
-             KPIs
+             KPIs (5 tarjetas)
              ================================================= -->
-        <section class="rep-kpi-grid">
+        <section class="rep-kpi-grid" style="grid-template-columns: repeat(5, minmax(0, 1fr));">
 
             <article class="rep-kpi rep-kpi--blue">
                 <div class="rep-kpi-info">
@@ -136,6 +136,18 @@
                 </div>
             </article>
 
+            <!-- NUEVO KPI: GASTOS DIARIOS -->
+            <article class="rep-kpi rep-kpi--red">
+                <div class="rep-kpi-info">
+                    <span class="rep-kpi-label">Gastos del Mes</span>
+                    <strong id="kpiGastos" class="rep-kpi-value">0</strong>
+                    <small id="kpiGastosSub" class="rep-kpi-sub">$0 gastados</small>
+                </div>
+                <div class="rep-kpi-icon">
+                    <i class="fas fa-cash-register"></i>
+                </div>
+            </article>
+
         </section>
 
         <!-- =================================================
@@ -144,8 +156,23 @@
         <section class="rep-panel">
 
             <!-- =========================================
-                 TABS
+                 TABS Y SELECT (RESPONSIVE)
                  ========================================= -->
+            
+            <!-- SELECT PARA MÓVILES Y TABLETS (Oculto en escritorio) -->
+            <div class="rep-tabs-mobile" id="contenedorTabsMobile">
+                <label for="selectTabMobile" class="rep-fecha-label">Seleccionar sección:</label>
+                <select id="selectTabMobile" class="form-control">
+                    <option value="novedades">Novedades</option>
+                    <option value="prestamos">Préstamos</option>
+                    <option value="movimientos">Movimientos</option>
+                    <option value="produccion">Producción</option>
+                    <option value="descuentos">Descuentos</option>
+                    <option value="gastos">Gastos Diarios</option>
+                </select>
+            </div>
+
+            <!-- TABS PARA ESCRITORIO (Se ocultan en móviles) -->
             <div class="rep-tabs" role="tablist" aria-label="Secciones de reportes">
 
                 <button type="button" class="rep-tab active" role="tab" data-tab="novedades" aria-selected="true">
@@ -173,9 +200,14 @@
                     <span>Descuentos</span>
                 </button>
 
+                <!-- NUEVO TAB: GASTOS DIARIOS -->
+                <button type="button" class="rep-tab" role="tab" data-tab="gastos" aria-selected="false">
+                    <i class="fas fa-cash-register"></i>
+                    <span>Gastos Diarios</span>
+                </button>
+
                 <!-- =========================================
                      TAB RESERVADA: LIQUIDACIÓN DE NÓMINA
-                     (Módulo en desarrollo por otro equipo)
                      ========================================= -->
                 <button
                     type="button"

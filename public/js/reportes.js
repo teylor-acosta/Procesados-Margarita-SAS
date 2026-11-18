@@ -26,9 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const kpiProduccionSub = document.getElementById('kpiProduccionSub');
     const kpiDescuentos    = document.getElementById('kpiDescuentos');
     const kpiDescuentosSub = document.getElementById('kpiDescuentosSub');
+    const kpiGastos        = document.getElementById('kpiGastos');
+    const kpiGastosSub     = document.getElementById('kpiGastosSub');
 
-    // Tabs
+    // Tabs Escritorio
     const tabs = document.querySelectorAll('.rep-tab[data-tab]');
+    
+    // Tab Móvil (Select)
+    const selectTabMobile  = document.getElementById('selectTabMobile');
 
     // Filtros
     const filtroBuscar    = document.getElementById('filtroBuscar');
@@ -191,34 +196,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 { key: 'observacion',      label: 'Observación',formatter: v => `
                     <span class="rep-truncate" title="${escapeHTML(v || '')}">${escapeHTML(v || '—')}</span>` }
             ]
-        }
+        },
 
-        /*
-        ============================================================
-        🔒 TAB RESERVADA: LIQUIDACIÓN DE NÓMINA
-        ============================================================
-        Este tab está DESHABILITADO en el HTML.
-        Cuando el compañero termine el módulo, debe:
-
-        1. En reportes.html:
-           - Quitar "disabled" y "rep-tab--locked" del botón data-tab="liquidacion"
-
-        2. Aquí, agregar la configuración:
-
-        liquidacion: {
-            endpoint: '/api/nomina/reportes/liquidacion',
-            exportar: 'liquidacion',
+        // =========================================================
+        // NUEVO TAB: GASTOS DIARIOS
+        // =========================================================
+        gastos: {
+            endpoint: '/api/nomina/reportes/gastos',
+            exportar: 'gastos',
             tipos: [],
             columnas: [
-                { key: 'empleado',  label: 'Empleado' },
-                { key: 'periodo',   label: 'Periodo' },
-                { key: 'total',     label: 'Total', formatter: v => formatearMoneda(v) },
-                { key: 'estado',    label: 'Estado', formatter: v => crearBadgeEstado(v) }
+                { 
+                    key: 'codigo_gasto', 
+                    label: 'Código',
+                    formatter: v => `<span class="rep-badge rep-badge--info">${escapeHTML(v || '—')}</span>` 
+                },
+                { key: 'nombre_gasto', label: 'Descripción' },
+                { key: 'fecha_registro', label: 'Fecha', formatter: v => formatearFecha(v) },
+                { 
+                    key: 'prestamo_id', 
+                    label: 'Vínculo',
+                    formatter: (v, r) => v 
+                        ? `<span class="rep-badge rep-badge--warning"><i class="fas fa-link"></i> Préstamo #${v} ${r.empleado_nombre ? `(${r.empleado_nombre})` : ''}</span>` 
+                        : '<span class="rep-badge rep-badge--secondary">Ninguno</span>'
+                },
+                { key: 'monto', label: 'Monto', formatter: v => formatearMoneda(v) }
             ]
         }
-        ============================================================
-        */
 
+        /* ============================================================
+           🔒 TAB RESERVADA: LIQUIDACIÓN DE NÓMINA
+           ============================================================ */
     };
 
     /* =========================================================
@@ -234,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function configurarEventos() {
-        // Tabs
+        // Tabs Escritorio
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 if (tab.disabled) return;
@@ -246,6 +254,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 aplicarTab(nuevaTab);
             });
         });
+
+        // Select Móvil
+        if (selectTabMobile) {
+            selectTabMobile.addEventListener('change', (e) => {
+                const nuevaTab = e.target.value;
+                if (CONFIG_TABS[nuevaTab]) {
+                    aplicarTab(nuevaTab);
+                }
+            });
+        }
 
         // Botones
         btnRefrescar?.addEventListener('click', () => {
@@ -308,8 +326,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         estadoApp.tabActual = tab;
 
-        // Actualizar botones
+        // Actualizar botones de escritorio
         tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+
+        // NUEVO: Sincronizar el select de móviles
+        if (selectTabMobile) {
+            selectTabMobile.value = tab;
+        }
 
         // Resetear filtros al cambiar tab
         limpiarFiltros(true);
@@ -435,6 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'movimientos': return data.movimientos || [];
             case 'produccion':  return data.produccion  || [];
             case 'descuentos':  return data.descuentos  || [];
+            case 'gastos':      return data.gastos      || []; // <-- NUEVO
             default:            return [];
         }
     }
@@ -487,6 +511,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (kpiDescuentos) kpiDescuentos.textContent = k.descuentos?.total || 0;
             if (kpiDescuentosSub) kpiDescuentosSub.textContent =
                 `${formatearMoneda(k.descuentos?.total_descontado || 0)} descontados`;
+
+            // NUEVO: KPI de Gastos
+            if (kpiGastos) kpiGastos.textContent = k.gastos?.total || 0;
+            if (kpiGastosSub) kpiGastosSub.textContent =
+                `${formatearMoneda(k.gastos?.total_monto || 0)} gastados`;
 
         } catch (error) {
             console.error('❌ Error KPIs:', error);

@@ -119,13 +119,15 @@ app.use((req, res, next) => {
 // ============================================
 
 // Bloquear acceso directo a páginas HTML,
-// permitiendo únicamente fragmentos autorizados.
+// permitiendo únicamente fragmentos autorizados, la tienda y el carrito.
 app.use((req, res, next) => {
 
     const ruta = req.path.toLowerCase();
 
     const archivosPermitidos = [
-        '/components/sidebar.html'
+        '/components/sidebar.html',
+        '/tienda.html',
+        '/carrito.html' // 🔥 Agregado para permitir acceso directo al carrito
     ];
 
     if (
@@ -275,6 +277,11 @@ app.use(
     require('./routes/nomina-prestamos.routes')
 );
 
+// 👇 AGREGADO — MÓDULO GASTOS DIARIOS
+app.use(
+    require('./routes/gastos-diarios.routes')
+);
+
 // ============================================
 // 🔥 SIDEBAR DINÁMICO
 // ============================================
@@ -349,12 +356,18 @@ app.get('/test-db', async(req, res) => {
 
 
 // ============================================
-// SERVER
+// SERVER / VISTAS EXTRAS
 // ============================================
 
 app.get('/tienda', (req, res) => {
     res.sendFile(
         path.join(__dirname, 'public', 'tienda.html')
+    );
+});
+
+app.get('/carrito', (req, res) => {
+    res.sendFile(
+        path.join(__dirname, 'public', 'carrito.html')
     );
 });
 

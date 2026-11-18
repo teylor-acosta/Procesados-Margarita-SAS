@@ -43,6 +43,14 @@ router.get('/nomina/configuracion', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/nomina-configuracion.html'));
 });
 
+// 🔥 Vista de Gastos Diarios
+router.get('/nomina/gastos-diarios', (req, res) => {
+    if (!req.session || !req.session.usuarioID) {
+        return res.redirect('/login');
+    }
+    res.sendFile(path.join(__dirname, '../public/gastos-diarios.html'));
+});
+
 // 🔥 Vista de Novedades (solo admin/super admin)
 router.get('/nomina/novedades', (req, res) => {
     // Si no hay sesión → al login
