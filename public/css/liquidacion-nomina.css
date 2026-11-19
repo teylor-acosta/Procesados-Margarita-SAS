@@ -1,0 +1,681 @@
+
+/* ==========================================
+   LIQUIDACIÓN DE NÓMINA
+========================================== */
+
+.contenido-nomina {
+    margin-left: 280px;
+    width: calc(100% - 280px);
+    min-height: calc(100vh - 105px);
+    padding: 22px 26px;
+}
+
+.encabezado-nomina,
+.panel-liquidacion,
+.panel-resumen {
+    background: rgba(255,255,255,.96);
+    border: 1px solid #dbe5ef;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(15,23,42,.06);
+}
+
+.encabezado-nomina {
+    padding: 20px 24px;
+    margin-bottom: 18px;
+}
+
+.encabezado-nomina h1 {
+    font-size: 25px;
+    color: #172554;
+    font-weight: 700;
+}
+
+.encabezado-nomina h1 i {
+    color: #2563eb;
+    margin-right: 10px;
+}
+
+.encabezado-nomina p {
+    color: #64748b;
+    font-size: 13px;
+    margin: 5px 0 0;
+}
+
+/* RESUMEN SUPERIOR */
+
+.resumen-nomina {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.indicador-nomina {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 17px;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    min-width: 0;
+}
+
+.indicador-nomina span,
+.indicador-nomina strong {
+    display: block;
+}
+
+.indicador-nomina span {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.indicador-nomina strong {
+    color: #172554;
+    font-size: 17px;
+    margin-top: 4px;
+    overflow-wrap: anywhere;
+}
+
+.indicador-icono,
+.panel-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 12px;
+    width: 46px;
+    height: 46px;
+    font-size: 20px;
+}
+
+.indicador-empleados .indicador-icono,
+.panel-icono.azul {
+    color: #2563eb;
+    background: #dbeafe;
+}
+
+.indicador-periodo .indicador-icono {
+    color: #7c3aed;
+    background: #ede9fe;
+}
+
+.indicador-total .indicador-icono,
+.panel-icono.verde {
+    color: #16a34a;
+    background: #dcfce7;
+}
+
+/* PASOS */
+
+.pasos-liquidacion {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.paso {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 12px;
+    background: white;
+    border: 1px solid #dbe5ef;
+    border-radius: 12px;
+}
+
+.paso > span {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #64748b;
+    font-weight: 700;
+}
+
+.paso strong,
+.paso small {
+    display: block;
+}
+
+.paso strong {
+    font-size: 13px;
+    color: #1e293b;
+}
+
+.paso small {
+    font-size: 10px;
+    color: #64748b;
+    margin-top: 3px;
+}
+
+.paso.activo {
+    background: #ecfdf5;
+    border-color: #22c55e;
+}
+
+.paso.activo > span {
+    background: #16a34a;
+    color: white;
+}
+
+/* DISTRIBUCIÓN */
+
+.layout-liquidacion {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 285px;
+    gap: 17px;
+    align-items: start;
+}
+
+.columna-liquidacion {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.panel-liquidacion {
+    padding: 19px;
+    min-width: 0;
+}
+
+.panel-titulo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.panel-icono.morado {
+    background: #ede9fe;
+    color: #7c3aed;
+}
+
+.panel-icono.naranja {
+    background: #ffedd5;
+    color: #ea580c;
+}
+
+.panel-titulo h3 {
+    color: #172554;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.panel-titulo p {
+    color: #64748b;
+    font-size: 12px;
+    margin: 4px 0 0;
+}
+
+/* FORMULARIOS */
+
+.formulario-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 17px;
+}
+
+.campo-nomina {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.campo-nomina label {
+    color: #475569;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.campo-nomina input,
+.campo-nomina select {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 9px;
+    color: #1e293b;
+    background: white;
+    outline: none;
+    font-size: 13px;
+}
+
+.campo-nomina input:focus,
+.campo-nomina select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.10);
+}
+
+.botones-periodo {
+    display: flex;
+    gap: 8px;
+}
+
+.botones-periodo button {
+    flex: 1;
+    border: 1px solid #bfdbfe;
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-radius: 9px;
+    padding: 10px 7px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.botones-periodo button:hover {
+    background: #dbeafe;
+}
+
+/* BUSCADOR */
+
+.buscador-colaborador {
+    position: relative;
+}
+
+.buscador-input {
+    position: relative;
+}
+
+.buscador-input i {
+    position: absolute;
+    left: 14px;
+    top: 15px;
+    color: #94a3b8;
+}
+
+.buscador-input input {
+    padding-left: 42px;
+}
+
+.ayuda-campo {
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+.resultados-colaboradores {
+    position: absolute;
+    z-index: 100;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #dbe5ef;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(15,23,42,.12);
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.resultado-colaborador {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-bottom: 1px solid #f1f5f9;
+    background: white;
+    text-align: left;
+    cursor: pointer;
+}
+
+.resultado-colaborador:hover {
+    background: #eff6ff;
+}
+
+.resultado-colaborador strong,
+.resultado-colaborador small {
+    display: block;
+}
+
+.resultado-colaborador strong {
+    color: #1e293b;
+    font-size: 13px;
+}
+
+.resultado-colaborador small {
+    color: #64748b;
+    font-size: 11px;
+    margin-top: 4px;
+}
+
+/* INFORMACIÓN COLABORADOR */
+
+.colaborador-seleccionado {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+}
+
+.avatar-colaborador {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #dbeafe;
+    color: #2563eb;
+    border-radius: 50%;
+}
+
+.datos-colaborador {
+    flex: 1;
+    min-width: 0;
+}
+
+.datos-colaborador h3 {
+    font-size: 15px;
+    color: #172554;
+    margin: 0;
+}
+
+.datos-colaborador span {
+    font-size: 11px;
+    color: #64748b;
+}
+
+.btn-cambiar {
+    border: 1px solid #bfdbfe;
+    color: #2563eb;
+    background: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 11px;
+}
+
+.datos-laborales-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.datos-laborales-grid > div {
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 9px;
+}
+
+.datos-laborales-grid span,
+.datos-laborales-grid strong {
+    display: block;
+}
+
+.datos-laborales-grid span {
+    font-size: 11px;
+    color: #64748b;
+}
+
+.datos-laborales-grid strong {
+    font-size: 13px;
+    margin-top: 5px;
+    color: #172554;
+}
+
+/* ETAPAS SENA */
+
+.etapas-resumen {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.etapa-info {
+    padding: 14px;
+    border-radius: 10px;
+}
+
+.etapa-info span,
+.etapa-info strong {
+    display: block;
+}
+
+.etapa-info span {
+    font-size: 12px;
+}
+
+.etapa-info strong {
+    font-size: 17px;
+    margin-top: 5px;
+}
+
+.etapa-info.lectiva {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.etapa-info.productiva {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.tramo-etapa {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 10px;
+    align-items: end;
+    padding: 13px;
+    margin-bottom: 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+.tramo-etapa label {
+    display: block;
+    font-size: 11px;
+    color: #64748b;
+    margin-bottom: 6px;
+}
+
+.tramo-etapa select,
+.tramo-etapa input {
+    width: 100%;
+    min-height: 40px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 12px;
+    background: white;
+}
+
+.btn-eliminar-tramo {
+    height: 40px;
+    width: 40px;
+    border: none;
+    border-radius: 8px;
+    background: #fee2e2;
+    color: #dc2626;
+    cursor: pointer;
+}
+
+.btn-agregar-tramo {
+    border: 1px dashed #2563eb;
+    color: #2563eb;
+    background: #eff6ff;
+    border-radius: 9px;
+    padding: 11px 15px;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.total-dias-etapa {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 17px;
+    padding: 13px;
+    border-radius: 9px;
+    background: #f1f5f9;
+    font-size: 13px;
+}
+
+.mensaje-etapas {
+    font-size: 12px;
+    margin-top: 10px;
+    color: #dc2626;
+}
+
+/* DETALLE */
+
+.detalle-placeholder {
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #94a3b8;
+    text-align: center;
+}
+
+.detalle-placeholder i {
+    font-size: 35px;
+    margin-bottom: 12px;
+}
+
+.detalle-placeholder p {
+    font-size: 12px;
+}
+
+.detalle-fila {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 13px;
+}
+
+.detalle-fila.resultado {
+    background: #dcfce7;
+    color: #166534;
+    font-weight: 700;
+    font-size: 16px;
+    border-radius: 9px;
+    margin-top: 10px;
+}
+
+/* RESUMEN LATERAL */
+
+.panel-resumen {
+    position: sticky;
+    top: 105px;
+    overflow: hidden;
+}
+
+.resumen-encabezado {
+    padding: 23px 16px;
+    text-align: center;
+    background: linear-gradient(135deg, #172554, #2563eb);
+    color: white;
+}
+
+.resumen-encabezado span {
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.resumen-encabezado h3 {
+    font-size: 14px;
+    margin: 12px 0;
+}
+
+.resumen-encabezado strong {
+    display: block;
+    font-size: 27px;
+}
+
+.resumen-encabezado small {
+    font-size: 11px;
+}
+
+.resumen-contenido {
+    padding: 17px;
+}
+
+.resumen-concepto,
+.resumen-neto {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 12px 0;
+    font-size: 12px;
+}
+
+.resumen-concepto strong,
+.resumen-neto strong {
+    white-space: nowrap;
+}
+
+.resumen-neto {
+    font-size: 14px;
+    font-weight: 700;
+    color: #15803d;
+}
+
+.btn-generar-liquidacion {
+    width: 100%;
+    border: none;
+    background: #16a34a;
+    color: white;
+    border-radius: 10px;
+    padding: 14px 8px;
+    margin-top: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-generar-liquidacion:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+}
+
+/* RESPONSIVE */
+
+@media(max-width: 1200px) {
+    .layout-liquidacion {
+        grid-template-columns: 1fr;
+    }
+
+    .panel-resumen {
+        position: static;
+    }
+}
+
+@media(max-width: 992px) {
+    .contenido-nomina {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+@media(max-width: 650px) {
+    .resumen-nomina {
+        grid-template-columns: 1fr;
+    }
+
+    .pasos-liquidacion {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .formulario-grid,
+    .datos-laborales-grid,
+    .etapas-resumen {
+        grid-template-columns: 1fr;
+    }
+
+    .tramo-etapa {
+        grid-template-columns: 1fr 1fr;
+    }
+}

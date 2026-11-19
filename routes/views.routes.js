@@ -155,6 +155,29 @@ router.get('/panel', proteger, verificarDocumentosPendientes, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'panel.html'));
 });
 
+
+/* =========================================
+   LIQUIDACIÓN Y PAGO DE NÓMINA
+========================================= */
+
+router.get(
+    '/nomina/liquidacion',
+    proteger,
+    verificarDocumentosPendientes,
+    soloAdminGeneral,
+    (req, res) => {
+
+        res.sendFile(
+            path.join(
+                __dirname,
+                '../public/liquidacion-nomina.html'
+            )
+        );
+
+    }
+);
+
+
 router.get('/recursos-humanos', proteger, soloAdminGeneral, (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'recursos-humanos.html'));
 });
