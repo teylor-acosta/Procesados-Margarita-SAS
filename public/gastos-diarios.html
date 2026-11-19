@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gastos Diarios - Procesados Margarita</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- 🔥 TUS ESTILOS GLOBALES (Fundamental para Navbar y Fondo) -->
+    <link rel="stylesheet" href="/css/style1.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="/css/nomina.css">
+    
+    <!-- Estilos específicos de Gastos Diarios -->
+    <link rel="stylesheet" href="/css/gastos-diarios.css">
+    
+    <!-- Estilos de ajuste rápido para esta vista (Aseguran que no se rompa) -->
+    <style>
+        /* Forzar que el fondo global se vea */
+        body {
+            background-color: #f4f7f6;
+        }
+        
+        /* Asegurar que el contenedor respete el sidebar */
+        .gastos-dashboard {
+            margin-left: 280px; /* Mismo margen que nomina-dashboard */
+            padding: 120px 40px 50px; /* Espacio para la navbar fija */
+            min-height: 100vh;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Ajuste responsive para móviles */
+        @media (max-width: 992px) {
+            .gastos-dashboard {
+                margin-left: 0;
+                padding: 100px 20px 30px;
+            }
+        }
+
+        /* Estilos para las tarjetas (si el css externo falla, esto salva el diseño) */
+        .card-gastos {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+            border: 1px solid #eef2f6;
+            overflow: hidden;
+        }
+        .card-header-gastos {
+            background: #fff;
+            border-bottom: 1px solid #eef2f6;
+            padding: 18px 25px;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-body-gastos {
+            padding: 25px;
+        }
+        .form-control-gastos, .form-select-gastos {
+            border-radius: 12px;
+            border: 1.5px solid #e2e8f0;
+            padding: 12px 15px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        .form-control-gastos:focus, .form-select-gastos:focus {
+            border-color: #e11d48;
+            box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.1);
+            outline: none;
+        }
+        .form-label-gastos {
+            font-weight: 600;
+            color: #475569;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        .btn-gastos-primary {
+            background: linear-gradient(135deg, #e11d48, #f43f5e);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(225, 29, 72, 0.3);
+            cursor: pointer;
+        }
+        .btn-gastos-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(225, 29, 72, 0.4);
+        }
+        .table-gastos thead th {
+            background: #f8fafc;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            padding: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .table-gastos tbody td {
+            padding: 15px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+        .table-gastos tbody tr:hover {
+            background: #f8fafc;
+        }
+        .total-dia-container {
+            background: #f8fafc;
+            padding: 20px;
+            text-align: right;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e293b;
+            border-top: 2px solid #e2e8f0;
+        }
+        .total-dia-container span {
+            color: #16a34a;
+            font-size: 1.5rem;
+            margin-left: 10px;
+        }
+        .badge-vinculo {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .badge-novedad {
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .badge-nada {
+            background: #f1f5f9;
+            color: #64748b;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .badge-codigo {
+            background: white;
+            border: 1px solid #e2e8f0;
+            color: #1e293b;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+        .btn-eliminar-gasto {
+            background: #fef2f2;
+            color: #ef4444;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .btn-eliminar-gasto:hover {
+            background: #fee2e2;
+            transform: scale(1.05);
+        }
+        .excel-drop-zone {
+            border: 2px dashed #0ea5e9;
+            border-radius: 16px;
+            background: #f0f9ff;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .excel-drop-zone:hover {
+            background: #e0f2fe;
+        }
+        .excel-drop-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .excel-icon {
+            font-size: 2.5rem;
+            color: #0ea5e9;
+            margin-bottom: 10px;
+        }
+        .cabecera-gastos {
+            max-width: 1400px;
+            margin: 0 auto 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .cabecera-gastos h1 {
+            margin: 0 0 5px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .cabecera-gastos p {
+            margin: 0;
+            color: #64748b;
+            font-size: 1rem;
+        }
+        .icono-cabecera-gastos {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e11d48, #f43f5e);
+            color: white;
+            box-shadow: 0 15px 30px rgba(225, 29, 72, 0.25);
+            font-size: 32px;
+        }
+        .btn-volver {
+            background: white;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .btn-volver:hover {
+            background: #f8fafc;
+            transform: translateY(-2px);
+            color: #1e293b;
+        }
+        .filtros-historial {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            padding: 10px 15px;
+            border-radius: 12px;
+        }
+        .filtros-historial input[type="date"] {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+
+        /* Estilo extra para el botón de exportar, para que no desentone */
+        #btnExportar {
+            background: white;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            cursor: pointer;
+        }
+        #btnExportar:hover {
+            background: #f8fafc;
+            transform: translateY(-2px);
+            color: #16a34a;
+            border-color: #16a34a;
+        }
+    </style>
+</head>
+
+<body data-pagina="nomina">
+
+    <!-- Sidebar Dinámico -->
+    <div id="sidebarContainer"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Navbar Global -->
+    <nav class="navbar-custom">
+        <div class="navbar-left">
+            <i class="fas fa-bars menu-toggle" id="btnOpenSidebar"></i>
+            <span class="empresa-nombre">Gastos Diarios</span>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="gastos-dashboard">
+
+        <!-- Cabecera del Módulo -->
+        <div class="cabecera-gastos">
+            <div class="titulo-seccion d-flex align-items-center gap-3">
+                <div class="icono-cabecera-gastos">
+                    <i class="fas fa-cash-register"></i>
+                </div>
+                <div>
+                    <h1>Gastos Diarios</h1>
+                    <p>Registra y consulta los gastos operativos de la empresa.</p>
+                </div>
+            </div>
+            
+            <!-- ACCIONES DE LA CABECERA: Exportar y Volver -->
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" id="btnExportar">
+                    <i class="fas fa-file-csv text-success"></i> Exportar CSV
+                </button>
+                <a href="/nomina" class="btn-volver">
+                    <i class="fas fa-arrow-left"></i> Volver a Nómina
+                </a>
+            </div>
+        </div>
+
+        <!-- FILA 1: Formulario y Migración Excel -->
+        <div class="row g-4 mb-4">
+            
+            <!-- Tarjeta Formulario -->
+            <div class="col-lg-8">
+                <div class="card-gastos h-100">
+                    <div class="card-header-gastos">
+                        <i class="fas fa-plus-circle text-success fs-5"></i> Registrar Nuevo Gasto
+                    </div>
+                    <div class="card-body-gastos">
+                        <form id="form-gasto">
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label-gastos">Código <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control-gastos" id="codigoGasto" placeholder="Ej: G-001" required>
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label-gastos">Descripción <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control-gastos" id="nombreGasto" placeholder="Ej: Compra de insumos" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label-gastos">Monto ($) <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control-gastos" id="montoGasto" step="0.01" placeholder="0.00" required>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label class="form-label-gastos">Fecha <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control-gastos" id="fechaGasto" required>
+                                </div>
+                                <div class="col-md-8">
+                                    <label class="form-label-gastos">Vincular a Préstamo (Opcional)</label>
+                                    <select class="form-select-gastos" id="vincularPrestamo">
+                                        <option value="">-- No vincular --</option>
+                                    </select>
+                                    <div class="form-text small">Si el gasto proviene de un préstamo, selecciónelo para evitar doble digitación.</div>
+                                </div>
+                            </div>
+                            
+                            <hr class="my-4" style="opacity: 0.1;">
+                            
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn-gastos-primary">
+                                    <i class="fas fa-save"></i> Guardar Gasto
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta Importación Excel -->
+            <div class="col-lg-4">
+                <div class="card-gastos h-100">
+                    <div class="card-header-gastos text-info">
+                        <i class="fas fa-file-excel fs-5"></i> Migración de Datos
+                    </div>
+                    <div class="card-body-gastos d-flex flex-column">
+                        <p class="text-muted small mb-3">
+                            Sube el archivo Excel histórico para importar los datos estáticos a la base de datos del sistema.
+                        </p>
+                        
+                        <form id="form-excel" class="flex-grow-1 d-flex flex-column">
+                            <div class="excel-drop-zone mb-3 flex-grow-1 d-flex flex-column justify-content-center">
+                                <i class="fas fa-cloud-upload-alt excel-icon"></i>
+                                <span class="fw-bold text-dark mb-1" id="nombre-archivo-excel">Haz clic o arrastra tu Excel aquí</span>
+                                <span class="text-muted small">Formatos: .xlsx, .xls</span>
+                                <input type="file" id="archivoExcel" accept=".xlsx, .xls" required>
+                            </div>
+                            
+                            <button class="btn btn-outline-info w-100 fw-bold" type="submit" id="btn-subir-excel">
+                                <i class="fas fa-upload me-2"></i>Importar Archivo
+                            </button>
+                        </form>
+                        
+                        <div class="progress mt-3 d-none" id="excel-progress-container" style="height: 6px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" id="excel-progress" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <div id="mensaje-excel" class="small text-center mt-2 fw-medium"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FILA 2: Tabla de Historial -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card-gastos">
+                    <div class="card-header-gastos d-flex flex-wrap justify-content-between align-items-center gap-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-list-alt text-primary me-2 fs-5"></i>
+                            <h5 class="mb-0 fw-bold">Registro de Gastos</h5>
+                        </div>
+                        
+                        <div class="filtros-historial">
+                            <label class="fw-semibold text-muted small mb-0 text-nowrap"><i class="fas fa-filter me-1"></i>Historial:</label>
+                            <input type="date" class="form-control form-control-sm border-0 shadow-sm" id="filtroFecha" style="width: 140px;">
+                            <button class="btn btn-sm btn-primary fw-bold" id="btn-filtrar">Buscar</button>
+                            <button class="btn btn-sm btn-outline-secondary fw-bold" id="btn-hoy">Hoy</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body-gastos p-0">
+                        <div class="table-responsive-gastos">
+                            <table class="table-gastos mb-0 text-center align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Código</th>
+                                        <th class="text-start">Descripción</th>
+                                        <th>Vínculo</th>
+                                        <th class="text-end">Monto</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cuerpo-tabla">
+                                    <tr>
+                                        <td colspan="6" class="text-muted py-5">
+                                            <i class="fas fa-spinner fa-spin me-2"></i>Cargando gastos...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="total-dia-container">
+                            Total del Día: <span id="total-dia">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal de Confirmación para Eliminar -->
+    <div class="modal fade" id="modalEliminar" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header bg-danger text-white border-0" style="border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-exclamation-triangle me-2"></i>Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <i class="fas fa-trash-alt text-danger fs-1 mb-3"></i>
+                    <p class="mb-0 fs-5">¿Estás seguro de que deseas eliminar este gasto?</p>
+                    <p class="text-muted small">Esta acción no se puede deshacer.</p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pb-4">
+                    <button type="button" class="btn btn-light fw-bold px-4" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger fw-bold px-4" id="btn-confirmar-eliminar">Sí, eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor de Notificaciones Toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toast-container" style="z-index: 9999;"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+    <script src="/js/gastos-diarios.js"></script>
+    <script src="/js/sidebar.js"></script>
+</body>
+</html>

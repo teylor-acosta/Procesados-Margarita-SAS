@@ -94,23 +94,31 @@ function normalizarBody(body) {
         cantidad_dias: b.cantidad_dias ? Number(b.cantidad_dias) : null,
         cantidad_horas: b.cantidad_horas ? Number(b.cantidad_horas) : null,
         motivo: motivoFinal || null,
-        observacion: obsFinal || null
+        observacion: obsFinal || null,
+        monto: b.monto ? Number(b.monto) : (b.valor ? Number(b.valor) : null) // <-- NUEVO CAMPO AGREGADO
     };
 }
 
 async function crearNovedad(req, data, soportes = []) {
     const db = getDB(req);
     
+    // NUEVO: Consultar si el tipo de novedad genera gasto
+    let generaGasto = 0;
+    if (data.tipo_novedad_id) {
+        const [tipoRows] = await db.query(`SELECT genera_gasto FROM nomina_novedades_tipos WHERE id = ? LIMIT 1`, [data.tipo_novedad_id]);
+        if (tipoRows.length) generaGasto = Number(tipoRows[0].genera_gasto);
+    }
+
     const [result] = await db.query(`
         INSERT INTO nomina_novedades
         (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin,
          hora_inicio, hora_fin, cantidad_dias, cantidad_horas,
-         motivo, observacion, estado, usuario_creacion, fecha_creacion)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDIENTE', ?, NOW())
+         motivo, observacion, monto, genera_gasto, estado, usuario_creacion, fecha_creacion)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDIENTE', ?, NOW())
     `, [
         data.empleado_id, data.tipo_novedad_id, data.fecha_inicio, data.fecha_fin,
         data.hora_inicio, data.hora_fin, data.cantidad_dias, data.cantidad_horas,
-        data.motivo, data.observacion, req.session.usuarioID
+        data.motivo, data.observacion, data.monto, generaGasto, req.session.usuarioID
     ]);
 
     const novedadId = result.insertId;
@@ -171,7 +179,8 @@ router.get('/kpis', requiereSesion, async (req, res) => {
 router.get('/tipos', requiereSesion, async (req, res) => {
     try {
         const db = getDB(req);
-        const [rows] = await db.query(`SELECT id, nombre, codigo, categoria, descripcion, permite_empleado, requiere_soporte, requiere_aprobacion FROM nomina_novedades_tipos WHERE activo = 1 ORDER BY categoria, nombre`);
+        // NUEVO: Agregado genera_gasto al SELECT
+        const [rows] = await db.query(`SELECT id, nombre, codigo, categoria, descripcion, permite_empleado, requiere_soporte, requiere_aprobacion, genera_gasto FROM nomina_novedades_tipos WHERE activo = 1 ORDER BY categoria, nombre`);
         res.json({ success: true, tipos: rows });
     } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
@@ -424,18 +433,56 @@ router.get('/:id', requiereSesion, async (req, res) => {
 // ============================================================
 
 router.patch('/:id/aprobar', soloAdmin, async (req, res) => {
+    const db = getDB(req);
+    const id = Number(req.params.id);
+
+    // Usamos una transacción para asegurar que si falla el gasto, no se apruebe la novedad
+    const conn = await db.getConnection();
     try {
-        const db = getDB(req);
-        const [actual] = await db.query(`SELECT estado FROM nomina_novedades WHERE id = ?`, [req.params.id]);
-        if (!actual.length) return res.status(404).json({ success: false, message: 'No encontrada' });
-        await db.query(`UPDATE nomina_novedades SET estado = 'APROBADA', usuario_revision = ?, fecha_revision = NOW() WHERE id = ?`, [req.session.usuarioID, req.params.id]);
-        await db.query(`
+        await conn.beginTransaction();
+
+        const [actual] = await conn.query(`SELECT * FROM nomina_novedades WHERE id = ? FOR UPDATE`, [id]);
+        if (!actual.length) throw new Error('No encontrada');
+        
+        const novedad = actual[0];
+
+        // 1. Actualizar estado de la novedad
+        await conn.query(`UPDATE nomina_novedades SET estado = 'APROBADA', usuario_revision = ?, fecha_revision = NOW() WHERE id = ?`, [req.session.usuarioID, id]);
+        
+        // 2. Insertar en historial
+        await conn.query(`
             INSERT INTO nomina_novedades_historial 
             (novedad_id, estado_anterior, estado_nuevo, usuario_id, fecha_registro) 
             VALUES (?, ?, 'APROBADA', ?, NOW())
-        `, [req.params.id, actual[0].estado, req.session.usuarioID]);
-        res.json({ success: true });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+        `, [id, novedad.estado, req.session.usuarioID]);
+
+        // 3. NUEVO: Si genera gasto, insertar en gastos_diarios
+        let gastoId = null;
+        if (Number(novedad.genera_gasto) === 1 && Number(novedad.monto) > 0) {
+            const [gastoResult] = await conn.query(`
+                INSERT INTO gastos_diarios
+                (codigo_gasto, nombre_gasto, monto, fecha_registro, origen, novedad_id, created_at, updated_at)
+                VALUES (?, ?, ?, NOW(), 'NOVEDAD', ?, NOW(), NOW())
+            `, [
+                'NOV-' + id, // Código autogenerado
+                novedad.motivo || 'Gasto por Novedad',
+                novedad.monto,
+                id
+            ]);
+            gastoId = gastoResult.insertId;
+
+            // Actualizar novedad con el ID del gasto creado
+            await conn.query(`UPDATE nomina_novedades SET gasto_diario_id = ? WHERE id = ?`, [gastoId, id]);
+        }
+
+        await conn.commit();
+        res.json({ success: true, gastoCreado: gastoId });
+    } catch (err) {
+        await conn.rollback();
+        res.status(500).json({ success: false, message: err.message });
+    } finally {
+        conn.release();
+    }
 });
 
 router.patch('/:id/rechazar', soloAdmin, async (req, res) => {

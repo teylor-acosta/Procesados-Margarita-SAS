@@ -366,3 +366,34 @@
     }
 
 }
+
+
+/* =========================================
+   NUEVO MÓDULO: GASTOS DIARIOS
+   ========================================= */
+
+.card-gastos {
+
+    background:
+        linear-gradient(
+            135deg,
+            #e11d48,
+            #f43f5e
+        );
+
+}
+
+
+/* Ajuste del Grid para 7 tarjetas.
+   Hacemos que la 7ma tarjeta (la última) se centre
+   en la fila de abajo en pantallas grandes. */
+
+@media (min-width: 1201px) {
+
+    .nomina-grid .card-nomina:last-child {
+
+        grid-column: 2 / 3;
+
+    }
+
+}

@@ -106,13 +106,23 @@ router.get('/api/nomina/reportes/kpis', requiereSesion, async (req, res) => {
             WHERE DATE_FORMAT(fecha_descuento, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
         `);
 
+        // KPI DE GASTOS DIARIOS
+        const [gastos] = await conn.query(`
+            SELECT
+                COUNT(*) AS total,
+                COALESCE(SUM(monto), 0) AS total_monto
+            FROM gastos_diarios
+            WHERE DATE_FORMAT(fecha_registro, '%Y-%m') = DATE_FORMAT(CURDATE(), '%Y-%m')
+        `);
+
         return res.json({
             ok: true,
             kpis: {
                 novedades: novedades[0],
                 prestamos: prestamos[0],
                 produccion: produccion[0],
-                descuentos: descuentos[0]
+                descuentos: descuentos[0],
+                gastos: gastos[0]
             }
         });
     } catch (error) {
@@ -282,7 +292,7 @@ router.get('/api/nomina/reportes/movimientos', requiereSesion, async (req, res) 
 });
 
 // ============================================================
-// REPORTE 4: LIQUIDACIONES DE PRODUCCIÓN (CORREGIDO ✅)
+// REPORTE 4: LIQUIDACIONES DE PRODUCCIÓN
 // ============================================================
 router.get('/api/nomina/reportes/produccion', requiereSesion, async (req, res) => {
     const db = getDB(req);
@@ -377,10 +387,52 @@ router.get('/api/nomina/reportes/descuentos', requiereSesion, async (req, res) =
 });
 
 // ============================================================
-// 🔒 REPORTE 6: LIQUIDACIÓN DE NÓMINA (RESERVADO)
+// REPORTE 6: GASTOS DIARIOS (ACTUALIZADO CON ORIGEN Y NOVEDAD_ID)
 // ============================================================
-// (Mismo bloque comentado que ya tienes, sin cambios)
-// ...
+router.get('/api/nomina/reportes/gastos', requiereSesion, async (req, res) => {
+    const db = getDB(req);
+    let conn = null;
+    try {
+        conn = await db.getConnection();
+
+        const { buscar, tipo_fecha, fecha, mes, ano, desde, hasta } = req.query;
+        const params = [];
+
+        let sql = `
+            SELECT 
+                g.id, 
+                g.codigo_gasto, 
+                g.nombre_gasto, 
+                g.monto, 
+                DATE_FORMAT(g.fecha_registro, '%Y-%m-%d') AS fecha_registro, 
+                g.prestamo_id,
+                g.origen,
+                g.novedad_id,
+                e.nombre AS empleado_nombre
+            FROM gastos_diarios g
+            LEFT JOIN nomina_prestamos p ON p.id = g.prestamo_id
+            LEFT JOIN empleados e ON e.id = p.empleado_id
+            WHERE 1 = 1
+        `;
+
+        if (buscar) {
+            const like = `%${buscar}%`;
+            sql += ` AND (g.codigo_gasto LIKE ? OR g.nombre_gasto LIKE ? OR e.nombre LIKE ?) `;
+            params.push(like, like, like);
+        }
+
+        sql += construirFiltroFecha('g.fecha_registro', tipo_fecha, fecha, mes, ano, desde, hasta, params);
+        sql += ` ORDER BY g.fecha_registro DESC, g.id DESC LIMIT 500 `;
+
+        const [rows] = await conn.query(sql, params);
+        return res.json({ ok: true, gastos: rows });
+    } catch (error) {
+        console.error('❌ Error reporte gastos:', error);
+        return res.status(500).json({ ok: false, error: error.message });
+    } finally {
+        if (conn) conn.release();
+    }
+});
 
 // ============================================================
 // EXPORTAR CSV POR TIPO
@@ -503,7 +555,7 @@ router.get('/api/nomina/reportes/exportar/:tipo', requiereSesion, async (req, re
         }
 
         // ----------------------------------------------------
-        // PRODUCCIÓN (CORREGIDO ✅)
+        // PRODUCCIÓN
         // ----------------------------------------------------
         else if (tipo === 'produccion') {
             columnas = [
@@ -567,6 +619,49 @@ router.get('/api/nomina/reportes/exportar/:tipo', requiereSesion, async (req, re
                 r.tipo_periodo, r.saldo_inicial, r.valor_descuento,
                 r.saldo_final, r.observacion
             ];
+        }
+
+        // ----------------------------------------------------
+        // GASTOS DIARIOS (ACTUALIZADO CON ORIGEN Y NOVEDAD_ID)
+        // ----------------------------------------------------
+        else if (tipo === 'gastos') {
+            columnas = [
+                'ID', 'Código', 'Descripción', 'Fecha', 'Vínculo', 'Monto'
+            ];
+            sql = `
+                SELECT 
+                    g.id, g.codigo_gasto, g.nombre_gasto, 
+                    DATE_FORMAT(g.fecha_registro, '%Y-%m-%d') AS fecha_registro, 
+                    g.prestamo_id,
+                    g.origen,
+                    g.novedad_id,
+                    g.monto,
+                    e.nombre AS empleado_nombre
+                FROM gastos_diarios g
+                LEFT JOIN nomina_prestamos p ON p.id = g.prestamo_id
+                LEFT JOIN empleados e ON e.id = p.empleado_id
+                WHERE 1 = 1
+            `;
+            if (buscar) {
+                const l = `%${buscar}%`;
+                sql += ` AND (g.codigo_gasto LIKE ? OR g.nombre_gasto LIKE ? OR e.nombre LIKE ?)`;
+                params.push(l, l, l);
+            }
+            sql += construirFiltroFecha('g.fecha_registro', tipo_fecha, fecha, mes, ano, desde, hasta, params);
+            sql += ` ORDER BY g.fecha_registro DESC, g.id DESC`;
+            mapear = r => {
+                let vinculo = 'Ninguno';
+                if (r.origen === 'NOVEDAD' || r.novedad_id) {
+                    vinculo = r.novedad_id ? `Novedad #${r.novedad_id}` : 'Novedad';
+                } else if (r.prestamo_id) {
+                    vinculo = `Préstamo #${r.prestamo_id} (${r.empleado_nombre || ''})`;
+                }
+                return [
+                    r.id, r.codigo_gasto, r.nombre_gasto, r.fecha_registro,
+                    vinculo,
+                    r.monto
+                ];
+            };
         }
 
         else {
