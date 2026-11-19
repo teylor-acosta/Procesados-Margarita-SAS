@@ -738,6 +738,47 @@ async function consultarValoresEmpleado() {
 
     });
 
+    // ==========================================
+// NAVEGACIÓN ENTRE PASOS
+// ==========================================
+
+function mostrarPaso(numero) {
+
+    const paso1 = document.querySelector('.layout-liquidacion');
+    const paso2 = document.getElementById('contenidoPaso2');
+
+    const indicadores = [
+        'indicadorPaso1',
+        'indicadorPaso2',
+        'indicadorPaso3',
+        'indicadorPaso4'
+    ];
+
+    paso1.hidden = numero !== 1;
+    paso2.hidden = numero !== 2;
+
+    indicadores.forEach((id, indice) => {
+
+        const indicador = document.getElementById(id);
+
+        indicador.classList.toggle(
+            'activo',
+            indice + 1 === numero
+        );
+
+        indicador.classList.toggle(
+            'completado',
+            indice + 1 < numero
+        );
+
+    });
+
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
 
 // =========================================================
 // PREPARAR PRELIQUIDACIÓN
@@ -822,15 +863,13 @@ async function prepararLiquidacion() {
 
 function mostrarPreliquidacion(data) {
 
-    const detalle = document.getElementById('detalleLiquidacion');
-
-    let panel = document.getElementById('resultadoPreliquidacion');
+    const panel = document.getElementById(
+        'resultadoPreliquidacion'
+    );
 
     if (!panel) {
-        panel = document.createElement('div');
-        panel.id = 'resultadoPreliquidacion';
-        panel.className = 'resultado-preliquidacion';
-        detalle.appendChild(panel);
+        console.error('No se encontró el contenedor de preliquidación.');
+        return;
     }
 
     const moneda = valor => formatoMoneda(Number(valor || 0));
@@ -879,6 +918,25 @@ function mostrarPreliquidacion(data) {
     const netoPagar = Number(
         calculo.neto_pagar ?? (totalDevengados - totalDeducciones)
     );
+
+    // SEGURIDAD SOCIAL
+const seguridadSocial = calculo.seguridad_social || {};
+
+const descuentoSalud = Number(
+    seguridadSocial.salud?.valor || 0
+);
+
+const descuentoPension = Number(
+    seguridadSocial.pension?.valor || 0
+);
+
+const porcentajeSalud = Number(
+    seguridadSocial.salud?.porcentaje || 0
+);
+
+const porcentajePension = Number(
+    seguridadSocial.pension?.porcentaje || 0
+);
 
 
 // =============================================
@@ -1026,35 +1084,56 @@ document.getElementById('resumenFecha').textContent =
 
         <h4>Deducciones</h4>
 
-        <p>
-            Total deducciones:
-            <strong>${moneda(totalDeducciones)}</strong>
-        </p>
+<table class="table">
+    <tbody>
+        ${data.contrato.tipo_vinculacion === 'Dependiente' ? `
+            <tr>
+                <td>
+                    Salud (${porcentajeSalud}%)
+                </td>
+                <td class="text-end">
+                    ${moneda(descuentoSalud)}
+                </td>
+            </tr>
 
-        <hr>
-
-        <h3>Total devengado: ${moneda(totalDevengados)}</h3>
-
-        <h3>Total deducciones: ${moneda(totalDeducciones)}</h3>
-
-        <h2>Neto preliminar a pagar: ${moneda(netoPagar)}</h2>
-
-        ${data.novedades?.pendientes_calculo?.length ? `
-            <p class="text-warning">
-                Hay ${data.novedades.pendientes_calculo.length}
-                novedad(es) que todavía requieren reglas de cálculo.
-            </p>
+            <tr>
+                <td>
+                    Pensión (${porcentajePension}%)
+                </td>
+                <td class="text-end">
+                    ${moneda(descuentoPension)}
+                </td>
+            </tr>
         ` : ''}
 
-        <p>
-            <strong>Estado:</strong> Preliquidación sin guardar.
-        </p>
+        <tr>
+            <td>Otras deducciones y anticipos</td>
+            <td class="text-end">
+                ${moneda(
+                    totalDeducciones -
+                    descuentoSalud -
+                    descuentoPension
+                )}
+            </td>
+        </tr>
+
+        <tr>
+            <th>Total deducciones</th>
+            <th class="text-end">
+                ${moneda(totalDeducciones)}
+            </th>
+        </tr>
+    </tbody>
+</table>
     `;
 
-    panel.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-    });
+    // Mostrar automáticamente el paso 2.
+mostrarPaso(2);
+
+panel.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+});
 }
 
 
@@ -1067,6 +1146,18 @@ document.getElementById('resumenFecha').textContent =
 
 document.getElementById('btnPrepararLiquidacion')
     .addEventListener('click', prepararLiquidacion);
+
+    // ==========================================
+// EVENTOS DE NAVEGACIÓN
+// ==========================================
+
+document.getElementById('btnVolverPaso1')
+    .addEventListener('click', () => {
+        mostrarPaso(1);
+    });
+
+// El paso 3 todavía está en construcción.
+document.getElementById('btnContinuarPaso3').disabled = true;
 
     console.log('Interfaz de liquidación lista.');
 

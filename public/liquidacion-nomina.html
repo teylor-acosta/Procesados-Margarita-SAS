@@ -155,39 +155,39 @@
     <!-- PASOS DE LIQUIDACIÓN -->
     <div class="pasos-liquidacion">
 
-        <div class="paso activo">
-            <span>1</span>
-            <div>
-                <strong>Preparar liquidación</strong>
-                <small>Seleccionar período y colaborador</small>
-            </div>
+    <div class="paso activo" id="indicadorPaso1">
+        <span>1</span>
+        <div>
+            <strong>Preparar liquidación</strong>
+            <small>Seleccionar período y colaborador</small>
         </div>
-
-        <div class="paso">
-            <span>2</span>
-            <div>
-                <strong>Revisar y ajustar</strong>
-                <small>Novedades y descuentos</small>
-            </div>
-        </div>
-
-        <div class="paso">
-            <span>3</span>
-            <div>
-                <strong>Registrar pago</strong>
-                <small>Confirmar el pago</small>
-            </div>
-        </div>
-
-        <div class="paso">
-            <span>4</span>
-            <div>
-                <strong>Comprobante</strong>
-                <small>Generar documento PDF</small>
-            </div>
-        </div>
-
     </div>
+
+    <div class="paso" id="indicadorPaso2">
+        <span>2</span>
+        <div>
+            <strong>Revisar y ajustar</strong>
+            <small>Novedades y descuentos</small>
+        </div>
+    </div>
+
+    <div class="paso" id="indicadorPaso3">
+        <span>3</span>
+        <div>
+            <strong>Registrar pago</strong>
+            <small>Confirmar el pago</small>
+        </div>
+    </div>
+
+    <div class="paso" id="indicadorPaso4">
+        <span>4</span>
+        <div>
+            <strong>Comprobante</strong>
+            <small>Generar documento PDF</small>
+        </div>
+    </div>
+
+</div>
 
 
     <!-- DISTRIBUCIÓN PRINCIPAL -->
@@ -513,6 +513,48 @@
     </div>
 
 </section>
+
+<!-- =========================================
+     PASO 2: REVISAR Y AJUSTAR
+========================================= -->
+
+<div id="contenidoPaso2" hidden>
+
+    <div class="panel-liquidacion">
+
+        <div class="panel-titulo">
+            <div class="panel-icono azul">
+                <i class="fas fa-clipboard-check"></i>
+            </div>
+
+            <div>
+                <h3>Revisar y ajustar liquidación</h3>
+                <p>
+                    Verifica los devengados, deducciones,
+                    novedades y descuentos del colaborador.
+                </p>
+            </div>
+        </div>
+
+        <div id="resultadoPreliquidacion"></div>
+
+        <div class="acciones-pasos">
+
+            <button type="button" id="btnVolverPaso1">
+                <i class="fas fa-arrow-left"></i>
+                Volver
+            </button>
+
+            <button type="button" id="btnContinuarPaso3">
+                Continuar al registro del pago
+                <i class="fas fa-arrow-right"></i>
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 
     </main>

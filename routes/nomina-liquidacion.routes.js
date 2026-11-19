@@ -684,6 +684,88 @@ for (const novedad of novedadesAprobadas) {
 }
 
 // =============================================
+// SEGURIDAD SOCIAL: SALUD Y PENSIÓN
+// =============================================
+
+let porcentajeSalud = 0;
+let porcentajePension = 0;
+
+let descuentoSalud = 0;
+let descuentoPension = 0;
+
+let ingresoBaseCotizacion = 0;
+
+// Los aportes del trabajador se calculan
+// para vinculación Dependiente.
+if (vinculacion === 'Dependiente') {
+
+    const [parametrosSeguridadSocial] = await db.query(`
+        SELECT
+            codigo,
+            valor,
+            DATE_FORMAT(fecha_inicio, '%Y-%m-%d') AS fecha_inicio,
+            DATE_FORMAT(fecha_fin, '%Y-%m-%d') AS fecha_fin
+        FROM nomina_parametros
+        WHERE codigo IN (
+            'PORCENTAJE_SALUD_TRABAJADOR',
+            'PORCENTAJE_PENSION_TRABAJADOR'
+        )
+          AND fecha_inicio <= ?
+          AND (fecha_fin IS NULL OR fecha_fin >= ?)
+        ORDER BY fecha_inicio DESC, id DESC
+    `, [inicio, fin]);
+
+    const obtenerParametro = codigo =>
+        parametrosSeguridadSocial.find(p =>
+            p.codigo === codigo &&
+            p.fecha_inicio <= inicio &&
+            (!p.fecha_fin || p.fecha_fin >= fin)
+        );
+
+    const parametroSalud = obtenerParametro(
+        'PORCENTAJE_SALUD_TRABAJADOR'
+    );
+
+    const parametroPension = obtenerParametro(
+        'PORCENTAJE_PENSION_TRABAJADOR'
+    );
+
+    if (!parametroSalud || !parametroPension) {
+        return res.status(400).json({
+            ok: false,
+            mensaje: 'No existen porcentajes de salud y pensión vigentes para todo el período.'
+        });
+    }
+
+    porcentajeSalud = Number(parametroSalud.valor);
+    porcentajePension = Number(parametroPension.valor);
+
+    if (
+        !Number.isFinite(porcentajeSalud) ||
+        !Number.isFinite(porcentajePension) ||
+        porcentajeSalud < 0 ||
+        porcentajePension < 0
+    ) {
+        return res.status(400).json({
+            ok: false,
+            mensaje: 'Los porcentajes de seguridad social no son válidos.'
+        });
+    }
+
+    // Por ahora se toma el salario del período como IBC.
+    // El auxilio de transporte no integra esta base.
+    ingresoBaseCotizacion = Math.round(salarioPeriodo);
+
+    descuentoSalud = Math.round(
+        ingresoBaseCotizacion * porcentajeSalud / 100
+    );
+
+    descuentoPension = Math.round(
+        ingresoBaseCotizacion * porcentajePension / 100
+    );
+}
+
+// =============================================
 // TOTALES DE LA PRELIQUIDACIÓN
 // =============================================
 
@@ -695,8 +777,11 @@ const totalDevengados = Math.round(
     totalDevengadoBase + otrosDevengados
 );
 
+const totalSeguridadSocial =
+    descuentoSalud + descuentoPension;
+
 const totalDeducciones = Math.round(
-    deduccionesNovedades
+    deduccionesNovedades + totalSeguridadSocial
 );
 
 const netoPagar = Math.round(
@@ -729,6 +814,22 @@ calculo: {
 
     total_deducciones: totalDeducciones,
     neto_pagar: netoPagar,
+
+    seguridad_social: {
+    ingreso_base_cotizacion: ingresoBaseCotizacion,
+
+    salud: {
+        porcentaje: porcentajeSalud,
+        valor: descuentoSalud
+    },
+
+    pension: {
+        porcentaje: porcentajePension,
+        valor: descuentoPension
+    },
+
+    total: totalSeguridadSocial
+},
 
     etapas: detalleEtapas
 },
