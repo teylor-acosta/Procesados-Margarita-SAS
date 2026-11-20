@@ -100,16 +100,20 @@ function mostrarNotificacion(mensaje, tipo = 'success') {
 // =====================================================================
 async function cargarGastos(fecha) {
     const tbody = document.getElementById('cuerpo-tabla');
-    const totalElement = document.getElementById('total-dia');
+    const totalIngresosEl = document.getElementById('total-ingresos');
+    const totalEgresosEl = document.getElementById('total-egresos');
+    const saldoEl = document.getElementById('saldo-dia');
     
     tbody.innerHTML = `
         <tr>
-            <td colspan="6" class="text-center text-muted py-5">
+            <td colspan="8" class="text-center text-muted py-5">
                 <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
                 Consultando base de datos...
             </td>
         </tr>`;
-    totalElement.textContent = '$0.00';
+    totalIngresosEl.textContent = '$0.00';
+    totalEgresosEl.textContent = '$0.00';
+    saldoEl.textContent = '$0.00';
 
     try {
         if (modoSimulacion) throw new Error('Modo simulación activo');
@@ -136,25 +140,39 @@ async function cargarGastos(fecha) {
 // =====================================================================
 function renderizarTabla(gastos) {
     const tbody = document.getElementById('cuerpo-tabla');
-    const totalElement = document.getElementById('total-dia');
+    const totalIngresosEl = document.getElementById('total-ingresos');
+    const totalEgresosEl = document.getElementById('total-egresos');
+    const saldoEl = document.getElementById('saldo-dia');
+
     tbody.innerHTML = '';
-    let total = 0;
+    let totalIngresos = 0;
+    let totalEgresos = 0;
 
     if (gastos.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="6" class="text-center text-muted py-5">
+                <td colspan="8" class="text-center text-muted py-5">
                     <i class="fas fa-inbox fs-2 mb-3 d-block opacity-50"></i>
                     No hay gastos registrados para esta fecha.
                 </td>
             </tr>`;
-        totalElement.textContent = '$0.00';
+        totalIngresosEl.textContent = '$0.00';
+        totalEgresosEl.textContent = '$0.00';
+        saldoEl.textContent = '$0.00';
         return;
     }
 
     gastos.forEach(gasto => {
         const monto = parseFloat(gasto.monto || 0);
-        total += monto;
+        const tipo = (gasto.tipo || 'EGRESO').toUpperCase();
+
+        if (tipo === 'INGRESO') totalIngresos += monto;
+        else totalEgresos += monto;
+
+        // Badge de tipo (Ingreso / Egreso)
+        const tipoBadge = tipo === 'INGRESO'
+            ? `<span class="badge-tipo badge-ingreso"><i class="fas fa-arrow-down me-1"></i>Ingreso</span>`
+            : `<span class="badge-tipo badge-egreso"><i class="fas fa-arrow-up me-1"></i>Egreso</span>`;
 
         // Badge de vínculo: Novedad (azul), Préstamo (amarillo/warning) o Ninguno
         let vinculoBadge = `<span class="badge badge-soft-secondary rounded-pill px-3 py-2">Ninguno</span>`;
@@ -169,13 +187,17 @@ function renderizarTabla(gastos) {
             ? gasto.fecha_registro.split('-').reverse().join('/') 
             : '';
 
+        const claseMonto = tipo === 'INGRESO' ? 'text-success' : 'text-danger';
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td class="fw-medium">${fechaFormateada}</td>
+            <td>${tipoBadge}</td>
             <td><span class="badge bg-light text-dark border fw-bold">${gasto.codigo_gasto}</span></td>
             <td class="text-start">${gasto.nombre_gasto}</td>
+            <td>${gasto.categoria || '<span class="text-muted small">—</span>'}</td>
             <td>${vinculoBadge}</td>
-            <td class="text-end fw-bold text-success">$${monto.toFixed(2)}</td>
+            <td class="text-end fw-bold ${claseMonto}">$${monto.toFixed(2)}</td>
             <td>
                 <button class="btn btn-outline-danger btn-sm btn-action-delete" onclick="abrirModalEliminar(${gasto.id})" title="Eliminar gasto">
                     <i class="fas fa-trash-alt"></i>
@@ -185,7 +207,12 @@ function renderizarTabla(gastos) {
         tbody.appendChild(tr);
     });
 
-    totalElement.textContent = `$${total.toFixed(2)}`;
+    const saldo = totalIngresos - totalEgresos;
+
+    totalIngresosEl.textContent = `$${totalIngresos.toFixed(2)}`;
+    totalEgresosEl.textContent = `$${totalEgresos.toFixed(2)}`;
+    saldoEl.textContent = `$${saldo.toFixed(2)}`;
+    saldoEl.className = 'resumen-valor ' + (saldo >= 0 ? 'saldo-positivo' : 'saldo-negativo');
 }
 
 // =====================================================================
@@ -205,6 +232,8 @@ async function registrarGasto(evento) {
     const nuevoGasto = {
         codigo_gasto: document.getElementById('codigoGasto').value.trim(),
         nombre_gasto: document.getElementById('nombreGasto').value.trim(),
+        tipo: document.getElementById('tipoMovimiento').value,
+        categoria: document.getElementById('categoriaGasto').value.trim() || null,
         monto: parseFloat(montoInput),
         fecha_registro: document.getElementById('fechaGasto').value,
         prestamo_id: document.getElementById('vincularPrestamo').value || null,
@@ -319,7 +348,6 @@ async function exportarCSV() {
     mostrarNotificacion('Generando archivo CSV...', 'info');
 
     try {
-        // Usamos fetch con credentials: 'include' para mantener la sesión
         const response = await fetch(`${API_URL}/exportar?fecha=${fechaActual}`, {
             method: 'GET',
             credentials: 'include'
@@ -329,10 +357,8 @@ async function exportarCSV() {
             throw new Error('Error al generar el archivo');
         }
 
-        // Convertimos la respuesta a Blob
         const blob = await response.blob();
         
-        // Creamos un enlace temporal para forzar la descarga
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -340,7 +366,6 @@ async function exportarCSV() {
         document.body.appendChild(a);
         a.click();
         
-        // Limpiamos el objeto URL
         a.remove();
         window.URL.revokeObjectURL(url);
         
@@ -477,7 +502,6 @@ async function procesarExcelModal(evento) {
             
             cargarGastos(document.getElementById('filtroFecha').value);
 
-            // Cerrar el modal después de 2 segundos
             setTimeout(() => {
                 const modal = bootstrap.Modal.getInstance(document.getElementById('modalImportar'));
                 if (modal) modal.hide();

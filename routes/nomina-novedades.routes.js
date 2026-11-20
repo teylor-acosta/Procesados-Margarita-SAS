@@ -1,3 +1,4 @@
+
 // ============================================================
 // routes/nomina-novedades.routes.js
 // BACKEND - NÓMINA NOVEDADES
@@ -74,12 +75,10 @@ function requiereSesion(req, res, next) {
 function normalizarBody(body) {
     const b = body || {};
     
-    // Concatenar tipo_detalle en motivo
     let motivoFinal = b.motivo || b.concepto || '';
     const detalle = b.tipo_detalle || b.tipo_ausencia || b.tipo_incapacidad || b.tipo_permiso || b.tipo_licencia || b.tipo_hora;
     if (detalle) motivoFinal = `[${detalle}] ${motivoFinal}`.trim();
 
-    // Concatenar valor y cuotas en observacion
     let obsFinal = b.observacion || '';
     if (b.valor || b.monto) obsFinal = `Valor: $${b.valor || b.monto} | ${obsFinal}`.trim();
     if (b.cuotas && b.cuotas > 1) obsFinal = `Cuotas: ${b.cuotas} | ${obsFinal}`.trim();
@@ -95,30 +94,45 @@ function normalizarBody(body) {
         cantidad_horas: b.cantidad_horas ? Number(b.cantidad_horas) : null,
         motivo: motivoFinal || null,
         observacion: obsFinal || null,
-        monto: b.monto ? Number(b.monto) : (b.valor ? Number(b.valor) : null) // <-- NUEVO CAMPO AGREGADO
+        monto: b.monto ? Number(b.monto) : (b.valor ? Number(b.valor) : null),
+        cuotas: b.cuotas ? Number(b.cuotas) : null // <-- NUEVO CAMPO AGREGADO
     };
 }
 
 async function crearNovedad(req, data, soportes = []) {
     const db = getDB(req);
-    
-    // NUEVO: Consultar si el tipo de novedad genera gasto
+
+    // Evitar insertar valores NULL en campos obligatorios.
+    if (!Number.isInteger(Number(data.empleado_id)) || Number(data.empleado_id) <= 0) {
+        const error = new Error('No se encontró un empleado asociado a la sesión.');
+        error.status = 400;
+        throw error;
+    }
+
+    const esNovedadFinanciera = ['/prestamo', '/descuento', '/ingreso'].includes(req.path);
+    if (!data.fecha_inicio && !esNovedadFinanciera) {
+        const error = new Error('La fecha de inicio es obligatoria para esta novedad.');
+        error.status = 400;
+        throw error;
+    }
+
     let generaGasto = 0;
     if (data.tipo_novedad_id) {
         const [tipoRows] = await db.query(`SELECT genera_gasto FROM nomina_novedades_tipos WHERE id = ? LIMIT 1`, [data.tipo_novedad_id]);
         if (tipoRows.length) generaGasto = Number(tipoRows[0].genera_gasto);
     }
 
+    // Se conserva la columna cuotas en el INSERT.
     const [result] = await db.query(`
         INSERT INTO nomina_novedades
         (empleado_id, tipo_novedad_id, fecha_inicio, fecha_fin,
          hora_inicio, hora_fin, cantidad_dias, cantidad_horas,
-         motivo, observacion, monto, genera_gasto, estado, usuario_creacion, fecha_creacion)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDIENTE', ?, NOW())
+         motivo, observacion, monto, cuotas, genera_gasto, estado, usuario_creacion, fecha_creacion)
+        VALUES (?, ?, COALESCE(?, CURDATE()), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDIENTE', ?, NOW())
     `, [
         data.empleado_id, data.tipo_novedad_id, data.fecha_inicio, data.fecha_fin,
         data.hora_inicio, data.hora_fin, data.cantidad_dias, data.cantidad_horas,
-        data.motivo, data.observacion, data.monto, generaGasto, req.session.usuarioID
+        data.motivo, data.observacion, data.monto, data.cuotas, generaGasto, req.session.usuarioID
     ]);
 
     const novedadId = result.insertId;
@@ -141,68 +155,157 @@ async function crearNovedad(req, data, soportes = []) {
 }
 
 async function verificarPassword(db, userId, password) {
-    const [rows] = await db.query(`SELECT password_hash FROM usuarios WHERE id = ? LIMIT 1`, [userId]);
+    const [rows] = await db.query(
+        `SELECT password_hash FROM usuarios WHERE id = ? LIMIT 1`,
+        [userId]
+    );
+
     if (!rows.length) return false;
+
     const hash = rows[0].password_hash;
+
     if (typeof hash === 'string' && hash.startsWith('$2')) {
         try {
             const bcrypt = require('bcrypt');
             return await bcrypt.compare(password, hash);
-        } catch (e) { return false; }
+        } catch (e) {
+            return false;
+        }
     }
+
     return String(hash) === String(password);
 }
 
 // ============================================================
-// 🔹 NOVEDADES (CRUD) - Rutas estáticas primero
+// NOVEDADES (CRUD) - Rutas estáticas primero
 // ============================================================
 
 router.get('/kpis', requiereSesion, async (req, res) => {
     try {
         const db = getDB(req);
-        let sql = `SELECT estado, COUNT(*) AS total FROM nomina_novedades`;
+
+        let sql = `
+            SELECT estado, COUNT(*) AS total
+            FROM nomina_novedades
+        `;
+
         const params = [];
-        if (!esAdmin(req)) { sql += ` WHERE empleado_id = ?`; params.push(req.session.empleadoID); }
+
+        if (!esAdmin(req)) {
+            sql += ` WHERE empleado_id = ?`;
+            params.push(req.session.empleadoID);
+        }
+
         sql += ` GROUP BY estado`;
+
         const [rows] = await db.query(sql, params);
-        const kpis = { pendientes: 0, aprobadas: 0, rechazadas: 0, historial: 0 };
+
+        const kpis = {
+            pendientes: 0,
+            aprobadas: 0,
+            rechazadas: 0,
+            historial: 0
+        };
+
         rows.forEach(r => {
-            if (r.estado === 'PENDIENTE') kpis.pendientes = r.total;
-            if (r.estado === 'APROBADA') kpis.aprobadas = r.total;
-            if (r.estado === 'RECHAZADA') kpis.rechazadas = r.total;
-            if (r.estado === 'EN_HISTORIAL') kpis.historial = r.total;
+            if (r.estado === 'PENDIENTE') {
+                kpis.pendientes = r.total;
+            }
+
+            if (r.estado === 'APROBADA') {
+                kpis.aprobadas = r.total;
+            }
+
+            if (r.estado === 'RECHAZADA') {
+                kpis.rechazadas = r.total;
+            }
+
+            if (r.estado === 'EN_HISTORIAL') {
+                kpis.historial = r.total;
+            }
         });
+
         res.json({ success: true, kpis });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
 });
 
 router.get('/tipos', requiereSesion, async (req, res) => {
     try {
         const db = getDB(req);
-        // NUEVO: Agregado genera_gasto al SELECT
-        const [rows] = await db.query(`SELECT id, nombre, codigo, categoria, descripcion, permite_empleado, requiere_soporte, requiere_aprobacion, genera_gasto FROM nomina_novedades_tipos WHERE activo = 1 ORDER BY categoria, nombre`);
-        res.json({ success: true, tipos: rows });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+
+        const [rows] = await db.query(`
+            SELECT
+                id,
+                nombre,
+                codigo,
+                categoria,
+                descripcion,
+                permite_empleado,
+                requiere_soporte,
+                requiere_aprobacion,
+                IFNULL(genera_gasto, 0) AS genera_gasto
+            FROM nomina_novedades_tipos
+            WHERE activo = 1
+            ORDER BY categoria, nombre
+        `);
+
+        res.json({
+            success: true,
+            tipos: rows
+        });
+
+    } catch (err) {
+        console.error('ERROR REAL EN /tipos:', err);
+
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
 });
 
 // ============================================================
-// 🔹 HISTORIAL
+// HISTORIAL
 // ============================================================
 
 router.get('/historial', requiereSesion, async (req, res) => {
     try {
         const db = getDB(req);
-        const { buscar, tipo, estado, tipo_fecha, fecha, mes, ano, desde, hasta } = req.query;
+
+        const {
+            buscar,
+            tipo,
+            estado,
+            tipo_fecha,
+            fecha,
+            mes,
+            ano,
+            desde,
+            hasta
+        } = req.query;
 
         let sql = `
-            SELECT n.*, e.nombre AS empleado_nombre,
-                   e.numero_documento, t.nombre AS tipo_novedad, t.categoria,
-                   n.id AS id_historial
+            SELECT
+                n.*,
+                e.nombre AS empleado_nombre,
+                e.numero_documento,
+                t.nombre AS tipo_novedad,
+                t.categoria,
+                n.id AS id_historial
             FROM nomina_novedades n
-            LEFT JOIN empleados e ON e.id = n.empleado_id
-            LEFT JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
+            LEFT JOIN empleados e
+                ON e.id = n.empleado_id
+            LEFT JOIN nomina_novedades_tipos t
+                ON t.id = n.tipo_novedad_id
             WHERE n.estado = 'EN_HISTORIAL'
         `;
+
         const params = [];
 
         if (!esAdmin(req)) {
@@ -211,313 +314,1026 @@ router.get('/historial', requiereSesion, async (req, res) => {
         }
 
         if (buscar) {
-            sql += ` AND (e.nombre LIKE ? OR e.numero_documento LIKE ? OR t.nombre LIKE ?)`;
+            sql += `
+                AND (
+                    e.nombre LIKE ?
+                    OR e.numero_documento LIKE ?
+                    OR t.nombre LIKE ?
+                )
+            `;
+
             const like = `%${buscar}%`;
             params.push(like, like, like);
         }
-        if (tipo) { sql += ` AND n.tipo_novedad_id = ?`; params.push(tipo); }
-        if (estado) { sql += ` AND n.estado = ?`; params.push(estado); }
-        
-        if (tipo_fecha === 'dia' && fecha) { sql += ` AND DATE(n.fecha_inicio) = ?`; params.push(fecha); }
-        else if (tipo_fecha === 'mes' && mes) { sql += ` AND DATE_FORMAT(n.fecha_inicio, '%Y-%m') = ?`; params.push(mes); }
-        else if (tipo_fecha === 'ano' && ano) { sql += ` AND YEAR(n.fecha_inicio) = ?`; params.push(ano); }
-        else if (tipo_fecha === 'rango' && desde && hasta) { sql += ` AND DATE(n.fecha_inicio) BETWEEN ? AND ?`; params.push(desde, hasta); }
+
+        if (tipo) {
+            sql += ` AND n.tipo_novedad_id = ?`;
+            params.push(tipo);
+        }
+
+        if (estado) {
+            sql += ` AND n.estado = ?`;
+            params.push(estado);
+        }
+
+        if (tipo_fecha === 'dia' && fecha) {
+            sql += ` AND DATE(n.fecha_inicio) = ?`;
+            params.push(fecha);
+
+        } else if (tipo_fecha === 'mes' && mes) {
+            sql += ` AND DATE_FORMAT(n.fecha_inicio, '%Y-%m') = ?`;
+            params.push(mes);
+
+        } else if (tipo_fecha === 'ano' && ano) {
+            sql += ` AND YEAR(n.fecha_inicio) = ?`;
+            params.push(ano);
+
+        } else if (
+            tipo_fecha === 'rango' &&
+            desde &&
+            hasta
+        ) {
+            sql += ` AND DATE(n.fecha_inicio) BETWEEN ? AND ?`;
+            params.push(desde, hasta);
+        }
 
         sql += ` ORDER BY n.fecha_creacion DESC`;
 
         const [rows] = await db.query(sql, params);
-        res.json({ success: true, novedades: rows });
+
+        res.json({
+            success: true,
+            novedades: rows
+        });
+
     } catch (err) {
         console.error('Error GET /historial:', err);
-        res.status(500).json({ success: false, message: err.message });
+
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
     }
 });
 
 router.get('/historial/exportar', requiereSesion, async (req, res) => {
     try {
         const db = getDB(req);
+
         let sql = `
-            SELECT n.id, e.nombre AS empleado_nombre, e.numero_documento, t.nombre AS tipo_novedad,
-                   n.fecha_inicio, n.fecha_fin, n.cantidad_dias, n.cantidad_horas, n.estado, n.fecha_creacion
+            SELECT
+                n.id,
+                e.nombre AS empleado_nombre,
+                e.numero_documento,
+                t.nombre AS tipo_novedad,
+                n.fecha_inicio,
+                n.fecha_fin,
+                n.cantidad_dias,
+                n.cantidad_horas,
+                n.estado,
+                n.fecha_creacion
             FROM nomina_novedades n
-            LEFT JOIN empleados e ON e.id = n.empleado_id
-            LEFT JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
+            LEFT JOIN empleados e
+                ON e.id = n.empleado_id
+            LEFT JOIN nomina_novedades_tipos t
+                ON t.id = n.tipo_novedad_id
             WHERE n.estado = 'EN_HISTORIAL'
         `;
+
         const params = [];
+
         if (!esAdmin(req)) {
             sql += ` AND n.empleado_id = ?`;
             params.push(req.session.empleadoID);
         }
+
         sql += ` ORDER BY n.fecha_creacion DESC`;
 
         const [rows] = await db.query(sql, params);
-        const cols = ['ID', 'Empleado', 'Documento', 'Tipo', 'Inicio', 'Fin', 'Días', 'Horas', 'Estado', 'Registro'];
+
+        const cols = [
+            'ID',
+            'Empleado',
+            'Documento',
+            'Tipo',
+            'Inicio',
+            'Fin',
+            'Días',
+            'Horas',
+            'Estado',
+            'Registro'
+        ];
+
         let csv = '\uFEFF' + cols.join(';') + '\n';
+
         rows.forEach(r => {
-            csv += [r.id, r.empleado_nombre || '', r.numero_documento || '', r.tipo_novedad || '', r.fecha_inicio || '', r.fecha_fin || '', r.cantidad_dias || '', r.cantidad_horas || '', r.estado || '', r.fecha_creacion || ''].map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(';') + '\n';
+            csv += [
+                r.id,
+                r.empleado_nombre || '',
+                r.numero_documento || '',
+                r.tipo_novedad || '',
+                r.fecha_inicio || '',
+                r.fecha_fin || '',
+                r.cantidad_dias || '',
+                r.cantidad_horas || '',
+                r.estado || '',
+                r.fecha_creacion || ''
+            ]
+                .map(v =>
+                    `"${String(v ?? '').replace(/"/g, '""')}"`
+                )
+                .join(';') + '\n';
         });
-        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-        res.setHeader('Content-Disposition', `attachment; filename="historial_${new Date().toISOString().slice(0,10)}.csv"`);
+
+        res.setHeader(
+            'Content-Type',
+            'text/csv; charset=utf-8'
+        );
+
+        res.setHeader(
+            'Content-Disposition',
+            `attachment; filename="historial_${new Date().toISOString().slice(0, 10)}.csv"`
+        );
+
         res.send(csv);
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
 });
 
 router.put('/historial/:id/restaurar', requiereSesion, async (req, res) => {
     try {
         const db = getDB(req);
+
         if (!esAdmin(req)) {
-            const [nov] = await db.query(`SELECT empleado_id FROM nomina_novedades WHERE id = ?`, [req.params.id]);
-            if (!nov.length || Number(nov[0].empleado_id) !== Number(req.session.empleadoID)) return res.status(403).json({ success: false, message: 'No autorizado' });
+            const [nov] = await db.query(
+                `SELECT empleado_id FROM nomina_novedades WHERE id = ?`,
+                [req.params.id]
+            );
+
+            if (
+                !nov.length ||
+                Number(nov[0].empleado_id) !== Number(req.session.empleadoID)
+            ) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'No autorizado'
+                });
+            }
         }
-        await db.query(`UPDATE nomina_novedades SET estado = 'PENDIENTE', observacion_rechazo = NULL WHERE id = ?`, [req.params.id]);
+
+        await db.query(
+            `UPDATE nomina_novedades
+             SET estado = 'PENDIENTE',
+                 observacion_rechazo = NULL
+             WHERE id = ?`,
+            [req.params.id]
+        );
+
         await db.query(`
-            INSERT INTO nomina_novedades_historial 
-            (novedad_id, estado_anterior, estado_nuevo, observacion, usuario_id, fecha_registro) 
+            INSERT INTO nomina_novedades_historial
+            (
+                novedad_id,
+                estado_anterior,
+                estado_nuevo,
+                observacion,
+                usuario_id,
+                fecha_registro
+            )
             VALUES (?, 'EN_HISTORIAL', 'PENDIENTE', 'Restaurada', ?, NOW())
-        `, [req.params.id, req.session.usuarioID]);
-        
-        res.json({ success: true, message: 'Restaurada' });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+        `, [
+            req.params.id,
+            req.session.usuarioID
+        ]);
+
+        res.json({
+            success: true,
+            message: 'Restaurada'
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
 });
 
 router.delete('/historial/:id', requiereSesion, async (req, res) => {
     try {
         const db = getDB(req);
         const { password } = req.body;
-        if (!password) return res.status(400).json({ success: false, message: 'Ingresa tu contraseña' });
+
+        if (!password) {
+            return res.status(400).json({
+                success: false,
+                message: 'Ingresa tu contraseña'
+            });
+        }
 
         if (!esAdmin(req)) {
-            const [nov] = await db.query(`SELECT empleado_id FROM nomina_novedades WHERE id = ?`, [req.params.id]);
-            if (!nov.length || Number(nov[0].empleado_id) !== Number(req.session.empleadoID)) return res.status(403).json({ success: false, message: 'No autorizado' });
+            const [nov] = await db.query(
+                `SELECT empleado_id FROM nomina_novedades WHERE id = ?`,
+                [req.params.id]
+            );
+
+            if (
+                !nov.length ||
+                Number(nov[0].empleado_id) !== Number(req.session.empleadoID)
+            ) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'No autorizado'
+                });
+            }
         }
 
-        const passOk = await verificarPassword(db, req.session.usuarioID, password);
-        if (!passOk) return res.status(403).json({ success: false, message: 'Contraseña incorrecta' });
+        const passOk = await verificarPassword(
+            db,
+            req.session.usuarioID,
+            password
+        );
 
-        const [soportes] = await db.query(`SELECT ruta_archivo FROM nomina_novedades_soportes WHERE novedad_id = ?`, [req.params.id]);
+        if (!passOk) {
+            return res.status(403).json({
+                success: false,
+                message: 'Contraseña incorrecta'
+            });
+        }
+
+        const [soportes] = await db.query(
+            `SELECT ruta_archivo
+             FROM nomina_novedades_soportes
+             WHERE novedad_id = ?`,
+            [req.params.id]
+        );
+
         for (const s of soportes) {
-            const filePath = path.join(__dirname, '..', s.ruta_archivo);
-            if (fs.existsSync(filePath)) { try { fs.unlinkSync(filePath); } catch (e) {} }
+            const filePath = path.join(
+                __dirname,
+                '..',
+                s.ruta_archivo
+            );
+
+            if (fs.existsSync(filePath)) {
+                try {
+                    fs.unlinkSync(filePath);
+                } catch (e) {}
+            }
         }
-        await db.query(`DELETE FROM nomina_novedades_soportes WHERE novedad_id = ?`, [req.params.id]);
-        await db.query(`DELETE FROM nomina_novedades_historial WHERE novedad_id = ?`, [req.params.id]);
-        await db.query(`DELETE FROM nomina_novedades WHERE id = ?`, [req.params.id]);
-        res.json({ success: true, message: 'Eliminado definitivamente' });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+
+        await db.query(
+            `DELETE FROM nomina_novedades_soportes
+             WHERE novedad_id = ?`,
+            [req.params.id]
+        );
+
+        await db.query(
+            `DELETE FROM nomina_novedades_historial
+             WHERE novedad_id = ?`,
+            [req.params.id]
+        );
+
+        await db.query(
+            `DELETE FROM nomina_novedades
+             WHERE id = ?`,
+            [req.params.id]
+        );
+
+        res.json({
+            success: true,
+            message: 'Eliminado definitivamente'
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
 });
 
 // ============================================================
-// 🔹 CIERRE DE PERÍODO
+// CIERRE DE PERÍODO
 // ============================================================
 
 router.post('/cierre-periodo/validar', soloAdmin, async (req, res) => {
     try {
         const db = getDB(req);
-        const [rows] = await db.query(`SELECT id FROM nomina_novedades WHERE estado = 'PENDIENTE' AND DATE_FORMAT(fecha_inicio, '%Y-%m') = ?`, [req.body.periodo]);
-        res.json({ success: true, pendientes: rows });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+
+        const [rows] = await db.query(
+            `SELECT id
+             FROM nomina_novedades
+             WHERE estado = 'PENDIENTE'
+               AND DATE_FORMAT(fecha_inicio, '%Y-%m') = ?`,
+            [req.body.periodo]
+        );
+
+        res.json({
+            success: true,
+            pendientes: rows
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
 });
 
 router.post('/cierre-periodo', soloAdmin, async (req, res) => {
     try {
         const db = getDB(req);
-        const [result] = await db.query(`UPDATE nomina_novedades SET estado = 'PROCESADA' WHERE estado = 'APROBADA' AND DATE_FORMAT(fecha_inicio, '%Y-%m') = ?`, [req.body.periodo]);
-        res.json({ success: true, actualizadas: result.affectedRows });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+
+        const [result] = await db.query(
+            `UPDATE nomina_novedades
+             SET estado = 'PROCESADA'
+             WHERE estado = 'APROBADA'
+               AND DATE_FORMAT(fecha_inicio, '%Y-%m') = ?`,
+            [req.body.periodo]
+        );
+
+        res.json({
+            success: true,
+            actualizadas: result.affectedRows
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
 });
 
 // ============================================================
-// 🔹 POST (Rutas de creación)
+// POST (Rutas de creación)
 // ============================================================
 
 function forzarEmpleadoPropio(req, data) {
-    if (!esAdmin(req)) data.empleado_id = req.session.empleadoID;
+    // Los usuarios normales solo pueden registrar novedades propias.
+    // Los administradores pueden seleccionar otro empleado.
+    // Si no se selecciona ninguno, se usa el empleado de la sesión.
+    if (!esAdmin(req) || !data.empleado_id) {
+        data.empleado_id = req.session.empleadoID || null;
+    }
+
     return data;
 }
 
-router.post('/ausencia', requiereSesion, upload.single('soporte'), async (req, res) => {
-    try { const id = await crearNovedad(req, forzarEmpleadoPropio(req, normalizarBody(req.body)), req.file ? [req.file] : []); res.json({ success: true, id }); } 
-    catch (err) { res.status(500).json({ success: false, message: err.message }); }
-});
+// ------------------------------------------------------------
+// AUSENCIA
+// ------------------------------------------------------------
 
-router.post('/incapacidad', requiereSesion, upload.single('soporte'), async (req, res) => {
-    try { const id = await crearNovedad(req, forzarEmpleadoPropio(req, normalizarBody(req.body)), req.file ? [req.file] : []); res.json({ success: true, id }); } 
-    catch (err) { res.status(500).json({ success: false, message: err.message }); }
-});
+router.post(
+    '/ausencia',
+    requiereSesion,
+    upload.single('soporte'),
+    async (req, res) => {
+        try {
+            const data = forzarEmpleadoPropio(
+                req,
+                normalizarBody(req.body)
+            );
+
+            const id = await crearNovedad(
+                req,
+                data,
+                req.file ? [req.file] : []
+            );
+
+            res.json({
+                success: true,
+                id
+            });
+
+        } catch (err) {
+            res.status(err.status || 500).json({
+                success: false,
+                message: err.message
+            });
+        }
+    }
+);
+
+// ------------------------------------------------------------
+// INCAPACIDAD
+// ------------------------------------------------------------
+
+router.post(
+    '/incapacidad',
+    requiereSesion,
+    upload.single('soporte'),
+    async (req, res) => {
+        try {
+            const data = forzarEmpleadoPropio(
+                req,
+                normalizarBody(req.body)
+            );
+
+            const id = await crearNovedad(
+                req,
+                data,
+                req.file ? [req.file] : []
+            );
+
+            res.json({
+                success: true,
+                id
+            });
+
+        } catch (err) {
+            res.status(err.status || 500).json({
+                success: false,
+                message: err.message
+            });
+        }
+    }
+);
+
+// ------------------------------------------------------------
+// PERMISO
+// ------------------------------------------------------------
 
 router.post('/permiso', requiereSesion, async (req, res) => {
-    try { const id = await crearNovedad(req, forzarEmpleadoPropio(req, normalizarBody(req.body))); res.json({ success: true, id }); } 
-    catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    try {
+        const data = forzarEmpleadoPropio(
+            req,
+            normalizarBody(req.body)
+        );
+
+        const id = await crearNovedad(req, data);
+
+        res.json({
+            success: true,
+            id
+        });
+
+    } catch (err) {
+        res.status(err.status || 500).json({
+            success: false,
+            message: err.message
+        });
+    }
 });
 
+// ------------------------------------------------------------
+// LICENCIA
+// ------------------------------------------------------------
+
 router.post('/licencia', requiereSesion, async (req, res) => {
-    try { const id = await crearNovedad(req, forzarEmpleadoPropio(req, normalizarBody(req.body))); res.json({ success: true, id }); } 
-    catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    try {
+        const data = forzarEmpleadoPropio(
+            req,
+            normalizarBody(req.body)
+        );
+
+        const id = await crearNovedad(req, data);
+
+        res.json({
+            success: true,
+            id
+        });
+
+    } catch (err) {
+        res.status(err.status || 500).json({
+            success: false,
+            message: err.message
+        });
+    }
 });
+
+// ------------------------------------------------------------
+// VACACIONES
+// ------------------------------------------------------------
 
 router.post('/vacaciones', requiereSesion, async (req, res) => {
     try {
-        const data = forzarEmpleadoPropio(req, normalizarBody(req.body));
-        if (!data.motivo) data.motivo = 'Vacaciones';
-        const id = await crearNovedad(req, data); res.json({ success: true, id }); 
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+        const data = forzarEmpleadoPropio(
+            req,
+            normalizarBody(req.body)
+        );
+
+        if (!data.motivo) {
+            data.motivo = 'Vacaciones';
+        }
+
+        const id = await crearNovedad(req, data);
+
+        res.json({
+            success: true,
+            id
+        });
+
+    } catch (err) {
+        res.status(err.status || 500).json({
+            success: false,
+            message: err.message
+        });
+    }
 });
+
+// ------------------------------------------------------------
+// HORAS EXTRA
+// ------------------------------------------------------------
 
 router.post('/horas-extra', requiereSesion, async (req, res) => {
-    try { const id = await crearNovedad(req, forzarEmpleadoPropio(req, normalizarBody(req.body))); res.json({ success: true, id }); } 
-    catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    try {
+        const data = forzarEmpleadoPropio(
+            req,
+            normalizarBody(req.body)
+        );
+
+        const id = await crearNovedad(req, data);
+
+        res.json({
+            success: true,
+            id
+        });
+
+    } catch (err) {
+        res.status(err.status || 500).json({
+            success: false,
+            message: err.message
+        });
+    }
 });
 
-router.post('/descuento', requiereSesion, upload.single('soporte'), async (req, res) => {
-    try { const id = await crearNovedad(req, forzarEmpleadoPropio(req, normalizarBody(req.body)), req.file ? [req.file] : []); res.json({ success: true, id }); } 
-    catch (err) { res.status(500).json({ success: false, message: err.message }); }
-});
+// ------------------------------------------------------------
+// DESCUENTO
+// ------------------------------------------------------------
+
+router.post(
+    '/descuento',
+    requiereSesion,
+    upload.single('soporte'),
+    async (req, res) => {
+        try {
+            const data = forzarEmpleadoPropio(
+                req,
+                normalizarBody(req.body)
+            );
+
+            const id = await crearNovedad(
+                req,
+                data,
+                req.file ? [req.file] : []
+            );
+
+            res.json({
+                success: true,
+                id
+            });
+
+        } catch (err) {
+            res.status(err.status || 500).json({
+                success: false,
+                message: err.message
+            });
+        }
+    }
+);
+
+// ------------------------------------------------------------
+// INGRESO
+// ------------------------------------------------------------
 
 router.post('/ingreso', requiereSesion, async (req, res) => {
-    try { const id = await crearNovedad(req, forzarEmpleadoPropio(req, normalizarBody(req.body))); res.json({ success: true, id }); } 
-    catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    try {
+        const data = forzarEmpleadoPropio(
+            req,
+            normalizarBody(req.body)
+        );
+
+        const id = await crearNovedad(req, data);
+
+        res.json({
+            success: true,
+            id
+        });
+
+    } catch (err) {
+        res.status(err.status || 500).json({
+            success: false,
+            message: err.message
+        });
+    }
 });
 
+// ------------------------------------------------------------
+// PRÉSTAMO / ANTICIPO
+// ------------------------------------------------------------
+
 router.post('/prestamo', requiereSesion, async (req, res) => {
-    try { const id = await crearNovedad(req, forzarEmpleadoPropio(req, normalizarBody(req.body))); res.json({ success: true, id }); } 
-    catch (err) { res.status(500).json({ success: false, message: err.message }); }
+    try {
+        const data = forzarEmpleadoPropio(
+            req,
+            normalizarBody(req.body)
+        );
+
+        const id = await crearNovedad(req, data);
+
+        res.json({
+            success: true,
+            id
+        });
+
+    } catch (err) {
+        console.error('ERROR AL GUARDAR PRÉSTAMO:', err);
+
+        res.status(err.status || 500).json({
+            success: false,
+            message: err.message
+        });
+    }
 });
 
 // ============================================================
-// 🔹 GET PRINCIPAL (Ruta raíz)
+// GET PRINCIPAL (Ruta raíz)
 // ============================================================
 
 router.get('/', requiereSesion, async (req, res) => {
     try {
         const db = getDB(req);
+
         let sql = `
-            SELECT n.*, e.nombre AS empleado_nombre, e.numero_documento, t.nombre AS tipo_novedad, t.categoria, n.id AS id_historial
+            SELECT
+                n.*,
+                e.nombre AS empleado_nombre,
+                e.numero_documento,
+                t.nombre AS tipo_novedad,
+                t.categoria,
+                n.id AS id_historial
             FROM nomina_novedades n
-            LEFT JOIN empleados e ON e.id = n.empleado_id
-            LEFT JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
+            LEFT JOIN empleados e
+                ON e.id = n.empleado_id
+            LEFT JOIN nomina_novedades_tipos t
+                ON t.id = n.tipo_novedad_id
             WHERE n.estado <> 'EN_HISTORIAL'
         `;
+
         const params = [];
-        if (!esAdmin(req)) { sql += ` AND n.empleado_id = ?`; params.push(req.session.empleadoID); }
+
+        if (!esAdmin(req)) {
+            sql += ` AND n.empleado_id = ?`;
+            params.push(req.session.empleadoID);
+        }
+
         sql += ` ORDER BY n.fecha_creacion DESC`;
+
         const [rows] = await db.query(sql, params);
+
         res.json(rows);
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
 });
 
 // ============================================================
-// 🔹 RUTAS DINÁMICAS (Al final para evitar conflictos)
+// RUTAS DINÁMICAS
+// Al final para evitar conflictos con las rutas estáticas
 // ============================================================
 
 router.get('/:id', requiereSesion, async (req, res) => {
     try {
         const db = getDB(req);
+
         const [rows] = await db.query(`
-            SELECT n.*, e.nombre AS empleado_nombre, e.numero_documento, t.nombre AS tipo_novedad, n.id AS id_historial
+            SELECT
+                n.*,
+                e.nombre AS empleado_nombre,
+                e.numero_documento,
+                t.nombre AS tipo_novedad,
+                n.id AS id_historial
             FROM nomina_novedades n
-            LEFT JOIN empleados e ON e.id = n.empleado_id
-            LEFT JOIN nomina_novedades_tipos t ON t.id = n.tipo_novedad_id
+            LEFT JOIN empleados e
+                ON e.id = n.empleado_id
+            LEFT JOIN nomina_novedades_tipos t
+                ON t.id = n.tipo_novedad_id
             WHERE n.id = ?
         `, [req.params.id]);
-        if (!rows.length) return res.status(404).json({ success: false, message: 'No encontrada' });
-        if (!esAdmin(req) && Number(rows[0].empleado_id) !== Number(req.session.empleadoID)) return res.status(403).json({ success: false, message: 'No autorizado' });
-        const [soportes] = await db.query(`SELECT * FROM nomina_novedades_soportes WHERE novedad_id = ?`, [req.params.id]);
-        const [historial] = await db.query(`SELECT * FROM nomina_novedades_historial WHERE novedad_id = ? ORDER BY fecha_registro ASC`, [req.params.id]);
-        res.json({ success: true, novedad: rows[0], soportes, historial });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+
+        if (!rows.length) {
+            return res.status(404).json({
+                success: false,
+                message: 'No encontrada'
+            });
+        }
+
+        if (
+            !esAdmin(req) &&
+            Number(rows[0].empleado_id) !==
+            Number(req.session.empleadoID)
+        ) {
+            return res.status(403).json({
+                success: false,
+                message: 'No autorizado'
+            });
+        }
+
+        const [soportes] = await db.query(
+            `SELECT *
+             FROM nomina_novedades_soportes
+             WHERE novedad_id = ?`,
+            [req.params.id]
+        );
+
+        const [historial] = await db.query(
+            `SELECT *
+             FROM nomina_novedades_historial
+             WHERE novedad_id = ?
+             ORDER BY fecha_registro ASC`,
+            [req.params.id]
+        );
+
+        res.json({
+            success: true,
+            novedad: rows[0],
+            soportes,
+            historial
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
 });
 
 // ============================================================
-// 🔹 PATCH (Solo Admin)
+// PATCH (Solo Admin)
 // ============================================================
+
+// ------------------------------------------------------------
+// APROBAR NOVEDAD
+// ------------------------------------------------------------
 
 router.patch('/:id/aprobar', soloAdmin, async (req, res) => {
     const db = getDB(req);
     const id = Number(req.params.id);
 
-    // Usamos una transacción para asegurar que si falla el gasto, no se apruebe la novedad
     const conn = await db.getConnection();
+
     try {
         await conn.beginTransaction();
 
-        const [actual] = await conn.query(`SELECT * FROM nomina_novedades WHERE id = ? FOR UPDATE`, [id]);
-        if (!actual.length) throw new Error('No encontrada');
-        
+        const [actual] = await conn.query(
+            `SELECT *
+             FROM nomina_novedades
+             WHERE id = ?
+             FOR UPDATE`,
+            [id]
+        );
+
+        if (!actual.length) {
+            throw new Error('No encontrada');
+        }
+
         const novedad = actual[0];
 
-        // 1. Actualizar estado de la novedad
-        await conn.query(`UPDATE nomina_novedades SET estado = 'APROBADA', usuario_revision = ?, fecha_revision = NOW() WHERE id = ?`, [req.session.usuarioID, id]);
-        
-        // 2. Insertar en historial
-        await conn.query(`
-            INSERT INTO nomina_novedades_historial 
-            (novedad_id, estado_anterior, estado_nuevo, usuario_id, fecha_registro) 
-            VALUES (?, ?, 'APROBADA', ?, NOW())
-        `, [id, novedad.estado, req.session.usuarioID]);
+        await conn.query(
+            `UPDATE nomina_novedades
+             SET estado = 'APROBADA',
+                 usuario_revision = ?,
+                 fecha_revision = NOW()
+             WHERE id = ?`,
+            [
+                req.session.usuarioID,
+                id
+            ]
+        );
 
-        // 3. NUEVO: Si genera gasto, insertar en gastos_diarios
+        await conn.query(`
+            INSERT INTO nomina_novedades_historial
+            (
+                novedad_id,
+                estado_anterior,
+                estado_nuevo,
+                usuario_id,
+                fecha_registro
+            )
+            VALUES (?, ?, 'APROBADA', ?, NOW())
+        `, [
+            id,
+            novedad.estado,
+            req.session.usuarioID
+        ]);
+
+        // ----------------------------------------------------
+        // INTEGRACIÓN AUTOMÁTICA CON GASTOS DIARIOS
+        // ----------------------------------------------------
+
         let gastoId = null;
-        if (Number(novedad.genera_gasto) === 1 && Number(novedad.monto) > 0) {
+
+        if (
+            Number(novedad.genera_gasto) === 1 &&
+            Number(novedad.monto) > 0
+        ) {
             const [gastoResult] = await conn.query(`
                 INSERT INTO gastos_diarios
-                (codigo_gasto, nombre_gasto, monto, fecha_registro, origen, novedad_id, created_at, updated_at)
-                VALUES (?, ?, ?, NOW(), 'NOVEDAD', ?, NOW(), NOW())
+                (
+                    codigo_gasto,
+                    nombre_gasto,
+                    tipo,
+                    monto,
+                    fecha_registro,
+                    origen,
+                    novedad_id,
+                    created_at,
+                    updated_at
+                )
+                VALUES (
+                    ?, ?, 'EGRESO', ?, CURDATE(),
+                    'NOVEDAD', ?, NOW(), NOW()
+                )
             `, [
-                'NOV-' + id, // Código autogenerado
+                'NOV-' + id,
                 novedad.motivo || 'Gasto por Novedad',
                 novedad.monto,
                 id
             ]);
+
             gastoId = gastoResult.insertId;
 
-            // Actualizar novedad con el ID del gasto creado
-            await conn.query(`UPDATE nomina_novedades SET gasto_diario_id = ? WHERE id = ?`, [gastoId, id]);
+            await conn.query(
+                `UPDATE nomina_novedades
+                 SET gasto_diario_id = ?
+                 WHERE id = ?`,
+                [
+                    gastoId,
+                    id
+                ]
+            );
         }
 
         await conn.commit();
-        res.json({ success: true, gastoCreado: gastoId });
+
+        res.json({
+            success: true,
+            gastoCreado: gastoId
+        });
+
     } catch (err) {
         await conn.rollback();
-        res.status(500).json({ success: false, message: err.message });
+
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+
     } finally {
         conn.release();
     }
 });
 
+// ------------------------------------------------------------
+// RECHAZAR NOVEDAD
+// ------------------------------------------------------------
+
 router.patch('/:id/rechazar', soloAdmin, async (req, res) => {
     try {
         const db = getDB(req);
         const { observacion } = req.body;
-        const [actual] = await db.query(`SELECT estado FROM nomina_novedades WHERE id = ?`, [req.params.id]);
-        if (!actual.length) return res.status(404).json({ success: false, message: 'No encontrada' });
-        await db.query(`UPDATE nomina_novedades SET estado = 'RECHAZADA', observacion_rechazo = ?, usuario_revision = ?, fecha_revision = NOW() WHERE id = ?`, [observacion || null, req.session.usuarioID, req.params.id]);
+
+        const [actual] = await db.query(
+            `SELECT estado
+             FROM nomina_novedades
+             WHERE id = ?`,
+            [req.params.id]
+        );
+
+        if (!actual.length) {
+            return res.status(404).json({
+                success: false,
+                message: 'No encontrada'
+            });
+        }
+
+        await db.query(
+            `UPDATE nomina_novedades
+             SET estado = 'RECHAZADA',
+                 observacion_rechazo = ?,
+                 usuario_revision = ?,
+                 fecha_revision = NOW()
+             WHERE id = ?`,
+            [
+                observacion || null,
+                req.session.usuarioID,
+                req.params.id
+            ]
+        );
+
         await db.query(`
-            INSERT INTO nomina_novedades_historial 
-            (novedad_id, estado_anterior, estado_nuevo, observacion, usuario_id, fecha_registro) 
+            INSERT INTO nomina_novedades_historial
+            (
+                novedad_id,
+                estado_anterior,
+                estado_nuevo,
+                observacion,
+                usuario_id,
+                fecha_registro
+            )
             VALUES (?, ?, 'RECHAZADA', ?, ?, NOW())
-        `, [req.params.id, actual[0].estado, observacion || null, req.session.usuarioID]);
-        res.json({ success: true });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+        `, [
+            req.params.id,
+            actual[0].estado,
+            observacion || null,
+            req.session.usuarioID
+        ]);
+
+        res.json({
+            success: true
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
 });
 
 // ============================================================
-// 🔹 DELETE (Solo Admin)
+// DELETE (Solo Admin)
 // ============================================================
+
+// ------------------------------------------------------------
+// ELIMINACIÓN LÓGICA
+// Envía la novedad al historial
+// ------------------------------------------------------------
 
 router.delete('/:id', soloAdmin, async (req, res) => {
     try {
         const db = getDB(req);
-        const [actual] = await db.query(`SELECT estado FROM nomina_novedades WHERE id = ?`, [req.params.id]);
-        if (!actual.length) return res.status(404).json({ success: false, message: 'No encontrada' });
-        await db.query(`UPDATE nomina_novedades SET estado = 'EN_HISTORIAL' WHERE id = ?`, [req.params.id]);
+
+        const [actual] = await db.query(
+            `SELECT estado
+             FROM nomina_novedades
+             WHERE id = ?`,
+            [req.params.id]
+        );
+
+        if (!actual.length) {
+            return res.status(404).json({
+                success: false,
+                message: 'No encontrada'
+            });
+        }
+
+        await db.query(
+            `UPDATE nomina_novedades
+             SET estado = 'EN_HISTORIAL'
+             WHERE id = ?`,
+            [req.params.id]
+        );
+
         await db.query(`
-            INSERT INTO nomina_novedades_historial 
-            (novedad_id, estado_anterior, estado_nuevo, usuario_id, fecha_registro) 
+            INSERT INTO nomina_novedades_historial
+            (
+                novedad_id,
+                estado_anterior,
+                estado_nuevo,
+                usuario_id,
+                fecha_registro
+            )
             VALUES (?, ?, 'EN_HISTORIAL', ?, NOW())
-        `, [req.params.id, actual[0].estado, req.session.usuarioID]);
-        res.json({ success: true });
-    } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+        `, [
+            req.params.id,
+            actual[0].estado,
+            req.session.usuarioID
+        ]);
+
+        res.json({
+            success: true
+        });
+
+   } catch (err) {
+    console.error('ERROR AL ELIMINAR NOVEDAD:', {
+        novedadId: req.params.id,
+        mensaje: err.message,
+        codigo: err.code,
+        sqlMessage: err.sqlMessage
+    });
+
+    res.status(500).json({
+        success: false,
+        message: err.message
+    });
+}
 });
+
+// ============================================================
+// EXPORTACIÓN DEL ROUTER
+// ============================================================
 
 module.exports = router;

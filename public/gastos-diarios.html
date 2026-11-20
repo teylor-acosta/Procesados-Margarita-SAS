@@ -308,6 +308,63 @@
             color: #16a34a;
             border-color: #16a34a;
         }
+
+        /* ===== NUEVO: Badges de tipo y resumen del día ===== */
+        .badge-tipo {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+        }
+        .badge-ingreso {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+        .badge-egreso {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+        .resumen-dia-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: #e2e8f0;
+            border-top: 2px solid #e2e8f0;
+        }
+        .resumen-item {
+            background: #f8fafc;
+            padding: 20px 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+        .resumen-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .resumen-valor {
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+        .resumen-item.ingresos .resumen-valor { color: #16a34a; }
+        .resumen-item.egresos .resumen-valor { color: #dc2626; }
+        .resumen-item.saldo { background: #eef2ff; }
+        .resumen-item.saldo .resumen-valor { color: #1e293b; }
+        .resumen-valor.saldo-positivo { color: #16a34a !important; }
+        .resumen-valor.saldo-negativo { color: #dc2626 !important; }
+
+        @media (max-width: 768px) {
+            .resumen-dia-container { grid-template-columns: 1fr; }
+            .resumen-item { align-items: center; }
+        }
     </style>
 </head>
 
@@ -336,7 +393,7 @@
                 </div>
                 <div>
                     <h1>Gastos Diarios</h1>
-                    <p>Registra y consulta los gastos operativos de la empresa.</p>
+                    <p>Registra y consulta lo que entra (ingresos) y lo que sale (egresos) en el día.</p>
                 </div>
             </div>
             
@@ -358,34 +415,51 @@
             <div class="col-lg-8">
                 <div class="card-gastos h-100">
                     <div class="card-header-gastos">
-                        <i class="fas fa-plus-circle text-success fs-5"></i> Registrar Nuevo Gasto
+                        <i class="fas fa-plus-circle text-success fs-5"></i> Registrar Movimiento (Ingreso / Egreso)
                     </div>
                     <div class="card-body-gastos">
                         <form id="form-gasto">
                             <div class="row g-3">
+                                <!-- Tipo: Ingreso o Egreso -->
+                                <div class="col-md-3">
+                                    <label class="form-label-gastos">Tipo <span class="text-danger">*</span></label>
+                                    <select class="form-select-gastos" id="tipoMovimiento" required>
+                                        <option value="EGRESO" selected>🔴 Egreso (sale)</option>
+                                        <option value="INGRESO">🟢 Ingreso (entra)</option>
+                                    </select>
+                                </div>
+
                                 <div class="col-md-3">
                                     <label class="form-label-gastos">Código <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control-gastos" id="codigoGasto" placeholder="Ej: G-001" required>
                                 </div>
-                                <div class="col-md-5">
+
+                                <div class="col-md-6">
                                     <label class="form-label-gastos">Descripción <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control-gastos" id="nombreGasto" placeholder="Ej: Compra de insumos" required>
+                                    <input type="text" class="form-control-gastos" id="nombreGasto" placeholder="Ej: Compra de insumos / Venta del día" required>
                                 </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label-gastos">Categoría</label>
+                                    <input type="text" class="form-control-gastos" id="categoriaGasto" placeholder="Ej: Comida, Ventas, Nómina">
+                                </div>
+
                                 <div class="col-md-4">
                                     <label class="form-label-gastos">Monto ($) <span class="text-danger">*</span></label>
                                     <input type="number" class="form-control-gastos" id="montoGasto" step="0.01" placeholder="0.00" required>
                                 </div>
-                                
+
                                 <div class="col-md-4">
                                     <label class="form-label-gastos">Fecha <span class="text-danger">*</span></label>
                                     <input type="date" class="form-control-gastos" id="fechaGasto" required>
                                 </div>
-                                <div class="col-md-8">
+
+                                <div class="col-md-12">
                                     <label class="form-label-gastos">Vincular a Préstamo (Opcional)</label>
                                     <select class="form-select-gastos" id="vincularPrestamo">
                                         <option value="">-- No vincular --</option>
                                     </select>
-                                    <div class="form-text small">Si el gasto proviene de un préstamo, selecciónelo para evitar doble digitación.</div>
+                                    <div class="form-text small">Si el movimiento proviene de un préstamo, selecciónelo para evitar doble digitación.</div>
                                 </div>
                             </div>
                             
@@ -393,7 +467,7 @@
                             
                             <div class="d-flex justify-content-end">
                                 <button type="submit" class="btn-gastos-primary">
-                                    <i class="fas fa-save"></i> Guardar Gasto
+                                    <i class="fas fa-save"></i> Guardar Movimiento
                                 </button>
                             </div>
                         </form>
@@ -441,7 +515,7 @@
                     <div class="card-header-gastos d-flex flex-wrap justify-content-between align-items-center gap-3">
                         <div class="d-flex align-items-center">
                             <i class="fas fa-list-alt text-primary me-2 fs-5"></i>
-                            <h5 class="mb-0 fw-bold">Registro de Gastos</h5>
+                            <h5 class="mb-0 fw-bold">Registro de Movimientos</h5>
                         </div>
                         
                         <div class="filtros-historial">
@@ -458,8 +532,10 @@
                                 <thead>
                                     <tr>
                                         <th>Fecha</th>
+                                        <th>Tipo</th>
                                         <th>Código</th>
                                         <th class="text-start">Descripción</th>
+                                        <th>Categoría</th>
                                         <th>Vínculo</th>
                                         <th class="text-end">Monto</th>
                                         <th>Acciones</th>
@@ -467,15 +543,26 @@
                                 </thead>
                                 <tbody id="cuerpo-tabla">
                                     <tr>
-                                        <td colspan="6" class="text-muted py-5">
-                                            <i class="fas fa-spinner fa-spin me-2"></i>Cargando gastos...
+                                        <td colspan="8" class="text-muted py-5">
+                                            <i class="fas fa-spinner fa-spin me-2"></i>Cargando movimientos...
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="total-dia-container">
-                            Total del Día: <span id="total-dia">$0.00</span>
+                        <div class="resumen-dia-container">
+                            <div class="resumen-item ingresos">
+                                <span class="resumen-label"><i class="fas fa-arrow-down"></i> Ingresos del día</span>
+                                <span class="resumen-valor" id="total-ingresos">$0.00</span>
+                            </div>
+                            <div class="resumen-item egresos">
+                                <span class="resumen-label"><i class="fas fa-arrow-up"></i> Egresos del día</span>
+                                <span class="resumen-valor" id="total-egresos">$0.00</span>
+                            </div>
+                            <div class="resumen-item saldo">
+                                <span class="resumen-label"><i class="fas fa-balance-scale"></i> Saldo del día</span>
+                                <span class="resumen-valor" id="saldo-dia">$0.00</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -494,7 +581,7 @@
                 </div>
                 <div class="modal-body p-4 text-center">
                     <i class="fas fa-trash-alt text-danger fs-1 mb-3"></i>
-                    <p class="mb-0 fs-5">¿Estás seguro de que deseas eliminar este gasto?</p>
+                    <p class="mb-0 fs-5">¿Estás seguro de que deseas eliminar este movimiento?</p>
                     <p class="text-muted small">Esta acción no se puede deshacer.</p>
                 </div>
                 <div class="modal-footer border-0 justify-content-center pb-4">

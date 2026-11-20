@@ -30,7 +30,7 @@
 }
 
 /* =========================================
-   2. CABECERA DEL MÓDULO (Título + Botones)
+   2. CABECERA DEL MÓDULO
    ========================================= */
 .cabecera-gastos {
     max-width: 1400px;
@@ -55,7 +55,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--gastos-primary), #f43f5e);
+    background: linear-gradient(
+        135deg,
+        var(--gastos-primary),
+        #f43f5e
+    );
     color: white;
     box-shadow: 0 12px 25px rgba(225, 29, 72, 0.25);
     font-size: 34px;
@@ -75,7 +79,9 @@
     font-size: 1.05rem;
 }
 
-/* Botones de acción de la cabecera (Exportar, Importar, Volver) */
+/* =========================================
+   3. BOTONES DE CABECERA
+   ========================================= */
 .btn-header-action {
     background: white;
     border: 1px solid var(--gastos-border);
@@ -89,7 +95,7 @@
     transition: all 0.2s ease;
     text-decoration: none;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
 }
 
 .btn-header-action:hover {
@@ -97,10 +103,9 @@
     color: var(--gastos-primary);
     border-color: var(--gastos-primary);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
 
-/* Botón volver (versión antigua, por si acaso) */
 .btn-volver {
     background: white;
     color: var(--gastos-text-dark);
@@ -113,7 +118,7 @@
     gap: 8px;
     text-decoration: none;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
 }
 
 .btn-volver:hover {
@@ -124,7 +129,7 @@
 }
 
 /* =========================================
-   3. TARJETAS (Cards)
+   4. TARJETAS
    ========================================= */
 .card-gastos {
     background: var(--gastos-bg-card);
@@ -137,7 +142,7 @@
 }
 
 .card-gastos:hover {
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
 }
 
 .card-header-gastos {
@@ -157,7 +162,7 @@
 }
 
 /* =========================================
-   4. FORMULARIO
+   5. FORMULARIO
    ========================================= */
 .form-label-gastos {
     font-weight: 600;
@@ -167,7 +172,8 @@
     display: block;
 }
 
-.form-control-gastos, .form-select-gastos {
+.form-control-gastos,
+.form-select-gastos {
     border-radius: 12px;
     border: 1.5px solid var(--gastos-border);
     padding: 12px 15px;
@@ -178,16 +184,20 @@
     background-color: #f8fafc;
 }
 
-.form-control-gastos:focus, .form-select-gastos:focus {
+.form-control-gastos:focus,
+.form-select-gastos:focus {
     border-color: var(--gastos-primary);
     box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.1);
     outline: none;
     background-color: #ffffff;
 }
 
-/* Botón principal de guardar */
 .btn-gastos-primary {
-    background: linear-gradient(135deg, var(--gastos-primary), #f43f5e);
+    background: linear-gradient(
+        135deg,
+        var(--gastos-primary),
+        #f43f5e
+    );
     color: white;
     border: none;
     padding: 12px 28px;
@@ -205,11 +215,15 @@
 .btn-gastos-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(225, 29, 72, 0.4);
-    background: linear-gradient(135deg, var(--gastos-primary-hover), var(--gastos-primary));
+    background: linear-gradient(
+        135deg,
+        var(--gastos-primary-hover),
+        var(--gastos-primary)
+    );
 }
 
 /* =========================================
-   5. ZONA DE IMPORTACIÓN EXCEL (DENTRO DEL MODAL)
+   6. IMPORTACIÓN EXCEL
    ========================================= */
 .excel-drop-zone {
     border: 2px dashed #38bdf8;
@@ -253,7 +267,7 @@
 }
 
 /* =========================================
-   6. TABLA DE GASTOS
+   7. TABLA DE GASTOS
    ========================================= */
 .table-responsive-gastos {
     overflow-x: auto;
@@ -290,7 +304,9 @@
     cursor: default;
 }
 
-/* Badges (Etiquetas) */
+/* =========================================
+   8. ETIQUETAS
+   ========================================= */
 .badge-vinculo {
     background: #fef3c7;
     color: #92400e;
@@ -320,10 +336,12 @@
     border-radius: 8px;
     font-weight: 700;
     font-size: 0.85rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
-/* Botón eliminar */
+/* =========================================
+   9. BOTÓN ELIMINAR
+   ========================================= */
 .btn-eliminar-gasto {
     background: #fef2f2;
     color: #ef4444;
@@ -346,7 +364,7 @@
 }
 
 /* =========================================
-   7. FILTROS Y TOTALES
+   10. FILTROS Y TOTALES
    ========================================= */
 .filtros-historial {
     display: flex;
@@ -377,7 +395,6 @@
     border-color: var(--gastos-primary);
 }
 
-/* Total del día */
 .total-dia-container {
     background: #f8fafc;
     padding: 25px;
@@ -400,58 +417,350 @@
     padding: 5px 15px;
     border-radius: 10px;
 }
+/* =========================================
+   11. RESPONSIVE MEJORADO - GASTOS DIARIOS
+   ========================================= */
+
+.gastos-dashboard,
+.gastos-dashboard * {
+    box-sizing: border-box;
+}
+
+.gastos-dashboard {
+    min-width: 0;
+}
+
+.gastos-dashboard .cabecera-gastos,
+.gastos-dashboard .card-gastos,
+.gastos-dashboard .card-body-gastos,
+.gastos-dashboard .card-header-gastos {
+    min-width: 0;
+}
+
+.cabecera-gastos .titulo-seccion > * {
+    min-width: 0;
+}
+
+.cabecera-gastos h1,
+.cabecera-gastos p,
+.card-header-gastos {
+    overflow-wrap: anywhere;
+}
 
 /* =========================================
-   8. RESPONSIVE (Móviles y Tablets)
+   12. TABLAS ADAPTABLES
    ========================================= */
+
+.table-responsive-gastos {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+}
+
+.table-gastos {
+    min-width: 680px;
+}
+
+.table-gastos th,
+.table-gastos td {
+    white-space: nowrap;
+}
+
+/* =========================================
+   13. FORMULARIOS ADAPTABLES
+   ========================================= */
+
+.form-control-gastos,
+.form-select-gastos,
+.filtros-historial input[type="date"] {
+    max-width: 100%;
+    min-width: 0;
+}
+
+.gastos-dashboard img,
+.gastos-dashboard svg {
+    max-width: 100%;
+}
+
+/* =========================================
+   14. PANTALLAS HASTA 1200PX
+   ========================================= */
+
 @media (max-width: 1200px) {
+
     .gastos-dashboard {
         margin-left: 0;
         padding: 100px 25px 35px;
     }
+
 }
 
+/* =========================================
+   15. TABLETS HASTA 992PX
+   ========================================= */
+
+@media (max-width: 992px) {
+
+    .cabecera-gastos {
+        gap: 18px;
+    }
+
+    .cabecera-gastos h1 {
+        font-size: clamp(1.8rem, 3vw, 2.4rem);
+    }
+
+    .cabecera-gastos > .d-flex {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .card-body-gastos {
+        padding: 24px;
+    }
+
+    .card-header-gastos {
+        flex-wrap: wrap;
+    }
+
+    .filtros-historial {
+        flex-wrap: wrap;
+    }
+
+}
+
+/* =========================================
+   16. TABLETS Y MÓVILES HASTA 768PX
+   ========================================= */
+
 @media (max-width: 768px) {
+
+    /* Dashboard */
+
+    .gastos-dashboard {
+        padding: 90px 16px 28px;
+    }
+
+    /* Cabecera */
+
     .cabecera-gastos {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
+        align-items: stretch;
+        gap: 18px;
+        margin-bottom: 24px;
     }
-    
+
+    .cabecera-gastos .titulo-seccion {
+        gap: 14px;
+    }
+
+    .icono-cabecera-gastos {
+        width: 60px;
+        height: 60px;
+        flex: 0 0 60px;
+        border-radius: 17px;
+        font-size: 27px;
+    }
+
     .cabecera-gastos h1 {
         font-size: 1.8rem;
+        line-height: 1.2;
+    }
+
+    .cabecera-gastos p {
+        font-size: 0.95rem;
+    }
+
+    /* Botones de cabecera */
+
+    .cabecera-gastos > .d-flex {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .btn-header-action,
+    .btn-volver {
+        justify-content: center;
+        text-align: center;
+    }
+
+    /* Tarjetas */
+
+    .card-gastos {
+        margin-bottom: 20px;
+        border-radius: 16px;
     }
 
     .card-header-gastos {
         flex-direction: column;
         align-items: flex-start;
-        gap: 15px;
+        gap: 12px;
+        padding: 18px;
     }
+
+    .card-body-gastos {
+        padding: 18px;
+    }
+
+    /* Filtros */
 
     .filtros-historial {
         flex-direction: column;
-        width: 100%;
         align-items: stretch;
+        width: 100%;
+        gap: 10px;
+        padding: 12px;
     }
 
     .filtros-historial input[type="date"] {
         width: 100%;
     }
 
+    /* Total del día */
+
     .total-dia-container {
         flex-direction: column;
+        align-items: stretch;
         text-align: center;
         gap: 10px;
+        padding: 20px 16px;
+        font-size: 1rem;
     }
 
-    /* En móviles, los botones de la cabecera ocupan todo el ancho */
+    .total-dia-container span {
+        display: block;
+        font-size: clamp(1.25rem, 5vw, 1.8rem);
+        overflow-wrap: anywhere;
+    }
+
+    /* Tablas */
+
+    .table-gastos thead th {
+        padding: 14px 12px;
+    }
+
+    .table-gastos tbody td {
+        padding: 13px 12px;
+    }
+
+    /* Importación Excel */
+
+    .excel-drop-zone {
+        padding: 28px 16px;
+    }
+
+}
+
+/* =========================================
+   17. CELULARES HASTA 480PX
+   ========================================= */
+
+@media (max-width: 480px) {
+
+    /* Contenedor principal */
+
+    .gastos-dashboard {
+        padding: 82px 12px 24px;
+    }
+
+    /* Cabecera */
+
+    .cabecera-gastos .titulo-seccion {
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .icono-cabecera-gastos {
+        width: 50px;
+        height: 50px;
+        flex-basis: 50px;
+        border-radius: 14px;
+        font-size: 23px;
+    }
+
+    .cabecera-gastos h1 {
+        font-size: 1.5rem;
+    }
+
+    .cabecera-gastos p {
+        font-size: 0.88rem;
+    }
+
+    /* Botones */
+
     .cabecera-gastos > .d-flex {
-        width: 100%;
         flex-direction: column;
+        align-items: stretch;
     }
 
+    .cabecera-gastos > .d-flex > *,
     .btn-header-action {
+        width: 100%;
+    }
+
+    .btn-header-action,
+    .btn-volver,
+    .btn-gastos-primary {
+        min-height: 44px;
+        padding: 11px 14px;
+    }
+
+    /* Tarjetas */
+
+    .card-header-gastos {
+        padding: 15px;
+        font-size: 1rem;
+    }
+
+    .card-body-gastos {
+        padding: 15px;
+    }
+
+    /* Formularios */
+
+    .form-control-gastos,
+    .form-select-gastos {
+        font-size: 16px;
+    }
+
+    .btn-gastos-primary {
         width: 100%;
         justify-content: center;
     }
+
+    /* Importación Excel */
+
+    .excel-drop-zone {
+        padding: 24px 12px;
+    }
+
+    .excel-icon {
+        font-size: 2.4rem;
+    }
+
+    /* Total */
+
+    .total-dia-container {
+        padding: 16px 12px;
+    }
+
+}
+
+/* =========================================
+   18. ACCESIBILIDAD Y MOVIMIENTO REDUCIDO
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .gastos-dashboard *,
+    .gastos-dashboard *::before,
+    .gastos-dashboard *::after {
+        scroll-behavior: auto;
+        transition-duration: 0.01ms;
+        animation-duration: 0.01ms;
+    }
+
 }

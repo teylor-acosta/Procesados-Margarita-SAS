@@ -1,921 +1,3732 @@
-/* ============================================================
-   HISTORIAL Y REPORTES · PROCESADOS MARGARITA
-   Archivo: /public/css/reportes.css
-   ============================================================ */
 
-/* ============================================================
-   VARIABLES
-   ============================================================ */
+/* ==========================================================================
+   PROCESADOS MARGARITA S.A.S.
+   ERP - HISTORIAL Y REPORTES
+
+   Archivo: public/css/reportes.css
+
+   CONTENIDO:
+   1. Variables institucionales
+   2. Configuración general
+   3. Contenedor principal
+   4. Encabezado
+   5. Botones
+   6. Panel principal
+   7. Pestañas de navegación
+   8. Selector móvil
+   9. Filtros
+   10. Campos de fecha
+   11. Tablas de movimientos
+   12. Información de las celdas
+   13. Indicadores de estado
+   14. Animaciones de carga
+   15. Estados vacíos
+   16. Mensajes de error
+   17. Pie del panel
+   18. Notificaciones del sistema
+   19. Ventanas modales de detalle
+   20. Encabezado de modales
+   21. Contenido de modales
+   22. Pie de modales
+   23. Contenedor de indicadores KPI
+   24. Tarjetas KPI
+   25. Información de indicadores
+   26. Iconos KPI
+   27. Colores institucionales
+   28. Estados interactivos
+   29. Ajustes generales
+   30. Pantallas grandes
+   31. Portátiles
+   32. Tablets horizontales
+   33. Tablets verticales
+   34. Celulares grandes
+   35. Celulares pequeños
+   36. Pantallas muy pequeñas
+   37. Accesibilidad
+   38. Configuración final de escritorio
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. VARIABLES INSTITUCIONALES
+   ========================================================================== */
+
 :root {
+
+    /* Colores principales */
+
     --rep-verde: #22c55e;
     --rep-verde-dark: #16a34a;
     --rep-verde-hover: #15803d;
     --rep-verde-light: #ecfdf5;
 
+    /* Colores complementarios */
+
     --rep-azul: #2563eb;
     --rep-azul-dark: #1d4ed8;
+
     --rep-amarillo: #f59e0b;
     --rep-amarillo-dark: #d97706;
+
     --rep-violeta: #8b5cf6;
     --rep-violeta-dark: #7c3aed;
+
     --rep-rojo: #ef4444;
     --rep-rojo-dark: #dc2626;
+
+    /* Textos */
 
     --rep-slate: #0f172a;
     --rep-slate-soft: #475569;
     --rep-muted: #94a3b8;
 
+    /* Bordes y fondos */
+
     --rep-borde: #e2e8f0;
     --rep-borde-suave: #f1f5f9;
+
     --rep-bg: #f8fafc;
     --rep-blanco: #ffffff;
 
-    --rep-sombra-card: 0 4px 20px rgba(15, 23, 42, .05);
-    --rep-sombra-hover: 0 10px 30px rgba(15, 23, 42, .08);
-    --rep-sombra-focus: 0 0 0 4px rgba(34, 197, 94, 0.15);
+    /* Sombras */
 
-    --rep-transicion: .25s cubic-bezier(0.4, 0, 0.2, 1);
+    --rep-sombra-card:
+        0 4px 20px rgba(15, 23, 42, .05);
+
+    --rep-sombra-hover:
+        0 10px 30px rgba(15, 23, 42, .08);
+
+    --rep-sombra-focus:
+        0 0 0 4px rgba(34, 197, 94, .15);
+
+    /* Animaciones */
+
+    --rep-transicion:
+        .25s cubic-bezier(.4, 0, .2, 1);
+
+    /* Diseño */
+
+    --rep-sidebar-width: 280px;
+
+    --rep-radius-card: 24px;
+    --rep-radius-button: 12px;
+
 }
 
-/* ============================================================
-   CONTENEDOR PRINCIPAL
-   ============================================================ */
-.rep-container {
-    margin-left: 280px;
-    width: calc(100% - 280px);
-    min-height: calc(100vh - 105px);
-    padding: 35px 40px 55px;
-    position: relative;
-    z-index: 1;
+
+/* ==========================================================================
+   2. CONFIGURACIÓN GENERAL
+   ========================================================================== */
+
+.rep-container,
+.rep-container *,
+.rep-container *::before,
+.rep-container *::after {
     box-sizing: border-box;
+}
+
+.rep-container {
     font-family: 'Averia Libre', sans-serif;
     color: var(--rep-slate);
 }
+
+.rep-container button,
+.rep-container input,
+.rep-container select,
+.rep-container textarea {
+    font-family: inherit;
+}
+
+.rep-container button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.rep-container img,
+.rep-container svg {
+    max-width: 100%;
+}
+
+.rep-container img {
+    height: auto;
+}
+
+.rep-container :focus-visible {
+    outline: 3px solid rgba(34, 197, 94, .35);
+    outline-offset: 3px;
+}
+
+
+/* ==========================================================================
+   3. CONTENEDOR PRINCIPAL
+   ========================================================================== */
+
+.rep-container {
+
+    position: relative;
+
+    z-index: 1;
+
+    margin-left: var(--rep-sidebar-width);
+
+    width: calc(100% - var(--rep-sidebar-width));
+
+    max-width: 100%;
+
+    min-width: 0;
+
+    min-height: calc(100vh - 105px);
+
+    padding: 35px 40px 55px;
+
+}
+
+
+/* Fondo institucional */
 
 .rep-container::before {
+
     content: "";
+
     position: fixed;
+
     top: 85px;
-    left: 280px;
+
+    left: var(--rep-sidebar-width);
+
     right: 0;
+
     bottom: 0;
+
     background: rgba(248, 250, 249, .3);
+
     pointer-events: none;
+
     z-index: -1;
+
 }
 
-/* ============================================================
-   HEADER
-   ============================================================ */
+
+/* ==========================================================================
+   4. ENCABEZADO PRINCIPAL
+   ========================================================================== */
+
 .rep-header {
+
     display: flex;
+
     justify-content: space-between;
+
     align-items: flex-end;
-    gap: 30px;
-    margin-bottom: 35px;
+
     flex-wrap: wrap;
+
+    gap: 30px;
+
+    margin-bottom: 35px;
+
+    min-width: 0;
+
 }
+
+
+/* Información del encabezado */
 
 .rep-header-info {
+
     min-width: 0;
-    flex: 1;
+
+    flex: 1 1 300px;
+
 }
+
+
+/* Etiqueta superior */
 
 .rep-overline {
+
     display: inline-block;
+
     margin-bottom: 8px;
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--rep-verde-dark);
-    background: var(--rep-verde-light);
+
     padding: 4px 10px;
+
     border-radius: 6px;
+
+    background: var(--rep-verde-light);
+
+    color: var(--rep-verde-dark);
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
 }
+
+
+/* Título */
 
 .rep-header h1 {
+
     margin: 0 0 10px;
-    font-size: 36px;
-    line-height: 1.1;
-    font-weight: 800;
+
     color: var(--rep-slate);
-    letter-spacing: -0.5px;
-    word-break: break-word;
+
+    font-size: 36px;
+
+    font-weight: 800;
+
+    line-height: 1.1;
+
+    letter-spacing: -.5px;
+
+    overflow-wrap: anywhere;
+
 }
+
+
+/* Descripción */
 
 .rep-header p {
-    margin: 0;
-    font-size: 16px;
-    color: var(--rep-slate-soft);
+
     max-width: 720px;
+
+    margin: 0;
+
+    color: var(--rep-slate-soft);
+
+    font-size: 16px;
+
     line-height: 1.5;
+
 }
+
+
+/* Acciones del encabezado */
 
 .rep-header-actions {
+
     display: flex;
+
     align-items: center;
-    gap: 12px;
+
     flex-wrap: wrap;
+
+    gap: 12px;
+
+    min-width: 0;
+
 }
 
-/* ============================================================
-   BOTONES
-   ============================================================ */
-.btn-rep-primary, .btn-rep-secondary {
+
+/* ==========================================================================
+   5. BOTONES INSTITUCIONALES
+   ========================================================================== */
+
+.btn-rep-primary,
+.btn-rep-secondary {
+
     display: inline-flex;
+
     align-items: center;
+
     justify-content: center;
+
     gap: 10px;
-    border-radius: 12px;
+
+    border-radius: var(--rep-radius-button);
+
     font-family: 'Averia Libre', sans-serif;
+
     font-weight: 700;
+
     cursor: pointer;
-    transition: all var(--rep-transicion);
-    outline: none;
-    box-sizing: border-box;
+
     text-align: center;
+
+    text-decoration: none;
+
+    transition:
+        background var(--rep-transicion),
+        border-color var(--rep-transicion),
+        color var(--rep-transicion),
+        box-shadow var(--rep-transicion),
+        transform var(--rep-transicion);
+
+    box-sizing: border-box;
+
 }
+
+
+/* Botón principal */
 
 .btn-rep-primary {
+
     min-height: 48px;
+
     padding: 12px 22px;
+
     border: none;
-    background: linear-gradient(135deg, var(--rep-verde), var(--rep-verde-dark));
-    color: #fff;
+
+    background: linear-gradient(
+        135deg,
+        var(--rep-verde),
+        var(--rep-verde-dark)
+    );
+
+    color: #ffffff;
+
     font-size: 15px;
-    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.2);
+
+    box-shadow:
+        0 4px 12px rgba(34, 197, 94, .2);
+
 }
 
 .btn-rep-primary:hover {
+
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(34, 197, 94, 0.3);
-    background: linear-gradient(135deg, var(--rep-verde-dark), var(--rep-verde-hover));
+
+    background: linear-gradient(
+        135deg,
+        var(--rep-verde-dark),
+        var(--rep-verde-hover)
+    );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 6px 16px rgba(34, 197, 94, .3);
+
 }
 
+
+/* Botón secundario */
+
 .btn-rep-secondary {
+
     min-height: 46px;
+
     padding: 10px 20px;
+
     border: 1px solid #dbe3ea;
+
     background: #ffffff;
+
     color: #334155;
+
     font-size: 14px;
-    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02);
+
+    box-shadow:
+        0 2px 6px rgba(15, 23, 42, .02);
+
 }
 
 .btn-rep-secondary:hover {
+
     background: var(--rep-bg);
+
     border-color: #cbd5e1;
+
     color: var(--rep-slate);
+
     transform: translateY(-1px);
+
 }
 
-.btn-rep-primary:active, .btn-rep-secondary:active {
+
+/* Estado activo */
+
+.btn-rep-primary:active,
+.btn-rep-secondary:active {
+
     transform: translateY(0);
+
+}
+
+
+/* Botones deshabilitados */
+
+.btn-rep-primary:disabled,
+.btn-rep-secondary:disabled {
+
+    opacity: .6;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+
 }
 
 .btn-rep-secondary:disabled {
-    opacity: .6;
-    cursor: not-allowed;
-    transform: none;
+
     background: #f1f5f9;
+
 }
 
-/* ============================================================
-   PANEL PRINCIPAL
-   ============================================================ */
+
+/* Accesibilidad */
+
+.btn-rep-primary:focus-visible,
+.btn-rep-secondary:focus-visible {
+
+    outline: 3px solid rgba(34, 197, 94, .35);
+
+    outline-offset: 3px;
+
+}
+
+
+/* ==========================================================================
+   6. PANEL PRINCIPAL
+   ========================================================================== */
+
 .rep-panel {
+
     width: 100%;
+
+    min-width: 0;
+
     border: 1px solid rgba(226, 232, 240, .8);
-    border-radius: 24px;
-    background: #ffffff;
+
+    border-radius: var(--rep-radius-card);
+
+    background: var(--rep-blanco);
+
     box-shadow: var(--rep-sombra-card);
+
     overflow: hidden;
+
     box-sizing: border-box;
+
 }
 
-/* ============================================================
-   TABS
-   ============================================================ */
+
+/* ==========================================================================
+   7. PESTAÑAS DE NAVEGACIÓN
+   ========================================================================== */
+
 .rep-tabs {
+
     display: flex;
+
     align-items: center;
+
     gap: 8px;
+
     padding: 0 24px;
+
     overflow-x: auto;
+
+    overflow-y: hidden;
+
     background: #ffffff;
-    border-bottom: 1px solid var(--rep-borde-suave);
+
+    border-bottom:
+        1px solid var(--rep-borde-suave);
+
     scrollbar-width: none;
+
     -webkit-overflow-scrolling: touch;
+
+    overscroll-behavior-x: contain;
+
 }
-.rep-tabs::-webkit-scrollbar { display: none; }
+
+.rep-tabs::-webkit-scrollbar {
+
+    display: none;
+
+}
+
+
+/* Botón de pestaña */
 
 .rep-tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 20px 16px;
-    border: none;
-    background: transparent;
-    color: var(--rep-slate-soft);
-    font-family: 'Averia Libre', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    white-space: nowrap;
-    cursor: pointer;
+
     position: relative;
-    transition: color var(--rep-transicion);
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex: 0 0 auto;
+
+    gap: 10px;
+
+    min-height: 58px;
+
+    padding: 20px 16px;
+
+    border: none;
+
+    background: transparent;
+
+    color: var(--rep-slate-soft);
+
+    font-family: 'Averia Libre', sans-serif;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        color var(--rep-transicion),
+        background var(--rep-transicion);
+
 }
+
+
+/* Línea indicadora */
 
 .rep-tab::after {
-    content: '';
+
+    content: "";
+
     position: absolute;
+
     bottom: 0;
+
     left: 0;
+
     width: 100%;
+
     height: 3px;
-    background: var(--rep-verde);
-    transform: scaleX(0);
-    transition: transform var(--rep-transicion);
+
     border-radius: 3px 3px 0 0;
+
+    background: var(--rep-verde);
+
+    transform: scaleX(0);
+
+    transition:
+        transform var(--rep-transicion);
+
 }
 
-.rep-tab:hover { color: var(--rep-slate); }
-.rep-tab.active { color: var(--rep-verde-dark); }
-.rep-tab.active::after { transform: scaleX(1); }
-.rep-tab i { font-size: 16px; }
+/* Interacciones */
+
+.rep-tab:hover {
+
+    color: var(--rep-slate);
+
+}
+
+.rep-tab.active {
+
+    color: var(--rep-verde-dark);
+
+}
+
+.rep-tab.active::after {
+
+    transform: scaleX(1);
+
+}
+
+.rep-tab i {
+
+    font-size: 16px;
+
+}
+
+
+/* Pestañas bloqueadas */
 
 .rep-tab--locked {
+
     opacity: .6;
+
     cursor: not-allowed;
+
     filter: grayscale(100%);
+
 }
-.rep-tab--locked:hover { color: var(--rep-slate-soft); }
-.rep-tab--locked::after { display: none; }
+
+.rep-tab--locked:hover {
+
+    color: var(--rep-slate-soft);
+
+}
+
+.rep-tab--locked::after {
+
+    display: none;
+
+}
+
+
+/* Etiqueta de pestaña */
 
 .rep-tab-badge {
+
     display: inline-flex;
+
     align-items: center;
+
     padding: 3px 8px;
+
     margin-left: 6px;
+
     border-radius: 20px;
+
     background: #f1f5f9;
+
     color: #64748b;
+
     font-size: 10px;
+
     font-weight: 800;
+
     letter-spacing: .5px;
+
     text-transform: uppercase;
+
 }
 
-/* ============================================================
-   SELECT MÓVIL (Oculto por defecto)
-   ============================================================ */
+
+/* ==========================================================================
+   8. SELECTOR DE PESTAÑAS PARA MÓVILES
+   ========================================================================== */
+
 .rep-tabs-mobile {
+
     display: none;
-    padding: 15px 20px;
-    background: #ffffff;
-    border-bottom: 1px solid var(--rep-borde-suave);
+
     flex-direction: column;
+
     gap: 8px;
+
+    padding: 15px 20px;
+
+    background: #ffffff;
+
+    border-bottom:
+        1px solid var(--rep-borde-suave);
+
     box-sizing: border-box;
+
 }
 
-/* ============================================================
-   FILTROS
-   ============================================================ */
-.rep-filtros {
-    padding: 24px;
-    background: #fbfcfd;
-    border-bottom: 1px solid var(--rep-borde-suave);
-    box-sizing: border-box;
+
+/* Ajustes del selector si utiliza form-control */
+
+.rep-tabs-mobile .form-control,
+.rep-tabs-mobile select {
+
+    width: 100%;
+
+    min-width: 0;
+
+    min-height: 44px;
+
+    border: 1px solid var(--rep-borde);
+
+    border-radius: 12px;
+
+    background-color: #ffffff;
+
+    color: var(--rep-slate);
+
+    font-family: 'Averia Libre', sans-serif;
+
+    font-size: 14px;
+
 }
+
+
+/* ==========================================================================
+   9. FILTROS DE REPORTES
+   ========================================================================== */
+
+.rep-filtros {
+
+    padding: 24px;
+
+    background: #fbfcfd;
+
+    border-bottom:
+        1px solid var(--rep-borde-suave);
+
+    box-sizing: border-box;
+
+}
+
+
+/* Distribución principal */
 
 .rep-filtros-grid {
+
     display: grid;
+
     grid-template-columns:
         minmax(200px, 2.5fr)
         minmax(130px, 1fr)
         minmax(130px, 1fr)
         minmax(130px, 1fr)
         auto;
+
     gap: 16px;
+
     align-items: center;
+
 }
+
+
+/* Cada filtro */
 
 .rep-filtro {
+
     min-width: 0;
+
     margin: 0;
+
 }
+
+
+/* Contenedor de búsqueda */
 
 .rep-input-wrapper {
+
     position: relative;
+
     display: flex;
+
     align-items: center;
+
     width: 100%;
+
+    min-width: 0;
+
 }
+
+
+/* Icono de búsqueda */
 
 .rep-input-wrapper i {
+
     position: absolute;
+
     left: 16px;
+
     color: #94a3b8;
+
     font-size: 15px;
+
     pointer-events: none;
+
     z-index: 2;
+
 }
+
+
+/* Espacio para el icono */
 
 .rep-input-wrapper .form-control {
+
     padding-left: 46px !important;
+
 }
+
+
+/* Campos generales */
 
 .rep-filtros .form-control {
+
     width: 100%;
+
+    min-width: 0;
+
     height: 46px;
+
     padding: 10px 14px;
+
     border: 1px solid #d7dee7;
+
     border-radius: 12px;
+
     background-color: #ffffff;
+
     color: var(--rep-slate);
+
     font-family: 'Averia Libre', sans-serif;
+
     font-size: 14px;
+
     font-weight: 500;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-    transition: all var(--rep-transicion);
+
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, .02);
+
+    transition:
+        border-color var(--rep-transicion),
+        box-shadow var(--rep-transicion),
+        background var(--rep-transicion);
+
     appearance: none;
+
     box-sizing: border-box;
+
 }
+
+
+/* Selectores */
 
 .rep-filtros select.form-control {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+
+    background-image: url(
+        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"
+    );
+
     background-repeat: no-repeat;
+
     background-position: right 14px center;
+
     background-size: 16px;
+
     padding-right: 40px;
+
 }
+
+
+/* Campo enfocado */
 
 .rep-filtros .form-control:focus {
+
     border-color: var(--rep-verde);
+
     box-shadow: var(--rep-sombra-focus);
+
     outline: none;
+
     background-color: #ffffff;
+
 }
 
+
+/* Botón limpiar filtros */
+
 .rep-filtro--limpiar {
+
     min-width: 110px;
+
 }
 
 .rep-filtro--limpiar .btn-rep-secondary {
-    height: 46px;
+
     width: 100%;
+
+    height: 46px;
+
 }
+
+
+/* ==========================================================================
+   10. FILTROS POR FECHA
+   ========================================================================== */
 
 .rep-filtros-fecha {
+
     display: flex;
+
     flex-wrap: wrap;
+
     gap: 16px;
+
     margin-top: 20px;
+
     padding-top: 20px;
+
     border-top: 1px dashed #cbd5e1;
-    animation: fadeIn 0.3s ease;
+
+    animation: repFadeIn .3s ease;
+
 }
+
+
+/* Animación de entrada */
+
+@keyframes repFadeIn {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(-5px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}
+
+
+/* Compatibilidad con la animación original */
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(-5px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
 }
+
+
+/* Campo de fecha */
 
 .rep-fecha-campo {
+
     display: flex;
+
     flex-direction: column;
-    gap: 8px;
-    min-width: 200px;
+
     flex: 1;
+
+    gap: 8px;
+
+    min-width: 200px;
+
 }
+
+
+/* Rango de fechas */
 
 .rep-fecha-campo--rango {
+
     display: flex;
+
     flex-direction: row;
+
     flex-wrap: wrap;
-    gap: 16px;
+
     flex-basis: 100%;
+
+    gap: 16px;
+
 }
+
+
+/* Campos dentro del rango */
 
 .rep-fecha-campo--rango > div {
+
     display: flex;
+
     flex-direction: column;
-    gap: 8px;
+
     flex: 1;
+
+    gap: 8px;
+
     min-width: 200px;
+
 }
+
+
+/* Etiquetas */
 
 .rep-fecha-label {
+
     color: var(--rep-slate-soft);
+
     font-size: 13px;
+
     font-weight: 700;
+
 }
 
-/* ============================================================
-   TABLA
-   ============================================================ */
+/* ==========================================================================
+   11. TABLAS DE MOVIMIENTOS
+   ========================================================================== */
+
+/* Contenedor principal de la tabla */
+
 .rep-tabla-wrapper {
-    width: 100%;
+
     position: relative;
-    background: #ffffff;
+
+    width: 100%;
+
+    max-width: 100%;
+
+    min-width: 0;
+
+    background: var(--rep-blanco);
+
     overflow: hidden;
+
 }
+
+
+/* Área de desplazamiento horizontal */
 
 .rep-tabla-scroll {
+
     width: 100%;
+
+    max-width: 100%;
+
     overflow-x: auto;
-    scrollbar-width: thin;
+
+    overflow-y: auto;
+
     -webkit-overflow-scrolling: touch;
+
+    overscroll-behavior-x: contain;
+
+    scrollbar-width: thin;
+
+    scrollbar-color: #cbd5e1 #f8fafc;
+
 }
+
+
+/* Barra de desplazamiento */
+
+.rep-tabla-scroll::-webkit-scrollbar {
+
+    width: 8px;
+
+    height: 8px;
+
+}
+
+.rep-tabla-scroll::-webkit-scrollbar-track {
+
+    background: #f8fafc;
+
+    border-radius: 10px;
+
+}
+
+.rep-tabla-scroll::-webkit-scrollbar-thumb {
+
+    background: #cbd5e1;
+
+    border-radius: 10px;
+
+}
+
+.rep-tabla-scroll::-webkit-scrollbar-thumb:hover {
+
+    background: #94a3b8;
+
+}
+
+
+/* Tabla general */
 
 .rep-table {
+
     width: 100%;
-    margin: 0;
-    border-collapse: collapse;
-    font-size: 14px;
+
     min-width: 650px;
+
+    margin: 0;
+
+    border-collapse: collapse;
+
+    border-spacing: 0;
+
+    background: #ffffff;
+
+    color: var(--rep-slate);
+
+    font-family: 'Averia Libre', sans-serif;
+
+    font-size: 14px;
+
 }
+
+
+/* Encabezados */
 
 .rep-table thead th {
-    padding: 16px 24px;
-    background: #f8fafc;
-    border-bottom: 1px solid var(--rep-borde);
-    color: var(--rep-slate-soft);
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    text-align: left;
-    white-space: nowrap;
+
     position: sticky;
+
     top: 0;
+
     z-index: 10;
+
+    padding: 16px 24px;
+
+    background: #f8fafc;
+
+    border-bottom: 1px solid var(--rep-borde);
+
+    color: var(--rep-slate-soft);
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    letter-spacing: .5px;
+
+    line-height: 1.4;
+
+    text-transform: uppercase;
+
+    text-align: left;
+
+    white-space: nowrap;
+
 }
+
+
+/* Celdas */
 
 .rep-table tbody td {
+
     padding: 16px 24px;
-    border-bottom: 1px solid var(--rep-borde-suave);
+
+    border-bottom:
+        1px solid var(--rep-borde-suave);
+
+    background: #ffffff;
+
     color: var(--rep-slate);
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
     vertical-align: middle;
-    transition: background var(--rep-transicion);
+
+    transition:
+        background-color var(--rep-transicion);
+
 }
 
-.rep-table tbody tr:hover td { background: #f8fafc; }
-.rep-table tbody tr:last-child td { border-bottom: none; }
+
+/* Efecto al pasar el cursor */
+
+.rep-table tbody tr:hover td {
+
+    background: #f8fafc;
+
+}
+
+
+/* Última fila */
+
+.rep-table tbody tr:last-child td {
+
+    border-bottom: none;
+
+}
+
+
+/* Enlaces y botones dentro de tablas */
+
+.rep-table a,
+.rep-table button {
+
+    max-width: 100%;
+
+}
+
+
+/* Botones dentro de celdas */
+
+.rep-table button {
+
+    cursor: pointer;
+
+}
+
+
+/* ==========================================================================
+   12. INFORMACIÓN DE LAS CELDAS
+   ========================================================================== */
+
+/* Contenedor de información principal */
 
 .rep-celda-principal {
+
     display: flex;
+
     flex-direction: column;
+
+    align-items: flex-start;
+
+    justify-content: center;
+
     gap: 4px;
+
+    min-width: 0;
+
+}
+
+
+/* Texto principal */
+
+.rep-celda-principal strong {
+
+    display: block;
+
+    max-width: 100%;
+
+    color: var(--rep-slate);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    line-height: 1.4;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* Texto secundario */
+
+.rep-celda-principal small {
+
+    display: block;
+
+    max-width: 100%;
+
+    color: var(--rep-muted);
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    line-height: 1.4;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* Texto recortado */
+
+.rep-truncate {
+
+    display: inline-block;
+
+    max-width: 240px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    vertical-align: middle;
+
+}
+
+
+/* ==========================================================================
+   13. INDICADORES DE ESTADO
+   ========================================================================== */
+
+/* Diseño general */
+
+.rep-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    max-width: 100%;
+
+    padding: 6px 12px;
+
+    border: 1px solid transparent;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    line-height: 1.3;
+
+    white-space: nowrap;
+
+    vertical-align: middle;
+
+}
+
+
+/* Estado pendiente / advertencia */
+
+.rep-badge--warning {
+
+    background: #fffbeb;
+
+    color: #b45309;
+
+    border-color: #fde68a;
+
+}
+
+
+/* Estado aprobado / completado */
+
+.rep-badge--success {
+
+    background: #ecfdf5;
+
+    color: #047857;
+
+    border-color: #a7f3d0;
+
+}
+
+
+/* Estado rechazado / error */
+
+.rep-badge--danger {
+
+    background: #fef2f2;
+
+    color: #b91c1c;
+
+    border-color: #fecaca;
+
+}
+
+
+/* Estado secundario */
+
+.rep-badge--secondary {
+
+    background: #f8fafc;
+
+    color: #475569;
+
+    border-color: #e2e8f0;
+
+}
+
+
+/* Estado principal */
+
+.rep-badge--primary {
+
+    background: #eff6ff;
+
+    color: #1d4ed8;
+
+    border-color: #bfdbfe;
+
+}
+
+
+/* Estado informativo */
+
+.rep-badge--info {
+
+    background: #ecfeff;
+
+    color: #0e7490;
+
+    border-color: #a5f3fc;
+
+}
+
+
+/* ==========================================================================
+   14. ANIMACIONES DE CARGA
+   ========================================================================== */
+
+/* Contenedor de carga */
+
+.rep-skeleton {
+
+    width: 100%;
+
+    padding: 24px;
+
+    background: #ffffff;
+
+}
+
+
+/* Filas animadas */
+
+.rep-skeleton-row {
+
+    width: 100%;
+
+    height: 48px;
+
+    margin-bottom: 12px;
+
+    border-radius: 12px;
+
+    background: linear-gradient(
+        90deg,
+        #f1f5f9 25%,
+        #e2e8f0 37%,
+        #f1f5f9 63%
+    );
+
+    background-size: 400% 100%;
+
+    animation:
+        repShimmer 1.4s ease-in-out infinite;
+
+}
+
+
+/* Última fila */
+
+.rep-skeleton-row:last-child {
+
+    margin-bottom: 0;
+
+}
+
+
+/* Animación */
+
+@keyframes repShimmer {
+
+    0% {
+
+        background-position: 100% 50%;
+
+    }
+
+    100% {
+
+        background-position: 0 50%;
+
+    }
+
+}
+
+
+/* ==========================================================================
+   15. ESTADOS VACÍOS
+   ========================================================================== */
+
+/* Contenedor */
+
+.rep-empty {
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    align-items: center !important;
+
+    justify-content: center !important;
+
+    width: 100%;
+
+    min-height: 300px;
+
+    padding: 60px 25px;
+
+    background: #ffffff;
+
+    text-align: center;
+
+    box-sizing: border-box;
+
+}
+
+
+/* Icono */
+
+.rep-empty-icon {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 72px;
+
+    height: 72px;
+
+    margin: 0 auto 18px !important;
+
+    border-radius: 20px;
+
+    background: #f1f5f9;
+
+    color: var(--rep-muted);
+
+    font-size: 28px;
+
+}
+
+
+/* Título */
+
+.rep-empty h3 {
+
+    margin: 0 0 8px;
+
+    color: var(--rep-slate);
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    line-height: 1.3;
+
+    text-align: center !important;
+
+}
+
+
+/* Descripción */
+
+.rep-empty p {
+
+    max-width: 400px;
+
+    margin: 0;
+
+    color: var(--rep-muted);
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    text-align: center !important;
+
+}
+
+
+/* ==========================================================================
+   16. MENSAJES DE ERROR
+   ========================================================================== */
+
+/* Error dentro de una tabla */
+
+.rep-error-cell {
+
+    padding: 30px !important;
+
+    background: #fef2f2 !important;
+
+    color: var(--rep-rojo);
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    line-height: 1.5;
+
+    text-align: center;
+
+}
+
+
+/* Icono de error */
+
+.rep-error-cell i {
+
+    margin-right: 8px;
+
+}
+
+
+/* ==========================================================================
+   17. PIE DEL PANEL
+   ========================================================================== */
+
+.rep-footer {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    flex-wrap: wrap;
+
+    gap: 15px;
+
+    width: 100%;
+
+    min-width: 0;
+
+    padding: 18px 24px;
+
+    border-top:
+        1px solid var(--rep-borde-suave);
+
+    background: #ffffff;
+
+    box-sizing: border-box;
+
+}
+
+
+/* Contador de registros */
+
+.rep-contador {
+
+    color: var(--rep-slate-soft);
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    line-height: 1.5;
+
+}
+
+
+/* ==========================================================================
+   18. NOTIFICACIONES DEL SISTEMA
+   ========================================================================== */
+
+/* Contenedor general de notificaciones */
+
+.rep-toasts {
+
+    position: fixed;
+
+    top: 100px;
+
+    right: 25px;
+
+    z-index: 10800;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+    width: calc(100% - 30px);
+
+    max-width: 400px;
+
+    pointer-events: none;
+
+    box-sizing: border-box;
+
+}
+
+
+/* Notificación individual */
+
+.rep-toast {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    width: 100%;
+
+    min-width: 0;
+
+    padding: 16px;
+
+    border: 1px solid var(--rep-borde-suave);
+
+    border-radius: 16px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 12px 30px rgba(15, 23, 42, .12);
+
+    opacity: 0;
+
+    transform: translateX(100%);
+
+    transition:
+        opacity .3s ease,
+        transform .3s cubic-bezier(
+            .68, -.55, .27, 1.55
+        );
+
+    pointer-events: auto;
+
+    box-sizing: border-box;
+
+}
+
+
+/* Mostrar notificación */
+
+.rep-toast.mostrar {
+
+    opacity: 1;
+
+    transform: translateX(0);
+
+}
+
+
+/* Icono */
+
+.rep-toast > i {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 40px;
+
+    height: 40px;
+
+    flex: 0 0 40px;
+
+    border-radius: 12px;
+
+    font-size: 18px;
+
+}
+
+
+/* Mensaje */
+
+.rep-toast > span {
+
+    flex: 1;
+
+    min-width: 0;
+
+    color: var(--rep-slate);
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    line-height: 1.4;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* Botón cerrar */
+
+.rep-toast-close {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 30px;
+
+    height: 30px;
+
+    flex: 0 0 30px;
+
+    padding: 0;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: var(--rep-muted);
+
+    font-size: 20px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background var(--rep-transicion),
+        color var(--rep-transicion);
+
+}
+
+
+/* Efecto al pasar el cursor */
+
+.rep-toast-close:hover {
+
+    background: #f1f5f9;
+
+    color: var(--rep-slate);
+
+}
+
+
+/* ==========================================================================
+   TIPOS DE NOTIFICACIÓN
+   ========================================================================== */
+
+/* Notificación exitosa */
+
+.rep-toast--success {
+
+    border-left:
+        4px solid var(--rep-verde-dark);
+
+}
+
+.rep-toast--success > i {
+
+    background: #ecfdf5;
+
+    color: var(--rep-verde-dark);
+
+}
+
+
+/* Notificación de error */
+
+.rep-toast--error {
+
+    border-left:
+        4px solid var(--rep-rojo-dark);
+
+}
+
+.rep-toast--error > i {
+
+    background: #fef2f2;
+
+    color: var(--rep-rojo-dark);
+
+}
+
+
+/* Notificación de advertencia */
+
+.rep-toast--warning {
+
+    border-left:
+        4px solid var(--rep-amarillo-dark);
+
+}
+
+.rep-toast--warning > i {
+
+    background: #fffbeb;
+
+    color: var(--rep-amarillo-dark);
+
+}
+
+
+/* Notificación informativa */
+
+.rep-toast--info {
+
+    border-left:
+        4px solid var(--rep-azul);
+
+}
+
+.rep-toast--info > i {
+
+    background: #eff6ff;
+
+    color: var(--rep-azul);
+
+}
+
+/* ==========================================================================
+   19. VENTANAS MODALES DE DETALLE
+   ========================================================================== */
+
+/* Contenedor principal del modal */
+
+.rep-modal {
+
+    width: 100%;
+
+    max-width: 90vw;
+
+    min-width: 0;
+
+    border: none;
+
+    border-radius: 24px;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 24px 64px rgba(15, 23, 42, .20);
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+
+}
+
+
+/* Configuración interna */
+
+.rep-modal,
+.rep-modal * {
+    box-sizing: border-box;
+}
+
+
+/* Evitar desbordamiento de contenido */
+
+.rep-modal img,
+.rep-modal svg {
+
+    max-width: 100%;
+
+    height: auto;
+
+}
+
+
+/* ==========================================================================
+   20. ENCABEZADO DEL MODAL
+   ========================================================================== */
+
+.rep-modal .modal-header {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 24px 28px;
+
+    border-bottom:
+        1px solid var(--rep-borde-suave);
+
+    background: #ffffff;
+
+}
+
+
+/* Título del modal */
+
+.rep-modal .modal-title {
+
+    flex: 1;
+
+    min-width: 0;
+
+    margin: 0;
+
+    color: var(--rep-slate);
+
+    font-family: 'Averia Libre', sans-serif;
+
+    font-size: 22px;
+
+    font-weight: 800;
+
+    line-height: 1.3;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* Botón de cierre */
+
+.rep-modal .modal-header .btn-close {
+
+    flex-shrink: 0;
+
+    margin: 0;
+
+    opacity: .75;
+
+    transition:
+        opacity var(--rep-transicion),
+        transform var(--rep-transicion);
+
+}
+
+.rep-modal .modal-header .btn-close:hover {
+
+    opacity: 1;
+
+    transform: rotate(90deg);
+
+}
+
+
+/* ==========================================================================
+   21. CUERPO DEL MODAL
+   ========================================================================== */
+
+.rep-modal .modal-body {
+
+    width: 100%;
+
+    min-width: 0;
+
+    max-height: 70vh;
+
+    padding: 28px;
+
+    background: #fbfcfd;
+
+    overflow-x: auto;
+
+    overflow-y: auto;
+
+    overscroll-behavior: contain;
+
+    -webkit-overflow-scrolling: touch;
+
+}
+
+
+/* Textos dentro del modal */
+
+.rep-modal .modal-body p {
+
+    max-width: 100%;
+
+    line-height: 1.6;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* Información resaltada */
+
+.rep-modal .modal-body strong {
+
+    color: var(--rep-slate);
+
+    font-weight: 700;
+
+}
+
+
+/* Tablas dentro del modal */
+
+.rep-modal .modal-body table {
+
+    max-width: 100%;
+
+}
+
+
+/* Contenedor de tablas */
+
+.rep-modal .modal-body .table-responsive {
+
+    width: 100%;
+
+    max-width: 100%;
+
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+
+}
+
+
+/* ==========================================================================
+   22. PIE DEL MODAL
+   ========================================================================== */
+
+.rep-modal .modal-footer {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    padding: 18px 24px;
+
+    border-top:
+        1px solid var(--rep-borde-suave);
+
+    background: #ffffff;
+
+}
+
+
+/* Botones del pie */
+
+.rep-modal .modal-footer .btn-rep-primary,
+.rep-modal .modal-footer .btn-rep-secondary {
+
+    min-height: 44px;
+
+    padding: 10px 18px;
+
+    font-size: 14px;
+
+}
+
+
+/* ==========================================================================
+   23. CONTENEDOR DE INDICADORES KPI
+   ========================================================================== */
+
+/*
+   El módulo utiliza cinco tarjetas KPI.
+
+   En escritorio se distribuyen en cinco columnas.
+   En pantallas menores se adaptarán mediante
+   las reglas responsive de la Parte 4.
+*/
+
+.rep-kpi-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+
+    gap: 12px;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin-bottom: 35px;
+
+}
+
+
+/* ==========================================================================
+   24. TARJETAS KPI
+   ========================================================================== */
+
+.rep-kpi {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 8px;
+
+    width: 100%;
+
+    min-width: 0;
+
+    min-height: 130px;
+
+    padding: 16px;
+
+    border: 1px solid rgba(226, 232, 240, .8);
+
+    border-radius: 20px;
+
+    background: #ffffff;
+
+    box-shadow: var(--rep-sombra-card);
+
+    overflow: hidden;
+
+    transition:
+        transform var(--rep-transicion),
+        box-shadow var(--rep-transicion),
+        border-color var(--rep-transicion);
+
+    box-sizing: border-box;
+
+}
+
+
+/* Interacción con el cursor */
+
+.rep-kpi:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow: var(--rep-sombra-hover);
+
+    border-color: #cbd5e1;
+
+}
+
+
+/* ==========================================================================
+   25. INFORMACIÓN DE LOS INDICADORES
+   ========================================================================== */
+
+/* Contenedor de textos */
+
+.rep-kpi-info {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    justify-content: center;
+
+    flex: 1 1 auto;
+
+    min-width: 0;
+
+}
+
+
+/* Etiqueta superior */
+
+.rep-kpi-label {
+
+    display: block;
+
+    max-width: 100%;
+
+    margin-bottom: 8px;
+
+    color: var(--rep-slate-soft);
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    line-height: 1.4;
+
+    letter-spacing: .3px;
+
+    text-transform: uppercase;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* Valor numérico */
+
+.rep-kpi-value {
+
+    display: block;
+
+    max-width: 100%;
+
+    margin-bottom: 6px;
+
+    color: var(--rep-slate);
+
+    font-size: 26px;
+
+    font-weight: 800;
+
+    line-height: 1.2;
+
+    letter-spacing: -.5px;
+
+    overflow-wrap: anywhere;
+
+    font-variant-numeric: tabular-nums;
+
+}
+
+
+/* Texto secundario */
+
+.rep-kpi-sub {
+
+    display: block;
+
+    max-width: 100%;
+
+    color: var(--rep-muted);
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    line-height: 1.4;
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* ==========================================================================
+   26. ICONOS DE INDICADORES KPI
+   ========================================================================== */
+
+.rep-kpi-icon {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 44px;
+
+    height: 44px;
+
+    flex: 0 0 44px;
+
+    margin-left: 10px;
+
+    border-radius: 12px;
+
+    font-size: 20px;
+
+    transition:
+        transform var(--rep-transicion);
+
+}
+
+
+/* Animación del icono */
+
+.rep-kpi:hover .rep-kpi-icon {
+
+    transform: scale(1.1) rotate(5deg);
+
+}
+
+
+/* ==========================================================================
+   27. COLORES INSTITUCIONALES DE LAS TARJETAS KPI
+   ========================================================================== */
+
+/* KPI azul */
+
+.rep-kpi--blue .rep-kpi-icon {
+
+    background: #eff6ff;
+
+    color: var(--rep-azul);
+
+}
+
+
+/* KPI verde */
+
+.rep-kpi--green .rep-kpi-icon {
+
+    background: #ecfdf5;
+
+    color: var(--rep-verde-dark);
+
+}
+
+
+/* KPI amarillo */
+
+.rep-kpi--amber .rep-kpi-icon {
+
+    background: #fffbeb;
+
+    color: var(--rep-amarillo-dark);
+
+}
+
+
+/* KPI violeta */
+
+.rep-kpi--violet .rep-kpi-icon {
+
+    background: #f5f3ff;
+
+    color: var(--rep-violeta-dark);
+
+}
+
+
+/* KPI rojo */
+
+.rep-kpi--red .rep-kpi-icon {
+
+    background: #fef2f2;
+
+    color: var(--rep-rojo-dark);
+
+}
+
+
+/* ==========================================================================
+   28. ESTADOS INTERACTIVOS Y ACCESIBILIDAD
+   ========================================================================== */
+
+/*
+   Los indicadores conservan su comportamiento
+   visual original. Cuando una tarjeta sea
+   interactiva, se podrá identificar mediante
+   elementos semánticos o atributos de control.
+*/
+
+/* Tarjetas interactivas */
+
+.rep-kpi:is(
+    button,
+    a,
+    [role="button"]
+) {
+
+    cursor: pointer;
+
+    text-decoration: none;
+
+}
+
+
+/* Enfoque mediante teclado */
+
+.rep-kpi:is(
+    button,
+    a,
+    [role="button"]
+):focus-visible {
+
+    outline: 3px solid rgba(34, 197, 94, .35);
+
+    outline-offset: 3px;
+
+}
+
+
+/* Estado activo */
+
+.rep-kpi:is(
+    button,
+    a,
+    [role="button"]
+):active {
+
+    transform: translateY(0);
+
+}
+
+
+/* Indicadores deshabilitados */
+
+.rep-kpi[aria-disabled="true"] {
+
+    opacity: .65;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+}
+
+
+/* Evitar efectos de hover en elementos deshabilitados */
+
+.rep-kpi[aria-disabled="true"]:hover {
+
+    transform: none;
+
+    box-shadow: var(--rep-sombra-card);
+
+    border-color: rgba(226, 232, 240, .8);
+
+}
+
+.rep-kpi[aria-disabled="true"]:hover .rep-kpi-icon {
+
+    transform: none;
+
+}
+
+/* ==========================================================================
+   29. AJUSTES GENERALES DE ADAPTABILIDAD
+   ========================================================================== */
+
+/* Evitar desbordamientos de los contenedores */
+
+.rep-container,
+.rep-header,
+.rep-header-info,
+.rep-header-actions,
+.rep-panel,
+.rep-kpi-grid,
+.rep-kpi,
+.rep-kpi-info,
+.rep-filtros,
+.rep-filtros-grid,
+.rep-tabla-wrapper,
+.rep-tabla-scroll,
+.rep-footer {
     min-width: 0;
 }
 
-.rep-celda-principal strong {
-    color: var(--rep-slate);
-    font-weight: 700;
-    font-size: 14px;
+/* Elementos principales */
+
+.rep-container,
+.rep-panel,
+.rep-filtros,
+.rep-tabla-wrapper,
+.rep-tabla-scroll {
+    max-width: 100%;
 }
 
-.rep-celda-principal small {
-    color: var(--rep-muted);
-    font-size: 12px;
-    font-weight: 500;
+/* Tablas desplazables */
+
+.rep-tabla-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
 }
 
-.rep-truncate {
-    display: inline-block;
-    max-width: 240px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    vertical-align: middle;
+/* Formularios */
+
+.rep-filtros input,
+.rep-filtros select,
+.rep-filtros textarea {
+    max-width: 100%;
+    min-width: 0;
 }
 
-/* ============================================================
-   BADGES
-   ============================================================ */
-.rep-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 12px;
-    font-weight: 700;
-    white-space: nowrap;
-    border: 1px solid transparent;
+/* Textos largos */
+
+.rep-kpi-label,
+.rep-kpi-value,
+.rep-kpi-sub,
+.rep-header h1,
+.rep-header p {
+    overflow-wrap: anywhere;
 }
 
-.rep-badge--warning   { background: #fffbeb; color: #b45309; border-color: #fde68a; }
-.rep-badge--success   { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
-.rep-badge--danger    { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
-.rep-badge--secondary { background: #f8fafc; color: #475569; border-color: #e2e8f0; }
-.rep-badge--primary   { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
-.rep-badge--info      { background: #ecfeff; color: #0e7490; border-color: #a5f3fc; }
+/* Evitar que los botones se desborden */
 
-/* ============================================================
-   SKELETON
-   ============================================================ */
-.rep-skeleton { padding: 24px; }
-.rep-skeleton-row {
-    height: 48px;
-    margin-bottom: 12px;
-    border-radius: 12px;
-    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 37%, #f1f5f9 63%);
-    background-size: 400% 100%;
-    animation: repShimmer 1.4s ease-in-out infinite;
-}
-.rep-skeleton-row:last-child { margin-bottom: 0; }
-@keyframes repShimmer {
-    0% { background-position: 100% 50%; }
-    100% { background-position: 0 50%; }
+.rep-header-actions .btn-rep-primary,
+.rep-header-actions .btn-rep-secondary,
+.rep-footer .btn-rep-secondary {
+    max-width: 100%;
 }
 
-/* ============================================================
-   ESTADO VACÍO
-   ============================================================ */
-.rep-empty {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100%;
-    min-height: 300px;
-    padding: 60px 25px;
-    text-align: center;
-    background: #ffffff;
-    box-sizing: border-box;
-}
+/* Modales */
 
-.rep-empty-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 72px;
-    height: 72px;
-    margin: 0 auto 18px auto !important;
-    border-radius: 20px;
-    background: #f1f5f9;
-    color: var(--rep-muted);
-    font-size: 28px;
-}
-
-.rep-empty h3 {
-    margin: 0 0 8px;
-    color: var(--rep-slate);
-    font-size: 18px;
-    font-weight: 700;
-    text-align: center !important;
-}
-
-.rep-empty p {
-    max-width: 400px;
-    margin: 0;
-    color: var(--rep-muted);
-    font-size: 14px;
-    line-height: 1.5;
-    text-align: center !important;
-}
-
-.rep-error-cell {
-    padding: 30px !important;
-    color: var(--rep-rojo);
-    text-align: center;
-    font-weight: 600;
-    background: #fef2f2 !important;
-}
-.rep-error-cell i { margin-right: 8px; }
-
-/* ============================================================
-   FOOTER DEL PANEL
-   ============================================================ */
-.rep-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    padding: 18px 24px;
-    border-top: 1px solid var(--rep-borde-suave);
-    background: #ffffff;
-    flex-wrap: wrap;
-    box-sizing: border-box;
-}
-
-.rep-contador {
-    color: var(--rep-slate-soft);
-    font-size: 14px;
-    font-weight: 600;
-}
-
-/* ============================================================
-   TOASTS
-   ============================================================ */
-.rep-toasts {
-    position: fixed;
-    top: 100px;
-    right: 25px;
-    z-index: 10800;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    pointer-events: none;
-    max-width: 400px;
-    width: calc(100% - 30px);
-    box-sizing: border-box;
-}
-
-.rep-toast {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 16px;
-    background: #ffffff;
-    border: 1px solid var(--rep-borde-suave);
-    border-radius: 16px;
-    box-shadow: 0 12px 30px rgba(15, 23, 42, .12);
-    opacity: 0;
-    transform: translateX(100%);
-    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    pointer-events: auto;
-    box-sizing: border-box;
-}
-
-.rep-toast.mostrar {
-    opacity: 1;
-    transform: translateX(0);
-}
-
-.rep-toast > i {
-    width: 40px;
-    height: 40px;
-    flex: 0 0 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    font-size: 18px;
-}
-
-.rep-toast > span {
-    flex: 1;
-    color: var(--rep-slate);
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1.4;
-    word-break: break-word;
-}
-
-.rep-toast-close {
-    width: 30px;
-    height: 30px;
-    border: none;
-    background: transparent;
-    color: var(--rep-muted);
-    font-size: 20px;
-    line-height: 1;
-    cursor: pointer;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all var(--rep-transicion);
-}
-
-.rep-toast-close:hover {
-    background: #f1f5f9;
-    color: var(--rep-slate);
-}
-
-.rep-toast--success { border-left: 4px solid var(--rep-verde-dark); }
-.rep-toast--success > i { background: #ecfdf5; color: var(--rep-verde-dark); }
-
-.rep-toast--error   { border-left: 4px solid var(--rep-rojo-dark); }
-.rep-toast--error   > i { background: #fef2f2; color: var(--rep-rojo-dark); }
-
-.rep-toast--warning { border-left: 4px solid var(--rep-amarillo-dark); }
-.rep-toast--warning > i { background: #fffbeb; color: var(--rep-amarillo-dark); }
-
-.rep-toast--info    { border-left: 4px solid var(--rep-azul); }
-.rep-toast--info    > i { background: #eff6ff; color: var(--rep-azul); }
-
-/* ============================================================
-   MODAL DE DETALLE
-   ============================================================ */
 .rep-modal {
-    border: none;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 24px 64px rgba(15, 23, 42, .2);
-    max-width: 90vw;
-    box-sizing: border-box;
-}
-
-.rep-modal .modal-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 20px;
-    padding: 24px 28px;
-    background: #ffffff;
-    border-bottom: 1px solid var(--rep-borde-suave);
-}
-
-.rep-modal .modal-title {
-    margin: 0;
-    color: var(--rep-slate);
-    font-size: 22px;
-    font-weight: 800;
-    word-break: break-word;
+    max-width: 100%;
 }
 
 .rep-modal .modal-body {
-    padding: 28px;
-    background: #fbfcfd;
-    overflow-y: auto;
-    max-height: 70vh;
-}
-
-.rep-modal .modal-footer {
-    padding: 18px 24px;
-    background: #ffffff;
-    border-top: 1px solid var(--rep-borde-suave);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-/* ============================================================
-   KPIs (TARJETAS) · ESCRITORIO (PC) vs MÓVIL (CELULAR)
-   ============================================================ */
-.rep-kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 12px;
-    margin-bottom: 35px;
-}
-
-.rep-kpi {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 130px;
-    padding: 16px;
-    overflow: hidden;
-    border: 1px solid rgba(226, 232, 240, .8);
-    border-radius: 20px;
-    background: #ffffff;
-    box-shadow: var(--rep-sombra-card);
-    transition: all var(--rep-transicion);
-    box-sizing: border-box;
-}
-
-.rep-kpi:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--rep-sombra-hover);
-    border-color: #cbd5e1;
-}
-
-.rep-kpi-info {
-    display: flex;
-    flex-direction: column;
     min-width: 0;
-    flex: 1;
 }
 
-.rep-kpi-label {
-    margin-bottom: 8px;
-    color: var(--rep-slate-soft);
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
+/* ==========================================================================
+   30. PANTALLAS GRANDES
+   Hasta 1600px
+   ========================================================================== */
+
+@media (max-width: 1600px) {
+
+    .rep-container {
+        padding-left: 32px;
+        padding-right: 32px;
+    }
+
+    .rep-header {
+        gap: 24px;
+    }
+
+    .rep-kpi-grid {
+        gap: 12px;
+    }
+
+    .rep-kpi {
+        min-height: 125px;
+        padding: 15px;
+    }
+
+    .rep-kpi-value {
+        font-size: 25px;
+    }
+
+    .rep-filtros-grid {
+        gap: 14px;
+    }
+
+    .rep-table thead th,
+    .rep-table tbody td {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
 }
 
-.rep-kpi-value {
-    margin-bottom: 6px;
-    color: var(--rep-slate);
-    font-size: 26px;
-    line-height: 1;
-    font-weight: 800;
+
+/* ==========================================================================
+   31. PORTÁTILES
+   Hasta 1400px
+   ========================================================================== */
+
+@media (max-width: 1400px) {
+
+    .rep-container {
+        padding: 32px 26px 48px;
+    }
+
+    /* Encabezado */
+
+    .rep-header {
+        gap: 20px;
+        margin-bottom: 28px;
+    }
+
+    .rep-header h1 {
+        font-size: 33px;
+    }
+
+    .rep-header p {
+        font-size: 15px;
+    }
+
+    /* KPI */
+
+    .rep-kpi-grid {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 14px;
+        margin-bottom: 28px;
+    }
+
+    .rep-kpi {
+        min-height: 125px;
+        padding: 18px;
+    }
+
+    .rep-kpi-value {
+        font-size: 27px;
+    }
+
+    .rep-kpi-label {
+        font-size: 12px;
+    }
+
+    /* Filtros */
+
+    .rep-filtros {
+        padding: 22px;
+    }
+
+    .rep-filtros-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 14px;
+    }
+
+    .rep-filtro--busqueda {
+        grid-column: 1 / -1;
+    }
+
+    .rep-filtro--limpiar {
+        grid-column: 1 / -1;
+        min-width: 0;
+    }
+
+    .rep-filtro--limpiar .btn-rep-secondary {
+        width: 100%;
+    }
+
+    /* Tablas */
+
+    .rep-table thead th,
+    .rep-table tbody td {
+        padding: 15px 18px;
+    }
+
 }
 
-.rep-kpi-sub {
-    color: var(--rep-muted);
-    font-size: 11px;
-    font-weight: 500;
-}
 
-.rep-kpi-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    flex: 0 0 44px;
-    border-radius: 12px;
-    font-size: 20px;
-    transition: transform var(--rep-transicion);
-    margin-left: 10px;
-}
+/* ==========================================================================
+   32. TABLETS HORIZONTALES Y PORTÁTILES PEQUEÑOS
+   Hasta 1200px
+   ========================================================================== */
 
-.rep-kpi:hover .rep-kpi-icon {
-    transform: scale(1.1) rotate(5deg);
-}
-
-/* Colores KPI */
-.rep-kpi--blue   .rep-kpi-icon { background: #eff6ff; color: var(--rep-azul); }
-.rep-kpi--green  .rep-kpi-icon { background: #ecfdf5; color: var(--rep-verde-dark); }
-.rep-kpi--amber  .rep-kpi-icon { background: #fffbeb; color: var(--rep-amarillo-dark); }
-.rep-kpi--violet .rep-kpi-icon { background: #f5f3ff; color: var(--rep-violeta-dark); }
-.rep-kpi--red    .rep-kpi-icon { background: #fef2f2; color: var(--rep-rojo-dark); }
-
-/* ============================================================
-   RESPONSIVE MEDIA QUERIES
-   ============================================================ */
 @media (max-width: 1200px) {
-    .rep-kpi-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .rep-filtros-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .rep-filtro--busqueda { grid-column: 1 / -1; }
-    .rep-filtro--limpiar { grid-column: 1 / -1; }
-    .rep-filtro--limpiar .btn-rep-secondary { width: 100%; }
+
+    .rep-container {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+
+    .rep-header h1 {
+        font-size: 31px;
+    }
+
+    /* Indicadores */
+
+    .rep-kpi-grid {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+    .rep-kpi {
+        min-height: 120px;
+    }
+
+    .rep-kpi-value {
+        font-size: 26px;
+    }
+
+    /* Pestañas de escritorio */
 
     .rep-tabs {
         display: none !important;
     }
+
+    /* Selector de pestañas móvil */
+
     .rep-tabs-mobile {
         display: flex !important;
     }
+
+    /* Filtros */
+
+    .rep-filtros-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .rep-filtro--busqueda {
+        grid-column: 1 / -1;
+    }
+
+    .rep-filtro--limpiar {
+        grid-column: 1 / -1;
+    }
+
+    .rep-filtro--limpiar .btn-rep-secondary {
+        width: 100%;
+    }
+
+    /* Tablas */
+
+    .rep-table {
+        min-width: 650px;
+    }
+
+    /* Modal */
+
+    .rep-modal .modal-body {
+        max-height: 65vh;
+    }
+
 }
+
+
+/* ==========================================================================
+   33. TABLETS Y PANTALLAS MEDIANAS
+   Hasta 992px
+   ========================================================================== */
 
 @media (max-width: 992px) {
-    .rep-container { margin-left: 0; width: 100%; padding: 30px 22px 45px; }
-    .rep-container::before { left: 0; }
-    .rep-header { align-items: flex-start; flex-direction: column; }
-    .rep-header-actions { width: 100%; }
-    .rep-header-actions .btn-rep-primary, .rep-header-actions .btn-rep-secondary { flex: 1; justify-content: center; }
-    .rep-header h1 { font-size: 30px; }
+
+    /*
+       Se libera el espacio reservado al sidebar.
+
+       El menú lateral debe utilizar también
+       su diseño responsive para este tamaño.
+    */
+
+    .rep-container {
+        margin-left: 0;
+        width: 100%;
+        max-width: 100%;
+        padding: 30px 22px 45px;
+    }
+
+    .rep-container::before {
+        left: 0;
+    }
+
+    /* Encabezado */
+
+    .rep-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 20px;
+        margin-bottom: 26px;
+    }
+
+    .rep-header-info {
+        width: 100%;
+        flex: 1 1 auto;
+    }
+
+    .rep-header h1 {
+        font-size: 30px;
+    }
+
+    .rep-header p {
+        font-size: 15px;
+    }
+
+    /* Botones */
+
+    .rep-header-actions {
+        width: 100%;
+        gap: 12px;
+    }
+
+    .rep-header-actions .btn-rep-primary,
+    .rep-header-actions .btn-rep-secondary {
+        flex: 1 1 180px;
+        justify-content: center;
+    }
+
+    /* KPI */
+
+    .rep-kpi-grid {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+    .rep-kpi {
+        min-height: 115px;
+    }
+
+    /* Panel */
+
+    .rep-panel {
+        border-radius: 20px;
+    }
+
+    /* Filtros */
+
+    .rep-filtros {
+        padding: 20px;
+    }
+
+    .rep-filtros-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    /* Modal */
+
+    .rep-modal {
+        max-width: 100%;
+    }
+
+    .rep-modal .modal-header {
+        padding: 22px;
+    }
+
+    .rep-modal .modal-body {
+        padding: 22px;
+    }
+
+    .rep-modal .modal-footer {
+        padding: 18px 22px;
+    }
+
 }
 
+
+/* ==========================================================================
+   34. TABLETS VERTICALES
+   Hasta 768px
+   ========================================================================== */
+
 @media (max-width: 768px) {
-    .rep-container { padding: 25px 16px 40px; }
-    .rep-footer { flex-direction: column; align-items: stretch; gap: 12px; }
-    .rep-footer .btn-rep-secondary { width: 100%; }
-    .rep-toasts { left: 15px; right: 15px; top: 85px; width: auto; max-width: none; }
-    .rep-toast { width: 100%; }
-    .rep-modal { max-width: 95vw; margin: 0 auto; }
+
+    /* Contenedor principal */
+
+    .rep-container {
+        margin-left: 0;
+        width: 100%;
+        padding: 25px 16px 40px;
+    }
+
+    /* Encabezado */
+
+    .rep-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .rep-overline {
+        font-size: 11px;
+        letter-spacing: 1.5px;
+    }
+
+    .rep-header h1 {
+        font-size: 28px;
+        line-height: 1.2;
+    }
+
+    .rep-header p {
+        font-size: 14px;
+    }
+
+    .rep-header-actions {
+        width: 100%;
+    }
+
+    /* Botones */
+
+    .rep-header-actions .btn-rep-primary,
+    .rep-header-actions .btn-rep-secondary {
+        flex: 1 1 100%;
+        width: 100%;
+        min-height: 46px;
+    }
 
     /* ==========================================================
-       VISTA EXCLUSIVA PARA CELULARES (< 768px):
-       Oculta etiquetas y textos secundarios, dejando solo números y símbolos
+       KPI COMPACTOS EN UNA FILA
        ========================================================== */
+
     .rep-kpi-grid {
-        grid-template-columns: repeat(5, 1fr); /* Mantiene las 5 tarjetas en fila horizontal compacta */
+        grid-template-columns:
+            repeat(5, minmax(0, 1fr));
+
         gap: 6px;
         margin-bottom: 25px;
     }
 
     .rep-kpi {
-        min-height: 70px;
-        padding: 8px 4px;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        text-align: center;
+
+        gap: 5px;
+
+        min-width: 0;
+        min-height: 80px;
+
+        padding: 8px 4px;
+
         border-radius: 12px;
+
+        text-align: center;
     }
 
-    /* Ocultar etiquetas de texto y subtítulos en móvil */
+    /* Ocultar etiquetas y subtítulos */
+
     .rep-kpi-label,
     .rep-kpi-sub {
         display: none !important;
     }
 
-    /* Reducir y centrar el valor numérico */
-    .rep-kpi-value {
-        font-size: 16px;
-        margin-bottom: 4px;
-        order: 2;
+    /* Información */
+
+    .rep-kpi-info {
+        display: contents;
     }
 
-    /* Centrar el icono y colocarlo arriba del número */
+    /* Valores numéricos */
+
+    .rep-kpi-value {
+        order: 2;
+
+        width: 100%;
+
+        margin: 0;
+
+        font-size: 16px;
+        font-weight: 800;
+
+        line-height: 1.2;
+
+        text-align: center;
+
+        overflow-wrap: anywhere;
+    }
+
+    /* Iconos */
+
     .rep-kpi-icon {
         position: static !important;
+
+        order: 1;
+
         width: 30px;
         height: 30px;
-        font-size: 14px;
-        margin: 0 0 4px 0 !important;
-        order: 1;
+
+        flex: 0 0 30px;
+
+        margin: 0 !important;
+
         border-radius: 8px;
+
+        font-size: 14px;
     }
+
+    /* Panel */
+
+    .rep-panel {
+        border-radius: 18px;
+    }
+
+    /* Selector de pestañas */
+
+    .rep-tabs {
+        display: none !important;
+    }
+
+    .rep-tabs-mobile {
+        display: flex !important;
+        padding: 14px 16px;
+    }
+
+    .rep-tabs-mobile select {
+        width: 100%;
+        min-height: 46px;
+    }
+
+    /* Filtros */
+
+    .rep-filtros {
+        padding: 18px;
+    }
+
+    .rep-filtros-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
+    }
+
+    .rep-filtro--busqueda,
+    .rep-filtro--limpiar {
+        grid-column: 1 / -1;
+    }
+
+    .rep-filtros .form-control {
+        min-height: 46px;
+    }
+
+    /* Fechas */
+
+    .rep-filtros-fecha {
+        gap: 12px;
+        margin-top: 16px;
+        padding-top: 16px;
+    }
+
+    .rep-fecha-campo {
+        min-width: 0;
+        flex: 1 1 200px;
+    }
+
+    .rep-fecha-campo--rango > div {
+        min-width: 0;
+        flex: 1 1 200px;
+    }
+
+    /* Tablas */
+
+    .rep-tabla-scroll {
+        overflow-x: auto;
+    }
+
+    .rep-table {
+        min-width: 650px;
+    }
+
+    .rep-table thead th,
+    .rep-table tbody td {
+        padding: 14px 15px;
+        font-size: 13px;
+    }
+
+    /* Estado vacío */
+
+    .rep-empty {
+        min-height: 260px;
+        padding: 40px 20px;
+    }
+
+    .rep-empty-icon {
+        width: 64px;
+        height: 64px;
+        font-size: 25px;
+    }
+
+    /* Footer */
+
+    .rep-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 16px 18px;
+    }
+
+    .rep-contador {
+        text-align: center;
+        font-size: 13px;
+    }
+
+    .rep-footer .btn-rep-secondary {
+        width: 100%;
+    }
+
+    /* Notificaciones */
+
+    .rep-toasts {
+        top: 85px;
+        left: 15px;
+        right: 15px;
+        width: auto;
+        max-width: none;
+    }
+
+    .rep-toast {
+        width: 100%;
+    }
+
+    /* Modales */
+
+    .rep-modal {
+        max-width: 95vw;
+        margin: 0 auto;
+        border-radius: 18px;
+    }
+
+    .rep-modal .modal-header {
+        padding: 20px;
+    }
+
+    .rep-modal .modal-title {
+        font-size: 20px;
+    }
+
+    .rep-modal .modal-body {
+        padding: 20px;
+        max-height: 65vh;
+    }
+
+    .rep-modal .modal-footer {
+        padding: 16px 20px;
+    }
+
 }
 
+
+/* ==========================================================================
+   35. CELULARES GRANDES
+   Hasta 600px
+   ========================================================================== */
+
+@media (max-width: 600px) {
+
+    /* Contenedor */
+
+    .rep-container {
+        padding: 22px 14px 35px;
+    }
+
+    /* Encabezado */
+
+    .rep-header h1 {
+        font-size: 27px;
+    }
+
+    .rep-header p {
+        font-size: 14px;
+    }
+
+    /* KPI */
+
+    .rep-kpi-grid {
+        grid-template-columns:
+            repeat(5, minmax(0, 1fr));
+
+        gap: 6px;
+    }
+
+    .rep-kpi {
+        min-height: 75px;
+        padding: 7px 3px;
+    }
+
+    .rep-kpi-value {
+        font-size: 15px;
+    }
+
+    .rep-kpi-icon {
+        width: 28px;
+        height: 28px;
+        flex-basis: 28px;
+        font-size: 13px;
+    }
+
+    /* Panel */
+
+    .rep-panel {
+        border-radius: 16px;
+    }
+
+    /* Filtros */
+
+    .rep-filtros {
+        padding: 16px;
+    }
+
+    .rep-filtros-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .rep-filtro--busqueda,
+    .rep-filtro--limpiar {
+        grid-column: auto;
+    }
+
+    .rep-filtro--limpiar {
+        width: 100%;
+    }
+
+    .rep-filtro--limpiar .btn-rep-secondary {
+        width: 100%;
+    }
+
+    /* Evitar zoom automático en iOS */
+
+    .rep-filtros .form-control,
+    .rep-tabs-mobile select {
+        font-size: 16px;
+    }
+
+    /* Fechas */
+
+    .rep-fecha-campo,
+    .rep-fecha-campo--rango > div {
+        flex-basis: 100%;
+        width: 100%;
+    }
+
+    /* Tablas */
+
+    .rep-table {
+        min-width: 620px;
+    }
+
+    /* Footer */
+
+    .rep-footer {
+        padding: 15px;
+    }
+
+    /* Modales */
+
+    .rep-modal .modal-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .rep-modal .modal-footer .btn-rep-primary,
+    .rep-modal .modal-footer .btn-rep-secondary {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    /* Notificaciones */
+
+    .rep-toasts {
+        top: 75px;
+        left: 12px;
+        right: 12px;
+    }
+
+    .rep-toast {
+        padding: 14px;
+        gap: 12px;
+    }
+
+    .rep-toast > i {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
+        font-size: 16px;
+    }
+
+    .rep-toast > span {
+        font-size: 13px;
+    }
+
+}
+
+
+/* ==========================================================================
+   36. CELULARES PEQUEÑOS
+   Hasta 480px
+   ========================================================================== */
+
 @media (max-width: 480px) {
-    .rep-container { padding: 20px 10px 35px; }
-    .rep-header h1 { font-size: 26px; }
-    .rep-header p { font-size: 14px; }
-    .rep-panel { border-radius: 16px; }
-    .rep-table thead th, .rep-table tbody td { padding: 14px 16px; font-size: 13px; }
+
+    /* Contenedor */
+
+    .rep-container {
+        padding: 20px 10px 35px;
+    }
+
+    /* Encabezado */
+
+    .rep-header {
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .rep-overline {
+        font-size: 10px;
+        letter-spacing: 1px;
+    }
+
+    .rep-header h1 {
+        font-size: 26px;
+    }
+
+    .rep-header p {
+        font-size: 14px;
+    }
+
+    /* Botones */
+
+    .btn-rep-primary,
+    .btn-rep-secondary {
+        min-height: 44px;
+        padding: 11px 14px;
+        font-size: 13px;
+    }
+
+    /* KPI */
+
+    .rep-kpi-grid {
+        grid-template-columns:
+            repeat(5, minmax(0, 1fr));
+
+        gap: 5px;
+        margin-bottom: 20px;
+    }
+
+    .rep-kpi {
+        min-height: 70px;
+        padding: 7px 2px;
+        border-radius: 10px;
+        gap: 4px;
+    }
+
+    .rep-kpi-icon {
+        width: 27px;
+        height: 27px;
+        flex-basis: 27px;
+        border-radius: 7px;
+        font-size: 13px;
+    }
+
+    .rep-kpi-value {
+        font-size: 14px;
+        line-height: 1.2;
+    }
+
+    /* Panel */
+
+    .rep-panel {
+        border-radius: 16px;
+    }
+
+    /* Selector móvil */
+
+    .rep-tabs-mobile {
+        padding: 12px;
+    }
+
+    /* Filtros */
+
+    .rep-filtros {
+        padding: 14px;
+    }
+
+    .rep-filtros-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .rep-filtros .form-control {
+        height: 44px;
+    }
+
+    /* Tablas */
+
+    .rep-table {
+        min-width: 600px;
+    }
+
+    .rep-table thead th,
+    .rep-table tbody td {
+        padding: 12px 14px;
+        font-size: 12px;
+    }
+
+    .rep-badge {
+        padding: 5px 9px;
+        font-size: 11px;
+    }
+
+    /* Estado vacío */
+
+    .rep-empty {
+        min-height: 230px;
+        padding: 30px 15px;
+    }
+
+    .rep-empty-icon {
+        width: 58px;
+        height: 58px;
+        font-size: 23px;
+    }
+
+    .rep-empty h3 {
+        font-size: 16px;
+    }
+
+    .rep-empty p {
+        font-size: 13px;
+    }
+
+    /* Modal */
+
+    .rep-modal {
+        max-width: 96vw;
+        border-radius: 14px;
+    }
+
+    .rep-modal .modal-header {
+        padding: 16px;
+        gap: 10px;
+    }
+
+    .rep-modal .modal-title {
+        font-size: 18px;
+    }
+
+    .rep-modal .modal-body {
+        padding: 16px;
+        max-height: 60vh;
+    }
+
+    .rep-modal .modal-footer {
+        padding: 14px 16px;
+    }
+
+    /* Notificaciones */
+
+    .rep-toasts {
+        top: 70px;
+        left: 10px;
+        right: 10px;
+    }
+
+    .rep-toast {
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    .rep-toast > span {
+        font-size: 12px;
+    }
+
+}
+
+
+/* ==========================================================================
+   37. PANTALLAS MUY PEQUEÑAS
+   Hasta 360px
+   ========================================================================== */
+
+@media (max-width: 360px) {
+
+    .rep-container {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .rep-header h1 {
+        font-size: 23px;
+    }
+
+    .rep-header p {
+        font-size: 13px;
+    }
+
+    /* KPI */
+
+    .rep-kpi-grid {
+        gap: 4px;
+    }
+
+    .rep-kpi {
+        min-height: 68px;
+        padding: 6px 2px;
+        border-radius: 9px;
+    }
+
+    .rep-kpi-icon {
+        width: 24px;
+        height: 24px;
+        flex-basis: 24px;
+        font-size: 12px;
+    }
+
+    .rep-kpi-value {
+        font-size: 12px;
+        letter-spacing: -.4px;
+    }
+
+    /* Filtros */
+
+    .rep-filtros {
+        padding: 12px;
+    }
+
+    /* Notificaciones */
+
+    .rep-toasts {
+        left: 8px;
+        right: 8px;
+    }
+
+}
+
+
+/* ==========================================================================
+   38. ACCESIBILIDAD Y MOVIMIENTO REDUCIDO
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .rep-container *,
+    .rep-container *::before,
+    .rep-container *::after,
+    .rep-modal *,
+    .rep-toast {
+
+        scroll-behavior: auto !important;
+
+        animation-duration: .01ms !important;
+
+        animation-iteration-count: 1 !important;
+
+        transition-duration: .01ms !important;
+
+    }
+
+}
+
+
+/* ==========================================================================
+   39. CONFIGURACIÓN FINAL PARA ESCRITORIO
+   ========================================================================== */
+
+/*
+   Mantener el espacio del menú lateral
+   únicamente en pantallas mayores a 992px.
+*/
+
+@media (min-width: 993px) {
+
+    .rep-container {
+        margin-left: var(--rep-sidebar-width);
+
+        width: calc(
+            100% - var(--rep-sidebar-width)
+        );
+    }
+
+    .rep-container::before {
+        left: var(--rep-sidebar-width);
+    }
+
+}
+
+
+/* ==========================================================================
+   40. AJUSTES FINALES DE SEGURIDAD VISUAL
+   ========================================================================== */
+
+/* Mantener los paneles dentro de su contenedor */
+
+.rep-panel,
+.rep-kpi-grid,
+.rep-tabla-wrapper,
+.rep-footer {
+    max-width: 100%;
+}
+
+/* Evitar desbordamientos en tarjetas */
+
+.rep-kpi {
+    min-width: 0;
+}
+
+.rep-kpi-info {
+    min-width: 0;
+}
+
+/* Scroll horizontal de tablas */
+
+.rep-tabla-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+/* Evitar que las notificaciones se salgan de pantalla */
+
+.rep-toast {
+    min-width: 0;
+}
+
+.rep-toast > span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* Ajustar elementos dentro de los modales */
+
+.rep-modal .modal-body {
+    max-width: 100%;
 }

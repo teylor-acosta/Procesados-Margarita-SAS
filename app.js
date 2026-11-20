@@ -291,7 +291,9 @@ app.use(
     require('./routes/sidebar.routes')
 );
 
+// 👇 CORREGIDO — PREFIJO PARA NOVEDADES
 app.use(
+    '/api/nomina/novedades',
     require('./routes/nomina-novedades.routes')
 );
 
