@@ -299,7 +299,12 @@ app.use(
     require('./routes/sidebar.routes')
 );
 
+// ============================================
+// 💰 MÓDULO DE NOVEDADES DE NÓMINA
+// ============================================
+
 app.use(
+    '/api/nomina/novedades',
     require('./routes/nomina-novedades.routes')
 );
 

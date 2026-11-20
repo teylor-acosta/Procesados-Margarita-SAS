@@ -17,6 +17,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let tramos = [];
     let siguienteId = 1;
 
+    // ==========================================
+// PRÉSTAMOS DEL COLABORADOR
+// ==========================================
+
+let prestamosEmpleado = [];
+let saldoTotalPrestamos = 0;
+let descuentoPrestamos = 0;
+let distribucionPrestamos = [];
+
     const formatoMoneda = valor =>
         new Intl.NumberFormat('es-CO', {
             style: 'currency',
@@ -555,6 +564,65 @@ await consultarValoresEmpleado();
 botonPreparar.disabled = false;
 
     }
+
+    // ==========================================
+// CONSULTAR PRÉSTAMOS ACTIVOS
+// ==========================================
+
+async function consultarPrestamosEmpleado(empleadoId) {
+
+    try {
+
+        const respuesta = await fetch(
+    `/nomina/prestamos/empleado/${empleadoId}/consolidado`,
+            {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }
+        );
+
+        const contenido = await respuesta.text();
+
+console.log('Estado de consulta de préstamos:', respuesta.status);
+console.log('Respuesta del servidor:', contenido);
+
+let data;
+
+try {
+    data = JSON.parse(contenido);
+} catch (error) {
+    throw new Error(
+        'El servidor no devolvió JSON. Revisa la ruta de préstamos. Respuesta: ' +
+        contenido.substring(0, 300)
+    );
+}
+
+        if (!respuesta.ok || !data.ok) {
+            throw new Error(
+                data.error || 'No fue posible consultar los préstamos.'
+            );
+        }
+
+        prestamosEmpleado = data.prestamos || [];
+
+        saldoTotalPrestamos = Number(data.saldo_total || 0);
+
+        console.log('Préstamos activos:', prestamosEmpleado);
+        console.log('Saldo total de préstamos:', saldoTotalPrestamos);
+
+        return data;
+
+    } catch (error) {
+
+        console.error('Error consultando préstamos:', error);
+
+        throw error;
+
+    }
+}
     // ==========================================
 // CONSULTAR VALORES AUTOMÁTICAMENTE
 // ==========================================
@@ -834,13 +902,28 @@ async function prepararLiquidacion() {
             }
         );
 
-        const data = await respuesta.json();
+        // Consultar todos los préstamos activos del colaborador.
+// Primero validar la respuesta de la liquidación.
+const data = await respuesta.json();
 
-        if (!respuesta.ok || !data.ok) {
-            throw new Error(data.mensaje || 'No fue posible preparar la liquidación.');
-        }
+if (!respuesta.ok || !data.ok) {
+    throw new Error(
+        data.mensaje || 'No fue posible preparar la liquidación.'
+    );
+}
 
-        mostrarPreliquidacion(data);
+// Consultar todos los préstamos activos del colaborador.
+await consultarPrestamosEmpleado(
+    empleadoSeleccionado.empleado_id
+);
+
+console.log(
+    'Saldo total pendiente de préstamos:',
+    formatoMoneda(saldoTotalPrestamos)
+);
+
+// Mostrar la preliquidación.
+mostrarPreliquidacion(data);
 
     } catch (error) {
 
@@ -873,6 +956,15 @@ function mostrarPreliquidacion(data) {
     }
 
     const moneda = valor => formatoMoneda(Number(valor || 0));
+
+const formatearFechaPrestamo = fecha => {
+    if (!fecha) return '-';
+
+    const fechaTexto = String(fecha).substring(0, 10);
+    const [anio, mes, dia] = fechaTexto.split('-');
+
+    return `${dia}/${mes}/${anio}`;
+};
 
     const calculo = data.calculo || {};
     const novedades = data.novedades?.detalle || [];
@@ -911,13 +1003,22 @@ function mostrarPreliquidacion(data) {
         calculo.total_devengados ?? calculo.total_devengado_base ?? 0
     );
 
-    const totalDeducciones = Number(
-        calculo.total_deducciones || 0
-    );
+    const totalDeduccionesBase = Number(
+    calculo.total_deducciones || 0
+);
 
-    const netoPagar = Number(
-        calculo.neto_pagar ?? (totalDevengados - totalDeducciones)
-    );
+let totalDeducciones = totalDeduccionesBase;
+
+const netoPagarBase = Number(
+    calculo.neto_pagar ??
+    (totalDevengados - totalDeduccionesBase)
+);
+
+let netoPagar = netoPagarBase;
+
+// Reiniciar la simulación para cada preliquidación.
+descuentoPrestamos = 0;
+distribucionPrestamos = [];
 
     // SEGURIDAD SOCIAL
 const seguridadSocial = calculo.seguridad_social || {};
@@ -1118,14 +1219,196 @@ document.getElementById('resumenFecha').textContent =
         </tr>
 
         <tr>
-            <th>Total deducciones</th>
-            <th class="text-end">
-                ${moneda(totalDeducciones)}
-            </th>
-        </tr>
+    <td>Descuento de préstamos</td>
+    <td class="text-end" id="valorDescuentoPrestamos">
+        ${moneda(0)}
+    </td>
+</tr>
+
+<tr>
+    <th>Total deducciones</th>
+    <th class="text-end" id="totalDeduccionesPreliquidacion">
+        ${moneda(totalDeducciones)}
+    </th>
+</tr>
     </tbody>
 </table>
+<hr>
+
+<h4>Préstamos activos del colaborador</h4>
+
+<div class="card p-3 mb-3">
+    <label for="descuentoPrestamosInput">
+        Descuento de préstamos para esta quincena
+    </label>
+
+    <input
+    type="text"
+    id="descuentoPrestamosInput"
+    class="form-control"
+    inputmode="numeric"
+    autocomplete="off"
+    min="0"
+    max="${saldoTotalPrestamos}"
+    placeholder="$ 0"
+    value=""
+>
+
+    <small class="text-muted">
+        El descuento no puede superar el saldo total pendiente.
+    </small>
+</div>
+
+${prestamosEmpleado.length > 0 ? `
+    <p>
+        <strong>Saldo total pendiente:</strong>
+        ${moneda(saldoTotalPrestamos)}
+    </p>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Fecha del préstamo</th>
+<th>Valor inicial</th>
+<th>Saldo pendiente</th>
+<th>Descuento quincenal</th>
+<th>Nuevo saldo</th>
+                </tr>
+            </thead>
+            <tbody id="tablaDistribucionPrestamos">
+    ${prestamosEmpleado.map(prestamo => `
+        <tr>
+            <td>${formatearFechaPrestamo(prestamo.fecha_prestamo)}</td>
+            <td>${moneda(
+                Number(prestamo.valor_prestamo || 0) +
+                Number(prestamo.valor_interes || 0)
+            )}</td>
+            <td>${moneda(prestamo.saldo_pendiente)}</td>
+            <td>$ 0</td>
+            <td>${moneda(prestamo.saldo_pendiente)}</td>
+        </tr>
+    `).join('')}
+</tbody>
+        </table>
+    </div>
+` : `
+    <p>No tiene préstamos activos con saldo pendiente.</p>
+`}
     `;
+
+    // =============================================
+// SIMULACIÓN DE DESCUENTOS DE PRÉSTAMOS
+// =============================================
+
+const inputDescuento = document.getElementById(
+    'descuentoPrestamosInput'
+);
+
+if (inputDescuento) {
+
+    inputDescuento.addEventListener('focus', () => {
+    inputDescuento.value =
+        inputDescuento.value.replace(/\D/g, '');
+});
+
+inputDescuento.addEventListener('blur', () => {
+    const digitos = inputDescuento.value.replace(/\D/g, '');
+    let valor = Number(digitos || 0);
+
+    valor = Math.min(valor, saldoTotalPrestamos);
+
+    inputDescuento.value = formatoMoneda(valor);
+});
+
+    inputDescuento.addEventListener('input', () => {
+
+        const digitos = inputDescuento.value.replace(/\D/g, '');
+
+let valor = Number(digitos || 0);
+
+        // No permitir descuentos negativos.
+        valor = Math.max(valor, 0);
+
+        // No superar el saldo total pendiente.
+        valor = Math.min(valor, saldoTotalPrestamos);
+
+        descuentoPrestamos = valor;
+
+        inputDescuento.value = digitos
+    ? String(valor)
+    : '';
+
+        let restante = valor;
+
+        distribucionPrestamos = prestamosEmpleado.map(prestamo => {
+
+            const saldo = Number(prestamo.saldo_pendiente || 0);
+
+            const aplicado = Math.min(restante, saldo);
+
+            restante -= aplicado;
+
+            return {
+                prestamo_id: prestamo.id,
+                saldo_anterior: saldo,
+                valor_aplicado: aplicado,
+                saldo_nuevo: saldo - aplicado
+            };
+        });
+
+        const tabla = document.getElementById(
+            'tablaDistribucionPrestamos'
+        );
+
+        if (tabla) {
+            tabla.innerHTML = distribucionPrestamos.map((item, index) => `
+                <tr>
+                    <td>${formatearFechaPrestamo(
+                        prestamosEmpleado[index].fecha_prestamo
+                    )}</td>
+                    <td>${moneda(
+                        Number(prestamosEmpleado[index].valor_prestamo || 0) +
+                        Number(prestamosEmpleado[index].valor_interes || 0)
+                    )}</td>
+                    <td>${moneda(item.saldo_anterior)}</td>
+                    <td>${moneda(item.valor_aplicado)}</td>
+                    <td>${moneda(item.saldo_nuevo)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Actualizar deducciones y neto.
+        totalDeducciones = totalDeduccionesBase + valor;
+        netoPagar = netoPagarBase - valor;
+
+        // Actualizar el desglose de deducciones.
+document.getElementById('valorDescuentoPrestamos').textContent =
+    moneda(valor);
+
+document.getElementById('totalDeduccionesPreliquidacion').textContent =
+    moneda(totalDeducciones);
+
+        document.getElementById('totalDeducciones').textContent =
+            moneda(totalDeducciones);
+
+        document.getElementById('totalNeto').textContent =
+            moneda(netoPagar);
+
+        document.getElementById('resumenDescuentos').textContent =
+            moneda(totalDeducciones);
+
+        document.getElementById('resumenNetoFinal').textContent =
+            moneda(netoPagar);
+
+        document.getElementById('resumenNeto').textContent =
+            moneda(netoPagar);
+
+        document.getElementById('resumenTotal').textContent =
+            moneda(netoPagar);
+
+    });
+}
 
     // Mostrar automáticamente el paso 2.
 mostrarPaso(2);

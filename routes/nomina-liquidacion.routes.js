@@ -47,69 +47,48 @@ router.get(
             const termino = `%${buscar}%`;
 
             const sql = `
-                SELECT
-                    e.id AS empleado_id,
-                    e.codigo,
-                    e.nombre,
-                    e.tipo_documento,
-                    e.numero_documento,
-                    e.telefono,
-                    e.email,
-                    c.id AS contrato_id,
-                    c.tipo_vinculacion,
-                    c.tipo_contrato,
-                    c.fecha_inicio,
-                    c.fecha_fin
-                FROM empleados e
-                INNER JOIN contratos c
-                    ON c.empleado_id = e.id
-                WHERE
-                    e.activo = 'SI'
-                    AND c.tipo_vinculacion IN (
-                        'Dependiente',
-                        'Aprendiz Sena'
-                    )
-                    AND c.fecha_inicio <= ?
-                    AND (
-                        c.fecha_fin IS NULL
-                        OR c.fecha_fin >= ?
-                    )
-                    AND (
-                        e.nombre LIKE ?
-                        OR e.numero_documento LIKE ?
-                        OR e.codigo LIKE ?
-                    )
-                    AND c.id = (
-                        SELECT c2.id
-                        FROM contratos c2
-                        WHERE c2.empleado_id = e.id
-                          AND c2.tipo_vinculacion IN (
-                              'Dependiente',
-                              'Aprendiz Sena'
-                          )
-                          AND c2.fecha_inicio <= ?
-                          AND (
-                              c2.fecha_fin IS NULL
-                              OR c2.fecha_fin >= ?
-                          )
-                        ORDER BY
-                            c2.fecha_inicio DESC,
-                            c2.id DESC
-                        LIMIT 1
-                    )
-                ORDER BY e.nombre ASC
-                LIMIT 20
-            `;
+    SELECT
+        e.id AS empleado_id,
+        e.codigo,
+        e.nombre,
+        e.tipo_documento,
+        e.numero_documento,
+        e.telefono,
+        e.email,
+        c.id AS contrato_id,
+        c.tipo_vinculacion,
+        c.tipo_contrato,
+        c.fecha_inicio,
+        c.fecha_fin
+    FROM empleados e
+    INNER JOIN contratos c
+        ON c.empleado_id = e.id
+       AND c.id = (
+            SELECT c2.id
+            FROM contratos c2
+            WHERE c2.empleado_id = e.id
+            ORDER BY
+                c2.fecha_inicio DESC,
+                c2.id DESC
+            LIMIT 1
+       )
+    WHERE
+        e.activo = 'SI'
+        AND c.tipo_vinculacion = 'Dependiente'
+        AND (
+            e.nombre LIKE ?
+            OR e.numero_documento LIKE ?
+            OR e.codigo LIKE ?
+        )
+    ORDER BY e.nombre ASC
+    LIMIT 20
+`;
 
             const [empleados] = await db.execute(sql, [
-                fin,
-                inicio,
-                termino,
-                termino,
-                termino,
-                fin,
-                inicio
-            ]);
+    termino,
+    termino,
+    termino
+]);
 
             return res.json({
                 success: true,
@@ -364,40 +343,59 @@ router.post(
                 });
             }
 
-            // Consultar contrato
-            const [contratos] = await db.query(`
-                SELECT *
-                FROM contratos
-                WHERE id = ?
-                  AND empleado_id = ?
-                  AND fecha_inicio <= ?
-                  AND (fecha_fin IS NULL OR fecha_fin >= ?)
-                LIMIT 1
-            `, [contrato_id, empleado_id, fin, inicio]);
+            // =============================================
+// VALIDAR EMPLEADO ACTIVO
+// =============================================
 
-            if (!contratos.length) {
-                return res.status(404).json({
-                    ok: false,
-                    mensaje: 'No se encontró un contrato vigente para el período.'
-                });
-            }
+const [empleados] = await db.query(`
+    SELECT
+        id,
+        nombre,
+        numero_documento,
+        activo
+    FROM empleados
+    WHERE id = ?
+      AND activo = 'SI'
+    LIMIT 1
+`, [empleado_id]);
 
-            const contrato = contratos[0];
+if (!empleados.length) {
+    return res.status(404).json({
+        ok: false,
+        mensaje: 'El empleado no existe o se encuentra inactivo.'
+    });
+}
 
-            // Consultar empleado
-            const [empleados] = await db.query(`
-                SELECT id, nombre, numero_documento, activo
-                FROM empleados
-                WHERE id = ?
-                LIMIT 1
-            `, [empleado_id]);
+// =============================================
+// CONSULTAR VINCULACIÓN DEL EMPLEADO
+// No validar fechas del contrato.
+// =============================================
 
-            if (!empleados.length) {
-                return res.status(404).json({
-                    ok: false,
-                    mensaje: 'No se encontró el empleado.'
-                });
-            }
+const [contratos] = await db.query(`
+    SELECT
+        id,
+        empleado_id,
+        tipo_vinculacion,
+        tipo_contrato,
+        fecha_inicio,
+        fecha_fin
+    FROM contratos
+    WHERE id = ?
+      AND empleado_id = ?
+      AND tipo_vinculacion = 'Dependiente'
+    LIMIT 1
+`, [contrato_id, empleado_id]);
+
+if (!contratos.length) {
+    return res.status(404).json({
+        ok: false,
+        mensaje: 'No se encontró una vinculación Dependiente válida para este empleado.'
+    });
+}
+
+const contrato = contratos[0];
+
+const vinculacion = contrato.tipo_vinculacion;
 
             // Obtener configuración vigente para el período.
             const [salarios] = await db.query(`
@@ -466,7 +464,6 @@ router.post(
 
             const minimo = Number(salarioMinimo.valor);
             const valorAuxilio = Number(auxilio.valor);
-            const vinculacion = contrato.tipo_vinculacion;
 
             let salarioMensual = 0;
             let salarioPeriodo = 0;
@@ -638,12 +635,11 @@ for (const novedad of novedadesAprobadas) {
         }
 
     // DESCUENTO AUTORIZADO
-    } else if (codigo === 'DESCUENTO_AUTORIZADO') {
+// Es una autorización del empleado para descuentos de préstamos.
+// No afecta directamente la liquidación.
+} else if (codigo === 'DESCUENTO_AUTORIZADO') {
 
-        if (valor !== null && Number.isFinite(valor)) {
-            deduccionesNovedades += valor;
-            tratamiento = 'DEDUCCION';
-        }
+    tratamiento = 'INFORMATIVO';
 
     // ANTICIPO DE SALARIO
     } else if (codigo === 'ANTICIPO_SALARIO') {
@@ -712,6 +708,7 @@ if (vinculacion === 'Dependiente') {
         )
           AND fecha_inicio <= ?
           AND (fecha_fin IS NULL OR fecha_fin >= ?)
+          AND activo = 1
         ORDER BY fecha_inicio DESC, id DESC
     `, [inicio, fin]);
 
