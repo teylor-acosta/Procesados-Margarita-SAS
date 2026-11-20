@@ -269,6 +269,14 @@ app.use(
     require('./routes/nomina.routes')
 );
 
+// ============================================
+// 💰 LIQUIDACIÓN DE NÓMINA
+// ============================================
+
+app.use(
+    require('./routes/nomina-liquidacion.routes')
+);
+
 app.use(
     require('./routes/nomina-configuracion.routes')
 );

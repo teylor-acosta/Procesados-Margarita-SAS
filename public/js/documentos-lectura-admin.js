@@ -14,6 +14,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const tablaDocumentos = document.getElementById('tablaDocumentos');
     const tablaHistorial = document.getElementById('tablaHistorial');
+    // ==========================================
+// ELEMENTOS DEL SEGUIMIENTO DOCUMENTAL
+// ==========================================
+
+const tablaSeguimiento = document.getElementById('tablaSeguimiento');
+
+const filtroBuscarEmpleado = document.getElementById('segBuscarEmpleado');
+const filtroSeguimientoDocumento = document.getElementById('segFiltroDocumento');
+const filtroSeguimientoEstado = document.getElementById('segFiltroEstado');
+
+const btnActualizarSeguimiento = document.getElementById('btnActualizarSeguimiento');
     const filtroTipoHistorial = document.getElementById('filtroTipoHistorial');
     filtroTipoHistorial.addEventListener('change', () => {
     const tipoSeleccionado = filtroTipoHistorial.value;

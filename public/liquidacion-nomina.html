@@ -1,0 +1,579 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Liquidación de Nómina - Procesados Margarita</title>
+
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Averia+Libre:wght@300;400;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- BOOTSTRAP -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- FONT AWESOME -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    >
+
+    <!-- ESTILOS GENERALES ERP -->
+    <link rel="stylesheet" href="/css/style1.css">
+
+    <!-- SIDEBAR GLOBAL -->
+    <link rel="stylesheet" href="/css/sidebar.css">
+
+    <!-- ESTILOS PROPIOS DE LIQUIDACIÓN -->
+    <link rel="stylesheet" href="/css/liquidacion-nomina.css">
+
+</head>
+
+<body data-pagina="nomina">
+
+    <!-- =========================================
+         SIDEBAR GLOBAL
+    ========================================= -->
+
+    <div id="sidebarContainer"></div>
+
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay">
+    </div>
+
+
+    <!-- =========================================
+         NAVBAR
+    ========================================= -->
+
+    <nav class="navbar-custom">
+
+        <div class="navbar-left">
+
+            <i
+                class="fas fa-bars menu-toggle"
+                id="btnOpenSidebar">
+            </i>
+
+            <span class="empresa-nombre">
+                Liquidación de Nómina
+            </span>
+
+        </div>
+
+        <div class="acciones-navbar">
+
+            <a href="/nomina" class="btn-light">
+                <i class="fas fa-arrow-left"></i>
+                Volver a Nómina
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =========================================
+         CONTENIDO PRINCIPAL
+    ========================================= -->
+
+    <main class="contenido-nomina">
+
+        <section class="encabezado-nomina">
+
+            <div>
+
+                <h1>
+                    <i class="fas fa-calculator"></i>
+                    Liquidación y Pago de Nómina
+                </h1>
+
+                <p>
+                    Administración de liquidaciones, pagos y comprobantes
+                    de los colaboradores.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        
+<section id="contenido-liquidacion">
+
+    <!-- RESUMEN SUPERIOR -->
+    <div class="resumen-nomina">
+
+        <div class="indicador-nomina indicador-empleados">
+            <div class="indicador-icono">
+                <i class="fas fa-users"></i>
+            </div>
+            <div>
+                <span>Colaborador seleccionado</span>
+                <strong id="resumenEmpleado">Ninguno</strong>
+            </div>
+        </div>
+
+        <div class="indicador-nomina indicador-periodo">
+            <div class="indicador-icono">
+                <i class="fas fa-calendar-days"></i>
+            </div>
+            <div>
+                <span>Período</span>
+                <strong id="resumenPeriodo">Sin seleccionar</strong>
+            </div>
+        </div>
+
+        <div class="indicador-nomina indicador-total">
+            <div class="indicador-icono">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <div>
+                <span>Neto estimado</span>
+                <strong id="resumenNeto">$0</strong>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- PASOS DE LIQUIDACIÓN -->
+    <div class="pasos-liquidacion">
+
+    <div class="paso activo" id="indicadorPaso1">
+        <span>1</span>
+        <div>
+            <strong>Preparar liquidación</strong>
+            <small>Seleccionar período y colaborador</small>
+        </div>
+    </div>
+
+    <div class="paso" id="indicadorPaso2">
+        <span>2</span>
+        <div>
+            <strong>Revisar y ajustar</strong>
+            <small>Novedades y descuentos</small>
+        </div>
+    </div>
+
+    <div class="paso" id="indicadorPaso3">
+        <span>3</span>
+        <div>
+            <strong>Registrar pago</strong>
+            <small>Confirmar el pago</small>
+        </div>
+    </div>
+
+    <div class="paso" id="indicadorPaso4">
+        <span>4</span>
+        <div>
+            <strong>Comprobante</strong>
+            <small>Generar documento PDF</small>
+        </div>
+    </div>
+
+</div>
+
+
+    <!-- DISTRIBUCIÓN PRINCIPAL -->
+    <div class="layout-liquidacion">
+
+        <div class="columna-liquidacion">
+
+            <!-- PERÍODO -->
+            <div class="panel-liquidacion">
+
+                <div class="panel-titulo">
+                    <div class="panel-icono azul">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+
+                    <div>
+                        <h3>Período de liquidación</h3>
+                        <p>Selecciona la quincena que deseas procesar.</p>
+                    </div>
+                </div>
+
+                <div class="formulario-grid">
+
+                    <div class="campo-nomina">
+                        <label for="tipoPeriodo">Tipo de período</label>
+
+                        <select id="tipoPeriodo">
+                            <option value="quincenal">Quincenal</option>
+                        </select>
+                    </div>
+
+                    <div class="campo-nomina">
+                        <label for="fechaInicio">Inicio del período</label>
+                        <input type="date" id="fechaInicio">
+                    </div>
+
+                    <div class="campo-nomina">
+                        <label for="fechaFin">Fin del período</label>
+                        <input type="date" id="fechaFin">
+                    </div>
+
+                    <div class="campo-nomina">
+                        <label>Selección rápida</label>
+
+                        <div class="botones-periodo">
+                            <button type="button" id="btnQuincena1">
+                                1 - 15
+                            </button>
+
+                            <button type="button" id="btnQuincena2">
+                                16 - Fin de mes
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- SELECCIÓN DE COLABORADOR -->
+            <div class="panel-liquidacion">
+
+                <div class="panel-titulo">
+
+                    <div class="panel-icono verde">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+
+                    <div>
+                        <h3>Seleccionar colaborador</h3>
+                        <p>Busca individualmente a la persona que deseas liquidar.</p>
+                    </div>
+
+                </div>
+
+                <div class="campo-nomina buscador-colaborador">
+
+                    <label for="buscarColaborador">
+                        Nombre o documento del colaborador
+                    </label>
+
+                    <div class="buscador-input">
+                        <i class="fas fa-search"></i>
+
+                        <input
+                            type="text"
+                            id="buscarColaborador"
+                            placeholder="Escribe el nombre o número de documento..."
+                            autocomplete="off"
+                        >
+                    </div>
+
+                    <div
+                        id="resultadosColaboradores"
+                        class="resultados-colaboradores"
+                        hidden>
+                    </div>
+
+                    <small class="ayuda-campo">
+                        Los resultados se cargarán desde el registro de empleados del ERP.
+                    </small>
+
+                </div>
+
+
+                <!-- INFORMACIÓN DEL COLABORADOR -->
+                <div id="informacionColaborador" hidden>
+
+                    <div class="colaborador-seleccionado">
+
+                        <div class="avatar-colaborador">
+                            <i class="fas fa-user"></i>
+                        </div>
+
+                        <div class="datos-colaborador">
+                            <h3 id="nombreColaborador">-</h3>
+                            <span id="documentoColaborador">-</span>
+                        </div>
+
+                        <button
+                            type="button"
+                            id="btnCambiarColaborador"
+                            class="btn-cambiar">
+                            <i class="fas fa-exchange-alt"></i>
+                            Cambiar
+                        </button>
+
+                    </div>
+
+                    <div class="datos-laborales-grid">
+
+                        <div>
+                            <span>Vinculación</span>
+                            <strong id="vinculacionColaborador">-</strong>
+                        </div>
+
+                        <div>
+                            <span>Contrato</span>
+                            <strong id="contratoColaborador">-</strong>
+                        </div>
+
+                        <div>
+                            <span>Salario mensual</span>
+                            <strong id="salarioColaborador">$0</strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ETAPAS APRENDIZ SENA -->
+            <div
+                id="seccionEtapasSena"
+                class="panel-liquidacion panel-etapas"
+                hidden>
+
+                <div class="panel-titulo">
+
+                    <div class="panel-icono morado">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+
+                    <div>
+                        <h3>Distribución de etapas SENA</h3>
+                        <p>
+                            Registra los días correspondientes a cada etapa
+                            dentro de la quincena.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="etapas-resumen">
+
+                    <div class="etapa-info lectiva">
+                        <span>Etapa lectiva</span>
+                        <strong>75% del SMMLV</strong>
+                    </div>
+
+                    <div class="etapa-info productiva">
+                        <span>Etapa productiva</span>
+                        <strong>100% del SMMLV</strong>
+                    </div>
+
+                </div>
+
+                <div id="listaTramosEtapa"></div>
+
+                <button
+                    type="button"
+                    id="btnAgregarTramo"
+                    class="btn-agregar-tramo">
+
+                    <i class="fas fa-plus"></i>
+                    Agregar tramo de etapa
+
+                </button>
+
+                <div class="total-dias-etapa">
+                    <span>Días distribuidos</span>
+                    <strong id="totalDiasEtapa">0 / 15 días</strong>
+                </div>
+
+                <p id="mensajeEtapas" class="mensaje-etapas"></p>
+
+            </div>
+
+
+            <!-- DETALLE DE LIQUIDACIÓN -->
+            <div class="panel-liquidacion">
+
+                <div class="panel-titulo">
+
+                    <div class="panel-icono naranja">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+
+                    <div>
+                        <h3>Detalle de liquidación</h3>
+                        <p>
+                            Resumen de los conceptos que intervienen
+                            en el pago del colaborador.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="detalle-placeholder" id="detallePlaceholder">
+
+                    <i class="fas fa-file-invoice-dollar"></i>
+
+                    <p>
+                        Selecciona un colaborador y configura el período
+                        para visualizar su liquidación.
+                    </p>
+
+                </div>
+
+                <div id="detalleLiquidacion" hidden>
+
+                    <div class="detalle-fila">
+                        <span>Total devengado</span>
+                        <strong id="totalDevengado">$0</strong>
+                    </div>
+
+                    <div class="detalle-fila">
+                        <span>Total deducciones</span>
+                        <strong id="totalDeducciones">$0</strong>
+                    </div>
+
+                    <div class="detalle-fila resultado">
+                        <span>Neto a pagar</span>
+                        <strong id="totalNeto">$0</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RESUMEN LATERAL -->
+        <aside class="panel-resumen">
+
+            <div class="resumen-encabezado">
+
+                <span>RESUMEN DE LIQUIDACIÓN</span>
+
+                <h3 id="resumenNombre">Sin colaborador</h3>
+
+                <strong id="resumenTotal">$0</strong>
+
+                <small id="resumenFecha">
+                    Selecciona un período
+                </small>
+
+            </div>
+
+            <div class="resumen-contenido">
+
+                <div class="resumen-concepto">
+                    <span>Salario y apoyos</span>
+                    <strong id="resumenSalario">$0</strong>
+                </div>
+
+                <div class="resumen-concepto">
+                    <span>Otros devengados</span>
+                    <strong id="resumenDevengados">$0</strong>
+                </div>
+
+                <div class="resumen-concepto">
+                    <span>Deducciones</span>
+                    <strong id="resumenDescuentos">$0</strong>
+                </div>
+
+                <hr>
+
+                <div class="resumen-neto">
+                    <span>Total neto a pagar</span>
+                    <strong id="resumenNetoFinal">$0</strong>
+                </div>
+
+                <button
+                    type="button"
+                    id="btnPrepararLiquidacion"
+                    class="btn-generar-liquidacion"
+                    disabled>
+
+                    <i class="fas fa-calculator"></i>
+                    Preparar liquidación
+
+                </button>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</section>
+
+<!-- =========================================
+     PASO 2: REVISAR Y AJUSTAR
+========================================= -->
+
+<div id="contenidoPaso2" hidden>
+
+    <div class="panel-liquidacion">
+
+        <div class="panel-titulo">
+            <div class="panel-icono azul">
+                <i class="fas fa-clipboard-check"></i>
+            </div>
+
+            <div>
+                <h3>Revisar y ajustar liquidación</h3>
+                <p>
+                    Verifica los devengados, deducciones,
+                    novedades y descuentos del colaborador.
+                </p>
+            </div>
+        </div>
+
+        <div id="resultadoPreliquidacion"></div>
+
+        <div class="acciones-pasos">
+
+            <button type="button" id="btnVolverPaso1">
+                <i class="fas fa-arrow-left"></i>
+                Volver
+            </button>
+
+            <button type="button" id="btnContinuarPaso3">
+                Continuar al registro del pago
+                <i class="fas fa-arrow-right"></i>
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+    </main>
+
+
+    <!-- =========================================
+         SCRIPTS GLOBALES
+    ========================================= -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+    <!-- SIDEBAR GLOBAL -->
+    <script src="/js/sidebar.js"></script>
+
+    <!-- JAVASCRIPT DE LIQUIDACIÓN -->
+    <script src="/js/liquidacion-nomina.js"></script>
+
+</body>
+
+</html>
