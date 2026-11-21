@@ -74,7 +74,7 @@ router.get(
        )
     WHERE
         e.activo = 'SI'
-        AND c.tipo_vinculacion = 'Dependiente'
+        AND c.tipo_vinculacion IN ('Dependiente', 'Aprendiz Sena')
         AND (
             e.nombre LIKE ?
             OR e.numero_documento LIKE ?
@@ -382,19 +382,18 @@ const [contratos] = await db.query(`
     FROM contratos
     WHERE id = ?
       AND empleado_id = ?
-      AND tipo_vinculacion = 'Dependiente'
+      AND tipo_vinculacion IN ('Dependiente', 'Aprendiz Sena')
     LIMIT 1
 `, [contrato_id, empleado_id]);
 
 if (!contratos.length) {
     return res.status(404).json({
         ok: false,
-        mensaje: 'No se encontró una vinculación Dependiente válida para este empleado.'
+        mensaje: 'No se encontró un contrato válido para este empleado.'
     });
 }
 
 const contrato = contratos[0];
-
 const vinculacion = contrato.tipo_vinculacion;
 
             // Obtener configuración vigente para el período.
@@ -466,88 +465,111 @@ const vinculacion = contrato.tipo_vinculacion;
             const valorAuxilio = Number(auxilio.valor);
 
             let salarioMensual = 0;
-            let salarioPeriodo = 0;
-            let auxilioPeriodo = 0;
-            let detalleEtapas = [];
+let salarioPeriodo = 0;
+let auxilioPeriodo = 0;
+let ingresoBaseCotizacionProductiva = 0;
+let detalleEtapas = [];
 
             if (vinculacion === 'Aprendiz Sena') {
 
-                if (!Array.isArray(tramos) || !tramos.length) {
-                    return res.status(400).json({
-                        ok: false,
-                        mensaje: 'Debes indicar las etapas del aprendiz.'
-                    });
-                }
+    if (!Array.isArray(tramos) || !tramos.length) {
+        return res.status(400).json({
+            ok: false,
+            mensaje: 'Debes indicar las etapas del aprendiz.'
+        });
+    }
 
-                const fechas = new Set();
+    const fechas = new Set();
 
-                for (const tramo of tramos) {
-                    if (
-                        !['lectiva', 'productiva'].includes(tramo.etapa) ||
-                        !formatoFecha.test(tramo.desde || '') ||
-                        !formatoFecha.test(tramo.hasta || '') ||
-                        tramo.desde < inicio ||
-                        tramo.hasta > fin ||
-                        tramo.desde > tramo.hasta
-                    ) {
-                        return res.status(400).json({
-                            ok: false,
-                            mensaje: 'Hay un tramo de etapa inválido.'
-                        });
-                    }
+    const salarioMaximo = Number(auxilio.salario_maximo_aplica);
 
-                    const desde = new Date(`${tramo.desde}T00:00:00`);
-                    const hasta = new Date(`${tramo.hasta}T00:00:00`);
+    for (const tramo of tramos) {
 
-                    let diasTramo = 0;
+        if (
+            !['lectiva', 'productiva'].includes(tramo.etapa) ||
+            !formatoFecha.test(tramo.desde || '') ||
+            !formatoFecha.test(tramo.hasta || '') ||
+            tramo.desde < inicio ||
+            tramo.hasta > fin ||
+            tramo.desde > tramo.hasta
+        ) {
+            return res.status(400).json({
+                ok: false,
+                mensaje: 'Hay un tramo de etapa inválido.'
+            });
+        }
 
-                    for (
-                        let fecha = new Date(desde);
-                        fecha <= hasta;
-                        fecha.setDate(fecha.getDate() + 1)
-                    ) {
-                        const clave = fecha.toISOString().substring(0, 10);
+        const desde = new Date(`${tramo.desde}T00:00:00`);
+        const hasta = new Date(`${tramo.hasta}T00:00:00`);
 
-                        if (fechas.has(clave)) {
-                            return res.status(400).json({
-                                ok: false,
-                                mensaje: 'Los tramos tienen fechas superpuestas.'
-                            });
-                        }
+        let diasTramo = 0;
 
-                        fechas.add(clave);
-                        diasTramo++;
-                    }
+        for (
+            let fecha = new Date(desde);
+            fecha <= hasta;
+            fecha.setDate(fecha.getDate() + 1)
+        ) {
 
-                    const porcentaje =
-                        tramo.etapa === 'lectiva' ? 0.75 : 1;
+            const clave = fecha.toISOString().substring(0, 10);
 
-                    const valorMensual = minimo * porcentaje;
-                    const valorTramo = (valorMensual / 30) * diasTramo;
+            if (fechas.has(clave)) {
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: 'Los tramos tienen fechas superpuestas.'
+                });
+            }
 
-                    salarioPeriodo += valorTramo;
+            fechas.add(clave);
+            diasTramo++;
+        }
 
-                    detalleEtapas.push({
-                        etapa: tramo.etapa,
-                        desde: tramo.desde,
-                        hasta: tramo.hasta,
-                        dias: diasTramo,
-                        porcentaje: porcentaje * 100,
-                        valor: Math.round(valorTramo)
-                    });
-                }
+        const porcentaje =
+            tramo.etapa === 'lectiva' ? 0.75 : 1;
 
-                if (fechas.size !== dias) {
-                    return res.status(400).json({
-                        ok: false,
-                        mensaje: 'Los tramos deben cubrir todos los días del período.'
-                    });
-                }
+        const valorMensual = minimo * porcentaje;
 
-                salarioMensual = minimo;
+        const valorTramo =
+            (valorMensual / 30) * diasTramo;
 
-            
+        salarioPeriodo += valorTramo;
 
+        // Salud y pensión únicamente sobre etapa productiva.
+        if (tramo.etapa === 'productiva') {
+            ingresoBaseCotizacionProductiva += valorTramo;
+        }
+
+        // Auxilio de transporte según el límite configurado.
+        let auxilioTramo = 0;
+
+if (
+    Number.isFinite(salarioMaximo) &&
+    valorMensual <= salarioMaximo
+) {
+    auxilioTramo = Math.round(
+        (valorAuxilio / 30) * diasTramo
+    );
+
+    auxilioPeriodo += auxilioTramo;
+}
+        detalleEtapas.push({
+            etapa: tramo.etapa,
+            desde: tramo.desde,
+            hasta: tramo.hasta,
+            dias: diasTramo,
+            porcentaje: porcentaje * 100,
+            valor: Math.round(valorTramo),
+            auxilio: Math.round(auxilioTramo)
+        });
+    }
+
+    if (fechas.size !== dias) {
+        return res.status(400).json({
+            ok: false,
+            mensaje: 'Los tramos deben cubrir todos los días del período.'
+        });
+    }
+
+    salarioMensual = minimo;
 
 } else if (vinculacion === 'Dependiente') {
 
@@ -592,16 +614,26 @@ const [novedadesAprobadas] = await db.query(`
         n.motivo,
         n.observacion,
         n.estado,
+
         t.nombre AS tipo_novedad,
         t.codigo,
-        t.categoria
+        t.categoria,
+
+        a.tipo_ausencia
+
     FROM nomina_novedades n
+
     INNER JOIN nomina_novedades_tipos t
         ON t.id = n.tipo_novedad_id
+
+    LEFT JOIN nomina_novedades_ausencias a
+        ON a.novedad_id = n.id
+
     WHERE n.empleado_id = ?
       AND n.estado = 'APROBADA'
       AND n.fecha_inicio <= ?
       AND (n.fecha_fin IS NULL OR n.fecha_fin >= ?)
+
     ORDER BY n.fecha_inicio ASC, n.id ASC
 `, [empleado_id, fin, inicio]);
 
@@ -691,9 +723,16 @@ let descuentoPension = 0;
 
 let ingresoBaseCotizacion = 0;
 
-// Los aportes del trabajador se calculan
-// para vinculación Dependiente.
-if (vinculacion === 'Dependiente') {
+// Los aportes se calculan para Dependientes
+// y para Aprendices Sena en etapa productiva.
+const tieneBaseSeguridadSocial =
+    vinculacion === 'Dependiente' ||
+    (
+        vinculacion === 'Aprendiz Sena' &&
+        ingresoBaseCotizacionProductiva > 0
+    );
+
+if (tieneBaseSeguridadSocial) {
 
     const [parametrosSeguridadSocial] = await db.query(`
         SELECT
@@ -710,7 +749,7 @@ if (vinculacion === 'Dependiente') {
           AND (fecha_fin IS NULL OR fecha_fin >= ?)
           AND activo = 1
         ORDER BY fecha_inicio DESC, id DESC
-    `, [inicio, fin]);
+    `, [fin, inicio]);
 
     const obtenerParametro = codigo =>
         parametrosSeguridadSocial.find(p =>
@@ -749,9 +788,19 @@ if (vinculacion === 'Dependiente') {
         });
     }
 
-    // Por ahora se toma el salario del período como IBC.
-    // El auxilio de transporte no integra esta base.
-    ingresoBaseCotizacion = Math.round(salarioPeriodo);
+    // El IBC no incluye auxilio de transporte.
+    if (vinculacion === 'Dependiente') {
+
+        ingresoBaseCotizacion = Math.round(salarioPeriodo);
+
+    } else if (vinculacion === 'Aprendiz Sena') {
+
+        // Únicamente se cotiza por los días productivos.
+        ingresoBaseCotizacion = Math.round(
+            ingresoBaseCotizacionProductiva
+        );
+
+    }
 
     descuentoSalud = Math.round(
         ingresoBaseCotizacion * porcentajeSalud / 100
@@ -761,6 +810,7 @@ if (vinculacion === 'Dependiente') {
         ingresoBaseCotizacion * porcentajePension / 100
     );
 }
+
 
 // =============================================
 // TOTALES DE LA PRELIQUIDACIÓN

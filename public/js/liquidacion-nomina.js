@@ -13,6 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const mensajeEtapas = document.getElementById('mensajeEtapas');
 
     const seccionEtapas = document.getElementById('seccionEtapasSena');
+    const modoEtapaSena = document.getElementById('modoEtapaSena');
+const etapaUnicaSena = document.getElementById('etapaUnicaSena');
+
+const contenedorEtapaUnica = document.getElementById('contenedorEtapaUnica');
+const contenedorTramosEtapa = document.getElementById('contenedorTramosEtapa');
 
     let tramos = [];
     let siguienteId = 1;
@@ -64,10 +69,6 @@ let distribucionPrestamos = [];
 
         actualizarPeriodo();
 
-        if (seccionEtapas && !seccionEtapas.hidden) {
-            renderizarTramos();
-        }
-
     }
 
     function convertirFecha(fecha) {
@@ -80,7 +81,7 @@ let distribucionPrestamos = [];
 
     }
 
-    function actualizarPeriodo() {
+ async function actualizarPeriodo() {
 
         if (!fechaInicio.value || !fechaFin.value) return;
 
@@ -96,9 +97,26 @@ let distribucionPrestamos = [];
 
         totalDiasEtapa.textContent = `0 / ${dias} días`;
 
-        if (tramos.length > 0) {
-            renderizarTramos();
-        }
+        if (!seccionEtapas.hidden) {
+
+    if (modoEtapaSena.value === 'unica') {
+
+        sincronizarModoEtapaSena();
+
+    } else if (tramos.length > 0) {
+
+        renderizarTramos();
+
+    }
+
+}
+if (
+    !seccionEtapas.hidden &&
+    empleadoSeleccionado &&
+    validarTramos()
+) {
+    await consultarValoresEmpleado();
+}
 
     }
 
@@ -112,6 +130,71 @@ let distribucionPrestamos = [];
         return Math.floor((fin - inicio) / 86400000) + 1;
 
     }
+
+    // ==========================================
+// SINCRONIZAR MODO DE ETAPA SENA
+// ==========================================
+
+function sincronizarModoEtapaSena() {
+
+    if (!fechaInicio.value || !fechaFin.value) return;
+
+    const modo = modoEtapaSena.value;
+
+    contenedorEtapaUnica.hidden = modo !== 'unica';
+    contenedorTramosEtapa.hidden = modo !== 'cambio';
+
+    if (modo === 'unica') {
+
+        tramos = [{
+            id: siguienteId++,
+            etapa: etapaUnicaSena.value,
+            desde: fechaInicio.value,
+            hasta: fechaFin.value
+        }];
+
+        validarTramos();
+
+    } else {
+
+        if (tramos.length === 0) {
+
+            tramos = [{
+                id: siguienteId++,
+                etapa: 'lectiva',
+                desde: fechaInicio.value,
+                hasta: fechaFin.value
+            }];
+
+        }
+
+        renderizarTramos();
+
+    }
+
+}
+
+modoEtapaSena.addEventListener('change', async () => {
+
+    sincronizarModoEtapaSena();
+
+    if (empleadoSeleccionado && validarTramos()) {
+        await consultarValoresEmpleado();
+    }
+
+});
+
+etapaUnicaSena.addEventListener('change', async () => {
+
+    if (modoEtapaSena.value === 'unica') {
+
+        sincronizarModoEtapaSena();
+
+        await consultarValoresEmpleado();
+
+    }
+
+});
 
     document.getElementById('btnQuincena1')
         .addEventListener('click', () => establecerQuincena(1));
@@ -127,7 +210,7 @@ let distribucionPrestamos = [];
     // MANEJO DE TRAMOS SENA
     // ==========================================
 
-    function agregarTramo() {
+async function agregarTramo() {
 
         const inicio = fechaInicio.value;
         const fin = fechaFin.value;
@@ -145,16 +228,23 @@ let distribucionPrestamos = [];
         });
 
         renderizarTramos();
+        if (validarTramos()) {
+    await consultarValoresEmpleado();
+}
 
     }
 
-    function eliminarTramo(id) {
+   async function eliminarTramo(id) {
 
-        tramos = tramos.filter(tramo => tramo.id !== id);
+    tramos = tramos.filter(tramo => tramo.id !== id);
 
-        renderizarTramos();
+    renderizarTramos();
 
+    if (validarTramos()) {
+        await consultarValoresEmpleado();
     }
+
+}
 
     function renderizarTramos() {
 
@@ -207,20 +297,35 @@ let distribucionPrestamos = [];
             const hasta = fila.querySelector('.fecha-tramo-fin');
             const eliminar = fila.querySelector('.btn-eliminar-tramo');
 
-            select.addEventListener('change', () => {
-                tramo.etapa = select.value;
-                validarTramos();
-            });
+            select.addEventListener('change', async () => {
 
-            desde.addEventListener('change', () => {
-                tramo.desde = desde.value;
-                validarTramos();
-            });
+    tramo.etapa = select.value;
 
-            hasta.addEventListener('change', () => {
-                tramo.hasta = hasta.value;
-                validarTramos();
-            });
+    if (validarTramos()) {
+        await consultarValoresEmpleado();
+    }
+
+});
+
+            desde.addEventListener('change', async () => {
+
+    tramo.desde = desde.value;
+
+    if (validarTramos()) {
+        await consultarValoresEmpleado();
+    }
+
+});
+
+            hasta.addEventListener('change', async () => {
+
+    tramo.hasta = hasta.value;
+
+    if (validarTramos()) {
+        await consultarValoresEmpleado();
+    }
+
+});
 
             eliminar.addEventListener('click', () => {
                 eliminarTramo(tramo.id);
@@ -528,29 +633,19 @@ async function seleccionarEmpleado(empleado) {
 
         if (esAprendiz) {
 
-            tramos = [];
+    modoEtapaSena.value = 'unica';
+    etapaUnicaSena.value = 'lectiva';
 
-            const dias = obtenerDiasPeriodo();
+    tramos = [];
 
-            // Inicialmente se propone un único tramo.
-            // El usuario podrá cambiarlo y dividirlo.
-            if (dias > 0) {
-                tramos.push({
-                    id: siguienteId++,
-                    etapa: 'lectiva',
-                    desde: fechaInicio.value,
-                    hasta: fechaFin.value
-                });
-            }
+    sincronizarModoEtapaSena();
 
-            renderizarTramos();
+} else {
 
-        } else {
+    tramos = [];
+    listaTramos.innerHTML = '';
 
-            tramos = [];
-            listaTramos.innerHTML = '';
-
-        }
+}
 
         const botonPreparar = document.getElementById(
     'btnPrepararLiquidacion'
@@ -972,14 +1067,15 @@ const formatearFechaPrestamo = fecha => {
     const etapas = calculo.etapas || [];
 
     const etapasHTML = etapas.map(etapa => `
-        <tr>
-            <td>${etapa.etapa}</td>
-            <td>${etapa.desde} al ${etapa.hasta}</td>
-            <td>${etapa.dias}</td>
-            <td>${etapa.porcentaje}%</td>
-            <td>${moneda(etapa.valor)}</td>
-        </tr>
-    `).join('');
+    <tr>
+        <td>${etapa.etapa}</td>
+        <td>${etapa.desde} al ${etapa.hasta}</td>
+        <td>${etapa.dias}</td>
+        <td>${etapa.porcentaje}%</td>
+        <td>${moneda(etapa.valor)}</td>
+        <td>${moneda(etapa.auxilio)}</td>
+    </tr>
+`).join('');
 
     const novedadesHTML = novedades.map(novedad => `
         <tr>
@@ -1147,10 +1243,11 @@ document.getElementById('resumenFecha').textContent =
                     <thead>
                         <tr>
                             <th>Etapa</th>
-                            <th>Fechas</th>
-                            <th>Días</th>
-                            <th>Porcentaje</th>
-                            <th>Valor</th>
+<th>Fechas</th>
+<th>Días</th>
+<th>Porcentaje</th>
+<th>Salario</th>
+<th>Auxilio de transporte</th>
                         </tr>
                     </thead>
                     <tbody>${etapasHTML}</tbody>
@@ -1187,7 +1284,7 @@ document.getElementById('resumenFecha').textContent =
 
 <table class="table">
     <tbody>
-        ${data.contrato.tipo_vinculacion === 'Dependiente' ? `
+        ${descuentoSalud > 0 || descuentoPension > 0 ? `
             <tr>
                 <td>
                     Salud (${porcentajeSalud}%)
