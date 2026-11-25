@@ -538,6 +538,7 @@ app.use(
 
 app.use(
     '/api/nomina/novedades',
+
     require('./routes/nomina-novedades.routes')
 );
 
@@ -547,7 +548,16 @@ app.use(
 
 app.use(
     '/api/sidebar',
+
     require('./routes/sidebar.routes')
+);
+// ============================================================
+// MÓDULO DE NOVEDADES DE NÓMINA
+// ============================================================
+
+app.use(
+    '/api/nomina/novedades',
+    require('./routes/nomina-novedades.routes')
 );
 
 // ============================================================

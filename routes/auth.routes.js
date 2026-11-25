@@ -1,156 +1,343 @@
-
-'use strict';
 const express = require('express');
+const router = express.Router();
+
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-const { proteger } = require('../middlewares/auth');
+
 require('dotenv').config();
-const router = express.Router();
+
+const { proteger } = require('../middlewares/auth');
+
 const SALT_ROUNDS = 10;
-const MAX_INTENTOS = 3; // Se conserva el límite del ERP original.
-const COOKIE_SESION = process.env.SESSION_COOKIE_NAME || 'connect.sid';
-const RESPUESTA_RECUPERACION = 'Si la cuenta existe se enviará un correo.';
-const transporter = nodemailer.createTransport({
-    host: 'smtp.hostinger.com', port: 465, secure: true,
-    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-    tls: { rejectUnauthorized: true }
-});
-if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-    transporter.verify().then(() => console.log('SMTP Hostinger conectado (auth.routes)'))
-        .catch(error => console.error('SMTP auth.routes:', error.message));
-}
-function obtenerDB(req) {
-    const db = req.app.get('db');
-    if (!db || typeof db.query !== 'function') throw new Error('La conexión MySQL no está configurada en app.set("db", db).');
-    return db;
-}
-function guardarSesion(req) {
-    return new Promise((resolve, reject) => req.session.save(error => error ? reject(error) : resolve()));
-}
-function regenerarSesion(req) {
-    return new Promise((resolve, reject) => req.session.regenerate(error => error ? reject(error) : resolve()));
-}
-function destruirSesion(req) {
-    return new Promise((resolve, reject) => req.session.destroy(error => error ? reject(error) : resolve()));
-}
-function limpiarCookie(res) {
-    res.clearCookie(COOKIE_SESION, { path: '/' });
-}
-function passwordValida(password) {
-    return typeof password === 'string' && password.length >= 8 && Buffer.byteLength(password, 'utf8') <= 72;
-}
-function escaparHTML(valor) {
-    return String(valor ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
+
+// ============================================
+// VALIDAR DOCUMENTOS OBLIGATORIOS PENDIENTES
+// ============================================
+
 async function tieneDocumentosPendientes(db, empleadoID) {
+
     const [documentos] = await db.query(`
         SELECT COUNT(*) AS pendientes
         FROM documentos_lectura d
-        INNER JOIN versiones_documentos v ON d.version_actual_id = v.id
-        LEFT JOIN aceptaciones_documentos a ON a.version_id = v.id AND a.empleado_id = ?
-        WHERE d.estado = 'ACTIVO' AND v.estado = 'VIGENTE' AND a.id IS NULL
+        INNER JOIN versiones_documentos v
+            ON d.version_actual_id = v.id
+        LEFT JOIN aceptaciones_documentos a
+            ON a.version_id = v.id
+            AND a.empleado_id = ?
+        WHERE d.estado = 'ACTIVO'
+            AND v.estado = 'VIGENTE'
+            AND a.id IS NULL
     `, [empleadoID]);
-    return Number(documentos[0]?.pendientes || 0) > 0;
+
+    return documentos[0].pendientes > 0;
 }
-// === INICIO DE SESIÓN ===
+
+// ============================================
+// CONFIG EMAIL (HOSTINGER — unificado con app.js)
+// ============================================
+
+const transporter = nodemailer.createTransport({
+    host: "smtp.hostinger.com",
+    port: 465,
+    secure: true,
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    },
+    tls: {
+        rejectUnauthorized: false
+    }
+});
+
+transporter.verify()
+    .then(() => console.log('SMTP Hostinger conectado (auth.routes)'))
+    .catch(err => console.error('SMTP error (auth.routes):', err.message));
+
+// ============================================
+// LOGIN
+// ============================================
+
 router.post('/api/login', async (req, res) => {
     try {
-        const db = obtenerDB(req);
-        const { usuario, password } = req.body || {};
-        if (typeof usuario !== 'string' || !usuario.trim() || typeof password !== 'string' || !password) {
-            return res.status(400).json({ success: false, message: 'Ingrese usuario y contraseña.' });
+        const db = req.app.get('db');
+        const { usuario, password } = req.body;
+
+        const sql = `
+    SELECT 
+        u.*,
+        r.nombre as rol,
+        e.nombre as nombre,
+        e.activo,
+        e.id as empleado_id,
+        u.bloqueado,
+        u.intentos_fallidos,
+        u.fecha_ultimo_login
+    FROM usuarios u
+    JOIN rol r ON u.rol_id = r.id
+    JOIN empleados e ON u.empleado_id = e.id
+    WHERE u.Usuario = ?
+`;
+
+        const [results] = await db.query(sql, [usuario]);
+
+        if (results.length === 0) {
+            return res.json({
+                success: false,
+                message: "Usuario no encontrado"
+            });
         }
-        const [results] = await db.query(`
-            SELECT u.*, r.nombre AS rol, e.nombre AS nombre, e.activo,
-                e.id AS empleado_id, u.bloqueado, u.intentos_fallidos, u.fecha_ultimo_login
-            FROM usuarios u
-            JOIN rol r ON u.rol_id = r.id
-            JOIN empleados e ON u.empleado_id = e.id
-            WHERE u.Usuario = ?
-        `, [usuario.trim()]);
-        if (!results.length) return res.json({ success: false, message: 'Usuario o contraseña incorrectos.' });
+
         const user = results[0];
+
+        // No registrar el objeto completo del usuario,
+        // porque contiene información sensible.
+
+        // =========================================
+        // EMPLEADO INACTIVO
+        // =========================================
+
         if (user.activo === 'NO') {
-            return res.json({ success: false, inactivo: true, message: 'Empleado inactivo. Comuníquese con el administrador.' });
+            return res.json({
+                success: false,
+                inactivo: true,
+                message: 'Empleado inactivo. Comuníquese con el administrador.'
+            });
         }
-        if (Number(user.bloqueado) === 1) {
-            return res.json({ success: false, bloqueado: true, message: 'Usuario bloqueado por el administrador.' });
+
+        // =========================================
+        // USUARIO BLOQUEADO
+        // =========================================
+
+        if (parseInt(user.bloqueado) === 1) {
+            return res.json({
+                success: false,
+                bloqueado: true,
+                message: 'Usuario bloqueado por el administrador.'
+            });
         }
-        if (Number(user.intentos_fallidos) >= MAX_INTENTOS) {
-            await db.query('UPDATE usuarios SET bloqueado = 1 WHERE ID = ?', [user.ID]);
-            return res.json({ success: false, bloqueado: true, message: 'Usuario bloqueado por múltiples intentos fallidos.' });
+
+        // =========================================
+        // BLOQUEO POR INTENTOS
+        // =========================================
+
+        if (parseInt(user.intentos_fallidos) >= 3) {
+            await db.query(
+                `UPDATE usuarios SET bloqueado = 1 WHERE ID = ?`,
+                [user.ID]
+            );
+
+            return res.json({
+                success: false,
+                bloqueado: true,
+                message: 'Usuario bloqueado por múltiples intentos fallidos.'
+            });
         }
-        const coincide = typeof user.password_hash === 'string' && await bcrypt.compare(password, user.password_hash);
-        if (!coincide) {
-            // Actualización atómica para evitar perder incrementos concurrentes.
-            await db.query(`UPDATE usuarios SET intentos_fallidos = intentos_fallidos + 1,
-                bloqueado = CASE WHEN intentos_fallidos + 1 >= ? THEN 1 ELSE bloqueado END
-                WHERE ID = ?`, [MAX_INTENTOS, user.ID]);
-            const [intentosRows] = await db.query('SELECT intentos_fallidos, bloqueado FROM usuarios WHERE ID = ?', [user.ID]);
-            const intentos = Number(intentosRows[0]?.intentos_fallidos || MAX_INTENTOS);
-            if (Number(intentosRows[0]?.bloqueado) === 1 || intentos >= MAX_INTENTOS) {
-                return res.json({ success: false, bloqueado: true, message: 'Usuario bloqueado por múltiples intentos fallidos.' });
+
+        // =========================================
+        // VALIDAR PASSWORD
+        // =========================================
+
+        const passwordMatch = await bcrypt.compare(password, user.password_hash);
+
+        // =========================================
+        // PASSWORD INCORRECTO
+        // =========================================
+
+        if (!passwordMatch) {
+            await db.query(
+                `UPDATE usuarios SET intentos_fallidos = intentos_fallidos + 1 WHERE ID = ?`,
+                [user.ID]
+            );
+
+            const [nuevoIntento] = await db.query(
+                `SELECT intentos_fallidos FROM usuarios WHERE ID = ?`,
+                [user.ID]
+            );
+
+            const intentos = nuevoIntento[0].intentos_fallidos;
+
+            if (intentos >= 3) {
+                await db.query(
+                    `UPDATE usuarios SET bloqueado = 1 WHERE ID = ?`,
+                    [user.ID]
+                );
+
+                return res.json({
+                    success: false,
+                    bloqueado: true,
+                    message: 'Usuario bloqueado por múltiples intentos fallidos.'
+                });
             }
-            return res.json({ success: false, message: `Contraseña incorrecta. Intento ${intentos} de ${MAX_INTENTOS}` });
+
+            return res.json({
+                success: false,
+                message: `Contraseña incorrecta. Intento ${intentos} de 3`
+            });
         }
-        // Regenerar antes de crear la sesión evita reutilizar un identificador previo.
-        await regenerarSesion(req);
+
+        // =========================================
+        // RESETEAR INTENTOS Y LOGIN
+        // =========================================
+
+        await db.query(
+            `UPDATE usuarios SET intentos_fallidos = 0, fecha_ultimo_login = NOW() WHERE ID = ?`,
+            [user.ID]
+        );
+
+        // =========================================
+        // CREAR SESIÓN
+        // =========================================
+
         req.session.usuarioID = user.ID;
         req.session.empleadoID = user.empleado_id;
         req.session.rolID = user.rol_id;
         req.session.rol = user.rol;
-        await db.query('UPDATE usuarios SET intentos_fallidos = 0, fecha_ultimo_login = NOW() WHERE ID = ?', [user.ID]);
-        if (Number(user.cambio_password) === 1) {
-            await guardarSesion(req);
-            return res.json({ success: true, redirect: '/cambiar-password' });
-        }
-        const [evaluaciones] = await db.query(`
-            SELECT
-                (SELECT COUNT(*) FROM evaluaciones_induccion WHERE estado = 'ACTIVA') AS total,
-                (SELECT COUNT(DISTINCT evaluacion_id) FROM resultados_evaluaciones
-                    WHERE usuario_id = ? AND aprobado = 1) AS aprobados,
-                (SELECT COUNT(*) FROM certificados_usuario WHERE usuario_id = ?) AS tiene_certificado
-        `, [user.ID, user.ID]);
-        const progreso = evaluaciones[0] || {};
-        let destino = '/dashboard';
-        if (Number(progreso.tiene_certificado || 0) > 0) destino = '/dashboard';
-        else if (Number(progreso.aprobados || 0) < Number(progreso.total || 0)) destino = '/induccion';
-        else destino = '/firma';
-        await guardarSesion(req);
-        return res.json({
-            success: true, redirect: destino,
-            usuario: {
-                id: user.ID, empleado_id: user.empleado_id, rol_id: user.rol_id,
-                nombre: user.nombre, rol: user.rol, activo: user.activo,
-                fecha_ultimo_login: user.fecha_ultimo_login
-            }
+
+        console.log("===== SESSION =====");
+        console.log({
+            usuarioID: req.session.usuarioID,
+            empleadoID: req.session.empleadoID,
+            rolID: req.session.rolID,
+            rol: req.session.rol
         });
+
+        // =========================================
+        // CAMBIO PASSWORD OBLIGATORIO
+        // =========================================
+
+        if (parseInt(user.cambio_password) === 1) {
+            return req.session.save(() => {
+                res.json({
+                    success: true,
+                    redirect: "/cambiar-password"
+                });
+            });
+        }
+
+        // =========================================
+        // VALIDAR INDUCCIÓN
+        // =========================================
+
+        const sqlCheck = `
+            SELECT
+    (
+        SELECT COUNT(*)
+        FROM evaluaciones_induccion
+        WHERE estado = 'ACTIVA'
+    ) AS total,
+    (
+        SELECT COUNT(DISTINCT evaluacion_id)
+        FROM resultados_evaluaciones
+        WHERE usuario_id = ?
+        AND aprobado = 1
+    ) AS aprobados,
+    (
+        SELECT COUNT(*)
+        FROM certificados_usuario
+        WHERE usuario_id = ?
+    ) AS tiene_certificado
+        `;
+
+        const [results2] = await db.query(
+            sqlCheck,
+            [req.session.usuarioID, req.session.usuarioID]
+        );
+
+        let destino = "/dashboard";
+
+        if (results2.length > 0) {
+            const total = results2[0].total || 0;
+            const aprobados = results2[0].aprobados || 0;
+            const tieneCertificado = results2[0].tiene_certificado > 0;
+
+            if (tieneCertificado) {
+                destino = "/dashboard";
+            } else if (aprobados < total) {
+                destino = "/induccion";
+            } else {
+                destino = "/firma";
+            }
+        }
+
+        req.session.save(() => {
+            res.json({
+                success: true,
+                redirect: destino,
+                usuario: {
+                    id: user.ID,
+                    empleado_id: user.empleado_id,
+                    rol_id: user.rol_id,
+                    nombre: user.nombre,
+                    rol: user.rol,
+                    activo: user.activo,
+                    fecha_ultimo_login: user.fecha_ultimo_login
+                }
+            });
+        });
+
     } catch (error) {
-        console.error('Error en /api/login:', error);
-        return res.status(500).json({ success: false, message: 'Error interno del servidor.' });
+        console.error('ERROR LOGIN COMPLETO:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor',
+            error: error.message
+        });
     }
 });
-// === DATOS DEL USUARIO AUTENTICADO ===
+
+// ============================================
+// /api/me (ACTUALIZADO CON CONTEOS MIGRADOS)
+// ============================================
+
 router.get('/api/me', proteger, async (req, res) => {
     try {
-        const db = obtenerDB(req);
-        const usuarioID = req.session.usuarioID;
-        const [results] = await db.query(`
-            SELECT e.codigo, e.nombre, e.tipo_documento, e.numero_documento,
-                e.rh, e.fecha_nacimiento, e.lugar_nacimiento, e.estado_civil,
-                e.direccion, e.barrio_localidad, e.telefono, e.email, e.activo,
-                c.nombre AS cargo, a.nombre AS area, s.nombre AS sede,
-                u.cambio_password, e.foto, r.nombre AS rol,
-                (SELECT COUNT(DISTINCT capitulo_id) FROM preguntas_induccion) AS total,
-                (SELECT COUNT(DISTINCT capitulo_id) FROM resultados_evaluaciones
-                    WHERE usuario_id = ? AND aprobado = 1) AS aprobados,
-                (SELECT COUNT(*) FROM certificados_usuario WHERE usuario_id = ?) AS tiene_certificado,
-                (SELECT COUNT(*) FROM empleados WHERE activo = 'SI') AS total_empleados_activos,
-                (SELECT COUNT(*) FROM usuarios WHERE bloqueado = 0) AS total_usuarios_sistema,
-                (SELECT COUNT(*) FROM capacitaciones WHERE estado = 'ACTIVO') AS total_capacitaciones,
-                (SELECT COUNT(*) FROM certificados_usuario) AS total_certificados_emitidos
+
+        // Evitar respuestas de autenticación almacenadas
+        // en caché al consultar los datos del usuario.
+
+        res.setHeader(
+            'Cache-Control',
+            'no-store, no-cache, must-revalidate, private'
+        );
+
+        const db = req.app.get('db');
+        const usuario_id = req.session.usuarioID;
+
+        const sql = `
+            SELECT 
+                e.codigo,
+                e.nombre,
+                e.tipo_documento,
+                e.numero_documento,
+                e.rh,
+                e.fecha_nacimiento,
+                e.lugar_nacimiento,
+                e.estado_civil,
+                e.direccion,
+                e.barrio_localidad,
+                e.telefono,
+                e.email,
+                e.activo,
+                c.nombre as cargo,
+                a.nombre as area,
+                s.nombre as sede,
+                u.cambio_password,
+                e.foto,
+                r.nombre as rol,
+
+                /* Datos de progreso individuales */
+                (SELECT COUNT(DISTINCT capitulo_id) FROM preguntas_induccion) as total,
+                (SELECT COUNT(DISTINCT capitulo_id) FROM resultados_evaluaciones WHERE usuario_id = ? AND aprobado = 1) as aprobados,
+                (SELECT COUNT(*) FROM certificados_usuario WHERE usuario_id = ?) as tiene_certificado,
+
+                /* Conteos analíticos globales para las tarjetas del Dashboard */
+                (SELECT COUNT(*) FROM empleados WHERE activo = 'SI') as total_empleados_activos,
+                (SELECT COUNT(*) FROM usuarios WHERE bloqueado = 0) as total_usuarios_sistema,
+                (SELECT COUNT(*)
+FROM capacitaciones
+WHERE estado = 'ACTIVO') AS total_capacitaciones,
+                (SELECT COUNT(*) FROM certificados_usuario) as total_certificados_emitidos
             FROM usuarios u
             JOIN empleados e ON u.empleado_id = e.id
             LEFT JOIN cargos c ON e.cargo_id = c.id
@@ -158,27 +345,63 @@ router.get('/api/me', proteger, async (req, res) => {
             LEFT JOIN sedes s ON e.sede_id = s.id
             JOIN rol r ON u.rol_id = r.id
             WHERE u.id = ?
-        `, [usuarioID, usuarioID, usuarioID]);
-        if (!results.length) return res.json({ success: false });
-        const u = results[0];
-        if (u.activo === 'NO') {
-            await destruirSesion(req);
-            limpiarCookie(res);
+        `;
+
+        const [results] = await db.query(
+            sql,
+            [usuario_id, usuario_id, usuario_id]
+        );
+
+        if (results.length === 0) {
             return res.json({ success: false });
         }
-        const total = Number(u.total || 0);
-        const aprobados = Number(u.aprobados || 0);
-        const tieneCertificado = Number(u.tiene_certificado || 0) > 0;
-        const completo = aprobados >= total && total > 0;
-        let redirect = '/dashboard';
-        if (Number(u.cambio_password) === 1) redirect = '/cambiar-password';
-        else if (!completo) redirect = '/induccion';
-        else if (!tieneCertificado) redirect = '/firma';
-        if (redirect === '/dashboard' && await tieneDocumentosPendientes(db, req.session.empleadoID)) {
-            redirect = '/documentos-lectura';
+
+        const u = results[0];
+
+        if (u.activo === 'NO') {
+            req.session.destroy();
+            return res.json({ success: false });
         }
-        return res.json({
-            success: true, usuario: u, completo, tiene_certificado: tieneCertificado, redirect,
+
+        const total = u.total || 0;
+        const aprobados = u.aprobados || 0;
+        const tieneCertificado = (u.tiene_certificado || 0) > 0;
+        const completo = aprobados >= total && total > 0;
+
+        let redirect = "/dashboard";
+
+        if (parseInt(u.cambio_password) === 1) {
+            redirect = "/cambiar-password";
+        } else if (!completo) {
+            redirect = "/induccion";
+        } else if (completo && !tieneCertificado) {
+            redirect = "/firma";
+        } else {
+            redirect = "/dashboard";
+        }
+
+        // =========================================
+        // VALIDAR DOCUMENTOS OBLIGATORIOS
+        // =========================================
+
+        if (redirect === "/dashboard") {
+
+            const pendientes = await tieneDocumentosPendientes(
+                db,
+                req.session.empleadoID
+            );
+
+            if (pendientes) {
+                redirect = "/documentos-lectura";
+            }
+        }
+
+        res.json({
+            success: true,
+            usuario: u,
+            completo,
+            tiene_certificado: tieneCertificado,
+            redirect,
             conteos: {
                 empleados: u.total_empleados_activos || 0,
                 usuarios: u.total_usuarios_sistema || 0,
@@ -186,115 +409,263 @@ router.get('/api/me', proteger, async (req, res) => {
                 certificates: u.total_certificados_emitidos || 0
             }
         });
+
     } catch (error) {
-        console.error('Error en /api/me:', error);
-        return res.status(500).json({ success: false });
+        console.error("ERROR EN /api/me:", error);
+        res.status(500).json({ success: false });
     }
 });
-// === RECUPERACIÓN DE CONTRASEÑA ===
+
+// ============================================
+// RECUPERAR PASSWORD TOKEN (CORREGIDO)
+// ============================================
+
 router.post('/api/recuperar', async (req, res) => {
     try {
-        const db = obtenerDB(req);
-        const { documento } = req.body || {};
-        if (!documento || typeof documento !== 'string') {
-            return res.status(400).json({ success: false, message: 'Debe ingresar el número de documento.' });
+        const db = req.app.get('db');
+        const { documento } = req.body;
+
+        if (!documento) {
+            return res.status(400).json({
+                success: false,
+                message: 'Debe ingresar el número de documento'
+            });
         }
-        const [results] = await db.query(`
-            SELECT u.id, e.nombre, e.email FROM usuarios u
+
+        const sql = `
+            SELECT u.id, e.nombre, e.email
+            FROM usuarios u
             JOIN empleados e ON u.empleado_id = e.id
             WHERE e.numero_documento = ?
-        `, [documento.trim()]);
+        `;
+
+        const [results] = await db.query(sql, [documento]);
+
+        // Respuesta genérica si no existe (seguridad)
+
+        if (results.length === 0) {
+            return res.json({
+                success: true,
+                message: 'Si la cuenta existe se enviará un correo.'
+            });
+        }
+
         const usuario = results[0];
-        if (!usuario?.email) return res.json({ success: true, message: RESPUESTA_RECUPERACION });
+
+        if (!usuario.email) {
+            return res.json({
+                success: true,
+                message: 'Si la cuenta existe se enviará un correo.'
+            });
+        }
+
         const token = crypto.randomBytes(32).toString('hex');
-        await db.query(`UPDATE usuarios SET token_reset = ?,
-            token_expira = DATE_ADD(NOW(), INTERVAL 10 MINUTE) WHERE id = ?`, [token, usuario.id]);
-        const baseUrl = (process.env.BASE_URL || 'https://procesadosmargaritasas.com').replace(/\/$/, '');
+
+        await db.query(
+            `UPDATE usuarios SET token_reset = ?, token_expira = DATE_ADD(NOW(), INTERVAL 10 MINUTE) WHERE id = ?`,
+            [token, usuario.id]
+        );
+
+        const baseUrl = process.env.BASE_URL || 'https://procesadosmargaritasas.com';
         const resetLink = `${baseUrl}/reset/${token}`;
+
+        // Envío de correo — si falla, se registra
+        // pero NO se devuelve 500 al cliente.
+
         try {
             await transporter.sendMail({
                 from: `"Procesados Margarita SAS" <${process.env.EMAIL_USER}>`,
                 to: usuario.email,
                 subject: 'Recuperación de contraseña ERP',
-                html: `<div style="font-family:Arial;padding:20px">
-                    <h2>Recuperación de acceso</h2>
-                    <p>Hola ${escaparHTML(usuario.nombre)}.</p>
-                    <p>Haz clic aquí para restablecer tu clave de acceso:</p>
-                    <p><a href="${escaparHTML(resetLink)}" style="display:inline-block;padding:12px 25px;background:#2563eb;color:white;text-decoration:none;border-radius:10px;font-weight:bold">Restablecer contraseña</a></p>
-                    <p style="color:#888;font-size:12px">Este enlace expira en 10 minutos.</p>
-                </div>`
+                html: `
+                    <div style="font-family:Arial; padding:20px;">
+                        <h2>Recuperación de acceso</h2>
+                        <p>Hola ${usuario.nombre}.</p>
+                        <p>Haz clic aquí para restablecer tu clave de acceso:</p>
+                        <br>
+                        <a href="${resetLink}" style="display:inline-block; padding:12px 25px; background:#2563eb; color:white; text-decoration:none; border-radius:10px; font-weight:bold;">
+                            Restablecer contraseña
+                        </a>
+                        <p style="margin-top:20px; color:#888; font-size:12px;">
+                            Este enlace expira en 10 minutos.
+                        </p>
+                    </div>
+                `
             });
-        } catch (error) {
-            console.error('Error al enviar recuperación:', error);
-            await db.query('UPDATE usuarios SET token_reset = NULL, token_expira = NULL WHERE id = ? AND token_reset = ?', [usuario.id, token]);
+
+            console.log(`Correo de recuperación enviado a ${usuario.email}`);
+
+        } catch (emailError) {
+            console.error(
+                'ERROR EMAIL (pero respondemos OK por seguridad):',
+                emailError.message
+            );
+
+            // Limpiar el token si el correo no se pudo enviar.
+
+            await db.query(
+                `UPDATE usuarios SET token_reset = NULL, token_expira = NULL WHERE id = ?`,
+                [usuario.id]
+            );
         }
-        return res.json({ success: true, message: RESPUESTA_RECUPERACION });
+
+        // Respuesta uniforme: siempre success para no revelar info.
+
+        return res.json({
+            success: true,
+            message: 'Si la cuenta existe se enviará un correo.'
+        });
+
     } catch (error) {
-        console.error('Error en /api/recuperar:', error);
-        return res.status(500).json({ success: false, message: 'Error interno del servidor.' });
+        console.error('ERROR RECUPERAR:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor'
+        });
     }
 });
-// === CAMBIO DE CONTRASEÑA CON SESIÓN ACTIVA ===
+
+// ============================================
+// CAMBIAR PASSWORD LOGUEADO
+// ============================================
+
 router.post('/api/cambiar-password', proteger, async (req, res) => {
     try {
-        const db = obtenerDB(req);
-        const { nuevaPassword } = req.body || {};
-        if (!passwordValida(nuevaPassword)) {
-            return res.status(400).json({ success: false, message: 'La contraseña debe tener al menos 8 caracteres y no superar 72 bytes.' });
+        const db = req.app.get('db');
+        const { nuevaPassword } = req.body;
+
+        if (!nuevaPassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'Password requerida'
+            });
         }
+
         const hash = await bcrypt.hash(nuevaPassword, SALT_ROUNDS);
-        await db.query(`UPDATE usuarios SET password_hash = ?, cambio_password = 0,
-            primera_vez = 0, fecha_cambio_password = NOW() WHERE id = ?`, [hash, req.session.usuarioID]);
-        await destruirSesion(req);
-        limpiarCookie(res);
-        return res.json({ success: true, redirect: '/login' });
+
+        await db.query(
+            `UPDATE usuarios SET password_hash = ?, cambio_password = 0, primera_vez = 0, fecha_cambio_password = NOW() WHERE id = ?`,
+            [hash, req.session.usuarioID]
+        );
+
+        req.session.destroy(err => {
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: 'No se pudo cerrar la sesión.'
+                });
+            }
+
+            res.clearCookie('connect.sid', { path: '/' });
+
+            res.json({
+                success: true,
+                redirect: '/login'
+            });
+        });
+
     } catch (error) {
-        console.error('Error en /api/cambiar-password:', error);
-        return res.status(500).json({ success: false, message: 'Error interno del servidor.' });
+        console.error('ERROR CAMBIAR PASSWORD:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor'
+        });
     }
 });
-// === CIERRE DE SESIÓN ===
-async function limpiarSesionCompleta(req, res) {
-    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-    try {
-        if (req.session) await destruirSesion(req);
-        limpiarCookie(res);
-        if (req.xhr || req.headers.accept?.includes('json') || req.originalUrl.includes('/api/')) {
-            return res.json({ success: true, redirect: '/login' });
+
+// ============================================
+// LOGOUT UNIFICADO (COMPATIBLE CON FETCH JSON)
+// ============================================
+
+const limpiarSesionCompleta = (req, res) => {
+    console.log('Destruyendo sesión en backend...');
+
+    res.setHeader(
+        'Cache-Control',
+        'no-store, no-cache, must-revalidate, private'
+    );
+
+    req.session.destroy(err => {
+        if (err) {
+            console.error("Error destruyendo req.session:", err);
+            return res.status(500).json({
+                success: false,
+                message: 'No se pudo cerrar la sesión'
+            });
         }
-        return res.redirect('/login');
-    } catch (error) {
-        console.error('Error cerrando sesión:', error);
-        return res.status(500).json({ success: false, message: 'No se pudo cerrar la sesión.' });
-    }
-}
+
+        console.log('Sesión eliminada de memoria del servidor.');
+
+        res.clearCookie('connect.sid', { path: '/' });
+
+        if (
+            req.xhr ||
+            req.headers.accept?.includes('json') ||
+            req.originalUrl.includes('/api/')
+        ) {
+            return res.json({
+                success: true,
+                redirect: '/login'
+            });
+        }
+
+        res.redirect('/login');
+    });
+};
+
 router.all('/api/logout', limpiarSesionCompleta);
 router.all('/logout', limpiarSesionCompleta);
-// === RESTABLECER CONTRASEÑA CON TOKEN ===
+
+// ============================================
+// RESET PASSWORD TOKEN
+// ============================================
+
 router.post('/api/reset-password', async (req, res) => {
     try {
-        const db = obtenerDB(req);
-        const { token, password } = req.body || {};
-        if (typeof token !== 'string' || !/^[a-f0-9]{64}$/i.test(token) || !passwordValida(password)) {
-            return res.status(400).json({ success: false, message: 'Token inválido o contraseña no válida (mínimo 8 caracteres, máximo 72 bytes).' });
+        const db = req.app.get('db');
+        const { token, password } = req.body;
+
+        if (!token || !password) {
+            return res.status(400).json({
+                success: false,
+                message: 'Datos incompletos'
+            });
         }
-        const [results] = await db.query(`SELECT id FROM usuarios
-            WHERE token_reset = ? AND token_expira > NOW()`, [token]);
-        if (!results.length) {
-            return res.status(400).json({ success: false, message: 'El enlace expiró o no es válido.' });
+
+        const sql = `
+            SELECT * FROM usuarios 
+            WHERE token_reset = ? AND token_expira > NOW()
+        `;
+
+        const [results] = await db.query(sql, [token]);
+
+        if (results.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'El enlace expiró o no es válido'
+            });
         }
+
+        const usuario = results[0];
         const hash = await bcrypt.hash(password, SALT_ROUNDS);
-        const [resultado] = await db.query(`UPDATE usuarios SET password_hash = ?, token_reset = NULL,
-            token_expira = NULL, cambio_password = 0, primera_vez = 0,
-            fecha_cambio_password = NOW() WHERE id = ? AND token_reset = ? AND token_expira > NOW()`,
-        [hash, results[0].id, token]);
-        if (!resultado.affectedRows) {
-            return res.status(400).json({ success: false, message: 'El enlace expiró o no es válido.' });
-        }
-        return res.json({ success: true, message: 'Contraseña actualizada.' });
+
+        await db.query(
+            `UPDATE usuarios SET password_hash = ?, token_reset = NULL, token_expira = NULL, cambio_password = 0, primera_vez = 0, fecha_cambio_password = NOW() WHERE id = ?`,
+            [hash, usuario.id]
+        );
+
+        res.json({
+            success: true,
+            message: 'Contraseña actualizada'
+        });
+
     } catch (error) {
-        console.error('Error en /api/reset-password:', error);
-        return res.status(500).json({ success: false, message: 'Error interno del servidor.' });
+        console.error('ERROR RESET PASSWORD:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor'
+        });
     }
 });
+
 module.exports = router;
