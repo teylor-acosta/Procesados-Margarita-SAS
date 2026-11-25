@@ -378,17 +378,35 @@
 
                 </div>
 
-                <div id="listaTramosEtapa"></div>
+                
+<div class="campo-nomina">
+    <label for="modoEtapaSena">¿Cómo se manejará la etapa del aprendiz?</label>
+    <select id="modoEtapaSena">
+        <option value="unica">Una sola etapa durante todo el período</option>
+        <option value="cambio">Cambio de etapa durante el período</option>
+    </select>
+</div>
 
-                <button
-                    type="button"
-                    id="btnAgregarTramo"
-                    class="btn-agregar-tramo">
+<div id="contenedorEtapaUnica" class="campo-nomina">
+    <label for="etapaUnicaSena">Etapa del aprendiz</label>
+    <select id="etapaUnicaSena">
+        <option value="lectiva">Lectiva - 75% del SMMLV</option>
+        <option value="productiva">Productiva - 100% del SMMLV</option>
+    </select>
+</div>
 
-                    <i class="fas fa-plus"></i>
-                    Agregar tramo de etapa
+<div id="contenedorTramosEtapa" hidden>
+    <div id="listaTramosEtapa"></div>
 
-                </button>
+    <button
+        type="button"
+        id="btnAgregarTramo"
+        class="btn-agregar-tramo">
+        <i class="fas fa-plus"></i>
+        Agregar tramo de etapa
+    </button>
+</div>
+
 
                 <div class="total-dias-etapa">
                     <span>Días distribuidos</span>
