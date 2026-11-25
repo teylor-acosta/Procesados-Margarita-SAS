@@ -1,3 +1,4 @@
+
 /* ============================================
    PANEL ERP - PROCESADOS MARGARITA
 ============================================ */
@@ -116,7 +117,7 @@
 }
 
 /* ============================================
-   TARJETAS (ESTILO GLOBAL MODIFICADO)
+   TARJETAS
 ============================================ */
 
 .modulo-card{
@@ -140,13 +141,17 @@
     gap:15px;
 
     cursor:pointer;
-    
-    /* [MODIFICADO] Degradado verde a azul para todas las tarjetas */
-    background: linear-gradient(135deg, var(--verde-dark), var(--azul));
-    color: white;
-    
-    border: none; /* Quitamos el borde gris para que se vea más limpio */
-    
+
+    background:linear-gradient(
+        135deg,
+        var(--verde-dark),
+        var(--azul)
+    );
+
+    color:white;
+
+    border:none;
+
     box-shadow:
         0 10px 25px rgba(0,0,0,.15);
 
@@ -164,7 +169,50 @@
 }
 
 /* ============================================
-   MODULOS FUTUROS (Mantienen su estilo apagado)
+   NUEVO MÓDULO: CRONOGRAMA DE TRANSFORMÍN
+============================================ */
+
+.modulo-card.transformin{
+
+    background:linear-gradient(
+        135deg,
+        var(--verde-dark),
+        var(--azul)
+    );
+
+    color:white;
+
+}
+
+.modulo-card.transformin span{
+
+    max-width:210px;
+
+    padding:0 10px;
+
+    line-height:1.25;
+
+    overflow-wrap:break-word;
+
+}
+
+.modulo-card.transformin small{
+
+    color:rgba(255,255,255,.92);
+
+}
+
+.modulo-card.transformin:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:
+        0 20px 40px rgba(0,0,0,.25);
+
+}
+
+/* ============================================
+   MODULOS FUTUROS
 ============================================ */
 
 .modulo-card.proximamente{
@@ -295,6 +343,14 @@
 
     }
 
+    .modulo-card.transformin span{
+
+        max-width:170px;
+
+        font-size:17px;
+
+    }
+
 }
 
 @media(max-width:480px){
@@ -316,6 +372,16 @@
     .modulo-card small{
 
         display:none;
+
+    }
+
+    .modulo-card.transformin span{
+
+        max-width:150px;
+
+        font-size:16px;
+
+        line-height:1.3;
 
     }
 

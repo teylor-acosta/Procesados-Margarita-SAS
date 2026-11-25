@@ -1,6 +1,9 @@
+
 document.addEventListener("DOMContentLoaded", async () => {
 
     const contenedor = document.getElementById("contenedorModulos");
+
+    if (!contenedor) return;
 
     try {
 
@@ -8,11 +11,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             credentials: 'include'
         });
 
+        if (!res.ok) {
+            throw new Error(`Error HTTP: ${res.status}`);
+        }
+
         const data = await res.json();
 
         console.log("DATA PANEL:", data);
 
-        if (!data.success) {
+        if (!data.success || !data.usuario) {
 
             window.location.href = "/login";
 
@@ -68,8 +75,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 </div>
 
-                <!-- 🔥 SE ELIMINÓ EL BOTÓN DE NOVEDADES PARA EL ADMIN
-                     Ahora los admins solo acceden a novedades desde Nómina -->
+                <!-- =====================================
+                     NUEVO MÓDULO: TRANSFORMÍN
+                ====================================== -->
+
+                <div
+                    class="modulo-card transformin"
+                    onclick="irCronogramaTransformin()">
+
+                    <i class="fas fa-calendar-days icono-modulo"></i>
+
+                    <span>Cronograma de Transformín</span>
+
+                    <small>
+                        Actividades y recordatorios
+                    </small>
+
+                </div>
+
+                <!-- =====================================
+                     MÓDULOS EN DESARROLLO
+                ====================================== -->
 
                 <div class="modulo-card proximamente">
 
@@ -159,7 +185,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 </div>
 
-                <Botón de Novedades para Usuario Normal -->
+                <!-- Botón de Novedades para Usuario Normal -->
+
                 <div
                     class="modulo-card mis-novedades"
                     onclick="irmisNovedades()">
@@ -184,13 +211,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (html === "") {
 
-            html = `
-                <p class="text-warning text-center">
+            // Mostrar el rol de forma segura como texto.
+            const aviso = document.createElement("p");
 
-                    Rol no reconocido: ${rol}
+            aviso.className = "text-warning text-center";
 
-                </p>
-            `;
+            aviso.textContent = `Rol no reconocido: ${rol}`;
+
+            contenedor.replaceChildren(aviso);
+
+            return;
 
         }
 
@@ -249,18 +279,30 @@ function irCapacitaciones() {
 
 }
 
-// [MODIFICADO] Función para ir a la ventana de novedades de ADMIN
+// ============================================
+// NÓMINA / NOVEDADES
+// ============================================
+
+// Administrador
 function irNovedades() {
 
-    // Los administradores van a la vista con todos los permisos
-    window.location.href = "/nomina/novedades"; 
+    window.location.href = "/nomina/novedades";
 
 }
 
-// [MODIFICADO] Función para ir a la ventana de novedades del USUARIO NORMAL
+// Usuario normal
 function irmisNovedades() {
 
-    // Ahora apunta a la misma ruta del backend, y el backend decide qué HTML mostrar
     window.location.href = "/nomina/novedades";
+
+}
+
+// ============================================
+// NUEVO MÓDULO: CRONOGRAMA DE TRANSFORMÍN
+// ============================================
+
+function irCronogramaTransformin() {
+
+    window.location.href = "/cronograma-transformin";
 
 }

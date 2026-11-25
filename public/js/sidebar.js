@@ -1,15 +1,18 @@
 /* ==========================================================================
    SIDEBAR GLOBAL ERP - PROCESADOS MARGARITA
    ========================================================================== */
-   /* ==========================================================================
+
+/* ==========================================================================
    VARIABLES GLOBALES
    ========================================================================== */
 
 let menuSistema = [];
-
 let paginaActual = "";
-
 let tipoMenu = "ERP";
+
+/* ==========================================================================
+   INICIALIZACIÓN DEL SIDEBAR
+   ========================================================================== */
 
 document.addEventListener("DOMContentLoaded", async () => {
 
@@ -21,6 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await cargarSidebar();
 
 });
+
 /* ==========================================================================
    DETERMINAR TIPO DE MENÚ
    ========================================================================== */
@@ -30,21 +34,15 @@ function detectarTipoMenu() {
     const onboarding = [
 
         "induccion",
-
         "evaluacion",
-
         "firma",
-
         "certificado"
 
     ];
 
     tipoMenu =
-
         onboarding.includes(paginaActual)
-
             ? "ONBOARDING"
-
             : "ERP";
 
 }
@@ -72,14 +70,14 @@ async function cargarSidebar() {
         const html =
             await response.text();
 
-        container.innerHTML =
-    html;
+        container.innerHTML = html;
 
-await cargarMenuBD();
+        await cargarMenuBD();
 
-construirMenu();
+        construirMenu();
 
-cargarDatosUsuario();
+        cargarDatosUsuario();
+
         configurarLogout();
 
         configurarMenuMovil();
@@ -90,9 +88,10 @@ cargarDatosUsuario();
             "Error cargando sidebar:",
             error
         );
+
     }
+
 }
-   
 
 /* ==========================================================================
    OBTENER MENÚ DESDE BASE DE DATOS
@@ -123,9 +122,7 @@ async function cargarMenuBD() {
         menuSistema =
             result.menu || [];
 
-    }
-
-    catch (error) {
+    } catch (error) {
 
         console.error(
             "Error cargando menú:",
@@ -140,30 +137,24 @@ async function cargarMenuBD() {
    FUNCIONES AUXILIARES DEL MENÚ
    ========================================================================== */
 
+// Buscar un módulo por nombre en todos los niveles del menú.
 function obtenerModulo(nombre, modulos = menuSistema) {
 
     for (const modulo of modulos) {
 
         if (modulo.nombre === nombre) {
-
             return modulo;
-
         }
 
         if (modulo.hijos && modulo.hijos.length) {
 
             const encontrado = obtenerModulo(
-
                 nombre,
-
                 modulo.hijos
-
             );
 
             if (encontrado) {
-
                 return encontrado;
-
             }
 
         }
@@ -174,6 +165,7 @@ function obtenerModulo(nombre, modulos = menuSistema) {
 
 }
 
+// Obtener los módulos hijos de un módulo padre.
 function obtenerHijos(idPadre) {
 
     function buscar(modulos) {
@@ -181,9 +173,7 @@ function obtenerHijos(idPadre) {
         for (const modulo of modulos) {
 
             if (modulo.id === idPadre) {
-
                 return modulo.hijos || [];
-
             }
 
             if (modulo.hijos && modulo.hijos.length) {
@@ -191,9 +181,7 @@ function obtenerHijos(idPadre) {
                 const hijos = buscar(modulo.hijos);
 
                 if (hijos) {
-
                     return hijos;
-
                 }
 
             }
@@ -207,14 +195,37 @@ function obtenerHijos(idPadre) {
     return buscar(menuSistema) || [];
 
 }
-function obtenerModuloPorId(id) {
 
-    return menuSistema.find(modulo =>
-        modulo.id === id
-    );
+// Buscar un módulo por ID de manera recursiva.
+// Permite encontrar módulos principales y secundarios.
+function obtenerModuloPorId(id, modulos = menuSistema) {
+
+    for (const modulo of modulos) {
+
+        if (String(modulo.id) === String(id)) {
+            return modulo;
+        }
+
+        if (modulo.hijos?.length) {
+
+            const encontrado = obtenerModuloPorId(
+                id,
+                modulo.hijos
+            );
+
+            if (encontrado) {
+                return encontrado;
+            }
+
+        }
+
+    }
+
+    return null;
 
 }
 
+// Obtener el módulo padre de un módulo hijo.
 function obtenerPadre(idHijo) {
 
     function buscar(modulos, padre = null) {
@@ -222,27 +233,18 @@ function obtenerPadre(idHijo) {
         for (const modulo of modulos) {
 
             if (modulo.id === idHijo) {
-
                 return padre;
-
             }
 
             if (modulo.hijos?.length) {
 
-                const encontrado =
-
-                    buscar(
-
-                        modulo.hijos,
-
-                        modulo
-
-                    );
+                const encontrado = buscar(
+                    modulo.hijos,
+                    modulo
+                );
 
                 if (encontrado) {
-
                     return encontrado;
-
                 }
 
             }
@@ -256,6 +258,8 @@ function obtenerPadre(idHijo) {
     return buscar(menuSistema);
 
 }
+
+// Identificar el módulo correspondiente a la ruta actual.
 function obtenerModuloActual() {
 
     const ruta = window.location.pathname;
@@ -265,19 +269,17 @@ function obtenerModuloActual() {
         for (const modulo of modulos) {
 
             if (modulo.ruta === ruta) {
-
                 return modulo;
-
             }
 
             if (modulo.hijos?.length) {
 
-                const encontrado = buscar(modulo.hijos);
+                const encontrado = buscar(
+                    modulo.hijos
+                );
 
                 if (encontrado) {
-
                     return encontrado;
-
                 }
 
             }
@@ -292,6 +294,7 @@ function obtenerModuloActual() {
 
 }
 
+// Construir la ruta jerárquica del módulo.
 function obtenerRutaModulo(modulo) {
 
     const ruta = [];
@@ -310,7 +313,6 @@ function obtenerRutaModulo(modulo) {
 
 }
 
-
 /* ==========================================================================
    RENDERIZAR MENÚ DINÁMICO
    ========================================================================== */
@@ -318,9 +320,7 @@ function obtenerRutaModulo(modulo) {
 function renderizarMenuDinamico(modulos) {
 
     const menu = document.getElementById(
-
         "menuDinamico"
-
     );
 
     if (!menu) return;
@@ -346,16 +346,14 @@ function renderizarMenuDinamico(modulos) {
 function activarEventosMenu() {
 
     document
-
         .querySelectorAll(".menu-parent")
-
         .forEach(parent => {
 
             parent.addEventListener("click", () => {
 
-                const grupo =
-
-                    parent.closest(".menu-group");
+                const grupo = parent.closest(
+                    ".menu-group"
+                );
 
                 grupo.classList.toggle("open");
 
@@ -372,9 +370,7 @@ function activarEventosMenu() {
 function crearNodoMenu(modulo) {
 
     // ==========================================
-
     // MÓDULO SIN HIJOS
-
     // ==========================================
 
     if (!modulo.hijos || modulo.hijos.length === 0) {
@@ -382,17 +378,13 @@ function crearNodoMenu(modulo) {
         return `
 
             <a
-
                 href="${modulo.ruta}"
-
                 class="menu-item">
 
                 <i class="fas ${modulo.icono}"></i>
 
                 <span>
-
                     ${modulo.nombre}
-
                 </span>
 
             </a>
@@ -402,9 +394,7 @@ function crearNodoMenu(modulo) {
     }
 
     // ==========================================
-
     // MÓDULO CON HIJOS
-
     // ==========================================
 
     return `
@@ -418,9 +408,7 @@ function crearNodoMenu(modulo) {
                     <i class="fas ${modulo.icono}"></i>
 
                     <span>
-
                         ${modulo.nombre}
-
                     </span>
 
                 </div>
@@ -432,9 +420,7 @@ function crearNodoMenu(modulo) {
             <div class="submenu">
 
                 ${modulo.hijos
-
                     .map(hijo => crearNodoMenu(hijo))
-
                     .join("")}
 
             </div>
@@ -445,16 +431,19 @@ function crearNodoMenu(modulo) {
 
 }
 
+/* ==========================================================================
+   VERIFICACIÓN DE MÓDULOS Y PERMISOS
+   ========================================================================== */
+
+// Verificar si el módulo existe dentro del menú autorizado.
+// Utiliza la búsqueda recursiva para incluir los submenús.
 function tieneModulo(nombre) {
 
-    return menuSistema.some(modulo =>
-
-        modulo.nombre === nombre
-
-    );
+    return obtenerModulo(nombre) !== null;
 
 }
 
+// Verificar si el módulo corresponde a la página actual.
 function moduloActivo(nombre) {
 
     const modulo = obtenerModulo(nombre);
@@ -465,64 +454,53 @@ function moduloActivo(nombre) {
 
 }
 
-/* =====================================
-   MENU RECURSOS HUMANOS
-===================================== */
+/* ==========================================================================
+   MENÚ RECURSOS HUMANOS
+   ========================================================================== */
 
 function menuRecursosHumanos(paginaActiva) {
 
+    // Páginas pertenecientes al módulo de empleados.
     const paginasEmpleados = [
-    'empleados-menu',
-    'empleados',
-    'crear-empleado',
-    'empleados-inactivos',
-    'documentacion',
-    'documentos-lectura-admin',
-    'centro-actividad'
-];
+        'empleados-menu',
+        'empleados',
+        'crear-empleado',
+        'empleados-inactivos',
+        'documentacion',
+        'documentos-lectura-admin',
+        'centro-actividad'
+    ];
 
-    const empleados =
+    // Obtener módulo de empleados.
+    const empleados = obtenerModuloPorId(4);
 
-    obtenerModuloPorId(4);
+    // Obtener submódulos de empleados.
+    const hijosEmpleados = obtenerHijos(4);
 
-const hijosEmpleados =
-
-    obtenerHijos(4);
-
+    // Determinar si debe mostrarse el módulo de empleados.
     const mostrarModuloEmpleados =
-
         paginasEmpleados.includes(paginaActiva);
 
-        const recursosHumanos =
-
-    obtenerModulo(
-
+    // Obtener módulo principal de Recursos Humanos.
+    const recursosHumanos = obtenerModulo(
         "Recursos Humanos"
-
     );
 
-const modulosRH =
-
-    recursosHumanos
-
-        ? obtenerHijos(
-
-            recursosHumanos.id
-
-        )
-
+    // Obtener módulos autorizados desde la base de datos.
+    const modulosRH = recursosHumanos
+        ? obtenerHijos(recursosHumanos.id)
         : [];
 
-        console.log(
-
-    "MODULOS RH:",
-
-    modulosRH
-
-);
-
+    console.log(
+        "MODULOS RH:",
+        modulosRH
+    );
 
     return `
+
+        <!-- ==========================================
+             TÍTULO DE RECURSOS HUMANOS
+        =========================================== -->
 
         <span class="menu-section-title">
 
@@ -530,8 +508,11 @@ const modulosRH =
 
         </span>
 
-        <a href="/panel"
+        <!-- ==========================================
+             ACCESO AL PANEL PRINCIPAL
+        =========================================== -->
 
+        <a href="/panel"
            class="menu-item">
 
             <i class="fas fa-th-large"></i>
@@ -540,18 +521,18 @@ const modulosRH =
 
         </a>
 
+        <!-- ==========================================
+             MENÚ PRINCIPAL DE RECURSOS HUMANOS
+        =========================================== -->
+
         <div class="menu-group ">
 
             <div class="menu-item menu-parent">
 
                 <div style="
-
                     display:flex;
-
                     align-items:center;
-
                     gap:10px;
-
                 ">
 
                     <i class="fas fa-users-cog"></i>
@@ -570,386 +551,229 @@ const modulosRH =
 
             <div class="submenu">
 
+                <!-- INICIO RECURSOS HUMANOS -->
+
                 <a href="/recursos-humanos"
+                   class="menu-item submenu-item ${
+                       paginaActiva === 'recursos-humanos'
+                           ? 'active'
+                           : ''
+                   }">
 
-   class="menu-item submenu-item ${paginaActiva === 'recursos-humanos' ? 'active' : ''}">
-
-    <i class="fas fa-house"></i>
-
-    <span>
-
-        Inicio Recursos Humanos
-
-    </span>
-
-</a>
-
-${modulosRH.map(modulo => `
-
-    <a
-
-        href="${modulo.ruta}"
-
-        class="menu-item submenu-item ${paginaActiva === modulo.ruta.substring(1) ? 'active' : ''}">
-
-        <i class="fas ${modulo.icono}"></i>
-
-        <span>${modulo.nombre}</span>
-
-    </a>
-
-`).join("")}
-
-<a
-
-    href="/nomina"
-
-    class="menu-item submenu-item ${paginaActiva === 'nomina' ? 'active' : ''}">
-
-    <i class="fas fa-money-check-dollar"></i>
-
-    <span>
-
-        Nómina
-
-    </span>
-
-</a>
-
-            </div>
-
-        </div>
-
-        ${mostrarModuloEmpleados ? `
-
-        <div class="menu-group open">
-
-            <div class="menu-item menu-parent">
-
-                <div style="
-
-                    display:flex;
-
-                    align-items:center;
-
-                    gap:10px;
-
-                ">
-
-                    <i class="fas fa-users"></i>
+                    <i class="fas fa-house"></i>
 
                     <span>
 
-                        Módulo Empleados
+                        Inicio Recursos Humanos
 
                     </span>
 
-                </div>
-
-                <i class="fas fa-chevron-down menu-arrow"></i>
-
-            </div>
-
-            <div class="submenu">
-
-                <a href="/empleados-menu"
-
-                   class="menu-item submenu-item ${paginaActiva === 'empleados-menu' ? 'active' : ''}">
-
-                    <i class="fas fa-layer-group"></i>
-
-                    <span>Inicio Módulo</span>
-
                 </a>
 
-                <a href="/empleados"
+                <!-- MÓDULOS DINÁMICOS -->
 
-                   class="menu-item submenu-item ${paginaActiva === 'empleados' ? 'active' : ''}">
+                ${modulosRH.map(modulo => `
 
-                    <i class="fas fa-list"></i>
+                    <a href="${modulo.ruta}"
+                       class="menu-item submenu-item ${
+                           paginaActiva === modulo.ruta.substring(1)
+                               ? 'active'
+                               : ''
+                       }">
 
-                    <span>Listado Empleados</span>
+                        <i class="fas ${modulo.icono}"></i>
 
-                </a>
+                        <span>${modulo.nombre}</span>
 
-                <a href="/crear-empleado"
+                    </a>
 
-                   class="menu-item submenu-item ${paginaActiva === 'crear-empleado' ? 'active' : ''}">
+                `).join("")}
 
-                    <i class="fas fa-user-plus"></i>
+                <!-- ACCESO AL MÓDULO DE NÓMINA -->
 
-                    <span>Crear Empleado</span>
+                <a href="/nomina"
+                   class="menu-item submenu-item ${
+                       paginaActiva === 'nomina'
+                           ? 'active'
+                           : ''
+                   }">
 
-                </a>
+                    <i class="fas fa-money-check-dollar"></i>
 
-                <a href="/empleados-inactivos"
+                    <span>
 
-                   class="menu-item submenu-item ${paginaActiva === 'empleados-inactivos' ? 'active' : ''}">
+                        Nómina
 
-                    <i class="fas fa-user-slash"></i>
-
-                    <span>Empleados Inactivos</span>
-
-                </a>
-
-                <a href="/documentacion-empleados"
-
-                   class="menu-item submenu-item ${paginaActiva === 'documentacion' ? 'active' : ''}">
-
-                    <i class="fas fa-folder-open"></i>
-
-                    <span>Gestión Documental</span>
-
-                </a>
-
-                <a href="/documentos-lectura-admin"
-   class="menu-item submenu-item ${paginaActiva === 'documentos-lectura-admin' ? 'active' : ''}">
-    <i class="fas fa-book-open"></i>
-    <span>Documentos y Políticas</span>
-</a>
-
-                <a href="/centro-actividad"
-
-                   class="menu-item submenu-item ${paginaActiva === 'centro-actividad' ? 'active' : ''}">
-
-                    <i class="fas fa-history"></i>
-
-                    <span>Centro de Actividad</span>
+                    </span>
 
                 </a>
 
             </div>
 
         </div>
+
+        <!-- ==========================================
+             MÓDULO DE EMPLEADOS
+        =========================================== -->
+
+        ${mostrarModuloEmpleados ? `
+
+            <div class="menu-group open">
+
+                <div class="menu-item menu-parent">
+
+                    <div style="
+                        display:flex;
+                        align-items:center;
+                        gap:10px;
+                    ">
+
+                        <i class="fas fa-users"></i>
+
+                        <span>
+
+                            Módulo Empleados
+
+                        </span>
+
+                    </div>
+
+                    <i class="fas fa-chevron-down menu-arrow"></i>
+
+                </div>
+
+                <div class="submenu">
+
+                    <!-- INICIO DEL MÓDULO -->
+
+                    <a href="/empleados-menu"
+                       class="menu-item submenu-item ${
+                           paginaActiva === 'empleados-menu'
+                               ? 'active'
+                               : ''
+                       }">
+
+                        <i class="fas fa-layer-group"></i>
+
+                        <span>Inicio Módulo</span>
+
+                    </a>
+
+                    <!-- LISTADO DE EMPLEADOS -->
+
+                    <a href="/empleados"
+                       class="menu-item submenu-item ${
+                           paginaActiva === 'empleados'
+                               ? 'active'
+                               : ''
+                       }">
+
+                        <i class="fas fa-list"></i>
+
+                        <span>Listado Empleados</span>
+
+                    </a>
+
+                    <!-- CREAR EMPLEADO -->
+
+                    <a href="/crear-empleado"
+                       class="menu-item submenu-item ${
+                           paginaActiva === 'crear-empleado'
+                               ? 'active'
+                               : ''
+                       }">
+
+                        <i class="fas fa-user-plus"></i>
+
+                        <span>Crear Empleado</span>
+
+                    </a>
+
+                    <!-- EMPLEADOS INACTIVOS -->
+
+                    <a href="/empleados-inactivos"
+                       class="menu-item submenu-item ${
+                           paginaActiva === 'empleados-inactivos'
+                               ? 'active'
+                               : ''
+                       }">
+
+                        <i class="fas fa-user-slash"></i>
+
+                        <span>Empleados Inactivos</span>
+
+                    </a>
+
+                    <!-- GESTIÓN DOCUMENTAL -->
+
+                    <a href="/documentacion-empleados"
+                       class="menu-item submenu-item ${
+                           paginaActiva === 'documentacion'
+                               ? 'active'
+                               : ''
+                       }">
+
+                        <i class="fas fa-folder-open"></i>
+
+                        <span>Gestión Documental</span>
+
+                    </a>
+
+                    <!-- DOCUMENTOS Y POLÍTICAS -->
+
+                    <a href="/documentos-lectura-admin"
+                       class="menu-item submenu-item ${
+                           paginaActiva === 'documentos-lectura-admin'
+                               ? 'active'
+                               : ''
+                       }">
+
+                        <i class="fas fa-book-open"></i>
+
+                        <span>Documentos y Políticas</span>
+
+                    </a>
+
+                    <!-- CENTRO DE ACTIVIDAD -->
+
+                    <a href="/centro-actividad"
+                       class="menu-item submenu-item ${
+                           paginaActiva === 'centro-actividad'
+                               ? 'active'
+                               : ''
+                       }">
+
+                        <i class="fas fa-history"></i>
+
+                        <span>Centro de Actividad</span>
+
+                    </a>
+
+                </div>
+
+            </div>
 
         ` : ''}
 
     `;
+
 }
+
+/* ==========================================================================
+   FIN DEL MENÚ DE RECURSOS HUMANOS
+   ========================================================================== */
+
+   /* ==========================================================================
+   MENÚ DEL MÓDULO DE USUARIOS
+   ========================================================================== */
+
 function menuUsuarios(paginaActiva) {
 
     return `
 
-    <span class="menu-section-title">
-
-        Recursos Humanos
-
-    </span>
-
-    <a href="/panel"
-
-       class="menu-item">
-
-        <i class="fas fa-th-large"></i>
-
-        <span>Panel</span>
-
-    </a>
-
-    <div class="menu-group ">
-
-        <div class="menu-item menu-parent">
-
-            <div style="
-
-                display:flex;
-
-                align-items:center;
-
-                gap:10px;
-
-            ">
-
-                <i class="fas fa-users-cog"></i>
-
-                <span>
-
-                    Recursos Humanos
-
-                </span>
-
-            </div>
-
-            <i class="fas fa-chevron-down menu-arrow"></i>
-
-        </div>
-
-        <div class="submenu">
-
-            <a href="/recursos-humanos"
-
-               class="menu-item submenu-item">
-
-                <i class="fas fa-house"></i>
-
-                <span>
-
-                    Inicio Recursos Humanos
-
-                </span>
-
-            </a>
-
-            <a href="/empleados-menu"
-
-               class="menu-item submenu-item">
-
-                <i class="fas fa-users"></i>
-
-                <span>
-
-                    Empleados
-
-                </span>
-
-            </a>
-
-            <a href="/usuarios"
-
-               class="menu-item submenu-item active">
-
-                <i class="fas fa-user-shield"></i>
-
-                <span>
-
-                    Usuarios
-
-                </span>
-
-            </a>
-
-            <a href="#"
-
-               class="menu-item submenu-item">
-
-                <i class="fas fa-graduation-cap"></i>
-
-                <span>
-
-                    Capacitaciones
-
-                </span>
-
-            </a>
-
-        </div>
-
-    </div>
-
-    <div class="menu-group open">
-
-        <div class="menu-item menu-parent">
-
-            <div style="
-
-                display:flex;
-
-                align-items:center;
-
-                gap:10px;
-
-            ">
-
-                <i class="fas fa-user-shield"></i>
-
-                <span>
-
-                    Módulo Usuarios
-
-                </span>
-
-            </div>
-
-            <i class="fas fa-chevron-down menu-arrow"></i>
-
-        </div>
-
-        <div class="submenu">
-
-            <a href="/usuarios"
-
-               class="menu-item submenu-item ${paginaActiva === 'usuarios' ? 'active' : ''}">
-
-                <i class="fas fa-house"></i>
-
-                <span>
-
-                    Inicio Usuarios
-
-                </span>
-
-            </a>
-
-            <a href="/crear-usuario"
-
-               class="menu-item submenu-item ${paginaActiva === 'crear-usuario' ? 'active' : ''}">
-
-                <i class="fas fa-user-plus"></i>
-
-                <span>
-
-                    Crear Usuario
-
-                </span>
-
-            </a>
-
-            <a href="/usuarios-registrados"
-
-               class="menu-item submenu-item ${paginaActiva === 'usuarios-registrados' ? 'active' : ''}">
-
-                <i class="fas fa-users"></i>
-
-                <span>
-
-                    Usuarios Registrados
-
-                </span>
-
-            </a>
-
-            <a href="/roles-accesos"
-
-               class="menu-item submenu-item ${paginaActiva === 'roles-accesos' ? 'active' : ''}">
-
-                <i class="fas fa-user-shield"></i>
-
-                <span>
-
-                    Roles y Accesos
-
-                </span>
-
-            </a>
-
-            <a href="/historial-usuarios"
-
-               class="menu-item submenu-item ${paginaActiva === 'historial-usuarios' ? 'active' : ''}">
-
-                <i class="fas fa-history"></i>
-
-                <span>
-
-                    Centro de Actividad
-
-                </span>
-
-            </a>
-
-        </div>
-
-    </div>
-
-`;
-}
-
-/* =====================================
-   MENÚ NÓMINA
-===================================== */
-
-function menuNomina(paginaActiva) {
-
-    return `
+        <!-- ==========================================
+             TÍTULO DE LA SECCIÓN
+        =========================================== -->
 
         <span class="menu-section-title">
 
@@ -957,39 +781,31 @@ function menuNomina(paginaActiva) {
 
         </span>
 
-        <a href="/panel"
+        <!-- ==========================================
+             ACCESO AL PANEL PRINCIPAL
+        =========================================== -->
 
+        <a href="/panel"
            class="menu-item">
 
             <i class="fas fa-th-large"></i>
 
-            <span>
-
-                Panel
-
-            </span>
+            <span>Panel</span>
 
         </a>
 
-
-        <!-- ==============================
-
-             RECURSOS HUMANOS
-
-        =============================== -->
+        <!-- ==========================================
+             MENÚ PRINCIPAL DE RECURSOS HUMANOS
+        =========================================== -->
 
         <div class="menu-group ">
 
             <div class="menu-item menu-parent">
 
                 <div style="
-
                     display:flex;
-
                     align-items:center;
-
                     gap:10px;
-
                 ">
 
                     <i class="fas fa-users-cog"></i>
@@ -1006,11 +822,11 @@ function menuNomina(paginaActiva) {
 
             </div>
 
-
             <div class="submenu">
 
-                <a href="/recursos-humanos"
+                <!-- INICIO DE RECURSOS HUMANOS -->
 
+                <a href="/recursos-humanos"
                    class="menu-item submenu-item">
 
                     <i class="fas fa-house"></i>
@@ -1023,9 +839,9 @@ function menuNomina(paginaActiva) {
 
                 </a>
 
+                <!-- MÓDULO DE EMPLEADOS -->
 
                 <a href="/empleados-menu"
-
                    class="menu-item submenu-item">
 
                     <i class="fas fa-users"></i>
@@ -1038,9 +854,285 @@ function menuNomina(paginaActiva) {
 
                 </a>
 
+                <!-- MÓDULO DE USUARIOS -->
 
                 <a href="/usuarios"
+                   class="menu-item submenu-item active">
 
+                    <i class="fas fa-user-shield"></i>
+
+                    <span>
+
+                        Usuarios
+
+                    </span>
+
+                </a>
+
+                <!-- MÓDULO DE CAPACITACIONES -->
+
+                <a href="#"
+                   class="menu-item submenu-item">
+
+                    <i class="fas fa-graduation-cap"></i>
+
+                    <span>
+
+                        Capacitaciones
+
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- ==========================================
+             MENÚ INTERNO DEL MÓDULO DE USUARIOS
+        =========================================== -->
+
+        <div class="menu-group open">
+
+            <div class="menu-item menu-parent">
+
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:10px;
+                ">
+
+                    <i class="fas fa-user-shield"></i>
+
+                    <span>
+
+                        Módulo Usuarios
+
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-down menu-arrow"></i>
+
+            </div>
+
+            <div class="submenu">
+
+                <!-- ==================================
+                     INICIO DEL MÓDULO DE USUARIOS
+                =================================== -->
+
+                <a href="/usuarios"
+                   class="menu-item submenu-item ${
+                       paginaActiva === 'usuarios'
+                           ? 'active'
+                           : ''
+                   }">
+
+                    <i class="fas fa-house"></i>
+
+                    <span>
+
+                        Inicio Usuarios
+
+                    </span>
+
+                </a>
+
+                <!-- ==================================
+                     CREACIÓN DE USUARIOS
+                =================================== -->
+
+                <a href="/crear-usuario"
+                   class="menu-item submenu-item ${
+                       paginaActiva === 'crear-usuario'
+                           ? 'active'
+                           : ''
+                   }">
+
+                    <i class="fas fa-user-plus"></i>
+
+                    <span>
+
+                        Crear Usuario
+
+                    </span>
+
+                </a>
+
+                <!-- ==================================
+                     USUARIOS REGISTRADOS
+                =================================== -->
+
+                <a href="/usuarios-registrados"
+                   class="menu-item submenu-item ${
+                       paginaActiva === 'usuarios-registrados'
+                           ? 'active'
+                           : ''
+                   }">
+
+                    <i class="fas fa-users"></i>
+
+                    <span>
+
+                        Usuarios Registrados
+
+                    </span>
+
+                </a>
+
+                <!-- ==================================
+                     GESTIÓN DE ROLES Y ACCESOS
+                =================================== -->
+
+                <a href="/roles-accesos"
+                   class="menu-item submenu-item ${
+                       paginaActiva === 'roles-accesos'
+                           ? 'active'
+                           : ''
+                   }">
+
+                    <i class="fas fa-user-shield"></i>
+
+                    <span>
+
+                        Roles y Accesos
+
+                    </span>
+
+                </a>
+
+                <!-- ==================================
+                     HISTORIAL Y CENTRO DE ACTIVIDAD
+                =================================== -->
+
+                <a href="/historial-usuarios"
+                   class="menu-item submenu-item ${
+                       paginaActiva === 'historial-usuarios'
+                           ? 'active'
+                           : ''
+                   }">
+
+                    <i class="fas fa-history"></i>
+
+                    <span>
+
+                        Centro de Actividad
+
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+/* ==========================================================================
+   FIN DEL MENÚ DEL MÓDULO DE USUARIOS
+   ========================================================================== */
+
+   /* ==========================================================================
+   MENÚ DEL MÓDULO DE NÓMINA
+   ========================================================================== */
+
+function menuNomina(paginaActiva) {
+
+    return `
+
+        <!-- ==========================================
+             TÍTULO DE LA SECCIÓN
+        =========================================== -->
+
+        <span class="menu-section-title">
+
+            Recursos Humanos
+
+        </span>
+
+        <!-- ==========================================
+             ACCESO AL PANEL PRINCIPAL
+        =========================================== -->
+
+        <a href="/panel"
+           class="menu-item">
+
+            <i class="fas fa-th-large"></i>
+
+            <span>
+
+                Panel
+
+            </span>
+
+        </a>
+
+        <!-- ==========================================
+             MENÚ PRINCIPAL DE RECURSOS HUMANOS
+        =========================================== -->
+
+        <div class="menu-group ">
+
+            <div class="menu-item menu-parent">
+
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:10px;
+                ">
+
+                    <i class="fas fa-users-cog"></i>
+
+                    <span>
+
+                        Recursos Humanos
+
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-down menu-arrow"></i>
+
+            </div>
+
+            <div class="submenu">
+
+                <!-- INICIO DE RECURSOS HUMANOS -->
+
+                <a href="/recursos-humanos"
+                   class="menu-item submenu-item">
+
+                    <i class="fas fa-house"></i>
+
+                    <span>
+
+                        Inicio Recursos Humanos
+
+                    </span>
+
+                </a>
+
+                <!-- MÓDULO DE EMPLEADOS -->
+
+                <a href="/empleados-menu"
+                   class="menu-item submenu-item">
+
+                    <i class="fas fa-users"></i>
+
+                    <span>
+
+                        Empleados
+
+                    </span>
+
+                </a>
+
+                <!-- MÓDULO DE USUARIOS -->
+
+                <a href="/usuarios"
                    class="menu-item submenu-item">
 
                     <i class="fas fa-user-shield"></i>
@@ -1053,9 +1145,9 @@ function menuNomina(paginaActiva) {
 
                 </a>
 
+                <!-- MÓDULO DE NÓMINA -->
 
                 <a href="/nomina"
-
                    class="menu-item submenu-item active">
 
                     <i class="fas fa-money-check-dollar"></i>
@@ -1072,25 +1164,18 @@ function menuNomina(paginaActiva) {
 
         </div>
 
-
-        <!-- ==============================
-
-             MÓDULO NÓMINA
-
-        =============================== -->
+        <!-- ==========================================
+             MENÚ INTERNO DEL MÓDULO DE NÓMINA
+        =========================================== -->
 
         <div class="menu-group open">
 
             <div class="menu-item menu-parent">
 
                 <div style="
-
                     display:flex;
-
                     align-items:center;
-
                     gap:10px;
-
                 ">
 
                     <i class="fas fa-money-check-dollar"></i>
@@ -1107,15 +1192,18 @@ function menuNomina(paginaActiva) {
 
             </div>
 
-
             <div class="submenu">
 
-
-                <!-- INICIO -->
+                <!-- ==================================
+                     INICIO DEL MÓDULO
+                =================================== -->
 
                 <a href="/nomina"
-
-                   class="menu-item submenu-item ${paginaActiva === 'nomina' ? 'active' : ''}">
+                   class="menu-item submenu-item ${
+                       paginaActiva === 'nomina'
+                           ? 'active'
+                           : ''
+                   }">
 
                     <i class="fas fa-house"></i>
 
@@ -1127,12 +1215,16 @@ function menuNomina(paginaActiva) {
 
                 </a>
 
-
-                <!-- LIQUIDACIÓN -->
+                <!-- ==================================
+                     LIQUIDACIÓN DE NÓMINA
+                =================================== -->
 
                 <a href="/nomina/liquidacion"
-
-                   class="menu-item submenu-item ${paginaActiva === 'nomina-liquidacion' ? 'active' : ''}">
+                   class="menu-item submenu-item ${
+                       paginaActiva === 'nomina-liquidacion'
+                           ? 'active'
+                           : ''
+                   }">
 
                     <i class="fas fa-calculator"></i>
 
@@ -1144,12 +1236,16 @@ function menuNomina(paginaActiva) {
 
                 </a>
 
-
-                <!-- NOVEDADES -->
+                <!-- ==================================
+                     NOVEDADES DE NÓMINA
+                =================================== -->
 
                 <a href="/nomina/novedades"
-
-                   class="menu-item submenu-item ${paginaActiva === 'nomina-novedades' ? 'active' : ''}">
+                   class="menu-item submenu-item ${
+                       paginaActiva === 'nomina-novedades'
+                           ? 'active'
+                           : ''
+                   }">
 
                     <i class="fas fa-file-circle-plus"></i>
 
@@ -1161,12 +1257,16 @@ function menuNomina(paginaActiva) {
 
                 </a>
 
-
-                <!-- PRÉSTAMOS -->
+                <!-- ==================================
+                     GESTIÓN DE PRÉSTAMOS
+                =================================== -->
 
                 <a href="/nomina/prestamos"
-
-                   class="menu-item submenu-item ${paginaActiva === 'nomina-prestamos' ? 'active' : ''}">
+                   class="menu-item submenu-item ${
+                       paginaActiva === 'nomina-prestamos'
+                           ? 'active'
+                           : ''
+                   }">
 
                     <i class="fas fa-hand-holding-dollar"></i>
 
@@ -1178,12 +1278,16 @@ function menuNomina(paginaActiva) {
 
                 </a>
 
-
-                <!-- PRODUCCIÓN -->
+                <!-- ==================================
+                     LIQUIDACIÓN POR PRODUCCIÓN
+                =================================== -->
 
                 <a href="/nomina/produccion"
-
-                   class="menu-item submenu-item ${paginaActiva === 'nomina-produccion' ? 'active' : ''}">
+                   class="menu-item submenu-item ${
+                       paginaActiva === 'nomina-produccion'
+                           ? 'active'
+                           : ''
+                   }">
 
                     <i class="fas fa-industry"></i>
 
@@ -1195,12 +1299,16 @@ function menuNomina(paginaActiva) {
 
                 </a>
 
-
-                <!-- CONFIGURACIÓN -->
+                <!-- ==================================
+                     CONFIGURACIÓN DE NÓMINA
+                =================================== -->
 
                 <a href="/nomina/configuracion"
-
-                   class="menu-item submenu-item ${paginaActiva === 'nomina-configuracion' ? 'active' : ''}">
+                   class="menu-item submenu-item ${
+                       paginaActiva === 'nomina-configuracion'
+                           ? 'active'
+                           : ''
+                   }">
 
                     <i class="fas fa-gear"></i>
 
@@ -1212,12 +1320,16 @@ function menuNomina(paginaActiva) {
 
                 </a>
 
-
-                <!-- HISTORIAL -->
+                <!-- ==================================
+                     HISTORIAL Y REPORTES
+                =================================== -->
 
                 <a href="/nomina/historial"
-
-                   class="menu-item submenu-item ${paginaActiva === 'nomina-historial' ? 'active' : ''}">
+                   class="menu-item submenu-item ${
+                       paginaActiva === 'nomina-historial'
+                           ? 'active'
+                           : ''
+                   }">
 
                     <i class="fas fa-chart-line"></i>
 
@@ -1229,7 +1341,6 @@ function menuNomina(paginaActiva) {
 
                 </a>
 
-
             </div>
 
         </div>
@@ -1238,31 +1349,46 @@ function menuNomina(paginaActiva) {
 
 }
 
+/* ==========================================================================
+   FIN DEL MENÚ DEL MÓDULO DE NÓMINA
+   ========================================================================== */
+
+   /* ==========================================================================
+   MENÚ DEL MÓDULO DE CAPACITACIONES
+   ========================================================================== */
+
 function menuCapacitaciones(paginaActiva) {
 
-    const usuario =
+    /* ==========================================
+       OBTENER INFORMACIÓN DEL USUARIO
+       ========================================== */
 
-        JSON.parse(
-
-            localStorage.getItem("usuario")
-
-        ) || {};
+    const usuario = JSON.parse(
+        localStorage.getItem("usuario")
+    ) || {};
 
     const rol =
-
         (usuario.rol || "").toLowerCase();
 
+    /* ==========================================
+       IDENTIFICAR ROL ADMINISTRATIVO
+       ========================================== */
+
     const esAdministrador =
+        rol === "admin" ||
+        rol === "administrador" ||
+        rol === "superadmin" ||
+        rol === "superadministrador";
 
-    rol === "admin" ||
-
-    rol === "administrador" ||
-
-    rol === "superadmin" ||
-
-    rol === "superadministrador";
+    /* ==========================================
+       CONSTRUIR MENÚ DE CAPACITACIONES
+       ========================================== */
 
     return `
+
+        <!-- ==========================================
+             TÍTULO DE NAVEGACIÓN
+        =========================================== -->
 
         <span class="menu-section-title">
 
@@ -1270,8 +1396,11 @@ function menuCapacitaciones(paginaActiva) {
 
         </span>
 
-        <a href="/dashboard"
+        <!-- ==========================================
+             ACCESO AL INICIO
+        =========================================== -->
 
+        <a href="/dashboard"
            class="menu-item">
 
             <i class="fas fa-home"></i>
@@ -1280,31 +1409,32 @@ function menuCapacitaciones(paginaActiva) {
 
         </a>
 
-         ${
+        <!-- ==========================================
+             REGRESAR A MIS CAPACITACIONES
+        =========================================== -->
 
-            paginaActiva === "capacitacion"
+        ${paginaActiva === "capacitacion" ? `
 
-            ? `
+            <a href="/mis-capacitaciones"
+               class="menu-item">
 
-                <a href="/mis-capacitaciones"
+                <i class="fas fa-arrow-left"></i>
 
-                   class="menu-item">
+                <span>
 
-                    <i class="fas fa-arrow-left"></i>
+                    Volver a mis capacitaciones
 
-                    <span>Volver a mis capacitaciones</span>
+                </span>
 
-                </a>
+            </a>
 
-            `
+        ` : ""}
 
-            : ""
-
-        }
-
+        <!-- ==========================================
+             ACCESO AL PANEL PRINCIPAL
+        =========================================== -->
 
         <a href="/panel"
-
            class="menu-item">
 
             <i class="fas fa-th-large"></i>
@@ -1313,18 +1443,18 @@ function menuCapacitaciones(paginaActiva) {
 
         </a>
 
+        <!-- ==========================================
+             MENÚ PRINCIPAL DE CAPACITACIONES
+        =========================================== -->
+
         <div class="menu-group open">
 
             <div class="menu-item menu-parent">
 
                 <div style="
-
                     display:flex;
-
                     align-items:center;
-
                     gap:10px;
-
                 ">
 
                     <i class="fas fa-graduation-cap"></i>
@@ -1343,9 +1473,16 @@ function menuCapacitaciones(paginaActiva) {
 
             <div class="submenu">
 
-                <a href="/centro-capacitaciones"
+                <!-- ==================================
+                     CENTRO DE CAPACITACIONES
+                =================================== -->
 
-                   class="menu-item submenu-item ${paginaActiva === "centro-capacitaciones" ? "active" : ""}">
+                <a href="/centro-capacitaciones"
+                   class="menu-item submenu-item ${
+                       paginaActiva === "centro-capacitaciones"
+                           ? "active"
+                           : ""
+                   }">
 
                     <i class="fas fa-house"></i>
 
@@ -1357,9 +1494,16 @@ function menuCapacitaciones(paginaActiva) {
 
                 </a>
 
-                <a href="/mis-capacitaciones"
+                <!-- ==================================
+                     MIS CAPACITACIONES
+                =================================== -->
 
-                   class="menu-item submenu-item ${paginaActiva === "mis-capacitaciones" ? "active" : ""}">
+                <a href="/mis-capacitaciones"
+                   class="menu-item submenu-item ${
+                       paginaActiva === "mis-capacitaciones"
+                           ? "active"
+                           : ""
+                   }">
 
                     <i class="fas fa-book-open"></i>
 
@@ -1371,35 +1515,49 @@ function menuCapacitaciones(paginaActiva) {
 
                 </a>
 
+                <!-- ==================================
+                     OPCIONES ADMINISTRATIVAS
+                =================================== -->
+
                 ${esAdministrador ? `
 
-                <a href="/administrar-capacitaciones"
+                    <!-- ADMINISTRAR CAPACITACIONES -->
 
-                   class="menu-item submenu-item ${paginaActiva === "administrar-capacitaciones" ? "active" : ""}">
+                    <a href="/administrar-capacitaciones"
+                       class="menu-item submenu-item ${
+                           paginaActiva === "administrar-capacitaciones"
+                               ? "active"
+                               : ""
+                       }">
 
-                    <i class="fas fa-chalkboard-teacher"></i>
+                        <i class="fas fa-chalkboard-teacher"></i>
 
-                    <span>
+                        <span>
 
-                        Administrar Capacitaciones
+                            Administrar Capacitaciones
 
-                    </span>
+                        </span>
 
-                </a>
+                    </a>
 
-                <a href="/seguimiento-general"
+                    <!-- SEGUIMIENTO GENERAL -->
 
-                   class="menu-item submenu-item ${paginaActiva === "seguimiento-general" ? "active" : ""}">
+                    <a href="/seguimiento-general"
+                       class="menu-item submenu-item ${
+                           paginaActiva === "seguimiento-general"
+                               ? "active"
+                               : ""
+                       }">
 
-                    <i class="fas fa-chart-line"></i>
+                        <i class="fas fa-chart-line"></i>
 
-                    <span>
+                        <span>
 
-                        Seguimiento General
+                            Seguimiento General
 
-                    </span>
+                        </span>
 
-                </a>
+                    </a>
 
                 ` : ""}
 
@@ -1412,31 +1570,217 @@ function menuCapacitaciones(paginaActiva) {
 }
 
 /* ==========================================================================
-   MENÚ DINÁMICO
+   FIN DEL MENÚ DEL MÓDULO DE CAPACITACIONES
+   ========================================================================== */
+
+   /* ==========================================================================
+   MENÚ DEL CRONOGRAMA DE TRANSFORMÍN
+   ========================================================================== */
+
+function menuTransformin(paginaActiva) {
+
+    /* ==========================================
+       OBTENER MÓDULOS AUTORIZADOS
+       ========================================== */
+
+    const inicio = obtenerModulo("Inicio");
+
+    const panel = obtenerModulo("Panel");
+
+    const perfil = obtenerModulo("Perfil");
+
+    const transformin = obtenerModulo(
+        "Cronograma de Transformín"
+    );
+
+    /* ==========================================
+       VERIFICAR ACCESO AL MÓDULO
+       ========================================== */
+
+    const tieneAccesoTransformin =
+        transformin !== null &&
+        transformin.ruta === "/cronograma-transformin";
+
+    /* ==========================================
+       IDENTIFICAR PÁGINA ACTIVA
+       ========================================== */
+
+    const esPaginaTransformin =
+        paginaActiva === "cronograma-transformin" ||
+        window.location.pathname === "/cronograma-transformin";
+
+    /* ==========================================
+       CONSTRUIR MENÚ DE TRANSFORMÍN
+       ========================================== */
+
+    return `
+
+        <!-- ==========================================
+             TÍTULO DE NAVEGACIÓN
+        =========================================== -->
+
+        <span class="menu-section-title">
+
+            Navegación
+
+        </span>
+
+        <!-- ==========================================
+             ACCESO AL INICIO
+        =========================================== -->
+
+        ${inicio ? `
+
+            <a href="/dashboard"
+               class="menu-item">
+
+                <i class="fas fa-home"></i>
+
+                <span>
+
+                    Inicio
+
+                </span>
+
+            </a>
+
+        ` : ""}
+
+        <!-- ==========================================
+             ACCESO AL PANEL PRINCIPAL
+        =========================================== -->
+
+        ${panel ? `
+
+            <a href="/panel"
+               class="menu-item">
+
+                <i class="fas fa-th-large"></i>
+
+                <span>
+
+                    Panel
+
+                </span>
+
+            </a>
+
+        ` : ""}
+
+        <!-- ==========================================
+             MÓDULO CRONOGRAMA DE TRANSFORMÍN
+        =========================================== -->
+
+        ${tieneAccesoTransformin ? `
+
+            <span class="menu-section-title">
+
+                Gestión de Transformín
+
+            </span>
+
+            <div class="menu-group open">
+
+                <div class="menu-item menu-parent">
+
+                    <div style="
+                        display:flex;
+                        align-items:center;
+                        gap:10px;
+                    ">
+
+                        <i class="fas fa-calendar-alt"></i>
+
+                        <span>
+
+                            Transformín
+
+                        </span>
+
+                    </div>
+
+                    <i class="fas fa-chevron-down menu-arrow"></i>
+
+                </div>
+
+                <div class="submenu">
+
+                    <!-- CRONOGRAMA PRINCIPAL -->
+
+                    <a href="/cronograma-transformin"
+                       class="menu-item submenu-item ${
+                           esPaginaTransformin
+                               ? "active"
+                               : ""
+                       }">
+
+                        <i class="fas fa-calendar-alt"></i>
+
+                        <span>
+
+                            Cronograma de Transformín
+
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        ` : ""}
+
+        <!-- ==========================================
+             ACCESO AL PERFIL DEL USUARIO
+        =========================================== -->
+
+        ${perfil ? `
+
+            <a href="/perfil"
+               class="menu-item">
+
+                <i class="fas fa-user-circle"></i>
+
+                <span>
+
+                    Mi Perfil
+
+                </span>
+
+            </a>
+
+        ` : ""}
+
+    `;
+
+}
+
+/* ==========================================================================
+   FIN DEL MENÚ DEL CRONOGRAMA DE TRANSFORMÍN
+   ========================================================================== */
+
+   /* ==========================================================================
+   CONSTRUCCIÓN GENERAL DEL MENÚ DINÁMICO
    ========================================================================== */
 
 function construirMenu() {
 
+    /* ==========================================
+       IDENTIFICAR PÁGINA Y MÓDULO ACTUAL
+       ========================================== */
+
     const pagina =
         document.body.dataset.pagina;
-        
+
     const moduloActual =
-    obtenerModuloActual();
-    
+        obtenerModuloActual();
+
     const rutaActual =
-    obtenerRutaModulo(
-        moduloActual
-    );
+        obtenerRutaModulo(moduloActual);
 
-    console.log(
-        "RUTA:",
-        rutaActual
-    );
-
-    console.log(
-        "MODULO ACTUAL:",
-        moduloActual
-    );
+    /* ==========================================
+       OBTENER CONTENEDOR DEL MENÚ
+       ========================================== */
 
     const menu =
         document.getElementById(
@@ -1444,564 +1788,864 @@ function construirMenu() {
         );
 
     if (!menu) return;
-    
+
+    /* ==========================================
+       OBTENER MÓDULOS PRINCIPALES
+       ========================================== */
+
     const menuPanel =
-    obtenerModulo("Panel");
+        obtenerModulo("Panel");
 
     const menuDashboard =
-    obtenerModulo("Inicio");
+        obtenerModulo("Inicio");
 
     const menuPerfil =
-    obtenerModulo("Mi Perfil");
+        obtenerModulo("Perfil");
 
-    /* ======================
+    /* ==========================================
+       OBTENER MÓDULO DE TRANSFORMÍN
+       ========================================== */
+
+    const moduloTransformin =
+        obtenerModulo("Cronograma de Transformín");
+
+    const tieneAccesoTransformin =
+        moduloTransformin !== null &&
+        moduloTransformin.ruta === "/cronograma-transformin";
+
+    /* ==========================================
        DASHBOARD
-    ====================== */
+       ========================================== */
 
     if (pagina === "dashboard") {
 
         menu.innerHTML = `
+
             <span class="menu-section-title">
+
                 Navegación
+
             </span>
 
-            <a href="/dashboard" class="menu-item active">
+            <a href="/dashboard"
+               class="menu-item active">
+
                 <i class="fas fa-home"></i>
+
                 Inicio
+
             </a>
 
-            <a href="/panel" class="menu-item">
+            <a href="/panel"
+               class="menu-item">
+
                 <i class="fas fa-th-large"></i>
+
                 Panel
+
             </a>
 
-            <a href="/perfil" class="menu-item">
+            <a href="/perfil"
+               class="menu-item">
+
                 <i class="fas fa-user-circle"></i>
+
                 Mi Perfil
+
             </a>
+
         `;
+
     }
 
-    /* ======================
+    /* ==========================================
        INDUCCIÓN
-    ====================== */
+       ========================================== */
 
     else if (pagina === "induccion") {
 
         menu.innerHTML = `
+
             <span class="menu-section-title">
+
                 Navegación
+
             </span>
 
-            <a href="/induccion" class="menu-item active">
+            <a href="/induccion"
+               class="menu-item active">
+
                 <i class="fas fa-graduation-cap"></i>
+
                 Inducción SST
+
             </a>
+
         `;
+
     }
 
-    /* ======================
-       FIRMA
-    ====================== */
+    /* ==========================================
+       FIRMA DIGITAL
+       ========================================== */
 
     else if (pagina === "firma") {
 
         menu.innerHTML = `
+
             <span class="menu-section-title">
+
                 Navegación
+
             </span>
 
-            <a href="/induccion" class="menu-item">
+            <a href="/induccion"
+               class="menu-item">
+
                 <i class="fas fa-graduation-cap"></i>
+
                 Inducción SST
+
             </a>
 
-            <a href="/firma" class="menu-item active">
+            <a href="/firma"
+               class="menu-item active">
+
                 <i class="fas fa-signature"></i>
+
                 Firma Digital
+
             </a>
+
         `;
+
     }
 
-    /* ======================
+    /* ==========================================
        CERTIFICADO
-    ====================== */
+       ========================================== */
 
     else if (pagina === "certificado") {
 
-    menu.innerHTML = `
-        <span class="menu-section-title">
-            Navegación
-        </span>
+        menu.innerHTML = `
 
-        <a href="/dashboard" class="menu-item">
-            <i class="fas fa-home"></i>
-            Inicio
-        </a>
+            <span class="menu-section-title">
 
-        <a href="/certificado" class="menu-item active">
-            <i class="fas fa-certificate"></i>
-            Certificado
-        </a>
-    `;
+                Navegación
 
-    const sidebarBottom =
-        document.querySelector(
-            ".sidebar-bottom"
-        );
+            </span>
 
-    if (sidebarBottom) {
+            <a href="/dashboard"
+               class="menu-item">
 
-        sidebarBottom.insertAdjacentHTML(
-            "afterbegin",
-            `
-            <button
-                id="btnDescargarPDF"
-                class="sidebar-pdf">
+                <i class="fas fa-home"></i>
 
-                <i class="fas fa-file-pdf"></i>
+                Inicio
 
-                <div class="pdf-info">
-                    <span>Descargar PDF</span>
-                    <small>Certificado Oficial</small>
-                </div>
+            </a>
 
-            </button>
-            `
-        );
+            <a href="/certificado"
+               class="menu-item active">
+
+                <i class="fas fa-certificate"></i>
+
+                Certificado
+
+            </a>
+
+        `;
+
+        /* ======================================
+           BOTÓN DE DESCARGA DEL CERTIFICADO
+           ====================================== */
+
+        const sidebarBottom =
+            document.querySelector(
+                ".sidebar-bottom"
+            );
+
+        if (sidebarBottom) {
+
+            sidebarBottom.insertAdjacentHTML(
+
+                "afterbegin",
+
+                `
+
+                <button
+                    id="btnDescargarPDF"
+                    class="sidebar-pdf">
+
+                    <i class="fas fa-file-pdf"></i>
+
+                    <div class="pdf-info">
+
+                        <span>
+
+                            Descargar PDF
+
+                        </span>
+
+                        <small>
+
+                            Certificado Oficial
+
+                        </small>
+
+                    </div>
+
+                </button>
+
+                `
+
+            );
+
+        }
+
     }
-}
 
-    /* ======================
-       PERFIL
-    ====================== */
+    /* ==========================================
+       PERFIL DEL USUARIO
+       ========================================== */
 
     else if (pagina === "perfil") {
 
         menu.innerHTML = `
+
             <span class="menu-section-title">
+
                 Navegación
+
             </span>
 
-            <a href="/dashboard" class="menu-item">
+            <a href="/dashboard"
+               class="menu-item">
+
                 <i class="fas fa-home"></i>
+
                 Inicio
+
             </a>
 
-            <a href="/perfil" class="menu-item active">
+            <a href="/perfil"
+               class="menu-item active">
+
                 <i class="fas fa-user-circle"></i>
+
                 Mi Perfil
+
             </a>
+
         `;
+
     }
 
-    /* ======================
-       PANEL
-    ====================== */
+    /* ==========================================
+       PANEL PRINCIPAL DEL ERP
+       ========================================== */
 
     else if (pagina === "panel") {
 
         menu.innerHTML = `
+
             <span class="menu-section-title">
+
                 Navegación
+
             </span>
 
-            <a href="/dashboard" class="menu-item">
+            <a href="/dashboard"
+               class="menu-item">
+
                 <i class="fas fa-home"></i>
+
                 Inicio
+
             </a>
 
-            <a href="/panel" class="menu-item active">
+            <a href="/panel"
+               class="menu-item active">
+
                 <i class="fas fa-th-large"></i>
+
                 Panel
+
             </a>
-        <a href="/perfil" class="menu-item">
-        <i class="fas fa-user-circle"></i>
-        Mi Perfil
-    </a>
-`;
+
+            <!-- ==================================
+                 CRONOGRAMA DE TRANSFORMÍN
+                 VISIBLE SEGÚN PERMISOS DEL SERVIDOR
+            =================================== -->
+
+            ${tieneAccesoTransformin ? `
+
+                <a href="/cronograma-transformin"
+                   class="menu-item">
+
+                    <i class="fas fa-calendar-alt"></i>
+
+                    <span>
+
+                        Cronograma de Transformín
+
+                    </span>
+
+                </a>
+
+            ` : ""}
+
+            <a href="/perfil"
+               class="menu-item">
+
+                <i class="fas fa-user-circle"></i>
+
+                Mi Perfil
+
+            </a>
+
+        `;
+
     }
 
+    /* ==========================================
+       CRONOGRAMA DE TRANSFORMÍN
+       ========================================== */
 
+    else if (
 
-    /*Recursos humanos*/
+        pagina === "cronograma-transformin" ||
+
+        window.location.pathname === "/cronograma-transformin"
+
+    ) {
+
+        menu.innerHTML =
+            menuTransformin(
+                "cronograma-transformin"
+            );
+
+    }
+
+    /* ==========================================
+       RECURSOS HUMANOS
+       ========================================== */
+
     else if (pagina === "recursos-humanos") {
 
-    menu.innerHTML =
-        menuRecursosHumanos(
-            "recursos-humanos"
-        );
+        menu.innerHTML =
+            menuRecursosHumanos(
+                "recursos-humanos"
+            );
 
-}
-/* =====================================
-   EMPLEADOS
-===================================== */
+    }
 
-else if (pagina === "empleados") {
+    /* ==========================================
+       LISTADO DE EMPLEADOS
+       ========================================== */
 
-    menu.innerHTML =
-        menuRecursosHumanos(
-            "empleados"
-        );
+    else if (pagina === "empleados") {
 
-}
+        menu.innerHTML =
+            menuRecursosHumanos(
+                "empleados"
+            );
 
+    }
 
-/* =====================================
-   CREAR EMPLEADO
-===================================== */
+    /* ==========================================
+       CREAR EMPLEADO
+       ========================================== */
 
-else if (pagina === "crear-empleado") {
+    else if (pagina === "crear-empleado") {
 
-    menu.innerHTML =
-        menuRecursosHumanos(
-            "crear-empleado"
-        );
+        menu.innerHTML =
+            menuRecursosHumanos(
+                "crear-empleado"
+            );
 
-}
+    }
 
-/* =====================================
-   MENU EMPLEADOS
-===================================== */
+    /* ==========================================
+       MENÚ PRINCIPAL DE EMPLEADOS
+       ========================================== */
 
-else if (pagina === "empleados-menu") {
+    else if (pagina === "empleados-menu") {
 
-    menu.innerHTML =
-        menuRecursosHumanos(
-            "empleados-menu"
-        );
+        menu.innerHTML =
+            menuRecursosHumanos(
+                "empleados-menu"
+            );
 
-}
+    }
 
-/* =====================================
-   EMPLEADOS INACTIVOS
-===================================== */
+    /* ==========================================
+       EMPLEADOS INACTIVOS
+       ========================================== */
 
-else if (pagina === "empleados-inactivos") {
+    else if (pagina === "empleados-inactivos") {
 
-    menu.innerHTML =
-        menuRecursosHumanos(
-            "empleados-inactivos"
-        );
+        menu.innerHTML =
+            menuRecursosHumanos(
+                "empleados-inactivos"
+            );
 
-}
+    }
 
+    /* ==========================================
+       GESTIÓN DOCUMENTAL
+       ========================================== */
 
-/* =====================================
-   DOCUMENTACION
-===================================== */
+    else if (pagina === "documentacion") {
 
-else if (pagina === "documentacion") {
+        menu.innerHTML =
+            menuRecursosHumanos(
+                "documentacion"
+            );
 
-    menu.innerHTML =
-        menuRecursosHumanos(
-            "documentacion"
-        );
+    }
 
-}
+    /* ==========================================
+       DOCUMENTOS Y POLÍTICAS
+       ========================================== */
 
+    else if (pagina === "documentos-lectura-admin") {
 
-else if (pagina === "documentos-lectura-admin") {
+        menu.innerHTML =
+            menuRecursosHumanos(
+                "documentos-lectura-admin"
+            );
 
-    menu.innerHTML =
-        menuRecursosHumanos(
-            "documentos-lectura-admin"
-        );
+    }
 
-}
+    /* ==========================================
+       CENTRO DE ACTIVIDAD
+       ========================================== */
 
-/* =====================================
-   CENTRO ACTIVIDAD
-===================================== */
+    else if (pagina === "centro-actividad") {
 
-else if (pagina === "centro-actividad") {
+        menu.innerHTML =
+            menuRecursosHumanos(
+                "centro-actividad"
+            );
 
-    menu.innerHTML =
-        menuRecursosHumanos(
-            "centro-actividad"
-        );
+    }
 
-}
+        /* ==========================================
+       MÓDULO DE USUARIOS
+       ========================================== */
 
+    else if (pagina === "usuarios") {
 
-else if (pagina === "usuarios") {
+        menu.innerHTML =
+            menuUsuarios(
+                "usuarios"
+            );
 
-    menu.innerHTML =
-        menuUsuarios(
-            "usuarios"
-        );
+    }
 
-}
+    /* ==========================================
+       CREAR USUARIO
+       ========================================== */
 
+    else if (pagina === "crear-usuario") {
 
-else if (pagina === "crear-usuario") {
+        menu.innerHTML =
+            menuUsuarios(
+                "crear-usuario"
+            );
 
-    menu.innerHTML =
-        menuUsuarios(
-            "crear-usuario"
-        );
+    }
 
-}
+    /* ==========================================
+       USUARIOS REGISTRADOS
+       ========================================== */
 
-else if (pagina === "usuarios-registrados") {
+    else if (pagina === "usuarios-registrados") {
 
-    menu.innerHTML =
-        menuUsuarios(
-            "usuarios-registrados"
-        );
+        menu.innerHTML =
+            menuUsuarios(
+                "usuarios-registrados"
+            );
 
-}
+    }
 
-else if (pagina === "roles-accesos") {
+    /* ==========================================
+       ROLES Y ACCESOS
+       ========================================== */
 
-    menu.innerHTML =
-        menuUsuarios(
-            "roles-accesos"
-        );
+    else if (pagina === "roles-accesos") {
 
-}
+        menu.innerHTML =
+            menuUsuarios(
+                "roles-accesos"
+            );
 
-else if (pagina === "historial-usuarios") {
+    }
 
-    menu.innerHTML =
-        menuUsuarios(
-            "historial-usuarios"
-        );
+    /* ==========================================
+       HISTORIAL DE USUARIOS
+       ========================================== */
 
-}
+    else if (pagina === "historial-usuarios") {
 
-/* =====================================
-   MÓDULO NÓMINA
-===================================== */
+        menu.innerHTML =
+            menuUsuarios(
+                "historial-usuarios"
+            );
 
-else if (pagina === "nomina") {
+    }
 
-    menu.innerHTML =
-        menuNomina(
-            "nomina"
-        );
+    /* ==========================================
+       MÓDULO DE NÓMINA
+       ========================================== */
 
-}
+    else if (pagina === "nomina") {
 
-else if (pagina === "nomina-liquidacion") {
+        menu.innerHTML =
+            menuNomina(
+                "nomina"
+            );
 
-    menu.innerHTML =
-        menuNomina(
-            "nomina-liquidacion"
-        );
+    }
 
-}
+    /* ==========================================
+       LIQUIDACIÓN DE NÓMINA
+       ========================================== */
 
-/* =====================================
-   NOVEDADES (VISTA DE USUARIO Y ADMIN)
-===================================== */
-else if (pagina === "nomina-novedades") {
+    else if (pagina === "nomina-liquidacion") {
 
-    // [AGREGADO] Verificamos si el usuario logueado es auxiliar
-    const usuario = JSON.parse(localStorage.getItem("usuario")) || {};
-    const rol = (usuario.rol || "").toLowerCase();
-    const esAuxiliar = rol.includes("auxiliar");
+        menu.innerHTML =
+            menuNomina(
+                "nomina-liquidacion"
+            );
 
-    if (esAuxiliar) {
-        // Si es auxiliar, le mostramos un menú básico sin opciones de admin
+    }
+
+    /* ==========================================
+       NOVEDADES DE NÓMINA
+       VISTA DE USUARIO Y ADMINISTRADOR
+       ========================================== */
+
+    else if (pagina === "nomina-novedades") {
+
+        // Obtener información del usuario actual.
+        const usuario = JSON.parse(
+            localStorage.getItem("usuario")
+        ) || {};
+
+        const rol =
+            (usuario.rol || "").toLowerCase();
+
+        // Identificar si el usuario tiene rol Auxiliar.
+        const esAuxiliar =
+            rol.includes("auxiliar");
+
+        /* ======================================
+           MENÚ PARA USUARIOS AUXILIARES
+           ====================================== */
+
+        if (esAuxiliar) {
+
+            menu.innerHTML = `
+
+                <span class="menu-section-title">
+
+                    Navegación
+
+                </span>
+
+                <!-- ACCESO AL PANEL -->
+
+                <a href="/panel"
+                   class="menu-item">
+
+                    <i class="fas fa-th-large"></i>
+
+                    <span>Panel</span>
+
+                </a>
+
+                <!-- ACCESO AL PERFIL -->
+
+                <a href="/perfil"
+                   class="menu-item">
+
+                    <i class="fas fa-user-circle"></i>
+
+                    <span>Mi Perfil</span>
+
+                </a>
+
+                <!-- ACCESO A CAPACITACIONES -->
+
+                <a href="/centro-capacitaciones"
+                   class="menu-item">
+
+                    <i class="fas fa-graduation-cap"></i>
+
+                    <span>Capacitaciones</span>
+
+                </a>
+
+                <!-- ACCESO A NOVEDADES -->
+
+                <a href="/nomina/novedades"
+                   class="menu-item active">
+
+                    <i class="fas fa-bell"></i>
+
+                    <span>Novedades</span>
+
+                </a>
+
+            `;
+
+        }
+
+        /* ======================================
+           MENÚ COMPLETO DE NÓMINA
+           ====================================== */
+
+        else {
+
+            menu.innerHTML =
+                menuNomina(
+                    "nomina-novedades"
+                );
+
+        }
+
+    }
+
+    /* ==========================================
+       PRÉSTAMOS
+       ========================================== */
+
+    else if (pagina === "nomina-prestamos") {
+
+        menu.innerHTML =
+            menuNomina(
+                "nomina-prestamos"
+            );
+
+    }
+
+    /* ==========================================
+       LIQUIDACIÓN POR PRODUCCIÓN
+       ========================================== */
+
+    else if (pagina === "nomina-produccion") {
+
+        menu.innerHTML =
+            menuNomina(
+                "nomina-produccion"
+            );
+
+    }
+
+    /* ==========================================
+       CONFIGURACIÓN DE NÓMINA
+       ========================================== */
+
+    else if (pagina === "nomina-configuracion") {
+
+        menu.innerHTML =
+            menuNomina(
+                "nomina-configuracion"
+            );
+
+    }
+
+    /* ==========================================
+       HISTORIAL Y REPORTES
+       ========================================== */
+
+    else if (pagina === "nomina-historial") {
+
+        menu.innerHTML =
+            menuNomina(
+                "nomina-historial"
+            );
+
+    }
+
+    /* ==========================================
+       CENTRO DE CAPACITACIONES
+       ========================================== */
+
+    else if (pagina === "centro-capacitaciones") {
+
+        menu.innerHTML =
+            menuCapacitaciones(
+                "centro-capacitaciones"
+            );
+
+    }
+
+    /* ==========================================
+       MIS CAPACITACIONES
+       ========================================== */
+
+    else if (pagina === "mis-capacitaciones") {
+
+        menu.innerHTML =
+            menuCapacitaciones(
+                "mis-capacitaciones"
+            );
+
+    }
+
+    /* ==========================================
+       VISUALIZACIÓN INDIVIDUAL DE CAPACITACIÓN
+       ========================================== */
+
+    else if (pagina === "capacitacion") {
+
         menu.innerHTML = `
+
             <span class="menu-section-title">
+
                 Navegación
+
             </span>
 
-            <a href="/panel" class="menu-item">
-                <i class="fas fa-th-large"></i>
-                <span>Panel</span>
+            <!-- ACCESO AL INICIO -->
+
+            <a href="/dashboard"
+               class="menu-item">
+
+                <i class="fas fa-home"></i>
+
+                <span>Inicio</span>
+
             </a>
 
-            <a href="/perfil" class="menu-item">
-                <i class="fas fa-user-circle"></i>
-                <span>Mi Perfil</span>
+            <!-- REGRESAR A MIS CAPACITACIONES -->
+
+            <a href="/mis-capacitaciones"
+               class="menu-item">
+
+                <i class="fas fa-arrow-left"></i>
+
+                <span>
+
+                    Volver a mis capacitaciones
+
+                </span>
+
             </a>
 
-            <a href="/centro-capacitaciones" class="menu-item">
-                <i class="fas fa-graduation-cap"></i>
-                <span>Capacitaciones</span>
-            </a>
-
-            <a href="/nomina/novedades" class="menu-item active">
-                <i class="fas fa-bell"></i>
-                <span>Novedades</span>
-            </a>
         `;
-    } else {
-        // Si es admin, mostramos el menú completo de nómina
-        menu.innerHTML = menuNomina("nomina-novedades");
+
     }
-}
 
-else if (pagina === "nomina-prestamos") {
+    /* ==========================================
+       ADMINISTRAR CAPACITACIONES
+       ========================================== */
 
-    menu.innerHTML =
-        menuNomina(
-            "nomina-prestamos"
-        );
+    else if (pagina === "administrar-capacitaciones") {
 
-}
+        menu.innerHTML =
+            menuCapacitaciones(
+                "administrar-capacitaciones"
+            );
 
-else if (pagina === "nomina-produccion") {
+    }
 
-    menu.innerHTML =
-        menuNomina(
-            "nomina-produccion"
-        );
+    /* ==========================================
+       SEGUIMIENTO GENERAL DE CAPACITACIONES
+       ========================================== */
 
-}
+    else if (pagina === "seguimiento-general") {
 
-else if (pagina === "nomina-configuracion") {
+        menu.innerHTML =
+            menuCapacitaciones(
+                "seguimiento-general"
+            );
 
-    menu.innerHTML =
-        menuNomina(
-            "nomina-configuracion"
-        );
+    }
 
-}
-
-else if (pagina === "nomina-historial") {
-
-    menu.innerHTML =
-        menuNomina(
-            "nomina-historial"
-        );
-
-}
-
-/* =====================================
-   CENTRO DE CAPACITACIONES
-===================================== */
-
-else if (pagina === "centro-capacitaciones") {
-
-    menu.innerHTML =
-        menuCapacitaciones(
-            "centro-capacitaciones"
-        );
-
-}
-
-else if (pagina === "mis-capacitaciones") {
-
-    menu.innerHTML =
-        menuCapacitaciones(
-            "mis-capacitaciones"
-        );
-
-}
-
-else if (pagina === "capacitacion") {
-
-    menu.innerHTML = `
-
-        <span class="menu-section-title">
-            Navegación
-        </span>
-
-        <a href="/dashboard"
-           class="menu-item">
-
-            <i class="fas fa-home"></i>
-
-            <span>Inicio</span>
-
-        </a>
-
-        <a href="/mis-capacitaciones"
-           class="menu-item">
-
-            <i class="fas fa-arrow-left"></i>
-
-            <span>Volver a mis capacitaciones</span>
-
-        </a>
-
-    `;
-
-}
-
-else if (pagina === "administrar-capacitaciones") {
-
-    menu.innerHTML =
-        menuCapacitaciones(
-            "administrar-capacitaciones"
-        );
-
-}
-
-else if (pagina === "seguimiento-general") {
-
-    menu.innerHTML =
-        menuCapacitaciones(
-            "seguimiento-general"
-        );
-
-}
-
-
-    /* ======================
-       DEFAULT
-    ====================== */
+    /* ==========================================
+       MENÚ PREDETERMINADO
+       ========================================== */
 
     else {
 
-    menu.innerHTML = `
-        <span class="menu-section-title">
-            Navegación
-        </span>
+        menu.innerHTML = `
 
-        <a href="/dashboard" class="menu-item active">
-            <i class="fas fa-home"></i>
-            Inicio
-        </a>
-    `;
-}
+            <span class="menu-section-title">
 
-/* =====================================
-   ACTIVAR SUBMENUS
-===================================== */
+                Navegación
 
-document
-    .querySelectorAll(
-        '.menu-parent'
-    )
-    .forEach(item => {
+            </span>
 
-        item.addEventListener(
-            'click',
-            () => {
+            <a href="/dashboard"
+               class="menu-item active">
 
-                const grupo =
-                    item.closest(
-                        '.menu-group'
+                <i class="fas fa-home"></i>
+
+                Inicio
+
+            </a>
+
+        `;
+
+    }
+
+    /* ==========================================
+       ACTIVAR EVENTOS DE LOS SUBMENÚS
+       ========================================== */
+
+    document
+        .querySelectorAll(".menu-parent")
+        .forEach(item => {
+
+            item.addEventListener(
+                "click",
+                () => {
+
+                    const grupo =
+                        item.closest(
+                            ".menu-group"
+                        );
+
+                    // Evitar errores si el grupo no existe.
+                    if (!grupo) return;
+
+                    grupo.classList.toggle(
+                        "open"
                     );
 
-                grupo.classList.toggle(
-                    'open'
-                );
+                }
+            );
 
-            }
-        );
-
-    });
+        });
 
 }
 
 /* ==========================================================================
-   DATOS USUARIO
+   FIN DE LA CONSTRUCCIÓN GENERAL DEL MENÚ
+   ========================================================================== */
+
+   /* ==========================================================================
+   DATOS DEL USUARIO
    ========================================================================== */
 
 function cargarDatosUsuario() {
 
     try {
 
-        const usuario =
-            JSON.parse(
-                localStorage.getItem("usuario")
-            ) || {};
+        /* ==========================================
+           OBTENER INFORMACIÓN DEL USUARIO
+           ========================================== */
+
+        const usuario = JSON.parse(
+            localStorage.getItem("usuario")
+        ) || {};
+
+        /* ==========================================
+           OBTENER ELEMENTOS DEL SIDEBAR
+           ========================================== */
 
         const nombreSidebar =
             document.getElementById(
@@ -2018,25 +2662,40 @@ function cargarDatosUsuario() {
                 "cargoSidebar"
             );
 
+        /* ==========================================
+           MOSTRAR NOMBRE DEL USUARIO
+           ========================================== */
+
         if (nombreSidebar) {
 
             nombreSidebar.textContent =
                 usuario.nombre ||
                 "Usuario";
+
         }
+
+        /* ==========================================
+           MOSTRAR ROL DEL USUARIO
+           ========================================== */
 
         if (rolSidebar) {
 
             rolSidebar.textContent =
                 usuario.rol ||
                 "Empleado";
+
         }
+
+        /* ==========================================
+           MOSTRAR CARGO DEL USUARIO
+           ========================================== */
 
         if (cargoSidebar) {
 
             cargoSidebar.textContent =
                 usuario.cargo ||
                 "";
+
         }
 
     } catch (error) {
@@ -2045,14 +2704,20 @@ function cargarDatosUsuario() {
             "Error cargando usuario:",
             error
         );
+
     }
+
 }
 
 /* ==========================================================================
-   LOGOUT
+   CIERRE DE SESIÓN
    ========================================================================== */
 
 function configurarLogout() {
+
+    /* ==========================================
+       OBTENER BOTÓN DE CIERRE DE SESIÓN
+       ========================================== */
 
     const btnLogout =
         document.getElementById(
@@ -2061,33 +2726,60 @@ function configurarLogout() {
 
     if (!btnLogout) return;
 
+    /* ==========================================
+       CONFIGURAR EVENTO DE CIERRE DE SESIÓN
+       ========================================== */
+
     btnLogout.addEventListener(
         "click",
         (e) => {
 
             e.preventDefault();
 
+            /* ==================================
+               ELIMINAR INFORMACIÓN DEL USUARIO
+               ================================== */
+
             localStorage.removeItem(
                 "usuario"
             );
+
+            /* ==================================
+               ELIMINAR TOKEN ALMACENADO
+               ================================== */
 
             localStorage.removeItem(
                 "token"
             );
 
+            /* ==================================
+               LIMPIAR ALMACENAMIENTO DE SESIÓN
+               ================================== */
+
             sessionStorage.clear();
+
+            /* ==================================
+               REDIRIGIR AL CIERRE DE SESIÓN
+               DEL SERVIDOR
+               ================================== */
 
             window.location.href =
                 "/logout";
+
         }
     );
+
 }
 
 /* ==========================================================================
-   MENÚ MÓVIL
+   CONFIGURACIÓN DEL MENÚ MÓVIL
    ========================================================================== */
 
 function configurarMenuMovil() {
+
+    /* ==========================================
+       OBTENER ELEMENTOS DEL MENÚ RESPONSIVE
+       ========================================== */
 
     const btnOpen =
         document.getElementById(
@@ -2104,9 +2796,19 @@ function configurarMenuMovil() {
             "sidebarOverlay"
         );
 
+    /* ==========================================
+       VALIDAR EXISTENCIA DE LOS ELEMENTOS
+       ========================================== */
+
     if (!btnOpen || !sidebar || !overlay) {
+
         return;
+
     }
+
+    /* ==========================================
+       ABRIR Y CERRAR EL MENÚ LATERAL
+       ========================================== */
 
     btnOpen.addEventListener(
         "click",
@@ -2115,6 +2817,10 @@ function configurarMenuMovil() {
             sidebar.classList.toggle(
                 "active"
             );
+
+            /* ==================================
+               MOSTRAR FONDO SUPERPUESTO
+               ================================== */
 
             if (
                 sidebar.classList.contains(
@@ -2131,9 +2837,15 @@ function configurarMenuMovil() {
                 overlay.classList.remove(
                     "active"
                 );
+
             }
+
         }
     );
+
+    /* ==========================================
+       CERRAR SIDEBAR AL PULSAR EL OVERLAY
+       ========================================== */
 
     overlay.addEventListener(
         "click",
@@ -2150,9 +2862,17 @@ function configurarMenuMovil() {
         }
     );
 
+    /* ==========================================
+       CONTROLAR CAMBIOS DE TAMAÑO DE PANTALLA
+       ========================================== */
+
     window.addEventListener(
         "resize",
         () => {
+
+            /* ==================================
+               RESTABLECER MENÚ EN ESCRITORIO
+               ================================== */
 
             if (
                 window.innerWidth > 992
@@ -2165,7 +2885,17 @@ function configurarMenuMovil() {
                 overlay.classList.remove(
                     "active"
                 );
+
             }
+
         }
     );
+
 }
+
+/* ==========================================================================
+   FIN DEL ARCHIVO SIDEBAR.JS
+
+   PROCESADOS MARGARITA S.A.S.
+   SISTEMA ERP CORPORATIVO
+   ========================================================================== */
