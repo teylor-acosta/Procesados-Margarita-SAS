@@ -1,3 +1,13 @@
+
+
+
+
+
+
+
+
+
+
 "use strict";
 
 // ============================================================
@@ -20,6 +30,7 @@ const cumpleanosService = require(
     "../public/servicios/cumpleanos.service"
 );
 
+const fechasService = require("../public/servicios/transformin-fechas.service");
 const router = express.Router();
 
 // ============================================================
@@ -82,7 +93,7 @@ const ZONA_HORARIA = "America/Bogota";
 
 const MAXIMO_ARCHIVO = 5 * 1024 * 1024;
 
-const ANIO_MINIMO = 2026;
+const ANIO_MINIMO = fechasService.ANIO_MIN;
 
 const CODIGO_FORMATO = "FT-SST-147";
 
@@ -250,7 +261,7 @@ function validarAnio(valor, minimo = ANIO_MINIMO) {
     if (
         !Number.isInteger(anio) ||
         anio < minimo ||
-        anio > 9999
+        anio > fechasService.ANIO_MAX
     ) {
 
         throw errorValidacion(
@@ -3015,7 +3026,12 @@ async function consultarCronogramaInstitucional(req, res) {
     const resultado = await excelService
         .obtenerCronograma(anio);
 
-    const actividades = resultado?.actividades || [];
+    const actividades = (resultado?.actividades || []).map(a => ({
+        ...a, actividadId: a.id, actividad_institucional_id: a.id,
+        fechaSugerida: fechasService.obtenerFechaSugerida(a.actividad, anio),
+        semanas: (a.semanas || []).map(s => ({...s, semanaId: s.id, semana_id: s.id,
+            actividad_institucional_id: a.id}))
+    }));
 
     res.json({
 
@@ -3496,10 +3512,16 @@ async function editarActividadInstitucional(req, res) {
 
             verificarCronogramaEditable(anterior);
 
+            const datos = {...(req.body || {})};
+            if (datos.restablecerFecha === true) {
+                const sugerida = fechasService.obtenerFechaSugerida(anterior.actividad, Number(anterior.anio));
+                if (!sugerida) throw errorValidacion("La actividad no tiene fecha sugerida.");
+                datos.fecha_exacta = sugerida;
+            }
             const actividad =
                 normalizarActividadInstitucional(
                     anterior,
-                    req.body || {}
+                    datos
                 );
 
             const cambios =
@@ -3663,6 +3685,38 @@ router.patch(
     ],
     ejecutar(editarActividadInstitucional)
 );
+
+// ============================================================
+// 38A. ASIGNACIÓN INICIAL DE FECHAS FALTANTES (ACCIÓN EXPLÍCITA)
+// ============================================================
+router.post("/api/institucional/fechas/asignar", ejecutar(async (req, res) => {
+    const anio = validarAnio(req.body?.anio);
+    const resultado = await transaccion(async conexion => {
+        const [filas] = await conexion.query(`
+            SELECT a.id FROM transformin_ft147_actividades a
+            JOIN transformin_ft147_cronogramas c ON c.id = a.cronograma_id
+            WHERE c.anio = ? AND c.codigo_formato = ? AND c.estado <> 'CERRADO'
+              AND a.fecha_exacta IS NULL AND a.estado IN ('PENDIENTE','EN_PROCESO')
+            ORDER BY a.id FOR UPDATE`, [anio, CODIGO_FORMATO]);
+        let asignadas = 0, omitidas = 0;
+        for (const fila of filas) {
+            const anterior = await obtenerActividadInstitucional(conexion, fila.id, true);
+            verificarCronogramaEditable(anterior);
+            const fecha = fechasService.obtenerFechaSugerida(anterior.actividad, anio);
+            const [historial] = await conexion.query(`SELECT id FROM transformin_actividades_historial
+                WHERE origen = 'FT147' AND actividad_id = ? AND accion = 'REPROGRAMACION' LIMIT 1`, [fila.id]);
+            if (!fecha || historial.length || anterior.fecha_exacta) { omitidas++; continue; }
+            await conexion.query("UPDATE transformin_ft147_actividades SET fecha_exacta = ? WHERE id = ?", [fecha, fila.id]);
+            const nuevo = await obtenerActividadInstitucional(conexion, fila.id);
+            await registrarHistorial(conexion, {origen: "FT147", actividadId: fila.id,
+                accion: "REPROGRAMACION", anterior, nuevo, descripcion: "Asignación inicial de fecha sugerida",
+                usuarioId: req.usuarioCronograma.id});
+            asignadas++;
+        }
+        return {asignadas, omitidas};
+    });
+    res.json({success: true, anio, ...resultado});
+}));
 
 // ============================================================
 // 39. CALCULAR ESTADO GENERAL INSTITUCIONAL
@@ -5457,6 +5511,29 @@ router.get(
             const semanas =
                 actividad.semanas || [];
 
+            // Mostrar la fecha exacta sin duplicar una programación semanal fechada.
+            const fechaExacta = actividad.fecha_exacta || null;
+            // Una referencia puede representar una única programación del mismo mes.
+            const programadas = semanas.filter(s => Number(s.programada) === 1);
+            const semanaReferencia = fechaValida(fechaExacta) &&
+                Number(fechaExacta.slice(0, 4)) === anio &&
+                programadas.length === 1 && !programadas[0].fecha_programada &&
+                Number(programadas[0].mes) === Number(fechaExacta.slice(5, 7))
+                ? programadas[0] : null;
+            const tipo = normalizarEnum(actividad.tipo);
+            const tipoCalendario = TIPOS_INSTITUCIONALES.includes(tipo) ? tipo : "OTRO";
+            if (fechaValida(fechaExacta) && Number(fechaExacta.slice(0, 4)) === anio &&
+                (mes === null || Number(fechaExacta.slice(5, 7)) === mes) &&
+                !semanaReferencia && !semanas.some(s => Number(s.programada) === 1 && s.fecha_programada === fechaExacta)) {
+                eventos.push({id: `FT147-${actividad.id}-FECHA`, actividadId: actividad.id,
+                    actividad_institucional_id: actividad.id, actividad_id: actividad.id, semanaId: null, semana_id: null,
+                    origen: "FT147", nombre: actividad.actividad || actividad.equipo,
+                    descripcion: actividad.descripcion || "", responsable: actividad.responsable,
+                    tipo: tipoCalendario, prioridad: actividad.prioridad || "MEDIA",
+                    estado: actividad.estado, fecha: fechaExacta, anio,
+                    mes: Number(fechaExacta.slice(5, 7)), observaciones: actividad.notas || null});
+            }
+
             for (const semana of semanas) {
 
                 if (Number(semana.programada) !== 1) {
@@ -5465,24 +5542,17 @@ router.get(
 
                 }
 
-                if (
 
-                    mes !== null &&
-
-                    Number(semana.mes) !== mes
-
-                ) {
-
-                    continue;
-
-                }
 
                 // Se utiliza únicamente una fecha
                 // registrada expresamente.
                 // No se inventan fechas para las semanas.
 
                 const fecha =
-                    semana.fecha_programada || null;
+                    fechaValida(semana.fecha_programada) && Number(semana.fecha_programada.slice(0, 4)) === anio
+                        ? semana.fecha_programada : (semana === semanaReferencia ? fechaExacta : null);
+                const mesEvento = fecha ? Number(fecha.slice(5, 7)) : Number(semana.mes);
+                if (mes !== null && mesEvento !== mes) continue;
 
                 const evento = {
 
@@ -5492,6 +5562,9 @@ router.get(
                     actividadId:
                         actividad.id,
 
+                    actividad_id: actividad.id,
+                    actividad_institucional_id: actividad.id,
+                    semana_id: semana.id,
                     semanaId:
                         semana.id,
 
@@ -5510,7 +5583,7 @@ router.get(
                         actividad.responsable,
 
                     tipo:
-                        actividad.tipo || "OTRO",
+                        tipoCalendario,
 
                     prioridad:
                         actividad.prioridad || "MEDIA",
@@ -5522,8 +5595,8 @@ router.get(
 
                     anio,
 
-                    mes:
-                        Number(semana.mes),
+                    mes: mesEvento,
+                    mesProgramacion: Number(semana.mes),
 
                     semanaMes:
                         Number(semana.semana_mes),
@@ -5555,9 +5628,12 @@ router.get(
 
                     eventos.push(evento);
 
-                } else {
+                } else if (!["COMPLETADA", "CANCELADA"].includes(semana.estado)) {
 
-                    eventosSinFecha.push(evento);
+                    eventosSinFecha.push({ ...evento,
+                        fechaSugerida: fechasService.obtenerFechaSugerida(actividad.actividad, anio),
+                        fechaExactaActividad: fechaExacta
+                    });
 
                 }
 

@@ -1265,7 +1265,7 @@ body[data-pagina="cronograma-transformin"] .estado-servicio {
 
 /* ==========================================================
    21. SELECTOR DEL PERIODO INSTITUCIONAL
-   Compatible con 2026, 2027 y años posteriores.
+   Compatible con años anteriores y posteriores (1900-9999).
 ========================================================== */
 .periodo-section,
 .cronograma-controles,
@@ -19747,4 +19747,185 @@ body[data-pagina="cronograma-transformin"] .cronograma-toast-container .toast-bo
 body[data-pagina="cronograma-transformin"] [hidden],
 body[data-pagina="cronograma-transformin"] .d-none {
     display:none !important;
+}
+
+/* ==========================================================
+   655. COMPLEMENTO DE COBERTURA HTML Y JAVASCRIPT
+   Conserva las reglas anteriores y la identidad institucional.
+========================================================== */
+body[data-pagina="cronograma-transformin"] .workspace-header { display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:18px; }
+body[data-pagina="cronograma-transformin"] .workspace-heading { min-width:0; flex:1 1 260px; }
+body[data-pagina="cronograma-transformin"] .workspace-heading h2 { margin:0 0 8px; color:var(--ct-azul-oscuro); }
+body[data-pagina="cronograma-transformin"] .workspace-heading p { margin:0; color:var(--ct-texto-secundario); }
+body[data-pagina="cronograma-transformin"] .cronograma-tab-content { width:100%; min-width:0; }
+body[data-pagina="cronograma-transformin"] .hero-decoracion { position:absolute; pointer-events:none; z-index:-1; border-radius:50%; background:rgba(255,255,255,.035); }
+body[data-pagina="cronograma-transformin"] .hero-decoracion-uno { width:180px; height:180px; bottom:-90px; left:15%; }
+body[data-pagina="cronograma-transformin"] .hero-decoracion-dos { width:110px; height:110px; top:20px; right:25%; }
+body[data-pagina="cronograma-transformin"] :is(.card-heading-icon,.calendario-icono) { display:grid; place-items:center; flex:0 0 44px; width:44px; height:44px; border-radius:12px; background:var(--ct-verde-suave); color:var(--ct-verde-oscuro); font-size:18px; }
+body[data-pagina="cronograma-transformin"] :is(.calendario-identidad,.calendario-toolbar) { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; min-width:0; }
+body[data-pagina="cronograma-transformin"] .calendario-mes { flex:1 1 160px; min-width:0; }
+body[data-pagina="cronograma-transformin"] .calendario-mes h4 { margin:0; color:var(--ct-azul-oscuro); }
+body[data-pagina="cronograma-transformin"] .calendario-filtro { flex:1 1 180px; min-width:0; }
+body[data-pagina="cronograma-transformin"] .calendario-nota { padding:10px 12px; border-radius:9px; background:var(--ct-azul-suave); color:var(--ct-azul-oscuro); font-size:12px; }
+/* 656. Calendario: mostrar el contenido completo sin recortar eventos. */
+body[data-pagina="cronograma-transformin"] .calendario-grid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); align-items:stretch; min-width:0; }
+body[data-pagina="cronograma-transformin"] #calendarioGrid > .calendario-dia { height:auto; max-height:none; min-width:0; overflow:visible; }
+body[data-pagina="cronograma-transformin"] #calendarioGrid .calendario-eventos { height:auto; max-height:none; overflow:visible; }
+body[data-pagina="cronograma-transformin"] #calendarioGrid .calendario-evento { height:auto; max-height:none; white-space:normal; align-items:flex-start; }
+body[data-pagina="cronograma-transformin"] #calendarioGrid .calendario-evento-nombre { display:block; min-width:0; max-height:none; white-space:normal; overflow:visible; text-overflow:clip; overflow-wrap:anywhere; line-clamp:unset; -webkit-line-clamp:unset; }
+/* 657. Acciones de tablas y controles de fechas. */
+body[data-pagina="cronograma-transformin"] :is(.acciones-actividad,.acciones-institucional,.acciones-cumpleanos) { display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+body[data-pagina="cronograma-transformin"] .btn-tabla-accion { display:inline-grid; place-items:center; width:34px; min-height:34px; padding:5px; border:1px solid var(--ct-borde); border-radius:8px; background:var(--ct-superficie-suave); color:var(--ct-azul-oscuro); transition:var(--ct-transicion); }
+body[data-pagina="cronograma-transformin"] .btn-tabla-accion:is(.completar,.cambiar-estado,.seguimiento) { color:var(--ct-verde-oscuro); background:var(--ct-verde-suave); }
+body[data-pagina="cronograma-transformin"] .btn-tabla-accion.editar { color:var(--ct-azul); background:var(--ct-azul-suave); }
+body[data-pagina="cronograma-transformin"] .btn-tabla-accion.eliminar { color:var(--ct-peligro); background:var(--ct-peligro-fondo); }
+body[data-pagina="cronograma-transformin"] .btn-tabla-accion:hover:not(:disabled) { border-color:currentColor; box-shadow:var(--ct-sombra-xs); }
+body[data-pagina="cronograma-transformin"] :is(#btnAsignarFechasInstitucionales,#btnRestablecerFechaInstitucional,.btn-ver-actividades) { display:inline-flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:8px; min-height:40px; padding:9px 13px; border:1px solid var(--ct-borde-activo); border-radius:9px; background:var(--ct-verde-suave); color:var(--ct-verde-oscuro); font-weight:700; white-space:normal; }
+body[data-pagina="cronograma-transformin"] :is(#btnAsignarFechasInstitucionales,#btnRestablecerFechaInstitucional,.btn-ver-actividades):hover:not(:disabled) { background:var(--ct-verde-oscuro); color:#fff; }
+body[data-pagina="cronograma-transformin"] #institucionalFechaExacta { width:100%; min-height:42px; color:var(--ct-texto); }
+body[data-pagina="cronograma-transformin"] .tabla-filtros { display:flex; flex-wrap:wrap; align-items:flex-end; gap:12px; margin-bottom:14px; }
+body[data-pagina="cronograma-transformin"] .tabla-cumplimiento { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+/* 658. Seguimiento institucional y estados dinámicos. */
+body[data-pagina="cronograma-transformin"] .seguimiento-estadisticas-corte { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr)); gap:12px; }
+body[data-pagina="cronograma-transformin"] .seguimiento-dato { --dato-color:var(--ct-azul); --dato-fondo:var(--ct-azul-suave); display:flex; flex-direction:column; gap:6px; min-width:0; padding:14px; border:1px solid var(--ct-borde); border-radius:12px; background:var(--ct-superficie); }
+body[data-pagina="cronograma-transformin"] .seguimiento-dato-programadas { --dato-color:var(--ct-azul); --dato-fondo:var(--ct-azul-suave); }
+body[data-pagina="cronograma-transformin"] .seguimiento-dato-completadas { --dato-color:var(--ct-exito); --dato-fondo:var(--ct-exito-fondo); }
+body[data-pagina="cronograma-transformin"] .seguimiento-dato-pendientes { --dato-color:var(--ct-advertencia); --dato-fondo:var(--ct-advertencia-fondo); }
+body[data-pagina="cronograma-transformin"] .seguimiento-dato-canceladas { --dato-color:var(--ct-peligro); --dato-fondo:var(--ct-peligro-fondo); }
+body[data-pagina="cronograma-transformin"] .seguimiento-dato-icono { display:grid; place-items:center; width:36px; height:36px; border-radius:9px; color:var(--dato-color); background:var(--dato-fondo); }
+body[data-pagina="cronograma-transformin"] .seguimiento-dato strong { font-size:24px; color:var(--dato-color); }
+body[data-pagina="cronograma-transformin"] :is(.seguimiento-descripcion,.seguimiento-texto,.institucional-frecuencia,.cumpleanos-correo,.historial-archivo) { color:var(--ct-texto-secundario); overflow-wrap:anywhere; }
+body[data-pagina="cronograma-transformin"] :is(.seguimiento-formula,.seguimiento-fecha-corte,.seguimiento-resultado) { padding:10px 12px; border-radius:9px; background:var(--ct-superficie-suave); color:var(--ct-azul-oscuro); }
+body[data-pagina="cronograma-transformin"] .seguimiento-tabla-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
+body[data-pagina="cronograma-transformin"] :is(.integracion-estado,.badge-origen,.actividad-prioridad,.agenda-item-estado,.cumpleanos-fecha) { display:inline-flex; align-items:center; gap:5px; max-width:100%; padding:4px 8px; border-radius:7px; background:var(--ct-superficie-hover); color:var(--ct-texto); font-size:11px; font-weight:700; overflow-wrap:anywhere; }
+body[data-pagina="cronograma-transformin"] .integracion-estado[data-estado="pendiente"] { background:var(--ct-advertencia-fondo); color:var(--ct-advertencia); }
+body[data-pagina="cronograma-transformin"] .integracion-estado:is([data-estado="activo"],[data-estado="conectado"],[data-estado="disponible"]) { background:var(--ct-exito-fondo); color:var(--ct-exito); }
+body[data-pagina="cronograma-transformin"] .integracion-estado[data-estado="error"] { background:var(--ct-peligro-fondo); color:var(--ct-peligro); }
+body[data-pagina="cronograma-transformin"] .cumpleanos-estados { display:flex; flex-wrap:wrap; gap:6px; }
+body[data-pagina="cronograma-transformin"] .alerta-marcas-excel { padding:12px; border:1px solid #fde68a; border-radius:10px; background:var(--ct-advertencia-fondo); color:var(--ct-advertencia); }
+body[data-pagina="cronograma-transformin"] .grafico-mensual-contenedor { width:100%; min-width:0; overflow-x:auto; }
+/* 659. Modales con formulario intermedio y pie accesible. */
+body[data-pagina="cronograma-transformin"] .cronograma-modal .modal-dialog-scrollable .modal-content { max-height:100%; min-height:0; overflow:hidden; }
+body[data-pagina="cronograma-transformin"] .cronograma-modal .modal-dialog-scrollable .modal-content > form { display:flex; flex-direction:column; flex:1 1 auto; min-height:0; overflow:hidden; }
+body[data-pagina="cronograma-transformin"] .cronograma-modal .modal-dialog-scrollable .modal-body { flex:1 1 auto; min-height:0; overflow-y:auto !important; overscroll-behavior:contain; }
+body[data-pagina="cronograma-transformin"] .cronograma-modal :is(.modal-header,.modal-footer) { flex-shrink:0; }
+body[data-pagina="cronograma-transformin"] .cronograma-modal .modal-footer { flex-wrap:wrap; gap:8px; }
+/* 660. Carga y notificaciones. */
+body[data-pagina="cronograma-transformin"] .cronograma-loading:not([hidden]) { position:fixed; inset:0; z-index:var(--ct-z-loading); display:grid; place-items:center; padding:16px; background:rgba(15,23,42,.55); overflow:auto; }
+body[data-pagina="cronograma-transformin"] .loading-contenido { width:min(100%,400px); padding:24px; border-radius:var(--ct-radio-lg); background:var(--ct-superficie); color:var(--ct-azul-oscuro); text-align:center; box-shadow:var(--ct-sombra-modal); }
+body[data-pagina="cronograma-transformin"] .loading-spinner { width:38px; height:38px; margin:14px auto; border:4px solid var(--ct-borde); border-top-color:var(--ct-verde); border-radius:50%; animation:ctCargaGiro .8s linear infinite; }
+@keyframes ctCargaGiro { to { transform:rotate(360deg); } }
+body[data-pagina="cronograma-transformin"] .cronograma-toast { max-width:100%; overflow-wrap:anywhere; border-radius:var(--ct-radio-sm); box-shadow:var(--ct-sombra); }
+@media (max-width:767.98px) {
+    body[data-pagina="cronograma-transformin"] :is(.calendario-toolbar,.tabla-filtros,.workspace-header) { align-items:stretch; }
+    body[data-pagina="cronograma-transformin"] :is(.calendario-contenido,.calendario-scroll) { overflow-x:auto; }
+    body[data-pagina="cronograma-transformin"] :is(.calendario-grid,.calendario-dias-semana) { min-width:560px; }
+    body[data-pagina="cronograma-transformin"] #btnAsignarFechasInstitucionales { max-width:100%; }
+}
+@media (prefers-reduced-motion:reduce) {
+    body[data-pagina="cronograma-transformin"] .loading-spinner { animation:none; }
+}
+/* 661. Continuidad del desplazamiento vertical.
+   Los contenedores internos ceden el scroll a su padre al llegar al límite.
+   Bootstrap conserva el bloqueo de la página mientras un modal está abierto. */
+body[data-pagina="cronograma-transformin"] :is(
+    .tabla-responsive,.calendario-contenido,.agenda-lista,
+    .grafico-mensual,.grafico-mensual-scroll,.matriz-institucional-contenedor,
+    .matriz-programacion-contenedor,.cumpleanos-alertas-lista,
+    .importacion-alerta-lista,.tabla-preview-container,.cronograma-toast-container
+) { overscroll-behavior-y: auto; }
+body[data-pagina="cronograma-transformin"] .cronograma-modal .modal-body {
+    overscroll-behavior-y: contain;
+}
+
+/* 662. Categorías del calendario: prioridad visual sobre el origen. */
+body[data-pagina="cronograma-transformin"] #calendarioGrid .calendario-evento[data-tipo="AMBIENTAL" i] {
+    --evento-color: #15803d;
+    --evento-fondo: #f0fdf4;
+    --evento-borde: #16a34a;
+}
+body[data-pagina="cronograma-transformin"] .leyenda-punto.ambiental {
+    background: #16a34a;
+}
+body[data-pagina="cronograma-transformin"] #calendarioGrid .calendario-evento[data-tipo="INSTITUCIONAL" i] {
+    --evento-color: #1d4ed8;
+    --evento-fondo: #eff6ff;
+    --evento-borde: #2563eb;
+}
+body[data-pagina="cronograma-transformin"] .leyenda-punto.institucional {
+    background: #2563eb;
+}
+body[data-pagina="cronograma-transformin"] #calendarioGrid .calendario-evento[data-tipo="CELEBRACION" i] {
+    --evento-color: #7e22ce;
+    --evento-fondo: #faf5ff;
+    --evento-borde: #9333ea;
+}
+body[data-pagina="cronograma-transformin"] .leyenda-punto.celebracion {
+    background: #9333ea;
+}
+body[data-pagina="cronograma-transformin"] #calendarioGrid .calendario-evento[data-tipo="CUMPLEANOS" i] {
+    --evento-color: #be185d;
+    --evento-fondo: #fdf2f8;
+    --evento-borde: #db2777;
+}
+body[data-pagina="cronograma-transformin"] .leyenda-punto.cumpleanos {
+    background: #db2777;
+}
+body[data-pagina="cronograma-transformin"] #calendarioGrid .calendario-evento[data-tipo="OTRO" i] {
+    --evento-color: #475569;
+    --evento-fondo: #f1f5f9;
+    --evento-borde: #64748b;
+}
+body[data-pagina="cronograma-transformin"] .leyenda-punto.otro {
+    background: #64748b;
+}
+
+/* Permitir nombres completos y conservar todos los eventos visibles. */
+body[data-pagina="cronograma-transformin"] #calendarioGrid .calendario-evento {
+    overflow: visible;
+    flex-shrink: 0;
+}
+body[data-pagina="cronograma-transformin"] #calendarioGrid .calendario-evento-nombre {
+    flex: 1 1 0;
+    word-break: normal;
+    overflow-wrap: anywhere;
+}
+
+/* 663. Compatibilidad visual con la navegación multianual. */
+body[data-pagina="cronograma-transformin"] #selectorAnio[type="number"] {
+    padding: 10px 14px;
+    cursor: text;
+    font-variant-numeric: tabular-nums;
+}
+body[data-pagina="cronograma-transformin"] #selectorAnio:invalid:not(:placeholder-shown) {
+    border-color: var(--ct-peligro);
+}
+body[data-pagina="cronograma-transformin"] .calendario-toolbar {
+    flex-wrap: wrap;
+    min-width: 0;
+}
+body[data-pagina="cronograma-transformin"] .calendario-navegacion {
+    flex-wrap: wrap;
+    max-width: 100%;
+}
+body[data-pagina="cronograma-transformin"] #tituloMesCalendario {
+    overflow-wrap: break-word;
+    font-variant-numeric: tabular-nums;
+}
+body[data-pagina="cronograma-transformin"] #contenedorEventosSinFecha[hidden] {
+    display: none !important;
+}
+body[data-pagina="cronograma-transformin"] #listaEventosSinFecha {
+    min-width: 0;
+    overscroll-behavior-y: auto;
+}
+body[data-pagina="cronograma-transformin"] #calendarioGrid .calendario-evento-nombre {
+    overflow-wrap: break-word;
+    word-break: normal;
+}
+@media (max-width:479.98px) {
+    body[data-pagina="cronograma-transformin"] .periodo-controles { width: 100%; }
+    body[data-pagina="cronograma-transformin"] .periodo-campo { flex: 1 1 120px; min-width: 0; }
+    body[data-pagina="cronograma-transformin"] #selectorAnio { width: 100%; }
+    body[data-pagina="cronograma-transformin"] #btnAplicarAnio { max-width: 100%; white-space: normal; }
 }
